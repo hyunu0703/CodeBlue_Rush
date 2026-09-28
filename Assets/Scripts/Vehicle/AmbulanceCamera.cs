@@ -1,30 +1,78 @@
 ﻿using UnityEngine;
 
-/// <summary>구급차를 추적하고 속도에 따라 진행 방향으로 카메라 위치를 이동한다.</summary>
+/// <summary>구급차를 추적하고 교차로에서만 차량 방향을 따라 회전한다.</summary>
 public class AmbulanceCamera : MonoBehaviour
 {
     [SerializeField] private Rigidbody2D target;
     [SerializeField] private float maxSpeed = 12f;
     [SerializeField] private float maxOffset = 3f;
-    [SerializeField] private float smoothTime = 0.25f;
+    [SerializeField] private float moveSmoothTime = 0.2f;
+    [SerializeField] private float rotateSmoothTime = 0.3f;
 
-    private Vector3 velocity;
+    private CameraTurnZone activeZone;
+    private Vector3 moveVelocity;
+    private float rotateVelocity;
+    private float targetAngle;
+    private bool followRotation;
 
-    // 차량 이동 후 카메라 위치를 갱신한다
+    // 현재 카메라 각도를 초기 고정 방향으로 저장한다
+    private void Awake()
+    {
+        targetAngle = transform.eulerAngles.z;
+    }
+
+    // 차량 이동 후 위치와 방향을 갱신한다
     private void LateUpdate()
     {
         if (!target) return;
 
-        float speedRate = Mathf.Clamp01(target.linearVelocity.magnitude / maxSpeed);
-        Vector2 offset = (Vector2)target.transform.up * (maxOffset * speedRate);
+        FollowPosition();
+        FollowRotation();
+    }
 
-        Vector3 targetPos = target.transform.position + (Vector3)offset;
+    // 속도에 따라 차량 앞쪽을 부드럽게 추적한다
+    private void FollowPosition()
+    {
+        float speedRate = Mathf.Clamp01(target.linearVelocity.magnitude / maxSpeed);
+        Vector3 targetPos = target.transform.position + transform.up * (maxOffset * speedRate);
+
         targetPos.z = transform.position.z;
 
         transform.position = Vector3.SmoothDamp(
             transform.position,
             targetPos,
-            ref velocity,
-            smoothTime);
+            ref moveVelocity,
+            moveSmoothTime);
+    }
+
+    // 교차로에서는 차량 방향을 따라가고 평소에는 지정 각도를 유지한다
+    private void FollowRotation()
+    {
+        float angle = followRotation ? target.rotation : targetAngle;
+
+        angle = Mathf.SmoothDampAngle(
+            transform.eulerAngles.z,
+            angle,
+            ref rotateVelocity,
+            rotateSmoothTime);
+
+        transform.rotation = Quaternion.Euler(0f, 0f, angle);
+    }
+
+    // 교차로 진입 시 차량 방향 추적을 시작한다
+    public void EnterTurnZone(CameraTurnZone zone)
+    {
+        activeZone = zone;
+        followRotation = true;
+    }
+
+    // 교차로 탈출 시 차량 방향과 가장 가까운 90도로 카메라를 고정한다
+    public void ExitTurnZone(CameraTurnZone zone)
+    {
+        if (activeZone != zone) return;
+
+        targetAngle = Mathf.Round(target.rotation / 90f) * 90f;
+        followRotation = false;
+        activeZone = null;
     }
 }
