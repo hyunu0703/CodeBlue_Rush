@@ -8,6 +8,7 @@ public class AmbulanceCamera : MonoBehaviour
     [SerializeField] private float maxOffset = 3f;
     [SerializeField] private float moveSmoothTime = 0.2f;
     [SerializeField] private float rotateSmoothTime = 0.3f;
+    [SerializeField] private float baseOffset = 1.5f;
 
     private CameraTurnZone activeZone;
     private Vector3 moveVelocity;
@@ -34,7 +35,9 @@ public class AmbulanceCamera : MonoBehaviour
     private void FollowPosition()
     {
         float speedRate = Mathf.Clamp01(target.linearVelocity.magnitude / maxSpeed);
-        Vector3 targetPos = target.transform.position + transform.up * (maxOffset * speedRate);
+        float offset = baseOffset + maxOffset * speedRate;
+
+        Vector3 targetPos = target.transform.position + transform.up * offset;
 
         targetPos.z = transform.position.z;
 

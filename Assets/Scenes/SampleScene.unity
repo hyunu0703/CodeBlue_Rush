@@ -1328,7 +1328,7 @@ Camera:
   far clip plane: 1000
   field of view: 34
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 6
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -1372,7 +1372,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AmbulanceCamera
   target: {fileID: 1677197396}
-  maxSpeed: 12
+  maxSpeed: 10
   maxOffset: 3
   moveSmoothTime: 0.25
   rotateSmoothTime: 0.25
@@ -4678,116 +4678,11 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
---- !u!1 &1677197392 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6341273260642957359, guid: 9d9dbdbda344a2245872c4e3994603e1, type: 3}
+--- !u!50 &1677197396 stripped
+Rigidbody2D:
+  m_CorrespondingSourceObject: {fileID: 4768616914345947666, guid: 9d9dbdbda344a2245872c4e3994603e1, type: 3}
   m_PrefabInstance: {fileID: 2452298141340058073}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1677197393
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1677197392}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 20dd9a34b998b5a49abc13b4b363b85c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::KeyboardAmbulanceInput
---- !u!114 &1677197394
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1677197392}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d9b4d6cddecced548bb26eb0343947d5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::AmbulanceController
-  maxSpeed: 8
-  acceleration: 5
-  brakePower: 15
-  coastPower: 2
-  maxSteerAngle: 35
-  steerAngleSpeed: 300
-  wheelBase: 5
-  grip: 8
---- !u!61 &1677197395
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1677197392}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0, y: 0}
-    oldSize: {x: 0, y: 0}
-    newSize: {x: 0, y: 0}
-    adaptiveTilingThreshold: 0
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  m_Size: {x: 1, y: 1}
-  m_EdgeRadius: 0
---- !u!50 &1677197396
-Rigidbody2D:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1677197392}
-  m_BodyType: 0
-  m_Simulated: 1
-  m_UseFullKinematicContacts: 0
-  m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDamping: 0
-  m_AngularDamping: 0.05
-  m_GravityScale: 0
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_Interpolate: 1
-  m_SleepingMode: 1
-  m_CollisionDetection: 0
-  m_Constraints: 0
 --- !u!1 &1735401141
 GameObject:
   m_ObjectHideFlags: 0
@@ -6155,29 +6050,21 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 491141194788609044, guid: 9d9dbdbda344a2245872c4e3994603e1, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 0.6
-      objectReference: {fileID: 0}
-    - target: {fileID: 491141194788609044, guid: 9d9dbdbda344a2245872c4e3994603e1, type: 3}
       propertyPath: m_LocalScale.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3062449520527842274, guid: 9d9dbdbda344a2245872c4e3994603e1, type: 3}
-      propertyPath: m_Layer
-      value: 0
+    - target: {fileID: 3155309600307615821, guid: 9d9dbdbda344a2245872c4e3994603e1, type: 3}
+      propertyPath: m_Size.x
+      value: 37.933334
       objectReference: {fileID: 0}
     - target: {fileID: 3155309600307615821, guid: 9d9dbdbda344a2245872c4e3994603e1, type: 3}
-      propertyPath: m_Color.b
-      value: 0.40993226
+      propertyPath: m_Size.y
+      value: 46.066666
       objectReference: {fileID: 0}
     - target: {fileID: 3155309600307615821, guid: 9d9dbdbda344a2245872c4e3994603e1, type: 3}
-      propertyPath: m_Color.g
-      value: 0.40993226
-      objectReference: {fileID: 0}
-    - target: {fileID: 3155309600307615821, guid: 9d9dbdbda344a2245872c4e3994603e1, type: 3}
-      propertyPath: m_Color.r
-      value: 0.8867924
-      objectReference: {fileID: 0}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 56babc5d9ff7c4246bb4bc47aafaaa66, type: 3}
     - target: {fileID: 3155309600307615821, guid: 9d9dbdbda344a2245872c4e3994603e1, type: 3}
       propertyPath: m_SortingOrder
       value: 3
@@ -6227,29 +6114,13 @@ PrefabInstance:
       value: Ambulance
       objectReference: {fileID: 0}
     - target: {fileID: 6341273260642957359, guid: 9d9dbdbda344a2245872c4e3994603e1, type: 3}
-      propertyPath: m_Layer
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6341273260642957359, guid: 9d9dbdbda344a2245872c4e3994603e1, type: 3}
       propertyPath: m_TagString
       value: Ambulance
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 6341273260642957359, guid: 9d9dbdbda344a2245872c4e3994603e1, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1677197396}
-    - targetCorrespondingSourceObject: {fileID: 6341273260642957359, guid: 9d9dbdbda344a2245872c4e3994603e1, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1677197395}
-    - targetCorrespondingSourceObject: {fileID: 6341273260642957359, guid: 9d9dbdbda344a2245872c4e3994603e1, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1677197394}
-    - targetCorrespondingSourceObject: {fileID: 6341273260642957359, guid: 9d9dbdbda344a2245872c4e3994603e1, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1677197393}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9d9dbdbda344a2245872c4e3994603e1, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
