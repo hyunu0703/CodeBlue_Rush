@@ -13,6 +13,9 @@ public class AmbulanceController : MonoBehaviour
     [SerializeField, Min(0.1f)] private float wheelBase = 5f;
     [SerializeField] private float grip = 8f;
 
+    public float SteerRate => maxSteerAngle <= 0f ? 0f : steerAngle / maxSteerAngle;
+    public bool IsSteering => Mathf.Abs(steer) > 0.01f;
+
     private Rigidbody2D rb;
     private float steer;
     private float throttle;
