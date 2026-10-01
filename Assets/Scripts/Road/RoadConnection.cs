@@ -18,6 +18,7 @@ public sealed class RoadConnection : MonoBehaviour
     public Vector3 Outward => transform.up;
     public int IncomingCount => incoming == null ? 0 : incoming.Length;
     public int OutgoingCount => outgoing == null ? 0 : outgoing.Length;
+    internal bool HasTarget => target;
     internal const float PositionTolerance = 0.05f;
     private const float DirectionDot = 0.98f;
 
@@ -56,12 +57,12 @@ public sealed class RoadConnection : MonoBehaviour
     {
         if (lanes == null)
             return false;
-        RoadChunk owner = GetComponentInParent<RoadChunk>();
+        RoadChunk owner = GetComponentInParent<RoadChunk>(true);
         if (!owner)
             return false;
         foreach (TrafficLane lane in lanes)
         {
-            if (!lane || !used.Add(lane) || lane.GetComponentInParent<RoadChunk>() != owner || !lane.Validate(out _))
+            if (!lane || !used.Add(lane) || lane.GetComponentInParent<RoadChunk>(true) != owner || !lane.Validate(out _))
                 return false;
             Vector3 point = entering ? lane.StartPoint : lane.EndPoint;
             Vector3 direction = entering ? -lane.StartDirection : lane.EndDirection;
@@ -85,9 +86,9 @@ public sealed class RoadConnection : MonoBehaviour
             error = "Inspector Target과 요청한 연결이 충돌합니다.";
         else if (!Validate(out error) || !other.Validate(out error))
             return false;
-        else if (!GetComponentInParent<RoadChunk>().Validate(out error) || !other.GetComponentInParent<RoadChunk>().Validate(out error))
+        else if (!GetComponentInParent<RoadChunk>(true).Validate(out error) || !other.GetComponentInParent<RoadChunk>(true).Validate(out error))
             return false;
-        else if (GetComponentInParent<RoadChunk>() == other.GetComponentInParent<RoadChunk>())
+        else if (GetComponentInParent<RoadChunk>(true) == other.GetComponentInParent<RoadChunk>(true))
             error = "같은 도로 내부의 연결 지점을 서로 연결할 수 없습니다.";
         else if (Vector3.Distance(Position, other.Position) > PositionTolerance || Vector3.Dot(Outward, other.Outward) > -DirectionDot)
             error = "도로 지점의 위치가 일치하고 바깥 방향이 서로 반대여야 합니다.";

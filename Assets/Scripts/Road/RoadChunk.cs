@@ -36,7 +36,7 @@ public sealed class RoadChunk : MonoBehaviour
         HashSet<TrafficLane> owned = new HashSet<TrafficLane>();
         foreach (TrafficLane lane in lanes)
         {
-            if (!lane || !owned.Add(lane) || lane.GetComponentInParent<RoadChunk>() != this || !lane.Validate(out error))
+            if (!lane || !owned.Add(lane) || lane.GetComponentInParent<RoadChunk>(true) != this || !lane.Validate(out error))
             {
                 error = error ?? "차선 참조 누락, 중복 또는 소유권 오류입니다.";
                 return false;
@@ -56,7 +56,7 @@ public sealed class RoadChunk : MonoBehaviour
         HashSet<TrafficLane> ends = new HashSet<TrafficLane>();
         foreach (RoadConnection connection in connections)
         {
-            if (!connection || !ports.Add(connection) || connection.GetComponentInParent<RoadChunk>() != this || !connection.Validate(out error))
+            if (!connection || !ports.Add(connection) || connection.GetComponentInParent<RoadChunk>(true) != this || !connection.Validate(out error))
             {
                 error = error ?? "도로 연결 지점 참조 누락, 중복 또는 소유권 오류입니다.";
                 return false;
@@ -80,8 +80,39 @@ public sealed class RoadChunk : MonoBehaviour
                 }
             }
         }
-        if (starts.Count != LaneCount || ends.Count != LaneCount)
-            error = "모든 차선의 시작점과 끝점을 도로 연결 지점에 등록해야 합니다.";
+        HashSet<TrafficLane> internalStarts = new HashSet<TrafficLane>();
+        foreach (TrafficLane lane in lanes)
+        {
+            HashSet<TrafficLane> choices = new HashSet<TrafficLane>();
+            if (ends.Contains(lane) && lane.InternalNextCount > 0)
+            {
+                error = "외부로 나가는 차선에 내부 후속 경로를 함께 지정할 수 없습니다.";
+                return false;
+            }
+            for (int i = 0; i < lane.InternalNextCount; i++)
+            {
+                TrafficLane next = lane.GetInternalNext(i);
+                if (!next || next == lane || !owned.Contains(next) || !choices.Add(next) || starts.Contains(next))
+                {
+                    error = "내부 후속 경로의 소유권, 중복 또는 경계 진입점이 잘못되었습니다.";
+                    return false;
+                }
+                if (Vector3.Distance(lane.EndPoint, next.StartPoint) > RoadConnection.PositionTolerance || Vector3.Dot(lane.EndDirection, next.StartDirection) < 0.98f)
+                {
+                    error = "내부 차선 연결의 끝점 또는 방향이 일치하지 않습니다.";
+                    return false;
+                }
+                internalStarts.Add(next);
+            }
+        }
+        foreach (TrafficLane lane in lanes)
+        {
+            if ((!starts.Contains(lane) && !internalStarts.Contains(lane)) || (!ends.Contains(lane) && lane.InternalNextCount == 0))
+            {
+                error = "모든 차선의 시작과 끝에는 경계 또는 내부 연결이 필요합니다.";
+                return false;
+            }
+        }
         return error == null;
     }
 

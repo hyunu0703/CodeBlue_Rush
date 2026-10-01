@@ -108,7 +108,7 @@ public static class RoadSamples
     }
 
     // 바깥 방향을 가진 도로 연결 지점을 생성한다
-    private static RoadConnection CreatePort(Transform parent, string name, Vector3 position, float angle)
+    internal static RoadConnection CreatePort(Transform parent, string name, Vector3 position, float angle)
     {
         GameObject port = new GameObject(name);
         port.transform.SetParent(parent, false);
@@ -118,7 +118,7 @@ public static class RoadSamples
     }
 
     // Inspector 배열에 내부 객체 참조를 저장한다
-    private static void SetArray(Object owner, string field, Object[] values)
+    internal static void SetArray(Object owner, string field, Object[] values)
     {
         SerializedObject data = new SerializedObject(owner);
         SerializedProperty array = data.FindProperty(field);
@@ -163,7 +163,7 @@ public static class RoadSamples
     }
 
     // 두 경계선 사이의 띠를 정점 색상 메시로 추가한다
-    private static void AddStrip(Vector2[] left, Vector2[] right, Color color, float z, List<Vector3> vertices, List<int> triangles, List<Color> colors)
+    internal static void AddStrip(Vector2[] left, Vector2[] right, Color color, float z, List<Vector3> vertices, List<int> triangles, List<Color> colors)
     {
         int start = vertices.Count;
         for (int i = 0; i < left.Length; i++)

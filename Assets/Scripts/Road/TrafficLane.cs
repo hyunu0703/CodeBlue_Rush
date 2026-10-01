@@ -7,13 +7,17 @@ public sealed class TrafficLane : MonoBehaviour
     [SerializeField] private Vector2[] points = { Vector2.zero, Vector2.up * 10f };
     [SerializeField] private TrafficLane leftLane;
     [SerializeField] private TrafficLane rightLane;
+    [Tooltip("같은 도로 내부의 후속 경로. 도로 경계의 Next는 RoadConnection이 설정")]
+    [SerializeField] private TrafficLane[] internalNext = new TrafficLane[0];
 
     private TrafficLane nextLane;
     private float[] distances;
     private Matrix4x4 pathMatrix;
     private bool valid;
 
-    public TrafficLane NextLane => nextLane;
+    public TrafficLane NextLane => NextCount == 1 ? GetNext(0) : null;
+    public int NextCount => nextLane ? 1 : InternalNextCount;
+    internal int InternalNextCount => internalNext == null ? 0 : internalNext.Length;
     public TrafficLane LeftLane => leftLane;
     public TrafficLane RightLane => rightLane;
     public int PointCount => points == null ? 0 : points.Length;
@@ -22,6 +26,20 @@ public sealed class TrafficLane : MonoBehaviour
     public Vector3 StartDirection => PointCount < 2 ? Vector3.zero : (GetWorldPoint(1) - StartPoint).normalized;
     public Vector3 EndDirection => PointCount < 2 ? Vector3.zero : (EndPoint - GetWorldPoint(PointCount - 2)).normalized;
     public float Length { get { EnsurePath(); return valid ? distances[distances.Length - 1] : 0f; } }
+
+    // 분기를 포함한 후속 차선을 인덱스로 조회한다
+    public TrafficLane GetNext(int index)
+    {
+        if (index < 0 || index >= NextCount)
+            return null;
+        return nextLane ? nextLane : internalNext[index];
+    }
+
+    // 도로 구성 검증용 내부 후속 참조를 조회한다
+    internal TrafficLane GetInternalNext(int index)
+    {
+        return internalNext[index];
+    }
 
     // 경로가 편집되면 거리 캐시를 무효화한다
     private void OnValidate()
