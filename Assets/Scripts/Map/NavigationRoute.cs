@@ -28,6 +28,8 @@ public sealed class NavigationRoute : MonoBehaviour
 
     public CityMap Map => map;
     public bool HasDestination { get; private set; }
+    public TrafficLane DestinationLane => laneDestination ? destinationLane : null;
+    public float DestinationDistance => laneDestination ? destinationDistance : 0f;
     public Vector3 Destination { get; private set; }
     public Vector3 Origin { get; private set; }
     public float StartDistance { get; private set; }
@@ -254,7 +256,7 @@ public sealed class NavigationRoute : MonoBehaviour
     {
         ResetPath();
         Publish(RouteStatus.Invalidated);
-        if (Application.isPlaying && isActiveAndEnabled && gameObject.activeInHierarchy && map && map.IsReady && pending == null)
+        if (HasDestination && Application.isPlaying && isActiveAndEnabled && gameObject.activeInHierarchy && map && map.IsReady && pending == null)
             pending = StartCoroutine(RecalculateAfterChanges());
     }
 
