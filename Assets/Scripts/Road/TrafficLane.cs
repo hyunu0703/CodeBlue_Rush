@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 /// <summary>시작점에서 끝점으로 진행하는 차선 경로와 직접 연결 참조를 소유한다</summary>
@@ -14,6 +15,7 @@ public sealed class TrafficLane : MonoBehaviour
     private float[] distances;
     private Matrix4x4 pathMatrix;
     private bool valid;
+    public event Action Changed;
 
     public TrafficLane NextLane => NextCount == 1 ? GetNext(0) : null;
     public int NextCount => nextLane ? 1 : InternalNextCount;
@@ -45,6 +47,34 @@ public sealed class TrafficLane : MonoBehaviour
     private void OnValidate()
     {
         distances = null;
+    }
+
+    // 사용 중인 경로가 비활성 차선을 계속 참조하지 않도록 알린다
+    private void OnDisable()
+    {
+        Changed?.Invoke();
+    }
+
+    // 월드 위치를 실제 차선 선분에 투영하여 시작점부터의 거리를 반환한다
+    public bool TryProject(Vector3 position, out float distance, out float squaredOffset)
+    {
+        distance = 0f;
+        squaredOffset = float.PositiveInfinity;
+        EnsurePath();
+        if (!valid || !float.IsFinite(position.x) || !float.IsFinite(position.y))
+            return false;
+        for (int i = 1; i < PointCount; i++)
+        {
+            Vector2 start = GetWorldPoint(i - 1);
+            Vector2 delta = (Vector2)GetWorldPoint(i) - start;
+            float t = Mathf.Clamp01(Vector2.Dot((Vector2)position - start, delta) / delta.sqrMagnitude);
+            float offset = ((Vector2)position - start - delta * t).sqrMagnitude;
+            if (offset >= squaredOffset)
+                continue;
+            squaredOffset = offset;
+            distance = Mathf.Lerp(distances[i - 1], distances[i], t);
+        }
+        return float.IsFinite(squaredOffset);
     }
 
     // 인덱스의 차선 점을 월드 좌표로 반환한다
@@ -133,7 +163,10 @@ public sealed class TrafficLane : MonoBehaviour
     // 연결 지점만 다음 차선의 상태를 변경한다
     internal void SetNext(TrafficLane lane)
     {
+        if (nextLane == lane)
+            return;
         nextLane = lane;
+        Changed?.Invoke();
     }
 
     // Scene에서 경로와 진행 화살표를 표시한다

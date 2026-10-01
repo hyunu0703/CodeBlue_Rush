@@ -22,6 +22,7 @@ public sealed class CityMap : MonoBehaviour
     private RoadChunk[] roads;
     private RoadConnection[,] ports;
     private TrafficLane[] lanes;
+    private HashSet<TrafficLane> laneSet = new HashSet<TrafficLane>();
     private bool ready;
     private Coroutine reconnectRoutine;
     public CityLayout Layout { get; private set; }
@@ -30,6 +31,7 @@ public sealed class CityMap : MonoBehaviour
     public int Seed => Layout == null ? initialSeed : Layout.Seed;
     public int LaneCount => lanes == null ? 0 : lanes.Length;
     public event Action<CityMap> Generated;
+    public event Action StateChanged;
 
     /// <summary>한 연결 마스크에 대응하는 Prefab과 회전 및 포트 인덱스를 저장한다</summary>
     private sealed class Variant
@@ -58,8 +60,9 @@ public sealed class CityMap : MonoBehaviour
     private IEnumerator Reconnect()
     {
         yield return null;
-        ready = Connect(Layout, ports, out string error) && Validate(out error);
+        ready = Connect(Layout, ports, out string error) && ValidateCity(Layout, roads, ports, lanes, out error);
         reconnectRoutine = null;
+        StateChanged?.Invoke();
         if (!ready)
             Debug.LogError(error, this);
     }
@@ -73,6 +76,7 @@ public sealed class CityMap : MonoBehaviour
             reconnectRoutine = null;
         }
         ready = false;
+        StateChanged?.Invoke();
     }
 
     // 생성기 컴포넌트만 제거되어도 소유한 도시를 정리한다
@@ -123,6 +127,46 @@ public sealed class CityMap : MonoBehaviour
     public TrafficLane GetLane(int index)
     {
         return index >= 0 && index < LaneCount ? lanes[index] : null;
+    }
+
+    // 현재 도시가 소유하고 활성화된 차선인지 상수 시간에 확인한다
+    public bool ContainsLane(TrafficLane lane)
+    {
+        return IsReady && lane && lane.isActiveAndEnabled && laneSet.Contains(lane);
+    }
+
+    // 현재 셀과 인접 셀의 실제 차선만 검사하여 가까운 도로 위치를 찾는다
+    public bool TryLocate(Vector3 position, float maxOffset, out TrafficLane lane, out float distance)
+    {
+        lane = null;
+        distance = 0f;
+        if (!IsReady || !float.IsFinite(position.x) || !float.IsFinite(position.y) || !float.IsFinite(position.z) || !float.IsFinite(maxOffset) || maxOffset < 0f || maxOffset > CellSize * 0.5f)
+            return false;
+        Vector3 local = transform.InverseTransformPoint(position);
+        if (local.x < -CellSize || local.y < -CellSize || local.x > Layout.Width * CellSize || local.y > Layout.Height * CellSize)
+            return false;
+        int cx = Mathf.RoundToInt(local.x / CellSize);
+        int cy = Mathf.RoundToInt(local.y / CellSize);
+        float best = maxOffset * maxOffset;
+        for (int y = cy - 1; y <= cy + 1; y++)
+        {
+            for (int x = cx - 1; x <= cx + 1; x++)
+            {
+                RoadChunk road = GetRoad(x, y);
+                if (!road || !road.isActiveAndEnabled)
+                    continue;
+                for (int i = 0; i < road.LaneCount; i++)
+                {
+                    TrafficLane candidate = road.GetLane(i);
+                    if (!ContainsLane(candidate) || !candidate.TryProject(position, out float along, out float offset) || offset > best || (lane && offset == best))
+                        continue;
+                    lane = candidate;
+                    distance = along;
+                    best = offset;
+                }
+            }
+        }
+        return lane;
     }
 
     // 임시 도시를 완전히 검증한 뒤 기존 도시와 교체한다
@@ -178,10 +222,12 @@ public sealed class CityMap : MonoBehaviour
             roads = built;
             ports = builtPorts;
             lanes = laneArray;
+            laneSet = new HashSet<TrafficLane>(laneArray);
             Layout = layout;
             CellSize = cellSize;
             ready = true;
             candidate = null;
+            StateChanged?.Invoke();
             Release(previous);
         }
         catch (Exception exception)
@@ -284,7 +330,10 @@ public sealed class CityMap : MonoBehaviour
     public bool Validate(out string error)
     {
         error = "생성된 도시가 없습니다.";
+        bool previous = ready;
         ready = isActiveAndEnabled && cityRoot && ValidateCity(Layout, roads, ports, lanes, out error);
+        if (previous != ready)
+            StateChanged?.Invoke();
         return ready;
     }
 
