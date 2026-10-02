@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using System.Collections;
 using UnityEngine;
 
@@ -197,3 +198,4 @@ public sealed class CollisionDemo : MonoBehaviour
             keyboard.enabled = true;
     }
 }
+#endif

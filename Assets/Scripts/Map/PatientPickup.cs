@@ -28,6 +28,7 @@ public sealed class PatientPickup : MonoBehaviour
     private static readonly WaitForFixedUpdate PhysicsTick = new WaitForFixedUpdate();
 
     public bool IsBoarding { get; private set; }
+    public event System.Action BoardingStarted;
     public bool IsPaused { get; private set; }
     public string Error { get; private set; }
 
@@ -139,6 +140,7 @@ public sealed class PatientPickup : MonoBehaviour
             return false;
         IsBoarding = true;
         IsPaused = false;
+        BoardingStarted?.Invoke();
         return true;
     }
 

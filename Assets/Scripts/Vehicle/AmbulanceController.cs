@@ -34,7 +34,7 @@ public class AmbulanceController : MonoBehaviour
     // 외부 입력값을 차량 제어값으로 저장한다
     public void SetInput(float steer, float throttle, float brake)
     {
-        if (IsControlLocked)
+        if (!isActiveAndEnabled || IsControlLocked)
             return;
         this.steer = Mathf.Clamp(steer, -1f, 1f);
         this.throttle = Mathf.Clamp01(throttle);
