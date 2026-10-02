@@ -14,6 +14,7 @@ public sealed class PatientReport : MonoBehaviour
         public CityMap Map { get; }
         public TrafficLane Lane { get; }
         public float Distance { get; }
+        public EnvironmentSlot Slot { get; }
 
         // 실제 도시와 차선상의 거리로 생성 위치를 고정한다
         internal SpawnPoint(CityMap map, TrafficLane lane, float distance)
@@ -21,6 +22,16 @@ public sealed class PatientReport : MonoBehaviour
             Map = map;
             Lane = lane;
             Distance = distance;
+            Slot = null;
+        }
+
+        // 도로변 현장과 네비게이션 접근 위치를 같은 Slot에 연결한다
+        internal SpawnPoint(CityMap map, EnvironmentSlot slot)
+        {
+            Map = map;
+            Slot = slot;
+            Lane = slot.Lane;
+            Distance = slot.Distance;
         }
 
         // 파괴되거나 다른 도시로 교체된 위치를 제외하고 현재 월드 위치와 방향을 반환한다
@@ -28,6 +39,13 @@ public sealed class PatientReport : MonoBehaviour
         {
             position = Vector3.zero;
             direction = Vector3.zero;
+            if (!ReferenceEquals(Slot, null))
+            {
+                if (!Slot || !Slot.IsValidFor(Map, EnvironmentSlot.Usage.Incident) || !Lane.TrySample(Distance, out _, out direction))
+                    return false;
+                position = Slot.transform.position;
+                return true;
+            }
             return Map && Map.ContainsLane(Lane) && float.IsFinite(Distance) && Distance >= 0f && Distance <= Lane.Length && Lane.TrySample(Distance, out position, out direction);
         }
     }
@@ -122,13 +140,13 @@ public sealed class PatientReport : MonoBehaviour
         ClearCache();
         cachedLayout = map.Layout;
         random = unchecked((uint)map.Seed) ^ 0xA511E9B3u;
-        for (int i = 0; i < map.LaneCount; i++)
+        for (int i = 0; i < map.IncidentSlotCount; i++)
         {
-            TrafficLane lane = map.GetLane(i);
-            if (!lane || lane.Length <= 0f)
+            EnvironmentSlot slot = map.GetIncidentSlot(i);
+            if (!slot || !slot.IsValidFor(map, EnvironmentSlot.Usage.Incident))
                 continue;
-            SpawnPoint point = new SpawnPoint(map, lane, lane.Length * 0.5f);
-            if (lane.TrySample(point.Distance, out _, out _))
+            SpawnPoint point = new SpawnPoint(map, slot);
+            if (point.TryGetPose(out _, out _))
                 candidates.Add(point);
         }
         order = new int[candidates.Count];

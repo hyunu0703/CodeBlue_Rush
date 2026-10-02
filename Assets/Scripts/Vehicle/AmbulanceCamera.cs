@@ -9,6 +9,7 @@ public class AmbulanceCamera : MonoBehaviour
     [SerializeField] private float moveSmoothTime = 0.2f;
     [SerializeField] private float rotateSmoothTime = 0.3f;
     [SerializeField] private float baseOffset = 1.5f;
+    [SerializeField] private CityMap map;
 
     private CameraTurnZone activeZone;
     private Vector3 moveVelocity;
@@ -20,6 +21,22 @@ public class AmbulanceCamera : MonoBehaviour
     private void Awake()
     {
         targetAngle = transform.eulerAngles.z;
+    }
+
+    // 지정된 맵 또는 주 카메라의 생성 등록에 참여한다
+    private void OnEnable()
+    {
+        if (map)
+            map.BindCamera(this);
+    }
+
+    // 카메라 해제 시 현재 교차로 추적을 종료한다
+    private void OnDisable()
+    {
+        if (map)
+            map.BindCamera(null);
+        activeZone = null;
+        followRotation = false;
     }
 
     // 차량 이동 후 위치와 방향을 갱신한다
@@ -74,7 +91,7 @@ public class AmbulanceCamera : MonoBehaviour
     {
         if (activeZone != zone) return;
 
-        targetAngle = Mathf.Round(target.rotation / 90f) * 90f;
+        targetAngle = Mathf.Round((target ? target.rotation : transform.eulerAngles.z) / 90f) * 90f;
         followRotation = false;
         activeZone = null;
     }

@@ -121,6 +121,8 @@ public sealed class VehicleAI : MonoBehaviour
     {
         float range = Mathf.Max(sensorDistance, Speed * Speed / (2f * braking) + 1f);
         range = Mathf.Min(range, 20f);
+        Lane.TrySample(Distance, out Vector3 origin, out _);
+        owner.ScanLeaders(origin, range);
         for (float probe = 0.25f; probe <= range; probe += 0.25f)
         {
             if (!Ahead(probe, out Vector3 point, out TrafficLane lane, out _))

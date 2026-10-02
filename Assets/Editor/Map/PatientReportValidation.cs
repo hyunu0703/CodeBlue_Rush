@@ -64,7 +64,8 @@ public static class PatientReportValidation
                 Check(copyReport.Patient.TryGetPose(out Vector3 copyPosition, out _) && Vector3.Distance(position, copyPosition) < 0.0001f, "같은 Seed와 요청 순서 재현");
                 Check(direction.sqrMagnitude > 0.99f && map.ContainsLane(report.Patient.Lane), "환자 위치 방향과 도시 소유권");
                 Check(route.Status == NavigationRoute.RouteStatus.Ready && route.DestinationLane == report.Patient.Lane && route.EndDistance == report.Patient.Distance, "4단계 목적지와 경로 연결");
-                Check(Vector3.Distance(route.Points[route.Points.Count - 1], position) < 0.001f, "표시 경로의 실제 현장 도착점");
+                report.Patient.Lane.TrySample(report.Patient.Distance, out Vector3 access, out _);
+                Check(Vector3.Distance(route.Points[route.Points.Count - 1], access) < 0.001f && report.Patient.Slot && Vector3.Distance(position, access) < 2f, "도로변 현장과 네비게이션 접근 도착점");
                 Check(previous != report.Patient.Lane, "직전 위치 즉시 반복 방지");
                 previous = report.Patient.Lane;
                 Check(!report.TryReport(out _) && report.Patient.Lane == previous && report.IsActive, "중복 보고가 기존 미션 보존");
@@ -98,15 +99,18 @@ public static class PatientReportValidation
             report.CancelReport();
 
             // 실제 출발 도로를 고립시켜 다른 후보 재시도와 최종 실패를 검사한다
-            RoadChunk isolated = map.GetRoad(0, 0);
+            EnvironmentSlot isolatedSlot = map.GetIncidentSlot(0);
+            RoadChunk isolated = isolatedSlot.Road;
             for (int i = 0; i < isolated.ConnectionCount; i++)
                 isolated.GetConnection(i).Disconnect();
-            PlaceSource(map, player, 0.8f);
+            isolatedSlot.Lane.TrySample(isolatedSlot.Distance + 0.1f, out Vector3 afterSlot, out _);
+            player.position = afterSlot;
             Check(!report.TryReport(out _) && report.Status == PatientReport.ReportStatus.NoReachablePoint && !report.IsActive && !route.HasDestination, "모든 후보 경로 실패의 유한 종료");
-            PlaceSource(map, player, 0.2f);
-            Check(report.TryReport(out _) && report.Patient.Lane == map.GetLane(0), "실패 후보를 건너뛰고 유일한 도달 가능 지점 선택");
+            isolatedSlot.Lane.TrySample(isolatedSlot.Distance - 0.1f, out Vector3 beforeSlot, out _);
+            player.position = beforeSlot;
+            Check(report.TryReport(out _) && report.Patient.Lane == isolatedSlot.Lane, "실패 후보를 건너뛰고 유일한 도달 가능 지점 선택");
             report.CancelReport();
-            Check(report.TryReport(out _) && report.Patient.Lane == map.GetLane(0), "다른 후보가 모두 실패하면 직전 위치만 최후 재사용");
+            Check(report.TryReport(out _) && report.Patient.Lane == isolatedSlot.Lane, "다른 후보가 모두 실패하면 직전 위치만 최후 재사용");
             report.CancelReport();
 
             copyReport.Configure(null);

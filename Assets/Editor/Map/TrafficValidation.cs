@@ -182,6 +182,21 @@ public static class TrafficValidation
         Set(lead, "cruiseSpeed", 0f);
         Check(!spawner.TrySpawn(straight, 9f, out _), "같은 위치 중복 생성 차단");
         Check(spawner.TrySpawn(straight, 2f, out VehicleAI follower), "뒤 차량 생성");
+        Physics2D.SyncTransforms();
+        var clearance = typeof(VehicleAI).GetMethod("Clearance", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+        float expectedClearance = (float)clearance.Invoke(follower, null);
+        GameObject clutter = new GameObject("UnrelatedTriggers");
+        straight.TrySample(2f, out Vector3 source, out Vector3 forward);
+        for (int i = 0; i < 40; i++)
+        {
+            GameObject trigger = new GameObject("Trigger", typeof(BoxCollider2D));
+            trigger.transform.SetParent(clutter.transform);
+            trigger.transform.position = source + Vector3.Cross(forward, Vector3.forward) * 4f;
+            trigger.GetComponent<BoxCollider2D>().isTrigger = true;
+        }
+        Physics2D.SyncTransforms();
+        Check(Mathf.Approximately((float)clearance.Invoke(follower, null), expectedClearance), "무관한 Trigger가 조회 버퍼를 채워도 앞차 감지 거리 유지");
+        Object.DestroyImmediate(clutter);
         float until = Time.time + 5f;
         while (Time.time < until) yield return null;
         Check(follower.Lane == straight && follower.Distance > 2f && follower.Speed < 0.1f && lead.Distance - follower.Distance > 1.8f, "앞 차량까지 주행 후 안전 간격 정지");

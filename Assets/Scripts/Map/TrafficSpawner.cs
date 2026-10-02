@@ -20,6 +20,8 @@ public sealed class TrafficSpawner : MonoBehaviour
     private readonly Stack<VehicleAI> pool = new Stack<VehicleAI>();
     private readonly Dictionary<Collider2D, VehicleAI> vehicles = new Dictionary<Collider2D, VehicleAI>();
     private readonly Collider2D[] hits = new Collider2D[32];
+    private readonly Collider2D[] leaderHits = new Collider2D[32];
+    private int leaderCount;
     private Rigidbody2D ambulanceBody;
     private ContactFilter2D filter;
     private CityMap subscribedMap;
@@ -131,15 +133,29 @@ public sealed class TrafficSpawner : MonoBehaviour
         return true;
     }
 
-    // 현재 또는 다음 차선의 앞 차량만 조회 결과에서 판별한다
+    // 한 차량의 짧은 경로 전체를 포함하는 후보를 한 번 조회한다
+    internal void ScanLeaders(Vector3 origin, float range)
+    {
+        leaderCount = Physics2D.OverlapCircle(origin, range + 1.5f, filter, leaderHits);
+    }
+
+    // 기존 원형 Probe와 같은 거리 조건을 캐싱한 콜라이더에서 판별한다
     internal bool HasLeaderAt(Vector3 position, VehicleAI self, TrafficLane sampledLane)
     {
-        int count = Physics2D.OverlapCircle(position, 1.5f, filter, hits);
-        if (count == hits.Length)
-            return true;
+        Collider2D[] candidates = leaderHits;
+        int count = leaderCount;
+        // 넓은 조회가 가득 찬 경우 기존의 짧은 조회로 되돌려 불필요한 정차를 막는다
+        if (count == leaderHits.Length)
+        {
+            candidates = hits;
+            count = Physics2D.OverlapCircle(position, 1.5f, filter, hits);
+            if (count == hits.Length)
+                return true;
+        }
         for (int i = 0; i < count; i++)
         {
-            if (!vehicles.TryGetValue(hits[i], out VehicleAI other) || !other || other == self || !other.isActiveAndEnabled || (other.Lane != sampledLane && other.TargetLane != sampledLane))
+            Collider2D hit = candidates[i];
+            if (!hit || !vehicles.TryGetValue(hit, out VehicleAI other) || !other || other == self || !other.isActiveAndEnabled || (other.Lane != sampledLane && other.TargetLane != sampledLane) || ((Vector2)position - hit.ClosestPoint(position)).sqrMagnitude > 2.25f)
                 continue;
             if (other.Lane != self.Lane || other.Distance > self.Distance)
                 return true;

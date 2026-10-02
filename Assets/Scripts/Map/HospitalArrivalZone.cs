@@ -11,6 +11,7 @@ public sealed class HospitalArrivalZone : MonoBehaviour
     private CityMap subscribedMap;
     private CityLayout layout;
     private CircleCollider2D area;
+    private EnvironmentSlot slot;
     public CityMap Map => map;
     public TrafficLane Lane { get; private set; }
     public float Distance { get; private set; }
@@ -35,6 +36,7 @@ public sealed class HospitalArrivalZone : MonoBehaviour
         Unsubscribe();
         layout = null;
         Lane = null;
+        slot = null;
         Distance = 0f;
     }
 
@@ -68,29 +70,42 @@ public sealed class HospitalArrivalZone : MonoBehaviour
         subscribedMap = null;
     }
 
-    // 도시 생성 시 Seed와 차선 배열의 직접 색인으로 병원 위치를 확보한다
+    // 도시 생성 시 Seed와 캐싱한 도로변 Slot에서 병원 위치를 확보한다
     private void Refresh()
     {
-        if (!map || !map.IsReady || map.LaneCount == 0)
+        if (!map || !map.IsReady || map.HospitalSlotCount == 0)
         {
             Lane = null;
+            slot = null;
+            Distance = 0f;
             layout = null;
             return;
         }
         if (layout == map.Layout)
             return;
         layout = map.Layout;
-        int index = (int)(((uint)map.Seed + (ulong)(uint)laneOffset) % (uint)map.LaneCount);
-        Lane = map.GetLane(index);
-        Distance = Lane ? Lane.Length * 0.5f : 0f;
-        if (Lane && Lane.TrySample(Distance, out Vector3 point, out Vector3 direction))
-            transform.SetPositionAndRotation(point, Quaternion.FromToRotation(Vector3.up, direction));
+        Lane = null;
+        slot = null;
+        Distance = 0f;
+        int start = (int)(((uint)map.Seed + (ulong)(uint)laneOffset) % (uint)map.HospitalSlotCount);
+        for (int i = 0; i < map.HospitalSlotCount; i++)
+        {
+            EnvironmentSlot candidate = map.GetHospitalSlot((start + i) % map.HospitalSlotCount);
+            if (!candidate || !candidate.IsValidFor(map, EnvironmentSlot.Usage.Hospital))
+                continue;
+            slot = candidate;
+            Lane = slot.Lane;
+            Distance = slot.Distance;
+            Lane.TrySample(Distance, out _, out Vector3 direction);
+            transform.SetPositionAndRotation(slot.transform.position, Quaternion.FromToRotation(Vector3.up, direction));
+            break;
+        }
     }
 
     // 현재 도시와 차선 및 실제 병원 영역의 위치가 일치하는지 확인한다
     public bool IsValidFor(CityMap city)
     {
-        return isActiveAndEnabled && map == city && map && layout == map.Layout && map.ContainsLane(Lane) && area && area.enabled && area.isTrigger && Lane.TrySample(Distance, out Vector3 point, out _) && (point - transform.position).sqrMagnitude < 0.0025f;
+        return isActiveAndEnabled && map == city && map && layout == map.Layout && slot && slot.IsValidFor(map, EnvironmentSlot.Usage.Hospital) && map.ContainsLane(Lane) && area && area.enabled && area.isTrigger && (slot.transform.position - transform.position).sqrMagnitude < 0.0025f;
     }
 
     // 실제 물리 차량이 현재 영역과 겹치는지 검사한다

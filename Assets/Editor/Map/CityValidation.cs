@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 
 /// <summary>Seed 재현성과 도시 연결 및 교체 수명을 실제 Unity 객체로 검증한다</summary>
-public static class CityValidation
+public static partial class CityValidation
 {
     private static int checks;
     private const string PlayKey = "CodeBlueRush.CityPlayValidation";

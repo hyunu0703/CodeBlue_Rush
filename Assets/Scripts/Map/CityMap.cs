@@ -24,6 +24,12 @@ public sealed class CityMap : MonoBehaviour
     private TrafficLane[] lanes;
     private HashSet<TrafficLane> laneSet = new HashSet<TrafficLane>();
     private bool ready;
+    private EnvironmentSlot[] hospitalSlots = Array.Empty<EnvironmentSlot>();
+    private EnvironmentSlot[] incidentSlots = Array.Empty<EnvironmentSlot>();
+    private CameraTurnZone[] turnZones = Array.Empty<CameraTurnZone>();
+    private AmbulanceCamera boundCamera;
+    public int HospitalSlotCount => hospitalSlots.Length;
+    public int IncidentSlotCount => incidentSlots.Length;
     private Coroutine reconnectRoutine;
     public CityLayout Layout { get; private set; }
     public float CellSize { get; private set; }
@@ -129,6 +135,61 @@ public sealed class CityMap : MonoBehaviour
         return index >= 0 && index < LaneCount ? lanes[index] : null;
     }
 
+    // 캐싱한 용도별 Slot을 직접 조회한다
+    public EnvironmentSlot GetHospitalSlot(int index)
+    {
+        return index >= 0 && index < hospitalSlots.Length ? hospitalSlots[index] : null;
+    }
+
+    // 상황보고 후보를 도로변 Slot에서 조회한다
+    public EnvironmentSlot GetIncidentSlot(int index)
+    {
+        return index >= 0 && index < incidentSlots.Length ? incidentSlots[index] : null;
+    }
+
+    // 현재 도시의 캐싱된 영역에만 카메라를 명시적으로 연결한다
+    public void BindCamera(AmbulanceCamera camera)
+    {
+        boundCamera = camera;
+        foreach (CameraTurnZone zone in turnZones)
+            if (zone)
+                zone.Bind(camera);
+    }
+
+    // 완성된 도로 이후에 환경을 배치하고 보도 끝점을 선형 시간에 연결한다
+    private static void Populate(GameObject root, int seed, out EnvironmentSlot[] hospitals, out EnvironmentSlot[] incidents)
+    {
+        var hospitalList = new List<EnvironmentSlot>();
+        var incidentList = new List<EnvironmentSlot>();
+        uint state = unchecked((uint)seed) ^ 0xE7193Bu;
+        foreach (EnvironmentSlot slot in root.GetComponentsInChildren<EnvironmentSlot>())
+        {
+            slot.Populate(ref state);
+            if ((slot.Uses & EnvironmentSlot.Usage.Hospital) != 0)
+                hospitalList.Add(slot);
+            if ((slot.Uses & EnvironmentSlot.Usage.Incident) != 0)
+                incidentList.Add(slot);
+        }
+        hospitals = hospitalList.ToArray();
+        incidents = incidentList.ToArray();
+        var ends = new Dictionary<Vector3Int, List<SidewalkPath>>();
+        foreach (SidewalkPath path in root.GetComponentsInChildren<SidewalkPath>())
+        {
+            for (int i = 0; i < path.PointCount; i++)
+            {
+                Vector3Int key = Vector3Int.RoundToInt(path.GetPoint(i) * 100f);
+                if (!ends.TryGetValue(key, out List<SidewalkPath> touching))
+                    ends.Add(key, touching = new List<SidewalkPath>());
+                foreach (SidewalkPath other in touching)
+                {
+                    path.Link(other);
+                    other.Link(path);
+                }
+                touching.Add(path);
+            }
+        }
+    }
+
     // 현재 도시가 소유하고 활성화된 차선인지 상수 시간에 확인한다
     public bool ContainsLane(TrafficLane lane)
     {
@@ -217,11 +278,20 @@ public sealed class CityMap : MonoBehaviour
             if (!Connect(layout, builtPorts, out error) || !ValidateCity(layout, built, builtPorts, laneArray, out error))
                 throw new InvalidOperationException(error);
 
+            Populate(candidate, seed, out EnvironmentSlot[] hospitals, out EnvironmentSlot[] incidents);
+            CameraTurnZone[] zones = candidate.GetComponentsInChildren<CameraTurnZone>();
+            if (!boundCamera && Camera.main)
+                boundCamera = Camera.main.GetComponent<AmbulanceCamera>();
+
             GameObject previous = cityRoot;
             cityRoot = candidate;
             roads = built;
             ports = builtPorts;
             lanes = laneArray;
+            hospitalSlots = hospitals;
+            incidentSlots = incidents;
+            turnZones = zones;
+            BindCamera(boundCamera);
             laneSet = new HashSet<TrafficLane>(laneArray);
             Layout = layout;
             CellSize = cellSize;
