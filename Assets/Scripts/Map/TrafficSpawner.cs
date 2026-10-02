@@ -209,6 +209,8 @@ public sealed class TrafficSpawner : MonoBehaviour
     {
         vehicle = null;
         int routeChoice = Next(int.MaxValue);
+        if (!TrafficSignalController.CanSpawn(lane, distance))
+            return false;
         if (!isActiveAndEnabled || !map || !prefab || active.Count >= maxVehicles || !map.ContainsLane(lane) || !float.IsFinite(distance) || distance < 0f || distance > lane.Length || !VehicleAI.Following(map, lane, routeChoice) || !lane.TrySample(distance, out Vector3 point, out _) || !CanSpawnAt(point) || !IsSpaceFree(point))
             return false;
         while (pool.Count > 0 && !vehicle)

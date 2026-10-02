@@ -18,6 +18,12 @@ public sealed class VehicleAI : MonoBehaviour
     [SerializeField, Range(0f, 1f)] private float cutInChance = 0.15f;
     [SerializeField, Min(5f)] private float cutInDistance = 18f;
     [SerializeField] private bool allowLaneChanges = true;
+    [SerializeField, Range(0f, 1f)] private float signalViolationChance = 0.05f;
+    private VehicleStopZone stopZone;
+    private TrafficSignalController crossing;
+    private bool violateSignal;
+    private bool enteredIntersection;
+    private float signalDistance = float.PositiveInfinity;
     private float changeProgress;
     private float nextChange;
     private float nextDecision;
@@ -73,6 +79,7 @@ public sealed class VehicleAI : MonoBehaviour
     // 재사용 전에 이전 도시와 차선 참조를 비운다
     internal void Clear()
     {
+        ClearSignal();
         TargetLane = null;
         changeProgress = 0f;
         owner = null;
@@ -124,6 +131,58 @@ public sealed class VehicleAI : MonoBehaviour
         return range;
     }
 
+    // 풀 반환이나 교차로 이탈 시 이전 접근 결정을 지운다
+    private void ClearSignal()
+    {
+        if (crossing)
+            crossing.Leave(shape);
+        stopZone = null;
+        crossing = null;
+        enteredIntersection = false;
+        violateSignal = false;
+        signalDistance = float.PositiveInfinity;
+    }
+
+    // 직접 연결된 짧은 경로만 따라 정지선까지 남은 거리를 제한한다
+    private float SignalClearance()
+    {
+        if (enteredIntersection)
+        {
+            if (crossing && TrafficSignalController.ForLane(Lane) == crossing)
+                return float.PositiveInfinity;
+            ClearSignal();
+        }
+        TrafficLane ahead = Lane;
+        float offset = -Distance;
+        for (int hop = 0; ahead && hop < 8 && offset < 20f; hop++)
+        {
+            TrafficSignalController signal = TrafficSignalController.ForLane(ahead);
+            VehicleStopZone zone = signal ? signal.Entry(ahead) : null;
+            if (zone)
+            {
+                if (stopZone != zone)
+                {
+                    ClearSignal();
+                    stopZone = zone;
+                    crossing = signal;
+                    violateSignal = owner.Roll(signalViolationChance);
+                }
+                float remaining = Mathf.Max(0f, offset + zone.StopDistance);
+                signalDistance = remaining;
+                TrafficLane route = Following(owner.Map, ahead, choice);
+                bool commit = remaining <= Speed * Time.fixedDeltaTime + 0.05f && Lane == ahead;
+                bool free = signal.TryEnter(this, zone, route, violateSignal, commit);
+                if (free && commit)
+                    enteredIntersection = true;
+                return free ? float.PositiveInfinity : remaining;
+            }
+            offset += ahead.Length;
+            ahead = Following(owner.Map, ahead, choice);
+        }
+        ClearSignal();
+        return float.PositiveInfinity;
+    }
+
     // 실제 인접 관계와 현재 지점의 같은 진행 방향만 허용한다
     private bool ProjectTarget(TrafficLane target, out float along, out Vector3 point)
     {
@@ -140,10 +199,10 @@ public sealed class VehicleAI : MonoBehaviour
     // 앞뒤 공간과 남은 도로 길이를 확인한 뒤 한 번만 변경을 시작한다
     public bool TryChangeLane(TrafficLane target)
     {
-        if (!allowLaneChanges || !isActiveAndEnabled || IsChangingLane || Time.time < nextChange || Speed < 0.5f || !ProjectTarget(target, out float along, out _) || !Following(owner.Map, target, choice))
+        if (enteredIntersection || !allowLaneChanges || !isActiveAndEnabled || IsChangingLane || Time.time < nextChange || Speed < 0.5f || !ProjectTarget(target, out float along, out _) || !Following(owner.Map, target, choice))
             return false;
         float needed = Mathf.Max(cruiseSpeed, Speed) * changeDuration + 1f;
-        if (Lane.Length - Distance < needed || target.Length - along < needed || !owner.LaneSpaceSafe(this, target, along, frontGap, rearGap, changeDuration))
+        if (signalDistance < needed + 2f || Lane.Length - Distance < needed || target.Length - along < needed || !owner.LaneSpaceSafe(this, target, along, frontGap, rearGap, changeDuration))
             return false;
         TargetLane = target;
         changeProgress = 0f;
@@ -187,7 +246,7 @@ public sealed class VehicleAI : MonoBehaviour
             owner.Release(this);
             return;
         }
-        float clear = Clearance();
+        float clear = Mathf.Min(Clearance(), SignalClearance());
         Decide(clear);
         bool changing = IsChangingLane;
         float targetAlong = 0f;
