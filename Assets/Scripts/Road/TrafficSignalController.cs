@@ -16,6 +16,7 @@ public sealed class TrafficSignalController : MonoBehaviour
     private readonly Dictionary<Collider2D, int> occupants = new Dictionary<Collider2D, int>();
     private readonly Collider2D[] hits = new Collider2D[32];
     private bool[,] conflicts;
+    private bool[,] pedestrianConflicts;
     private int[] counts;
     private Coroutine routine;
     private TrafficLane[] registered;
@@ -47,6 +48,23 @@ public sealed class TrafficSignalController : MonoBehaviour
         return isActiveAndEnabled && phase >= 0 && phase < ZoneCount && zones[phase] == zone;
     }
 
+    // 차량 신호, 실제 회전 경로, 교차로 점유를 모두 반영한다
+    public bool CanPedestrianCross(VehicleStopZone zone)
+    {
+        if (!isActiveAndEnabled || !zone || !zone.isActiveAndEnabled || zone.Signal != this || pedestrianConflicts == null || zone.IsGreen)
+            return false;
+        int crossing = -1;
+        for (int i = 0; i < ZoneCount; i++)
+            if (zones[i] == zone)
+                crossing = i;
+        if (crossing < 0)
+            return false;
+        for (int route = 0; route < counts.Length; route++)
+            if (pedestrianConflicts[crossing, route] && (counts[route] > 0 || (phase >= 0 && phase < ZoneCount && routesFrom[route] == zones[phase])))
+                return false;
+        return true;
+    }
+
     // 교차로 내부에 갑자기 생성되어 신호를 우회하는 차량을 막는다
     public static bool CanSpawn(TrafficLane lane, float distance)
     {
@@ -60,6 +78,8 @@ public sealed class TrafficSignalController : MonoBehaviour
     }
 
     // 실제 내부 경로를 한 번 등록하고 교차로당 하나의 신호 루틴만 시작한다
+    private VehicleStopZone[] routesFrom;
+
     private void OnEnable()
     {
         if (!Application.isPlaying || !road || ZoneCount == 0)
@@ -89,10 +109,20 @@ public sealed class TrafficSignalController : MonoBehaviour
             }
         }
         counts = new int[paths.Count];
+        routesFrom = origins.ToArray();
         conflicts = new bool[paths.Count, paths.Count];
+        pedestrianConflicts = new bool[ZoneCount, paths.Count];
         for (int a = 0; a < paths.Count; a++)
             for (int b = a + 1; b < paths.Count; b++)
                 conflicts[a, b] = conflicts[b, a] = origins[a] != origins[b] && Crosses(paths[a], paths[b]);
+        for (int z = 0; z < ZoneCount; z++)
+        {
+            VehicleStopZone zone = zones[z];
+            if (!zone || !zone.CrosswalkStart || !zone.CrosswalkEnd)
+                continue;
+            for (int r = 0; r < paths.Count; r++)
+                pedestrianConflicts[z, r] = CrossesCrosswalk(paths[r], zone.CrosswalkStart.position, zone.CrosswalkEnd.position) || CrossesCrosswalk(origins[r].Lane, zone.CrosswalkStart.position, zone.CrosswalkEnd.position);
+        }
         registered = new TrafficLane[road.LaneCount];
         for (int i = 0; i < registered.Length; i++)
         {
@@ -109,6 +139,24 @@ public sealed class TrafficSignalController : MonoBehaviour
         {
             a.TrySample(x, out Vector3 point, out _);
             if (b.TryProject(point, out _, out float offset) && offset < 4.84f)
+                return true;
+        }
+        return false;
+    }
+
+    // 초기화 때만 실제 차량 경로와 보행 선분의 접촉을 계산한다
+    private static bool CrossesCrosswalk(TrafficLane route, Vector3 start, Vector3 end)
+    {
+        Vector2 segment = end - start;
+        float length = segment.sqrMagnitude;
+        if (length < 0.01f)
+            return true;
+        for (float distance = 0f; distance <= route.Length + 0.5f; distance += 0.5f)
+        {
+            if (!route.TrySample(distance, out Vector3 point, out _))
+                return true;
+            float t = Mathf.Clamp01(Vector2.Dot((Vector2)(point - start), segment) / length);
+            if (((Vector2)(point - start) - segment * t).sqrMagnitude < 2.25f)
                 return true;
         }
         return false;

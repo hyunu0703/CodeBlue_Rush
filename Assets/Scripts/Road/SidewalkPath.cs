@@ -11,7 +11,7 @@ public sealed class SidewalkPath : MonoBehaviour
     [SerializeField] private SidewalkPath across;
     private readonly List<SidewalkPath> next = new List<SidewalkPath>();
     public RoadChunk Road => road;
-    public int PointCount => points.Length;
+    public int PointCount => points == null ? 0 : points.Length;
     public int NextCount => next.Count;
     public VehicleStopZone Crosswalk => crosswalk;
     public SidewalkPath Across => across;
@@ -19,7 +19,7 @@ public sealed class SidewalkPath : MonoBehaviour
     // 보행 위치를 배열 수정 없이 월드 좌표로 반환한다
     public Vector3 GetPoint(int index)
     {
-        return index >= 0 && index < points.Length ? transform.TransformPoint(points[index]) : transform.position;
+        return points != null && index >= 0 && index < points.Length ? transform.TransformPoint(points[index]) : transform.position;
     }
 
     // 연결된 활성 보도만 반환한다

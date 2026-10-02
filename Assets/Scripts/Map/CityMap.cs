@@ -22,6 +22,8 @@ public sealed class CityMap : MonoBehaviour
     private RoadChunk[] roads;
     private RoadConnection[,] ports;
     private TrafficLane[] lanes;
+    private SidewalkPath[] sidewalks = Array.Empty<SidewalkPath>();
+    private HashSet<SidewalkPath> sidewalkSet = new HashSet<SidewalkPath>();
     private HashSet<TrafficLane> laneSet = new HashSet<TrafficLane>();
     private bool ready;
     private EnvironmentSlot[] hospitalSlots = Array.Empty<EnvironmentSlot>();
@@ -36,6 +38,7 @@ public sealed class CityMap : MonoBehaviour
     public bool IsReady => ready && isActiveAndEnabled && cityRoot;
     public int Seed => Layout == null ? initialSeed : Layout.Seed;
     public int LaneCount => lanes == null ? 0 : lanes.Length;
+    public int SidewalkPathCount => sidewalks.Length;
     public event Action<CityMap> Generated;
     public event Action StateChanged;
 
@@ -135,6 +138,18 @@ public sealed class CityMap : MonoBehaviour
         return index >= 0 && index < LaneCount ? lanes[index] : null;
     }
 
+    // 현재 도시에서 한 번 수집한 보도 경로를 조회한다
+    public SidewalkPath GetSidewalkPath(int index)
+    {
+        return index >= 0 && index < sidewalks.Length ? sidewalks[index] : null;
+    }
+
+    // 파괴되거나 교체된 도시의 경로를 거부한다
+    public bool ContainsSidewalkPath(SidewalkPath path)
+    {
+        return IsReady && path && path.isActiveAndEnabled && sidewalkSet.Contains(path);
+    }
+
     // 캐싱한 용도별 Slot을 직접 조회한다
     public EnvironmentSlot GetHospitalSlot(int index)
     {
@@ -157,7 +172,7 @@ public sealed class CityMap : MonoBehaviour
     }
 
     // 완성된 도로 이후에 환경을 배치하고 보도 끝점을 선형 시간에 연결한다
-    private static void Populate(GameObject root, int seed, out EnvironmentSlot[] hospitals, out EnvironmentSlot[] incidents)
+    private static void Populate(GameObject root, int seed, out EnvironmentSlot[] hospitals, out EnvironmentSlot[] incidents, out SidewalkPath[] paths)
     {
         var hospitalList = new List<EnvironmentSlot>();
         var incidentList = new List<EnvironmentSlot>();
@@ -173,7 +188,8 @@ public sealed class CityMap : MonoBehaviour
         hospitals = hospitalList.ToArray();
         incidents = incidentList.ToArray();
         var ends = new Dictionary<Vector3Int, List<SidewalkPath>>();
-        foreach (SidewalkPath path in root.GetComponentsInChildren<SidewalkPath>())
+        paths = root.GetComponentsInChildren<SidewalkPath>();
+        foreach (SidewalkPath path in paths)
         {
             for (int i = 0; i < path.PointCount; i++)
             {
@@ -278,7 +294,7 @@ public sealed class CityMap : MonoBehaviour
             if (!Connect(layout, builtPorts, out error) || !ValidateCity(layout, built, builtPorts, laneArray, out error))
                 throw new InvalidOperationException(error);
 
-            Populate(candidate, seed, out EnvironmentSlot[] hospitals, out EnvironmentSlot[] incidents);
+            Populate(candidate, seed, out EnvironmentSlot[] hospitals, out EnvironmentSlot[] incidents, out SidewalkPath[] paths);
             CameraTurnZone[] zones = candidate.GetComponentsInChildren<CameraTurnZone>();
             if (!boundCamera && Camera.main)
                 boundCamera = Camera.main.GetComponent<AmbulanceCamera>();
@@ -288,6 +304,8 @@ public sealed class CityMap : MonoBehaviour
             roads = built;
             ports = builtPorts;
             lanes = laneArray;
+            sidewalks = paths;
+            sidewalkSet = new HashSet<SidewalkPath>(paths);
             hospitalSlots = hospitals;
             incidentSlots = incidents;
             turnZones = zones;

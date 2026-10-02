@@ -23,6 +23,8 @@ public sealed class TrafficSpawner : MonoBehaviour
     private readonly Collider2D[] leaderHits = new Collider2D[32];
     private int leaderCount;
     private Rigidbody2D ambulanceBody;
+    private SirenController siren;
+    private CitizenSpawner citizens;
     private ContactFilter2D filter;
     private CityMap subscribedMap;
     private CityLayout layout;
@@ -32,6 +34,7 @@ public sealed class TrafficSpawner : MonoBehaviour
     public int ActiveCount => active.Count;
     public int PooledCount => pool.Count;
     public int MaxVehicles => maxVehicles;
+    internal bool SirenOn => siren && siren.isActiveAndEnabled && siren.IsOn;
 
     // 트리거 차량 감지를 위한 조회 필터를 준비한다
     private void Awake()
@@ -71,6 +74,15 @@ public sealed class TrafficSpawner : MonoBehaviour
     {
         Unbind();
         ambulanceBody = player ? player.GetComponent<Rigidbody2D>() : null;
+        siren = player ? player.GetComponent<SirenController>() : null;
+        if (Application.isPlaying && map && player)
+        {
+            if (!citizens)
+                citizens = GetComponent<CitizenSpawner>();
+            if (!citizens)
+                citizens = gameObject.AddComponent<CitizenSpawner>();
+            citizens.Configure(map, player, view, siren, Resources.Load<CitizenAI>("Citizen"));
+        }
         subscribedMap = map;
         if (subscribedMap)
             subscribedMap.StateChanged += HandleMap;
@@ -179,6 +191,33 @@ public sealed class TrafficSpawner : MonoBehaviour
             return false;
         speed = Vector2.Dot(ambulanceBody.linearVelocity, direction);
         return true;
+    }
+
+    // 현재 차선 또는 짧은 정방향 연결에서 빠르게 접근하는 사이렌을 확인한다
+    internal bool IsAmbulanceApproaching(TrafficLane target, float distance, float vehicleSpeed)
+    {
+        if (!SirenOn || !map || !map.ContainsLane(target) || !TryAmbulanceLane(out TrafficLane lane, out float along, out float speed) || speed < 1f || speed <= vehicleSpeed + 0.3f)
+            return false;
+        return ApproachAlong(lane, target, -along, distance, 0);
+    }
+
+    // 거리와 연결 횟수를 제한하여 분기 차선도 확인한다
+    private bool ApproachAlong(TrafficLane lane, TrafficLane target, float offset, float distance, int hops)
+    {
+        if (!map.ContainsLane(lane) || hops > 3 || offset > 30f)
+            return false;
+        if (lane == target)
+        {
+            float gap = offset + distance;
+            return gap > 2f && gap <= 25f;
+        }
+        for (int i = 0; i < lane.NextCount; i++)
+        {
+            TrafficLane next = lane.GetNext(i);
+            if (next && ApproachAlong(next, target, offset + lane.Length, distance, hops + 1))
+                return true;
+        }
+        return false;
     }
 
     // 목표 차선의 앞뒤 차량과 변경 중 예약 차량을 물리 조회로 확인한다

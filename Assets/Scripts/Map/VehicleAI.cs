@@ -206,6 +206,8 @@ public sealed class VehicleAI : MonoBehaviour
         float needed = Mathf.Max(cruiseSpeed, Speed) * changeDuration + 1f;
         if (signalDistance < needed + 2f || Lane.Length - Distance < needed || target.Length - along < needed || !owner.LaneSpaceSafe(this, target, along, frontGap, rearGap, changeDuration))
             return false;
+        if (owner.IsAmbulanceApproaching(target, along, Speed))
+            return false;
         TargetLane = target;
         changeProgress = 0f;
         return true;
@@ -214,7 +216,7 @@ public sealed class VehicleAI : MonoBehaviour
     // 실제 구급차 차선과 접근 속도 및 예상 후방 간격을 확인한 후 확률을 적용한다
     public bool TryCutIn()
     {
-        if (!owner || !allowLaneChanges || IsChangingLane || Time.time < nextChange || Time.time < nextCutIn)
+        if (!owner || owner.SirenOn || !allowLaneChanges || IsChangingLane || Time.time < nextChange || Time.time < nextCutIn)
             return false;
         nextCutIn = Time.time + decisionInterval;
         if (!owner.TryAmbulanceLane(out TrafficLane lane, out float ambulanceDistance, out float ambulanceSpeed) || ambulanceSpeed < 2f || ambulanceSpeed <= Speed + 0.2f || Speed < 0.5f || !ProjectTarget(lane, out float along, out _))
@@ -233,6 +235,12 @@ public sealed class VehicleAI : MonoBehaviour
         if (!allowLaneChanges || IsChangingLane || Time.time < nextDecision)
             return;
         nextDecision = Time.time + decisionInterval;
+        if (owner.IsAmbulanceApproaching(Lane, Distance, Speed))
+        {
+            if (!TryChangeLane(Lane.LeftLane))
+                TryChangeLane(Lane.RightLane);
+            return;
+        }
         if (TryCutIn() || clear >= sensorDistance - 0.5f || clear < Speed * changeDuration + 0.5f)
             return;
         if (!TryChangeLane(Lane.LeftLane))
