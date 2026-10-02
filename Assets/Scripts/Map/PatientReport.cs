@@ -6,7 +6,7 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public sealed class PatientReport : MonoBehaviour
 {
-    public enum ReportStatus { Idle, Active, NavigationUnavailable, MapUnavailable, NoCandidates, NoReachablePoint, InvalidStart, Cancelled }
+    public enum ReportStatus { Idle, Active, NavigationUnavailable, MapUnavailable, NoCandidates, NoReachablePoint, InvalidStart, Cancelled, PatientOnBoard }
 
     /// <summary>생성된 실제 차선 위의 환자 생성 위치와 접근 목적지를 표현한다</summary>
     public readonly struct SpawnPoint
@@ -46,11 +46,14 @@ public sealed class PatientReport : MonoBehaviour
     private int revision;
 
     public bool IsActive { get; private set; }
+    public int MissionId { get; private set; }
+    public bool IsPatientOnBoard => IsActive && Status == ReportStatus.PatientOnBoard;
     public SpawnPoint Patient { get; private set; }
     public ReportStatus Status { get; private set; }
     public int CandidateCount => candidates.Count;
-    public string Message => IsActive ? "환자가 발생했습니다\n현장으로 이동하세요" : string.Empty;
+    public string Message => IsPatientOnBoard ? "환자 탑승이 완료되었습니다" : IsActive ? "환자가 발생했습니다\n현장으로 이동하세요" : string.Empty;
     public event Action ReportChanged;
+    public event Action PatientPickedUp;
 
     // 참조 교체 전에 기존 보고를 정리하고 현재 도시를 연결한다
     public void Configure(NavigationRoute route)
@@ -203,6 +206,7 @@ public sealed class PatientReport : MonoBehaviour
                     Patient = point;
                     previous = index;
                     IsActive = true;
+                    MissionId++;
                     Status = ReportStatus.Active;
                     ReportChanged?.Invoke();
                     if (!IsActive)
@@ -237,6 +241,20 @@ public sealed class PatientReport : MonoBehaviour
     public void CancelReport()
     {
         EndReport(ReportStatus.Idle);
+    }
+
+    // 같은 미션의 픽업 완료를 한 번만 확정하고 다음 단계에 알린다
+    internal bool TryCompletePickup(int missionId)
+    {
+        if (!isActiveAndEnabled || !IsActive || IsPatientOnBoard || MissionId != missionId || !Patient.TryGetPose(out _, out _))
+            return false;
+        Status = ReportStatus.PatientOnBoard;
+        if (OwnsDestination(Patient))
+            navigation.ClearDestination();
+        ReportChanged?.Invoke();
+        if (IsPatientOnBoard && MissionId == missionId)
+            PatientPickedUp?.Invoke();
+        return true;
     }
 
     // 보고 상태를 먼저 변경한 뒤 소유 목적지와 알림을 정리한다
@@ -280,7 +298,7 @@ public sealed class PatientReport : MonoBehaviour
     // 임시 재탐색은 기다리고 사라진 목적지나 확정된 경로 실패는 보고 취소로 반영한다
     private void HandleRouteChanged()
     {
-        if (reporting || !IsActive)
+        if (reporting || !IsActive || IsPatientOnBoard)
             return;
         if (navigation && navigation.isActiveAndEnabled && OwnsDestination(Patient) && Patient.TryGetPose(out _, out _) && (navigation.Status == NavigationRoute.RouteStatus.Ready || navigation.Status == NavigationRoute.RouteStatus.Invalidated))
             return;
