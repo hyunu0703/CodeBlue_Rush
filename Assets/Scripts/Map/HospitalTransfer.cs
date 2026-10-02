@@ -58,6 +58,8 @@ public sealed class HospitalTransfer : MonoBehaviour
     private void Bind()
     {
         Unsubscribe();
+        if (ambulance && ambulance.TryGetComponent(out AmbulanceCollision collision))
+            collision.Configure(report, ecg, this);
         subscribedReport = report;
         subscribedECG = ecg;
         subscribedMap = navigation ? navigation.Map : null;

@@ -136,6 +136,7 @@ GameObject:
   - component: {fileID: 3526043532117664516}
   - component: {fileID: 2162470331066435328}
   - component: {fileID: 8507897006139631648}
+  - component: {fileID: 1300000000000000001}
   m_Layer: 0
   m_Name: Ambulance
   m_TagString: Ambulance
@@ -245,7 +246,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9b4d6cddecced548bb26eb0343947d5, type: 3}
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::AmbulanceController
-  maxSpeed: 8
+  maxSpeed: 10
   acceleration: 5
   brakePower: 15
   coastPower: 2
@@ -278,3 +279,21 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::SirenController
   audioSource: {fileID: 0}
+--- !u!114 &1300000000000000001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6341273260642957359}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8417c99ec02640358f78a6ac26e2cff8, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::AmbulanceCollision
+  report: {fileID: 0}
+  ecg: {fileID: 0}
+  transfer: {fileID: 0}
+  stunDuration: 2
+  knockbackDuration: 0.25
+  knockbackSpeed: 5

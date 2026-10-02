@@ -65,6 +65,8 @@ public sealed class PatientReport : MonoBehaviour
 
     public bool IsActive { get; private set; }
     public int MissionId { get; private set; }
+    public int CollisionCount { get; private set; }
+    public bool HasFatalCollision { get; private set; }
     public bool IsPatientOnBoard => IsActive && Status == ReportStatus.PatientOnBoard;
     public SpawnPoint Patient { get; private set; }
     public ReportStatus Status { get; private set; }
@@ -72,6 +74,7 @@ public sealed class PatientReport : MonoBehaviour
     public string Message => IsPatientOnBoard ? "환자 탑승이 완료되었습니다" : IsActive ? "환자가 발생했습니다\n현장으로 이동하세요" : string.Empty;
     public event Action ReportChanged;
     public event Action PatientPickedUp;
+    public event Action FatalCollision;
 
     // 참조 교체 전에 기존 보고를 정리하고 현재 도시를 연결한다
     public void Configure(NavigationRoute route)
@@ -225,6 +228,8 @@ public sealed class PatientReport : MonoBehaviour
                     previous = index;
                     IsActive = true;
                     MissionId++;
+                    CollisionCount = 0;
+                    HasFatalCollision = false;
                     Status = ReportStatus.Active;
                     ReportChanged?.Invoke();
                     if (!IsActive)
@@ -273,6 +278,20 @@ public sealed class PatientReport : MonoBehaviour
         if (IsPatientOnBoard && MissionId == missionId)
             PatientPickedUp?.Invoke();
         return true;
+    }
+
+    // 현재 탑승 미션의 충돌만 기록하고 치명 사고를 한 번 알린다
+    internal void RecordCollision(int missionId, bool fatal)
+    {
+        if (!isActiveAndEnabled || !IsPatientOnBoard || MissionId != missionId || HasFatalCollision)
+            return;
+        if (!fatal)
+        {
+            CollisionCount++;
+            return;
+        }
+        HasFatalCollision = true;
+        FatalCollision?.Invoke();
     }
 
     // 보고 상태를 먼저 변경한 뒤 소유 목적지와 알림을 정리한다

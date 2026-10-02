@@ -35,6 +35,12 @@ public sealed class VehicleAI : MonoBehaviour
     private Rigidbody2D body;
     private CircleCollider2D shape;
     private int choice;
+    private float stunUntil;
+    private float knockbackUntil;
+    private Vector2 knockbackVelocity;
+    private bool recovering;
+    private AmbulanceCollision collision;
+    public bool IsStunned => recovering || Time.time < stunUntil;
     internal int Slot { get; set; } = -1;
     public TrafficLane Lane { get; private set; }
     public float Distance { get; private set; }
@@ -54,11 +60,13 @@ public sealed class VehicleAI : MonoBehaviour
     {
         if (owner)
             owner.Release(this);
+        ResetCollision();
     }
 
     // 풀에서 꺼낸 차량을 차선 방향에 맞추어 초기화한다
     internal void Place(TrafficSpawner source, TrafficLane lane, float distance, int routeChoice)
     {
+        ResetCollision();
         owner = source;
         Lane = lane;
         Distance = distance;
@@ -79,6 +87,7 @@ public sealed class VehicleAI : MonoBehaviour
     // 재사용 전에 이전 도시와 차선 참조를 비운다
     internal void Clear()
     {
+        ResetCollision();
         ClearSignal();
         TargetLane = null;
         changeProgress = 0f;
@@ -87,6 +96,65 @@ public sealed class VehicleAI : MonoBehaviour
         Distance = 0f;
         Speed = 0f;
         Slot = -1;
+    }
+
+    // Kinematic 이동을 넉백으로 전환하고 진행 중인 차선 변경을 중지한다
+    internal void ApplyCollision(AmbulanceCollision source, Vector2 velocity, float stunDuration, float knockbackDuration)
+    {
+        collision = source;
+        stunUntil = Time.time + stunDuration;
+        knockbackUntil = Time.time + Mathf.Min(knockbackDuration, stunDuration);
+        knockbackVelocity = velocity;
+        recovering = true;
+        Speed = 0f;
+        TargetLane = null;
+        changeProgress = 0f;
+        body.linearVelocity = Vector2.zero;
+        body.angularVelocity = 0f;
+    }
+
+    // 풀 반환과 재배치 전에 접촉 상대와 임시 이동 상태를 제거한다
+    private void ResetCollision()
+    {
+        if (collision)
+            collision.Forget(shape);
+        collision = null;
+        stunUntil = knockbackUntil = 0f;
+        knockbackVelocity = Vector2.zero;
+        recovering = false;
+        if (body)
+        {
+            body.linearVelocity = Vector2.zero;
+            body.angularVelocity = 0f;
+        }
+    }
+
+    // 경직 중 차선 추종을 멈추고 안전한 현재 차선 위치까지 점진적으로 복귀한다
+    private void MoveCollision()
+    {
+        body.linearVelocity = Vector2.zero;
+        if (Time.time < knockbackUntil)
+        {
+            body.MovePosition(body.position + knockbackVelocity * Time.fixedDeltaTime);
+            return;
+        }
+        if (Time.time < stunUntil)
+            return;
+        if (!Lane.TryProject(body.position, out float along, out float offset) || offset > 36f || !Lane.TrySample(along, out Vector3 point, out Vector3 direction) || !owner.LaneSpaceSafe(this, Lane, along, frontGap, rearGap, 0f) || !owner.IsSpaceFree(point, this))
+        {
+            owner.Release(this);
+            return;
+        }
+        Vector2 next = Vector2.MoveTowards(body.position, point, 5f * Time.fixedDeltaTime);
+        body.MovePosition(next);
+        body.MoveRotation(Mathf.MoveTowardsAngle(body.rotation, Vector2.SignedAngle(Vector2.up, direction), turnSpeed * Time.fixedDeltaTime));
+        if ((next - (Vector2)point).sqrMagnitude > 0.0001f)
+            return;
+        Distance = along;
+        recovering = false;
+        knockbackVelocity = Vector2.zero;
+        nextChange = Time.time + changeCooldown;
+        nextDecision = Time.time + decisionInterval;
     }
 
     // 현재 도시에 속한 정방향 연결만 반환한다
@@ -201,7 +269,7 @@ public sealed class VehicleAI : MonoBehaviour
     // 앞뒤 공간과 남은 도로 길이를 확인한 뒤 한 번만 변경을 시작한다
     public bool TryChangeLane(TrafficLane target)
     {
-        if (enteredIntersection || !allowLaneChanges || !isActiveAndEnabled || IsChangingLane || Time.time < nextChange || Speed < 0.5f || !ProjectTarget(target, out float along, out _) || !Following(owner.Map, target, choice))
+        if (IsStunned || enteredIntersection || !allowLaneChanges || !isActiveAndEnabled || IsChangingLane || Time.time < nextChange || Speed < 0.5f || !ProjectTarget(target, out float along, out _) || !Following(owner.Map, target, choice))
             return false;
         float needed = Mathf.Max(cruiseSpeed, Speed) * changeDuration + 1f;
         if (signalDistance < needed + 2f || Lane.Length - Distance < needed || target.Length - along < needed || !owner.LaneSpaceSafe(this, target, along, frontGap, rearGap, changeDuration))
@@ -216,7 +284,7 @@ public sealed class VehicleAI : MonoBehaviour
     // 실제 구급차 차선과 접근 속도 및 예상 후방 간격을 확인한 후 확률을 적용한다
     public bool TryCutIn()
     {
-        if (!owner || owner.SirenOn || !allowLaneChanges || IsChangingLane || Time.time < nextChange || Time.time < nextCutIn)
+        if (IsStunned || !owner || owner.SirenOn || !allowLaneChanges || IsChangingLane || Time.time < nextChange || Time.time < nextCutIn)
             return false;
         nextCutIn = Time.time + decisionInterval;
         if (!owner.TryAmbulanceLane(out TrafficLane lane, out float ambulanceDistance, out float ambulanceSpeed) || ambulanceSpeed < 2f || ambulanceSpeed <= Speed + 0.2f || Speed < 0.5f || !ProjectTarget(lane, out float along, out _))
@@ -254,6 +322,11 @@ public sealed class VehicleAI : MonoBehaviour
         if (!owner.Map || !owner.Map.ContainsLane(Lane) || !NextLane)
         {
             owner.Release(this);
+            return;
+        }
+        if (IsStunned)
+        {
+            MoveCollision();
             return;
         }
         float clear = Mathf.Min(Clearance(), SignalClearance());
