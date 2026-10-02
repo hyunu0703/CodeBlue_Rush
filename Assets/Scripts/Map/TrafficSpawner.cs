@@ -20,6 +20,7 @@ public sealed class TrafficSpawner : MonoBehaviour
     private readonly Stack<VehicleAI> pool = new Stack<VehicleAI>();
     private readonly Dictionary<Collider2D, VehicleAI> vehicles = new Dictionary<Collider2D, VehicleAI>();
     private readonly Collider2D[] hits = new Collider2D[32];
+    private Rigidbody2D ambulanceBody;
     private ContactFilter2D filter;
     private CityMap subscribedMap;
     private CityLayout layout;
@@ -67,6 +68,7 @@ public sealed class TrafficSpawner : MonoBehaviour
     private void Bind()
     {
         Unbind();
+        ambulanceBody = player ? player.GetComponent<Rigidbody2D>() : null;
         subscribedMap = map;
         if (subscribedMap)
             subscribedMap.StateChanged += HandleMap;
@@ -137,7 +139,7 @@ public sealed class TrafficSpawner : MonoBehaviour
             return true;
         for (int i = 0; i < count; i++)
         {
-            if (!vehicles.TryGetValue(hits[i], out VehicleAI other) || !other || other == self || !other.isActiveAndEnabled || other.Lane != sampledLane)
+            if (!vehicles.TryGetValue(hits[i], out VehicleAI other) || !other || other == self || !other.isActiveAndEnabled || (other.Lane != sampledLane && other.TargetLane != sampledLane))
                 continue;
             if (other.Lane != self.Lane || other.Distance > self.Distance)
                 return true;
@@ -145,6 +147,51 @@ public sealed class TrafficSpawner : MonoBehaviour
         return false;
     }
 
+    // 차선 변경 판단의 확률을 도시 Seed 난수 진행에서 얻는다
+    internal bool Roll(float chance)
+    {
+        return chance > 0f && (chance >= 1f || Next(100000) < chance * 100000f);
+    }
+
+    // 기존 지역 도로 조회와 캐싱한 실제 물리 속도로 구급차를 확인한다
+    internal bool TryAmbulanceLane(out TrafficLane lane, out float distance, out float speed)
+    {
+        lane = null;
+        distance = 0f;
+        speed = 0f;
+        if (!ambulanceBody || !ambulanceBody.gameObject.activeInHierarchy || !map || !map.TryLocate(ambulanceBody.position, 0.7f, out lane, out distance) || !lane.TrySample(distance, out _, out Vector3 direction))
+            return false;
+        speed = Vector2.Dot(ambulanceBody.linearVelocity, direction);
+        return true;
+    }
+
+    // 목표 차선의 앞뒤 차량과 변경 중 예약 차량을 물리 조회로 확인한다
+    internal bool LaneSpaceSafe(VehicleAI self, TrafficLane target, float along, float front, float rear, float seconds)
+    {
+        if (!map.ContainsLane(target) || !target.TrySample(along, out Vector3 point, out Vector3 direction))
+            return false;
+        float radius = Mathf.Max(front, rear) + 12f * seconds + 2f;
+        int count = Physics2D.OverlapCircle(point, radius, filter, hits);
+        if (count == hits.Length)
+            return false;
+        for (int i = 0; i < count; i++)
+        {
+            if (!vehicles.TryGetValue(hits[i], out VehicleAI other) || !other || other == self || !other.isActiveAndEnabled || (other.Lane != target && other.TargetLane != target))
+                continue;
+            float gap = Vector3.Dot(other.transform.position - point, direction);
+            float required = gap >= 0f ? front + Mathf.Max(0f, self.Speed - other.Speed) * seconds : rear + Mathf.Max(0f, other.Speed - self.Speed) * seconds;
+            if (Mathf.Abs(gap) < required)
+                return false;
+        }
+        if (TryAmbulanceLane(out TrafficLane playerLane, out float playerAlong, out float playerSpeed) && playerLane == target)
+        {
+            float gap = playerAlong - along;
+            float required = gap >= 0f ? front + Mathf.Max(0f, self.Speed - playerSpeed) * seconds : rear + Mathf.Max(0f, playerSpeed - self.Speed) * seconds;
+            if (Mathf.Abs(gap) < required)
+                return false;
+        }
+        return true;
+    }
     // 실제 카메라의 여유 영역 밖이며 플레이어와 충분히 떨어진 위치만 허용한다
     public bool CanSpawnAt(Vector3 point)
     {

@@ -10,6 +10,21 @@ public sealed class VehicleAI : MonoBehaviour
     [SerializeField, Min(0.1f)] private float braking = 8f;
     [SerializeField, Min(1f)] private float turnSpeed = 360f;
     [SerializeField, Min(3f)] private float sensorDistance = 7f;
+    [SerializeField, Min(0.5f)] private float changeDuration = 1.1f;
+    [SerializeField, Min(1f)] private float changeCooldown = 6f;
+    [SerializeField, Min(0.2f)] private float decisionInterval = 0.8f;
+    [SerializeField, Min(2f)] private float frontGap = 4f;
+    [SerializeField, Min(2f)] private float rearGap = 3f;
+    [SerializeField, Range(0f, 1f)] private float cutInChance = 0.15f;
+    [SerializeField, Min(5f)] private float cutInDistance = 18f;
+    [SerializeField] private bool allowLaneChanges = true;
+    private float changeProgress;
+    private float nextChange;
+    private float nextDecision;
+    private float nextCutIn;
+    public TrafficLane TargetLane { get; private set; }
+    public bool IsChangingLane => TargetLane;
+    public bool AllowLaneChanges { get => allowLaneChanges; set => allowLaneChanges = value; }
     private TrafficSpawner owner;
     private Rigidbody2D body;
     private CircleCollider2D shape;
@@ -43,6 +58,11 @@ public sealed class VehicleAI : MonoBehaviour
         Distance = distance;
         choice = routeChoice;
         Speed = 0f;
+        TargetLane = null;
+        changeProgress = 0f;
+        nextChange = Time.time + 1f;
+        nextCutIn = 0f;
+        nextDecision = Time.time + 1f + (uint)routeChoice % 100 / 100f;
         lane.TrySample(distance, out Vector3 position, out Vector3 direction);
         float rotation = Vector2.SignedAngle(Vector2.up, direction);
         transform.SetPositionAndRotation(position, Quaternion.Euler(0f, 0f, rotation));
@@ -53,6 +73,8 @@ public sealed class VehicleAI : MonoBehaviour
     // 재사용 전에 이전 도시와 차선 참조를 비운다
     internal void Clear()
     {
+        TargetLane = null;
+        changeProgress = 0f;
         owner = null;
         Lane = null;
         Distance = 0f;
@@ -102,6 +124,59 @@ public sealed class VehicleAI : MonoBehaviour
         return range;
     }
 
+    // 실제 인접 관계와 현재 지점의 같은 진행 방향만 허용한다
+    private bool ProjectTarget(TrafficLane target, out float along, out Vector3 point)
+    {
+        along = 0f;
+        point = default;
+        if (!owner || !owner.Map.ContainsLane(Lane) || !owner.Map.ContainsLane(target) || (target != Lane.LeftLane && target != Lane.RightLane) || target.transform.parent != Lane.transform.parent)
+            return false;
+        if ((target == Lane.LeftLane && target.RightLane != Lane) || (target == Lane.RightLane && target.LeftLane != Lane))
+            return false;
+        Lane.TrySample(Distance, out Vector3 origin, out Vector3 direction);
+        return target.TryProject(origin, out along, out float offset) && offset > 0.01f && offset < 36f && target.TrySample(along, out point, out Vector3 forward) && Vector3.Dot(direction, forward) > 0.98f;
+    }
+
+    // 앞뒤 공간과 남은 도로 길이를 확인한 뒤 한 번만 변경을 시작한다
+    public bool TryChangeLane(TrafficLane target)
+    {
+        if (!allowLaneChanges || !isActiveAndEnabled || IsChangingLane || Time.time < nextChange || Speed < 0.5f || !ProjectTarget(target, out float along, out _) || !Following(owner.Map, target, choice))
+            return false;
+        float needed = Mathf.Max(cruiseSpeed, Speed) * changeDuration + 1f;
+        if (Lane.Length - Distance < needed || target.Length - along < needed || !owner.LaneSpaceSafe(this, target, along, frontGap, rearGap, changeDuration))
+            return false;
+        TargetLane = target;
+        changeProgress = 0f;
+        return true;
+    }
+
+    // 실제 구급차 차선과 접근 속도 및 예상 후방 간격을 확인한 후 확률을 적용한다
+    public bool TryCutIn()
+    {
+        if (!owner || !allowLaneChanges || IsChangingLane || Time.time < nextChange || Time.time < nextCutIn)
+            return false;
+        nextCutIn = Time.time + decisionInterval;
+        if (!owner.TryAmbulanceLane(out TrafficLane lane, out float ambulanceDistance, out float ambulanceSpeed) || ambulanceSpeed < 2f || ambulanceSpeed <= Speed + 0.2f || Speed < 0.5f || !ProjectTarget(lane, out float along, out _))
+            return false;
+        float gap = along - ambulanceDistance;
+        if (gap <= rearGap || gap > cutInDistance || gap - (ambulanceSpeed - Speed) * changeDuration < rearGap)
+            return false;
+        if (!owner.LaneSpaceSafe(this, lane, along, frontGap, rearGap, changeDuration) || !owner.Roll(cutInChance))
+            return false;
+        return TryChangeLane(lane);
+    }
+
+    // 간헐적으로 접근 구급차 또는 앞차 정체가 있는 경우만 판단한다
+    private void Decide(float clear)
+    {
+        if (!allowLaneChanges || IsChangingLane || Time.time < nextDecision)
+            return;
+        nextDecision = Time.time + decisionInterval;
+        if (TryCutIn() || clear >= sensorDistance - 0.5f || clear < Speed * changeDuration + 0.5f)
+            return;
+        if (!TryChangeLane(Lane.LeftLane))
+            TryChangeLane(Lane.RightLane);
+    }
     // 물리 주기마다 선속도와 실제 차선상의 위치만 갱신한다
     private void FixedUpdate()
     {
@@ -113,6 +188,17 @@ public sealed class VehicleAI : MonoBehaviour
             return;
         }
         float clear = Clearance();
+        Decide(clear);
+        bool changing = IsChangingLane;
+        float targetAlong = 0f;
+        if (changing && !ProjectTarget(TargetLane, out targetAlong, out _))
+        {
+            owner.Release(this);
+            return;
+        }
+        bool safe = !changing || owner.LaneSpaceSafe(this, TargetLane, targetAlong, frontGap, rearGap, Mathf.Max(0.2f, changeDuration - changeProgress));
+        if (!safe)
+            clear = 0f;
         float targetSpeed = Mathf.Min(cruiseSpeed, Mathf.Sqrt(2f * braking * clear));
         Speed = Mathf.MoveTowards(Speed, targetSpeed, (targetSpeed < Speed ? braking : acceleration) * Time.fixedDeltaTime);
         float travel = Mathf.Min(Speed * Time.fixedDeltaTime, clear);
@@ -136,6 +222,28 @@ public sealed class VehicleAI : MonoBehaviour
         {
             owner.Release(this);
             return;
+        }
+        if (changing)
+        {
+            if (!ProjectTarget(TargetLane, out targetAlong, out Vector3 targetPoint))
+            {
+                owner.Release(this);
+                return;
+            }
+            if (safe && travel > 0f)
+                changeProgress += Time.fixedDeltaTime;
+            float blend = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(changeProgress / changeDuration));
+            point = Vector3.Lerp(point, targetPoint, blend);
+            Vector3 motion = point - (Vector3)body.position;
+            if (motion.sqrMagnitude > 0.000001f)
+                direction = motion.normalized;
+            if (blend >= 1f)
+            {
+                Lane = TargetLane;
+                Distance = targetAlong;
+                TargetLane = null;
+                nextChange = Time.time + changeCooldown;
+            }
         }
         body.MovePosition(point);
         float angle = Vector2.SignedAngle(Vector2.up, direction);
