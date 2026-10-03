@@ -2107,6 +2107,7 @@ MonoBehaviour:
   - {x: -2.3400002, y: -10.000001}
   crosswalk: {fileID: 0}
   across: {fileID: 0}
+  next: []
 --- !u!1 &1973350310146119083
 GameObject:
   m_ObjectHideFlags: 0
@@ -2370,6 +2371,7 @@ MonoBehaviour:
   leftLane: {fileID: 0}
   rightLane: {fileID: 0}
   internalNext: []
+  nextLane: {fileID: 0}
 --- !u!1 &2216581329138933385
 GameObject:
   m_ObjectHideFlags: 0
@@ -5197,6 +5199,7 @@ MonoBehaviour:
   - {x: 2.3400002, y: -10.000001}
   crosswalk: {fileID: 0}
   across: {fileID: 0}
+  next: []
 --- !u!1 &5223997718367043831
 GameObject:
   m_ObjectHideFlags: 0
@@ -5887,6 +5890,7 @@ MonoBehaviour:
   leftLane: {fileID: 0}
   rightLane: {fileID: 0}
   internalNext: []
+  nextLane: {fileID: 0}
 --- !u!1 &6036050119740009872
 GameObject:
   m_ObjectHideFlags: 0
@@ -11350,6 +11354,10 @@ PrefabInstance:
     - target: {fileID: 3658140664782965800, guid: 851e43ba0f5c86e4fa1ff5c33268dbdd, type: 3}
       propertyPath: m_Name
       value: Sidewalk
+      objectReference: {fileID: 0}
+    - target: {fileID: 3658140664782965800, guid: 851e43ba0f5c86e4fa1ff5c33268dbdd, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8126124289110953466, guid: 851e43ba0f5c86e4fa1ff5c33268dbdd, type: 3}
       propertyPath: m_Enabled
