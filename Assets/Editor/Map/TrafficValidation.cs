@@ -288,7 +288,7 @@ public static class TrafficValidation
         Check(spawner.ActiveCount > 0 && spawner.PooledCount + spawner.ActiveCount <= 4, "주변 생성과 작은 풀 재사용");
         Set(spawner, "attempts", 0f, true);
         VehicleAI oldVehicle = spawner.GetVehicle(0);
-        Check(map.TryStartNewCity(unchecked(map.Seed + 1), out _), "새 도시 생성");
+        Check(FixedMapScene.ReloadFixture(map, out _), "새 도시 생성");
         Check(spawner.ActiveCount == 0 && !oldVehicle.Lane && !oldVehicle.gameObject.activeSelf, "이전 도시 차량 즉시 정리");
         Check(!spawner.TrySpawn(straight, 2f, out _), "이전 도시 차선 생성 거절");
         TrafficLane fresh = map.GetLane(0);

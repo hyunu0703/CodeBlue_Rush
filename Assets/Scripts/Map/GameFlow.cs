@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-/// <summary>기존 미션 이벤트를 연결하고 성공 시 미션만, 실패 시 도시를 교체한다</summary>
+/// <summary>기존 미션 이벤트를 연결하고 고정 맵에서 출동과 결과 및 미션 초기화를 관리한다</summary>
 [DisallowMultipleComponent]
 public sealed class GameFlow : MonoBehaviour
 {
@@ -14,8 +14,11 @@ public sealed class GameFlow : MonoBehaviour
     [SerializeField] private NavigationRoute navigation;
     [SerializeField] private AmbulanceController ambulance;
     [SerializeField] private HospitalArrivalZone hospital;
+    [SerializeField] private Transform ambulanceSpawnPoint;
+    [SerializeField] private AmbulanceCamera ambulanceCamera;
     private Rigidbody2D body;
     private SirenController siren;
+    private AmbulanceCollision collision;
     private bool started;
     private bool transitioning;
     private int missionId;
@@ -27,16 +30,17 @@ public sealed class GameFlow : MonoBehaviour
     // 모든 컴포넌트 활성화 후 기존 도시 준비와 보고를 시작한다
     private void Start()
     {
-        if (!map || !report || !pickup || !ecg || !transfer || !navigation || !ambulance || !hospital)
+        if (!map || !report || !pickup || !ecg || !transfer || !navigation || !ambulance || !hospital || !ambulanceSpawnPoint)
         {
             FailSetup("Gameplay references are missing.");
             return;
         }
         body = ambulance.GetComponent<Rigidbody2D>();
         siren = ambulance.GetComponent<SirenController>();
+        collision = ambulance.GetComponent<AmbulanceCollision>();
         started = true;
         Subscribe();
-        BeginWorld(false);
+        BeginWorld();
     }
 
     // 재활성화에서는 현재 미션의 구독만 복구한다
@@ -75,32 +79,28 @@ public sealed class GameFlow : MonoBehaviour
         Unsubscribe();
     }
 
-    // 최초 시작과 실패 후에만 도시를 준비하고 플레이어의 시작 위치를 배치한다
-    private void BeginWorld(bool replace)
+    // 최초 시작과 미션 초기화에서 고정 맵을 확인하고 소방서 위치로 복귀한다
+    private void BeginWorld()
     {
         transitioning = true;
         Error = null;
         SetState(Phase.Preparing);
         SetDriving(false);
         ClearMission();
-        bool ready = replace ? map.TryStartNewCity(map.CreateSeed(), out string error) : map.EnsureGenerated(out error);
+        bool ready = map.Initialize(out string error);
         if (!ready || !hospital.IsValidFor(map))
         {
             FailSetup(error ?? "No valid hospital in this city.");
             transitioning = false;
             return;
         }
-        TrafficLane lane = map.GetLane(0);
-        if (!lane || !lane.TrySample(lane.Length * 0.5f, out Vector3 position, out Vector3 direction))
-        {
-            FailSetup("No valid ambulance spawn lane.");
-            transitioning = false;
-            return;
-        }
-        float angle = Vector2.SignedAngle(Vector2.up, direction);
-        body.transform.SetPositionAndRotation(position, Quaternion.Euler(0f, 0f, angle));
+        Vector3 position = ambulanceSpawnPoint.position;
+        float angle = ambulanceSpawnPoint.eulerAngles.z;
+        body.transform.SetPositionAndRotation(position, ambulanceSpawnPoint.rotation);
         body.position = position;
         body.rotation = angle;
+        if (ambulanceCamera)
+            ambulanceCamera.ResetFollow();
         Physics2D.SyncTransforms();
         BeginMission();
         transitioning = false;
@@ -123,22 +123,13 @@ public sealed class GameFlow : MonoBehaviour
         SetState(Phase.DrivingToPatient);
     }
 
-    // 결과를 확인한 사용자의 입력만 다음 출동 또는 새 도시를 요청한다
+    // 결과를 확인한 사용자의 입력으로 다음 미션을 요청한다
     public void Continue()
     {
         if (!isActiveAndEnabled || transitioning)
             return;
-        if (State == Phase.GameOver)
-        {
-            BeginWorld(true);
-            return;
-        }
-        if (State != Phase.Result)
-            return;
-        transitioning = true;
-        ClearMission();
-        BeginMission();
-        transitioning = false;
+        if (State == Phase.GameOver || State == Phase.Result)
+            BeginWorld();
     }
 
     // 기존 취소 이벤트가 픽업, ECG, 병원과 미션 목적지를 초기화한다
@@ -147,6 +138,8 @@ public sealed class GameFlow : MonoBehaviour
         missionId = 0;
         report.CancelReport();
         navigation.ClearDestination();
+        if (collision)
+            collision.ResetCollision();
     }
 
     private bool IsCurrentMission()
@@ -196,7 +189,7 @@ public sealed class GameFlow : MonoBehaviour
         return 0;
     }
 
-    // 최초 실패만 확정하고 기존 미션을 중지한 뒤 새 도시 입력을 기다린다
+    // 최초 실패만 확정하고 기존 미션을 중지한 뒤 새 미션 입력을 기다린다
     private void HandleFailure()
     {
         if (!IsCurrentMission() || State == Phase.Result || State == Phase.GameOver)

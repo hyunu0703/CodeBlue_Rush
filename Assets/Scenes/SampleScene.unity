@@ -1559,6 +1559,7 @@ MonoBehaviour:
   moveSmoothTime: 0.25
   rotateSmoothTime: 0.25
   baseOffset: 3
+  map: {fileID: 0}
 --- !u!1 &530556171
 GameObject:
   m_ObjectHideFlags: 0

@@ -207,7 +207,7 @@ public static class MapAssetStage3
         int closed = road.ConnectionCount * 2;
         for (int d = 0; d < 4; d++)
         {
-            Vector2 axis = CityLayout.Direction(d);
+            Vector2 axis = CitySamples.Direction(d);
             if (HasPort(road, axis)) continue;
             Vector2 right = new Vector2(axis.y, -axis.x);
             SetPoints(paths[closed++], axis * center - right * 5f, axis * center + right * 5f);

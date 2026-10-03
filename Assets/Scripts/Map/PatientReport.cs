@@ -54,12 +54,10 @@ public sealed class PatientReport : MonoBehaviour
 
     private NavigationRoute subscribedNavigation;
     private CityMap map;
-    private CityLayout cachedLayout;
+    private CityMap cachedMap;
     private readonly List<SpawnPoint> candidates = new List<SpawnPoint>();
-    private int[] order = Array.Empty<int>();
-    private int[] slots = Array.Empty<int>();
     private int previous = -1;
-    private uint random;
+    private readonly System.Random random = new System.Random();
     private bool reporting;
     private int revision;
 
@@ -71,7 +69,7 @@ public sealed class PatientReport : MonoBehaviour
     public SpawnPoint Patient { get; private set; }
     public ReportStatus Status { get; private set; }
     public int CandidateCount => candidates.Count;
-    public string Message => IsPatientOnBoard ? "환자 탑승이 완료되었습니다" : IsActive ? "환자가 발생했습니다\n현장으로 이동하세요" : string.Empty;
+    public string Message => IsPatientOnBoard ? "환자 탑승이 완료되었습니다" : IsActive ? "환자 발생: " + (Patient.Slot ? Patient.Slot.name : "현장") + "\n현장으로 이동하세요" : string.Empty;
     public event Action ReportChanged;
     public event Action PatientPickedUp;
     public event Action FatalCollision;
@@ -135,14 +133,13 @@ public sealed class PatientReport : MonoBehaviour
             map.StateChanged -= HandleMapChanged;
     }
 
-    // 새 도시에서만 생성된 차선 목록을 한 번 순회하여 후보와 선택 배열을 준비한다
+    // 고정 맵을 처음 연결할 때만 지정된 후보를 검증하고 캐싱한다
     private void RefreshCandidates()
     {
-        if (!map || !map.IsReady || ReferenceEquals(cachedLayout, map.Layout))
+        if (!map || !map.IsReady || ReferenceEquals(cachedMap, map))
             return;
         ClearCache();
-        cachedLayout = map.Layout;
-        random = unchecked((uint)map.Seed) ^ 0xA511E9B3u;
+        cachedMap = map;
         for (int i = 0; i < map.IncidentSlotCount; i++)
         {
             EnvironmentSlot slot = map.GetIncidentSlot(i);
@@ -152,26 +149,17 @@ public sealed class PatientReport : MonoBehaviour
             if (point.TryGetPose(out _, out _))
                 candidates.Add(point);
         }
-        order = new int[candidates.Count];
-        slots = new int[candidates.Count];
-        for (int i = 0; i < order.Length; i++)
-        {
-            order[i] = i;
-            slots[i] = i;
-        }
     }
 
     // 이전 도시의 후보와 직전 위치 및 순서를 제거한다
     private void ClearCache()
     {
         candidates.Clear();
-        order = Array.Empty<int>();
-        slots = Array.Empty<int>();
-        cachedLayout = null;
+        cachedMap = null;
         previous = -1;
     }
 
-    // 중복 없는 유한 후보 선택 후 기존 네비게이션이 성공한 현장만 확정한다
+    // 직전 지점을 제외한 인덱스 한 번으로 후보를 선택하고 기존 경로를 설정한다
     public bool TryReport(out string error)
     {
         error = null;
@@ -193,52 +181,36 @@ public sealed class PatientReport : MonoBehaviour
         SpawnPoint attempted = default;
         try
         {
-            int remaining = order.Length;
-            // 직전 위치는 다른 후보가 모두 실패한 경우에만 마지막으로 시도한다
-            if (previous >= 0)
+            int count = candidates.Count;
+            int index = random.Next(count > 1 && previous >= 0 ? count - 1 : count);
+            if (count > 1 && previous >= 0 && index >= previous)
+                index++;
+            SpawnPoint point = candidates[index];
+            if (!point.TryGetPose(out _, out _))
+                return Fail(ReportStatus.NoReachablePoint, "선택된 환자 후보의 Scene 참조를 확인하세요.", out error);
+            attempted = point;
+            bool found = navigation.SetDestination(point.Lane, point.Distance);
+            if (request != revision || !isActiveAndEnabled)
             {
-                Swap(slots[previous], remaining - 1);
-                remaining--;
+                error = "상황 보고 요청이 취소되었습니다.";
+                return false;
             }
-            for (int attempt = 0; attempt < candidates.Count; attempt++)
+            if (found && OwnsDestination(point))
             {
-                int index;
-                if (remaining > 0)
-                {
-                    random = unchecked(random * 1664525u + 1013904223u);
-                    int slot = (int)((random >> 8) % (uint)remaining);
-                    index = order[slot];
-                    Swap(slot, --remaining);
-                }
-                else
-                    index = previous;
-                SpawnPoint point = candidates[index];
-                if (!point.TryGetPose(out _, out _))
-                    continue;
-                attempted = point;
-                bool found = navigation.SetDestination(point.Lane, point.Distance);
-                if (request != revision || !isActiveAndEnabled)
-                {
+                Patient = point;
+                previous = index;
+                IsActive = true;
+                MissionId++;
+                CollisionCount = 0;
+                HasFatalCollision = false;
+                Status = ReportStatus.Active;
+                ReportChanged?.Invoke();
+                if (!IsActive)
                     error = "상황 보고 요청이 취소되었습니다.";
-                    return false;
-                }
-                if (found && OwnsDestination(point))
-                {
-                    Patient = point;
-                    previous = index;
-                    IsActive = true;
-                    MissionId++;
-                    CollisionCount = 0;
-                    HasFatalCollision = false;
-                    Status = ReportStatus.Active;
-                    ReportChanged?.Invoke();
-                    if (!IsActive)
-                        error = "상황 보고 요청이 취소되었습니다.";
-                    return IsActive;
-                }
-                if (navigation.Status == NavigationRoute.RouteStatus.InvalidStart)
-                    return Fail(ReportStatus.InvalidStart, "구급차의 현재 도로 위치가 유효하지 않습니다.", out error);
+                return IsActive;
             }
+            if (navigation.Status == NavigationRoute.RouteStatus.InvalidStart)
+                return Fail(ReportStatus.InvalidStart, "구급차의 현재 도로 위치가 유효하지 않습니다.", out error);
             return Fail(ReportStatus.NoReachablePoint, "접근 가능한 환자 위치를 찾지 못했습니다.", out error);
         }
         finally
@@ -247,17 +219,6 @@ public sealed class PatientReport : MonoBehaviour
                 navigation.ClearDestination();
             reporting = false;
         }
-    }
-
-    // 선택 배열과 역색인을 함께 교환하여 직전 후보 제외와 무복원 추출을 상수 시간에 처리한다
-    private void Swap(int a, int b)
-    {
-        int first = order[a];
-        int second = order[b];
-        order[a] = second;
-        order[b] = first;
-        slots[first] = b;
-        slots[second] = a;
     }
 
     // 외부 흐름에서 보고를 취소하고 이 보고가 소유한 목적지만 제거한다
@@ -303,6 +264,8 @@ public sealed class PatientReport : MonoBehaviour
         IsActive = false;
         Patient = default;
         Status = status;
+        CollisionCount = 0;
+        HasFatalCollision = false;
         if (OwnsDestination(old))
             navigation.ClearDestination();
         if (notify)
@@ -327,8 +290,11 @@ public sealed class PatientReport : MonoBehaviour
     // 도시 교체나 비활성화 시 이전 보고를 제거하고 새 도시의 후보를 준비한다
     private void HandleMapChanged()
     {
-        if (!map || !map.IsReady || !ReferenceEquals(cachedLayout, map.Layout))
+        if (!map || !map.IsReady || !ReferenceEquals(cachedMap, map))
+        {
             CancelReport();
+            ClearCache();
+        }
         RefreshCandidates();
     }
 

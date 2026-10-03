@@ -9,7 +9,9 @@ public sealed class EnvironmentSlot : MonoBehaviour
     [SerializeField] private Usage usage;
     [SerializeField] private TrafficLane lane;
     [SerializeField, Min(0f)] private float distance;
+    #if UNITY_EDITOR
     [SerializeField] private GameObject[] variants = Array.Empty<GameObject>();
+    #endif
     public RoadChunk Road => road;
     public Usage Uses => usage;
     public TrafficLane Lane => lane;
@@ -21,14 +23,4 @@ public sealed class EnvironmentSlot : MonoBehaviour
         return isActiveAndEnabled && road && road.isActiveAndEnabled && road.ConnectionCount == 2 && (usage & required) == required && map && map.ContainsLane(lane) && lane.transform.IsChildOf(road.transform) && float.IsFinite(distance) && distance >= 0f && distance <= lane.Length && lane.TrySample(distance, out Vector3 access, out _) && (access - transform.position).sqrMagnitude <= 9f;
     }
 
-    // 도로 그래프와 독립적인 난수로 지정된 Placeholder 하나만 배치한다
-    internal void Populate(ref uint state)
-    {
-        if (!isActiveAndEnabled || (usage & (Usage.Building | Usage.Decoration)) == 0 || variants == null || variants.Length == 0)
-            return;
-        state = unchecked(state * 1664525u + 1013904223u);
-        GameObject prefab = variants[(state >> 8) % (uint)variants.Length];
-        if (prefab)
-            Instantiate(prefab, transform, false);
-    }
 }

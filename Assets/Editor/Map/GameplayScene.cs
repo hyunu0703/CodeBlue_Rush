@@ -19,10 +19,7 @@ public static class GameplayScene
         if (!Application.isBatchMode && !EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
         var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
         CityMap map = new GameObject("City").AddComponent<CityMap>();
-        Set(map, "straight", Load<RoadChunk>("City/Straight"));
-        Set(map, "corner", Load<RoadChunk>("City/Corner"));
-        Set(map, "tJunction", Load<RoadChunk>("City/TJunction"));
-        Set(map, "intersection", Load<RoadChunk>("City/Intersection"));
+        FixedMapScene.AttachWorld(map);
         AmbulanceController ambulance = Instance<AmbulanceController>("Ambulance");
         Rigidbody2D body = ambulance.GetComponent<Rigidbody2D>();
         var cameraObject = new GameObject("Main Camera", typeof(Camera), typeof(AudioListener), typeof(AmbulanceCamera));
@@ -51,7 +48,7 @@ public static class GameplayScene
         PatientECG ecg = mission.AddComponent<PatientECG>();
         ecg.Configure(report);
         HospitalArrivalZone hospital = Instance<HospitalArrivalZone>("Hospital");
-        hospital.Configure(map);
+        FixedMapScene.PlaceHospital(hospital, map);
         PrefabUtility.RecordPrefabInstancePropertyModifications(hospital);
         HospitalTransfer transfer = mission.AddComponent<HospitalTransfer>();
         transfer.Configure(report, navigation, ecg, body, new[] { hospital });
@@ -71,6 +68,7 @@ public static class GameplayScene
         Set(flow, "navigation", navigation);
         Set(flow, "ambulance", ambulance);
         Set(flow, "hospital", hospital);
+        FixedMapScene.ConnectSpawn(flow, map, ambulance, cameraObject.GetComponent<AmbulanceCamera>());
         CreateUI(flow, report, ecg, navigation, ambulance);
         EditorSceneManager.SaveScene(scene, Path);
         EditorBuildSettings.scenes = new[] { new EditorBuildSettingsScene(Path, true) };

@@ -47,10 +47,10 @@ public sealed class NavigationUI : MaskableGraphic
     protected override void OnPopulateMesh(VertexHelper mesh)
     {
         mesh.Clear();
-        if (!navigation || navigation.Status != NavigationRoute.RouteStatus.Ready || navigation.Points.Count == 0 || !navigation.Map || navigation.Map.Layout == null)
+        if (!navigation || navigation.Status != NavigationRoute.RouteStatus.Ready || navigation.Points.Count == 0 || !navigation.Map || !navigation.Map.IsReady)
             return;
         CityMap city = navigation.Map;
-        Vector2 size = new Vector2(city.Layout.Width, city.Layout.Height) * city.CellSize;
+        Vector2 size = new Vector2(city.Width, city.Height) * city.CellSize;
         Vector2 center = (size - Vector2.one * city.CellSize) * 0.5f;
         Rect rect = GetPixelAdjustedRect();
         float scale = Mathf.Max(0f, Mathf.Min((rect.width - 16f) / size.x, (rect.height - 16f) / size.y));

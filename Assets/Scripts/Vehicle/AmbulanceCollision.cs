@@ -92,6 +92,13 @@ public sealed class AmbulanceCollision : MonoBehaviour
     // 비활성화 시 접촉 참조를 남기지 않는다
     private void OnDisable()
     {
+        ResetCollision();
+    }
+
+    // 미션 복귀 시 이전 물리 접촉과 속도 기록을 정리한다
+    public void ResetCollision()
+    {
         contacts.Clear();
+        LastCollisionSpeed = 0f;
     }
 }

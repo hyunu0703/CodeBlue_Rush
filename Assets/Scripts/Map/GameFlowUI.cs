@@ -41,7 +41,7 @@ public sealed class GameFlowUI : MonoBehaviour
         controls.SetActive(flow.State == GameFlow.Phase.DrivingToPatient || flow.State == GameFlow.Phase.Pickup || flow.State == GameFlow.Phase.Transporting);
         title.text = flow.Error ?? (result ? "PATIENT DELIVERED" : "GAME OVER");
         stars.text = result ? new string('★', flow.Stars) + new string('☆', 3 - flow.Stars) : string.Empty;
-        buttonLabel.text = failed ? "NEW CITY" : "NEXT MISSION";
+        buttonLabel.text = "NEXT MISSION";
         continueButton.interactable = result || failed;
         status.text = flow.State == GameFlow.Phase.Pickup ? "STOP - PATIENT BOARDING" : flow.State == GameFlow.Phase.Transporting ? "DRIVE TO HOSPITAL" : flow.State == GameFlow.Phase.DrivingToPatient ? "DRIVE TO PATIENT" : string.Empty;
     }

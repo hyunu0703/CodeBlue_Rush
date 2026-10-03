@@ -122,8 +122,8 @@ public static class GameFlowValidation
         Check(GameFlow.Evaluate(PatientECG.ECGState.Yellow, 1) == 2 && GameFlow.Evaluate(PatientECG.ECGState.Red, 1) == 1 && GameFlow.Evaluate(PatientECG.ECGState.Green, 1) == 0 && GameFlow.Evaluate(PatientECG.ECGState.Red, 2) == 0, "One collision ratings and invalid combinations");
         ambulance.GetComponent<KeyboardAmbulanceInput>().enabled = false;
         ambulance.GetComponent<SirenController>().Toggle();
-        CityLayout layout = map.Layout;
-        int seed = map.Seed;
+        RoadChunk layout = map.GetRoad(0, 0);
+        int worldId = map.GetRoad(0, 0).GetInstanceID();
         int mission = report.MissionId;
         var previous = report.Patient;
         int results = 0;
@@ -147,7 +147,7 @@ public static class GameFlowValidation
             ClickContinue();
             flow.Continue();
             yield return null;
-            Check(map.Layout == layout && map.Seed == seed && report.MissionId == ++mission, "Continue reuses city and creates exactly one mission");
+            Check(map.GetRoad(0, 0) == layout && map.GetRoad(0, 0).GetInstanceID() == worldId && report.MissionId == ++mission, "Continue reuses city and creates exactly one mission");
             Check(!report.IsPatientOnBoard && !ecg.HasPatient && ecg.Value == 100f && report.CollisionCount == 0 && !report.HasFatalCollision && transfer.Destination == null, "Mission reset removes previous patient, ECG, collision and hospital");
             Check(previous.Slot != report.Patient.Slot, "New patient location");
             previous = report.Patient;
@@ -162,9 +162,9 @@ public static class GameFlowValidation
         Capture("GameplayGameOver.png");
         ClickContinue();
         yield return null;
-        Check(map.Seed != seed && map.Layout != layout && flow.State == GameFlow.Phase.DrivingToPatient, "Death restarts with a new seed and city");
-        seed = map.Seed;
-        layout = map.Layout;
+        Check(map.GetRoad(0, 0).GetInstanceID() == worldId && map.GetRoad(0, 0) == layout && flow.State == GameFlow.Phase.DrivingToPatient, "Death restarts a mission on the same fixed map");
+        worldId = map.GetRoad(0, 0).GetInstanceID();
+        layout = map.GetRoad(0, 0);
         pickup = PickupAtSite();
         while (pickup.MoveNext()) yield return null;
         RecordCollision(true);
@@ -173,7 +173,7 @@ public static class GameFlowValidation
         Check(flow.State == GameFlow.Phase.GameOver && failures == 2 && results == 2, "FatalCollision and subsequent death cannot double-complete");
         ClickContinue();
         yield return null;
-        Check(map.Seed != seed && map.Layout != layout && report.CollisionCount == 0 && !report.HasFatalCollision, "Fatal collision restarts a clean new city");
+        Check(map.GetRoad(0, 0).GetInstanceID() == worldId && map.GetRoad(0, 0) == layout && report.CollisionCount == 0 && !report.HasFatalCollision, "Fatal collision resets mission on the same fixed map");
         pickup = PickupAtSite();
         while (pickup.MoveNext()) yield return null;
         RecordCollision(false);

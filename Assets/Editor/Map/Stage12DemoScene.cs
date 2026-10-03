@@ -120,9 +120,6 @@ public static class Stage12DemoScene
         SceneManager.MoveGameObjectToScene(mapObject, scene);
         CityMap map = mapObject.AddComponent<CityMap>();
         CitySamples.Configure(map);
-        Set(map, "initialSeed", 12345);
-        Set(map, "randomSeedOnStart", false);
-        Set(map, "density", 35);
 
         GameObject ambulanceAsset = AssetDatabase.LoadAssetAtPath<GameObject>(AmbulancePath);
         GameObject ambulanceObject = (GameObject)PrefabUtility.InstantiatePrefab(ambulanceAsset, scene);

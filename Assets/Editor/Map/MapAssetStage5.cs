@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 
-/// <summary>최소 식생 이미지를 재사용 Prefab으로 조립하고 기존 Gameplay 생성기에 연결한다</summary>
+/// <summary>최소 식생 이미지를 재사용 Prefab으로 조립하고 편집용 라이브러리에 저장한다</summary>
 public static class MapAssetStage5
 {
     private const string images = "Assets/Images/Maps/Nature/";
@@ -28,9 +28,8 @@ public static class MapAssetStage5
         CreateFlowers();
         CreateBeds();
         UpdateTree();
-        ConnectScene();
         AssetDatabase.SaveAssets();
-        Debug.Log("STAGE5_APPLIED: 식생 13종 재사용 Prefab과 Gameplay 연결 완료");
+        Debug.Log("STAGE5_APPLIED: 식생 13종 재사용 Prefab과 자산 작성 완료");
     }
 
     // 새 PNG 네 개만 최소 해상도와 투명 Sprite 및 WebGL 압축으로 설정한다
@@ -158,31 +157,6 @@ public static class MapAssetStage5
             PrefabUtility.SaveAsPrefabAsset(root, path);
         }
         finally { PrefabUtility.UnloadPrefabContents(root); }
-    }
-
-    // 기존 CityMap과 CityTerrain을 참조하는 식생 표시 컴포넌트만 추가한다
-    private static void ConnectScene()
-    {
-        const string path = "Assets/Scenes/Gameplay.unity";
-        Scene scene = SceneManager.GetSceneByPath(path);
-        bool added = !scene.isLoaded;
-        if (added) scene = EditorSceneManager.OpenScene(path, OpenSceneMode.Additive);
-        CityMap city = null;
-        foreach (GameObject root in scene.GetRootGameObjects()) if (!city) city = root.GetComponentInChildren<CityMap>(true);
-        if (!city) throw new InvalidOperationException("Gameplay CityMap 누락");
-        if (!city.TryGetComponent(out CityVegetation vegetation)) vegetation = city.gameObject.AddComponent<CityVegetation>();
-        var data = new SerializedObject(vegetation);
-        data.FindProperty("map").objectReferenceValue = city;
-        data.FindProperty("terrain").objectReferenceValue = city.GetComponent<CityTerrain>();
-        foreach (var pair in new Dictionary<string, string> {
-            { "treeSmall", "Tree_Small_01" }, { "treeMedium", "Tree_Medium_01" }, { "treeLarge", "Tree_Large_01" },
-            { "bushRound", "Bush_Round_01" }, { "bushLow", "Bush_Low_01" }, { "hedgeShort", "Hedge_Short_01" }, { "hedgeLong", "Hedge_Long_01" },
-            { "flowerPatchPink", "FlowerPatch_01" }, { "flowerPatchYellow", "FlowerPatch_02" }, { "flowerBush", "FlowerBush_01" },
-            { "flowerBedSmall", "FlowerBed_Small_01" }, { "flowerBedMedium", "FlowerBed_Medium_01" }, { "planter", "Planter_01" } })
-            data.FindProperty(pair.Key).objectReferenceValue = prefabs[pair.Value];
-        data.ApplyModifiedPropertiesWithoutUndo();
-        EditorSceneManager.SaveScene(scene);
-        if (added) EditorSceneManager.CloseScene(scene, true);
     }
 
     // 식생 종류와 고정 광원 방향을 가진 독립 루트를 작성한다

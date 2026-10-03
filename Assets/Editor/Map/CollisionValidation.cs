@@ -41,8 +41,6 @@ public static class CollisionValidation
         PatientECG patient = Object.FindFirstObjectByType<PatientECG>();
         HospitalTransfer hospital = Object.FindFirstObjectByType<HospitalTransfer>();
         Camera camera = Camera.main;
-        Set(map, "randomSeedOnStart", false);
-        Set(map, "initialSeed", 12345);
         GameObject root = new GameObject("Stage13 Collision Demo");
         CitizenSpawner citizens = root.AddComponent<CitizenSpawner>();
         citizens.enabled = false;

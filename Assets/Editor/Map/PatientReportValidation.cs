@@ -38,11 +38,11 @@ public static class PatientReportValidation
             route.Configure(map, player);
             report.Configure(route);
             Check(!report.TryReport(out _) && report.Status == PatientReport.ReportStatus.MapUnavailable, "도시 생성 전 보고");
-            Check(map.EnsureGenerated(out _), "도시 생성");
+            Check(map.Initialize(out _), "도시 생성");
             PlaceSource(map, player, 0.2f);
             CityMap copy = replica.AddComponent<CityMap>();
             CitySamples.Configure(copy);
-            Check(copy.EnsureGenerated(out _), "동일 Seed 도시 복제");
+            Check(copy.Initialize(out _), "고정 World 검증용 복제");
             Transform copyPlayer = new GameObject("Copy Source").transform;
             copyPlayer.SetParent(replica.transform, false);
             PlaceSource(copy, copyPlayer, 0.2f);
@@ -92,7 +92,7 @@ public static class PatientReportValidation
             Object.DestroyImmediate(broken.gameObject);
             Check(report.TryReport(out _) && report.Patient.TryGetPose(out _, out _), "파괴된 캐시 후보 안전 처리");
             PatientReport.SpawnPoint old = report.Patient;
-            Check(map.TryStartNewCity(97, out _), "외부 요청에 의한 도시 교체");
+            Check(FixedMapScene.ReloadFixture(map, out _), "외부 요청에 의한 도시 교체");
             Check(!report.IsActive && !report.Patient.Lane && !old.TryGetPose(out _, out _), "이전 도시 SpawnPoint 제거");
             PlaceSource(map, player, 0.2f);
             Check(report.TryReport(out _) && report.Patient.Map == map && map.ContainsLane(report.Patient.Lane), "새 도시 후보 재구축");
@@ -223,12 +223,12 @@ public static class PatientReportValidation
                     break;
                 case 2:
                     Check(!playReport.IsActive && !playRoute.HasDestination && !oldPoint.TryGetPose(out _, out _), "환자 위치 파괴 안전 처리");
-                    Check(playMap.TryStartNewCity(411, out _), "새 도시 교체");
+                    Check(FixedMapScene.ReloadFixture(playMap, out _), "새 도시 교체");
                     NavigationEditor.Preview(playRoute);
                     playRoute.ClearDestination();
                     Check(playReport.TryReport(out _) && playMap.ContainsLane(playReport.Patient.Lane), "새 도시 현장 선택");
                     oldPoint = playReport.Patient;
-                    Check(playMap.TryStartNewCity(412, out _), "활성 보고 중 도시 교체");
+                    Check(FixedMapScene.ReloadFixture(playMap, out _), "활성 보고 중 도시 교체");
                     Check(!playReport.IsActive && !playReport.Patient.Lane && !oldPoint.TryGetPose(out _, out _), "이전 도시 참조 정리");
                     break;
                 case 3:

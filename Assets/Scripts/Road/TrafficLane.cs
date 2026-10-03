@@ -11,7 +11,7 @@ public sealed class TrafficLane : MonoBehaviour
     [Tooltip("같은 도로 내부의 후속 경로. 도로 경계의 Next는 RoadConnection이 설정")]
     [SerializeField] private TrafficLane[] internalNext = new TrafficLane[0];
 
-    private TrafficLane nextLane;
+    [SerializeField] private TrafficLane nextLane;
     private float[] distances;
     private Matrix4x4 pathMatrix;
     private bool valid;

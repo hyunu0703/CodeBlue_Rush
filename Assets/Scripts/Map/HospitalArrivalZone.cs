@@ -1,111 +1,39 @@
 using System;
 using UnityEngine;
 
-/// <summary>생성된 도시의 실제 차선에 병원 지점과 차량 도착 영역을 등록한다</summary>
+/// <summary>고정 Scene의 병원 접근 지점과 차량 도착 영역을 제공한다</summary>
 [DisallowMultipleComponent]
 [RequireComponent(typeof(CircleCollider2D))]
 public sealed class HospitalArrivalZone : MonoBehaviour
 {
     [SerializeField] private CityMap map;
-    [SerializeField, Min(0)] private int laneOffset;
-    private CityMap subscribedMap;
-    private CityLayout layout;
+    [SerializeField] private EnvironmentSlot slot;
     private CircleCollider2D area;
-    private EnvironmentSlot slot;
     public CityMap Map => map;
-    public TrafficLane Lane { get; private set; }
-    public float Distance { get; private set; }
+    public TrafficLane Lane => slot ? slot.Lane : null;
+    public float Distance => slot ? slot.Distance : 0f;
     public Vector3 HospitalPoint => transform.position;
     public event Action<HospitalArrivalZone, Rigidbody2D> VehicleEntered;
 
-    // 영역 참조를 한 번 캐싱한다
+    // 영역 참조만 캐싱하고 Scene에 저장한 병원 위치를 유지한다
     private void Awake()
     {
         area = GetComponent<CircleCollider2D>();
     }
 
-    // 기존 도시 생성 이벤트와 현재 도시를 연결한다
-    private void OnEnable()
+    // 명시적인 고정 병원 접근 지점을 연결한다
+    public void Configure(CityMap city, EnvironmentSlot access)
     {
-        Bind();
-    }
-
-    // 이전 도시와 차선 참조를 해제한다
-    private void OnDisable()
-    {
-        Unsubscribe();
-        layout = null;
-        Lane = null;
-        slot = null;
-        Distance = 0f;
-    }
-
-    // 도로 생성기를 변경하지 않고 병원 차선 선택 정보를 연결한다
-    public void Configure(CityMap city, int offset = 0)
-    {
-        Unsubscribe();
         map = city;
-        laneOffset = Mathf.Max(0, offset);
-        layout = null;
-        Lane = null;
-        if (isActiveAndEnabled)
-            Bind();
+        slot = access;
     }
 
-    // 같은 맵 이벤트를 중복 없이 구독한다
-    private void Bind()
-    {
-        Unsubscribe();
-        subscribedMap = map;
-        if (subscribedMap)
-            subscribedMap.StateChanged += Refresh;
-        Refresh();
-    }
-
-    // 실제 구독한 맵에서 해제한다
-    private void Unsubscribe()
-    {
-        if (subscribedMap)
-            subscribedMap.StateChanged -= Refresh;
-        subscribedMap = null;
-    }
-
-    // 도시 생성 시 Seed와 캐싱한 도로변 Slot에서 병원 위치를 확보한다
-    private void Refresh()
-    {
-        if (!map || !map.IsReady || map.HospitalSlotCount == 0)
-        {
-            Lane = null;
-            slot = null;
-            Distance = 0f;
-            layout = null;
-            return;
-        }
-        if (layout == map.Layout)
-            return;
-        layout = map.Layout;
-        Lane = null;
-        slot = null;
-        Distance = 0f;
-        int start = (int)(((uint)map.Seed + (ulong)(uint)laneOffset) % (uint)map.HospitalSlotCount);
-        for (int i = 0; i < map.HospitalSlotCount; i++)
-        {
-            EnvironmentSlot candidate = map.GetHospitalSlot((start + i) % map.HospitalSlotCount);
-            if (!candidate || !candidate.IsValidFor(map, EnvironmentSlot.Usage.Hospital))
-                continue;
-            slot = candidate;
-            Lane = slot.Lane;
-            Distance = slot.Distance;
-            Lane.TrySample(Distance, out _, out Vector3 direction);
-            transform.SetPositionAndRotation(slot.transform.position, Quaternion.FromToRotation(Vector3.up, direction));
-            break;
-        }
-    }
-
-    // 현재 도시와 차선 및 실제 병원 영역의 위치가 일치하는지 확인한다
+    // Scene의 고정 병원과 도로 접근 참조를 확인한다
     public bool IsValidFor(CityMap city)
     {
-        return isActiveAndEnabled && map == city && map && layout == map.Layout && slot && slot.IsValidFor(map, EnvironmentSlot.Usage.Hospital) && map.ContainsLane(Lane) && area && area.enabled && area.isTrigger && (slot.transform.position - transform.position).sqrMagnitude < 0.0025f;
+        if (!area)
+            area = GetComponent<CircleCollider2D>();
+        return isActiveAndEnabled && map == city && map && slot && slot.IsValidFor(map, EnvironmentSlot.Usage.Hospital) && area && area.enabled && area.isTrigger && (slot.transform.position - transform.position).sqrMagnitude < 0.0025f;
     }
 
     // 실제 물리 차량이 현재 영역과 겹치는지 검사한다

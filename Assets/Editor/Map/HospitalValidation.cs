@@ -45,7 +45,7 @@ public static class HospitalValidation
         }
         GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(path));
         HospitalArrivalZone zone = instance.GetComponent<HospitalArrivalZone>();
-        zone.Configure(map);
+        FixedMapScene.PlaceHospital(zone, map);
         PrefabUtility.RecordPrefabInstancePropertyModifications(zone);
         HospitalTransfer transfer = report.gameObject.AddComponent<HospitalTransfer>();
         transfer.Configure(report, route, ecg, body, new[] { zone });
@@ -176,7 +176,7 @@ public static class HospitalValidation
         Check(transfer.Status == HospitalTransfer.TransferStatus.Transporting && transfer.Destination == zone, "픽업 후 병원 지정");
         Check(route.Status == NavigationRoute.RouteStatus.Ready && route.DestinationLane == zone.Lane && route.DestinationDistance == zone.Distance && route.Points.Count > 0, "환자 경로를 실제 병원 도로 경로로 교체");
         HospitalArrivalZone wrong = Object.Instantiate(zone);
-        wrong.Configure(route.Map, 5);
+        FixedMapScene.PlaceHospital(wrong, route.Map, 5);
         body.position = wrong.HospitalPoint;
         Physics2D.SyncTransforms();
         Check(!transfer.TryArrive(wrong) && arrivals == 0, "다른 병원 영역 거절");
@@ -265,7 +265,7 @@ public static class HospitalValidation
         while (pickup.MoveNext()) yield return null;
         TrafficLane previousLane = zone.Lane;
         int oldMission = transfer.MissionId;
-        Check(route.Map.TryStartNewCity(unchecked(route.Map.Seed + 1), out _), "새 도시 생성");
+        Check(FixedMapScene.ReloadFixture(route.Map, out _), "새 도시 생성");
         Check(!report.IsActive && transfer.Destination == null && zone.Lane != previousLane && zone.IsValidFor(route.Map) && !transfer.TryArrive(zone), "새 도시 병원 재등록 및 이전 참조 무효화");
         pickup = Pickup(report, route, body);
         while (pickup.MoveNext()) yield return null;

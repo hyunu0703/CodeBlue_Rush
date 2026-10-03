@@ -101,12 +101,12 @@ public static class Stage12Validation
         {
             CityMap map = root.AddComponent<CityMap>();
             CitySamples.Configure(map);
-            Require(map.EnsureGenerated(out string error), error ?? "City generation", ref checks);
+            Require(map.Initialize(out string error), error ?? "City generation", ref checks);
             Require(map.SidewalkPathCount > 0, "City sidewalk cache", ref checks);
             SidewalkPath old = map.GetSidewalkPath(0);
             for (int i = 0; i < map.SidewalkPathCount; i++)
                 Require(map.ContainsSidewalkPath(map.GetSidewalkPath(i)), "City sidewalk ownership", ref checks);
-            Require(map.TryStartNewCity(map.Seed + 1, out error), error ?? "City replacement", ref checks);
+            Require(FixedMapScene.ReloadFixture(map, out error), error ?? "City replacement", ref checks);
             Require(!map.ContainsSidewalkPath(old), "Old sidewalk invalidation", ref checks);
         }
         finally { Object.DestroyImmediate(root); }
@@ -137,7 +137,7 @@ public static class Stage12Validation
             GameObject root = new GameObject("Stage12 Runtime Validation");
             playMap = root.AddComponent<CityMap>();
             CitySamples.Configure(playMap);
-            Require(playMap.EnsureGenerated(out string error), error ?? "Play city", ref playStep);
+            Require(playMap.Initialize(out string error), error ?? "Play city", ref playStep);
             GameObject vehicle = Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Ambulance.prefab"));
             vehicle.transform.position = new Vector3(80f, 80f, 0f);
             SirenController siren = vehicle.GetComponent<SirenController>();
@@ -211,7 +211,7 @@ public static class Stage12Validation
                     moved = true;
             Require(moved, "Traffic movement", ref playStep);
             SidewalkPath old = playMap.GetSidewalkPath(0);
-            Require(playMap.TryStartNewCity(playMap.Seed + 1, out string error), error ?? "Play city replacement", ref playStep);
+            Require(FixedMapScene.ReloadFixture(playMap, out string error), error ?? "Play city replacement", ref playStep);
             Require(playCitizens.ActiveCount == 0 && !playMap.ContainsSidewalkPath(old), "Citizen city cleanup", ref playStep);
             Debug.Log("Stage12 play validation passed: " + playStep + " checks");
             SessionState.SetBool(PlayKey, false);
@@ -233,3 +233,4 @@ public static class Stage12Validation
         checks++;
     }
 }
+

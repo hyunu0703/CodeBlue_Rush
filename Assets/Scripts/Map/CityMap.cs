@@ -1,212 +1,112 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>도시 도로의 생성 수명과 Prefab 배치 및 차선 연결 검증을 소유한다</summary>
+/// <summary>Scene에 저장된 고정 도로와 미션 후보를 조회하고 연결 상태를 검증한다</summary>
 [DisallowMultipleComponent]
 public sealed class CityMap : MonoBehaviour
 {
-    [SerializeField] private RoadChunk straight;
-    [SerializeField] private RoadChunk corner;
-    [SerializeField] private RoadChunk tJunction;
-    [SerializeField] private RoadChunk intersection;
-    [SerializeField, Range(5, 24)] private int width = 9;
-    [SerializeField, Range(5, 24)] private int height = 9;
-    [SerializeField, Range(0, 100)] private int density = 35;
+    [SerializeField] private RoadChunk[] fixedRoads = Array.Empty<RoadChunk>();
+    [SerializeField] private TrafficLane[] fixedLanes = Array.Empty<TrafficLane>();
+    [SerializeField] private SidewalkPath[] fixedSidewalks = Array.Empty<SidewalkPath>();
+    [SerializeField] private EnvironmentSlot[] patientPoints = Array.Empty<EnvironmentSlot>();
+    [SerializeField] private CameraTurnZone[] fixedTurnZones = Array.Empty<CameraTurnZone>();
+    [SerializeField, Min(1)] private int width = 9;
+    [SerializeField, Min(1)] private int height = 9;
     [SerializeField, Min(4f)] private float cellSize = 20f;
-    [SerializeField] private bool randomSeedOnStart = true;
-    [SerializeField] private int initialSeed = 12345;
-
-    private GameObject cityRoot;
-    private RoadChunk[] roads;
-    private RoadConnection[,] ports;
-    private TrafficLane[] lanes;
-    private SidewalkPath[] sidewalks = Array.Empty<SidewalkPath>();
-    private HashSet<SidewalkPath> sidewalkSet = new HashSet<SidewalkPath>();
-    private HashSet<TrafficLane> laneSet = new HashSet<TrafficLane>();
+    private readonly HashSet<TrafficLane> laneSet = new HashSet<TrafficLane>();
+    private readonly HashSet<SidewalkPath> sidewalkSet = new HashSet<SidewalkPath>();
     private bool ready;
-    private EnvironmentSlot[] hospitalSlots = Array.Empty<EnvironmentSlot>();
-    private EnvironmentSlot[] incidentSlots = Array.Empty<EnvironmentSlot>();
-    private CameraTurnZone[] turnZones = Array.Empty<CameraTurnZone>();
-    private AmbulanceCamera boundCamera;
-    public int HospitalSlotCount => hospitalSlots.Length;
-    public int IncidentSlotCount => incidentSlots.Length;
-    private Coroutine reconnectRoutine;
-    public CityLayout Layout { get; private set; }
-    public float CellSize { get; private set; }
-    public bool IsReady => ready && isActiveAndEnabled && cityRoot;
-    public int Seed => Layout == null ? initialSeed : Layout.Seed;
-    public int LaneCount => lanes == null ? 0 : lanes.Length;
-    public int SidewalkPathCount => sidewalks.Length;
-    public event Action<CityMap> Generated;
+    public bool IsReady => ready && isActiveAndEnabled;
+    public float CellSize => cellSize;
+    public int Width => width;
+    public int Height => height;
+    public int LaneCount => fixedLanes.Length;
+    public int SidewalkPathCount => fixedSidewalks.Length;
+    public int IncidentSlotCount => patientPoints.Length;
     public event Action StateChanged;
 
-    /// <summary>한 연결 마스크에 대응하는 Prefab과 회전 및 포트 인덱스를 저장한다</summary>
-    private sealed class Variant
-    {
-        internal RoadChunk prefab;
-        internal int rotation;
-        internal int[] portIndices;
-    }
-
-    // 게임 시작 시 한 번만 도시를 준비한다
-    private void Start()
-    {
-        if (!EnsureGenerated(out string error))
-            Debug.LogError(error, this);
-    }
-
-    // 도시를 다시 활성화할 때 기존 인스턴스의 연결만 복구한다
+    // 저장된 참조만 준비하며 도로와 환경 객체를 생성하지 않는다
     private void OnEnable()
     {
-        if (!cityRoot)
-            return;
-        reconnectRoutine = StartCoroutine(Reconnect());
+        Initialize(out _);
     }
 
-    // 자식들의 활성화 콜백이 끝난 다음 기존 그래프를 복구한다
-    private IEnumerator Reconnect()
-    {
-        yield return null;
-        ready = Connect(Layout, ports, out string error) && ValidateCity(Layout, roads, ports, lanes, out error);
-        reconnectRoutine = null;
-        StateChanged?.Invoke();
-        if (!ready)
-            Debug.LogError(error, this);
-    }
-
-    // 비활성 상태에서는 소비자가 도시를 사용하지 못하도록 표시한다
+    // 소비자에게 고정 맵을 일시적으로 사용할 수 없음을 알린다
     private void OnDisable()
     {
-        if (reconnectRoutine != null)
-        {
-            StopCoroutine(reconnectRoutine);
-            reconnectRoutine = null;
-        }
         ready = false;
         StateChanged?.Invoke();
     }
 
-    // 생성기 컴포넌트만 제거되어도 소유한 도시를 정리한다
-    private void OnDestroy()
-    {
-        Release(cityRoot);
-        cityRoot = null;
-    }
-
-    // 이미 생성된 도시는 재사용하고 최초 호출에서만 Seed를 선택한다
-    public bool EnsureGenerated(out string error)
+    // 시작 순서에 의존하지 않도록 명시적으로 캐시를 준비한다
+    public bool Initialize(out string error)
     {
         error = null;
-        if (cityRoot)
+        if (IsReady)
+            return true;
+        if (!isActiveAndEnabled || fixedRoads.Length != width * height || fixedLanes.Length == 0 || !float.IsFinite(cellSize) || cellSize < 4f)
         {
-            if (!IsReady)
-                error = "기존 도시가 활성화되고 연결된 상태가 아닙니다.";
-            return IsReady;
-        }
-        return Build(randomSeedOnStart ? CreateSeed() : initialSeed, out error);
-    }
-
-    // 향후 Game Over 처리자가 새로운 Seed로 도시 교체를 요청한다
-    public bool TryStartNewCity(int seed, out string error)
-    {
-        if (cityRoot && seed == Seed)
-        {
-            error = "새 도시에는 기존 도시와 다른 Seed가 필요합니다.";
+            error = "고정 맵의 도로와 차선 및 격자 참조를 확인하세요.";
             return false;
         }
-        return Build(seed, out error);
+        laneSet.Clear();
+        sidewalkSet.Clear();
+        foreach (TrafficLane lane in fixedLanes)
+        {
+            if (!lane || !laneSet.Add(lane))
+            {
+                error = "고정 맵의 차선이 누락되었거나 중복되었습니다.";
+                return false;
+            }
+        }
+        foreach (SidewalkPath path in fixedSidewalks)
+            if (path)
+                sidewalkSet.Add(path);
+        ready = true;
+        StateChanged?.Invoke();
+        return true;
     }
 
-    // 전역 Unity Random 상태를 변경하지 않고 새 Seed를 발급한다
-    public int CreateSeed()
-    {
-        int seed = Guid.NewGuid().GetHashCode();
-        return seed == Seed ? unchecked(seed + 1) : seed;
-    }
-
-    // 완성된 도시의 도로를 격자 좌표로 직접 조회한다
+    // 고정 격자의 도로를 상수 시간에 조회한다
     public RoadChunk GetRoad(int x, int y)
     {
-        return Layout != null && x >= 0 && y >= 0 && x < Layout.Width && y < Layout.Height ? roads[y * Layout.Width + x] : null;
+        return x >= 0 && y >= 0 && x < width && y < height && y * width + x < fixedRoads.Length ? fixedRoads[y * width + x] : null;
     }
 
-    // 네비게이션 등이 사용할 차선을 생성 순서로 조회한다
+    // 저장된 차선을 인덱스로 조회한다
     public TrafficLane GetLane(int index)
     {
-        return index >= 0 && index < LaneCount ? lanes[index] : null;
+        return index >= 0 && index < fixedLanes.Length ? fixedLanes[index] : null;
     }
 
-    // 현재 도시에서 한 번 수집한 보도 경로를 조회한다
+    // 저장된 보도 경로를 인덱스로 조회한다
     public SidewalkPath GetSidewalkPath(int index)
     {
-        return index >= 0 && index < sidewalks.Length ? sidewalks[index] : null;
+        return index >= 0 && index < fixedSidewalks.Length ? fixedSidewalks[index] : null;
     }
 
-    // 파괴되거나 교체된 도시의 경로를 거부한다
+    // 현재 활성화된 고정 보도인지 확인한다
     public bool ContainsSidewalkPath(SidewalkPath path)
     {
         return IsReady && path && path.isActiveAndEnabled && sidewalkSet.Contains(path);
     }
 
-    // 캐싱한 용도별 Slot을 직접 조회한다
-    public EnvironmentSlot GetHospitalSlot(int index)
-    {
-        return index >= 0 && index < hospitalSlots.Length ? hospitalSlots[index] : null;
-    }
-
-    // 상황보고 후보를 도로변 Slot에서 조회한다
+    // 지정된 환자 후보를 인덱스로 조회한다
     public EnvironmentSlot GetIncidentSlot(int index)
     {
-        return index >= 0 && index < incidentSlots.Length ? incidentSlots[index] : null;
+        return index >= 0 && index < patientPoints.Length ? patientPoints[index] : null;
     }
 
-    // 현재 도시의 캐싱된 영역에만 카메라를 명시적으로 연결한다
+    // Scene에 미리 배치한 회전 영역에 카메라를 연결한다
     public void BindCamera(AmbulanceCamera camera)
     {
-        boundCamera = camera;
-        foreach (CameraTurnZone zone in turnZones)
+        foreach (CameraTurnZone zone in fixedTurnZones)
             if (zone)
                 zone.Bind(camera);
     }
 
-    // 완성된 도로 이후에 환경을 배치하고 보도 끝점을 선형 시간에 연결한다
-    private static void Populate(GameObject root, int seed, out EnvironmentSlot[] hospitals, out EnvironmentSlot[] incidents, out SidewalkPath[] paths)
-    {
-        var hospitalList = new List<EnvironmentSlot>();
-        var incidentList = new List<EnvironmentSlot>();
-        uint state = unchecked((uint)seed) ^ 0xE7193Bu;
-        foreach (EnvironmentSlot slot in root.GetComponentsInChildren<EnvironmentSlot>())
-        {
-            slot.Populate(ref state);
-            if ((slot.Uses & EnvironmentSlot.Usage.Hospital) != 0)
-                hospitalList.Add(slot);
-            if ((slot.Uses & EnvironmentSlot.Usage.Incident) != 0)
-                incidentList.Add(slot);
-        }
-        hospitals = hospitalList.ToArray();
-        incidents = incidentList.ToArray();
-        var ends = new Dictionary<Vector3Int, List<SidewalkPath>>();
-        paths = root.GetComponentsInChildren<SidewalkPath>();
-        foreach (SidewalkPath path in paths)
-        {
-            for (int i = 0; i < path.PointCount; i++)
-            {
-                Vector3Int key = Vector3Int.RoundToInt(path.GetPoint(i) * 100f);
-                if (!ends.TryGetValue(key, out List<SidewalkPath> touching))
-                    ends.Add(key, touching = new List<SidewalkPath>());
-                foreach (SidewalkPath other in touching)
-                {
-                    path.Link(other);
-                    other.Link(path);
-                }
-                touching.Add(path);
-            }
-        }
-    }
-
-    // 현재 도시가 소유하고 활성화된 차선인지 상수 시간에 확인한다
+    // 현재 활성화된 고정 차선인지 상수 시간에 확인한다
     public bool ContainsLane(TrafficLane lane)
     {
         return IsReady && lane && lane.isActiveAndEnabled && laneSet.Contains(lane);
@@ -220,7 +120,7 @@ public sealed class CityMap : MonoBehaviour
         if (!IsReady || !float.IsFinite(position.x) || !float.IsFinite(position.y) || !float.IsFinite(position.z) || !float.IsFinite(maxOffset) || maxOffset < 0f || maxOffset > CellSize * 0.5f)
             return false;
         Vector3 local = transform.InverseTransformPoint(position);
-        if (local.x < -CellSize || local.y < -CellSize || local.x > Layout.Width * CellSize || local.y > Layout.Height * CellSize)
+        if (local.x < -CellSize || local.y < -CellSize || local.x > width * CellSize || local.y > height * CellSize)
             return false;
         int cx = Mathf.RoundToInt(local.x / CellSize);
         int cy = Mathf.RoundToInt(local.y / CellSize);
@@ -246,217 +146,22 @@ public sealed class CityMap : MonoBehaviour
         return lane;
     }
 
-    // 임시 도시를 완전히 검증한 뒤 기존 도시와 교체한다
-    private bool Build(int seed, out string error)
-    {
-        error = null;
-        if (!isActiveAndEnabled || transform.lossyScale != Vector3.one || Vector3.Dot(transform.forward, Vector3.forward) < 0.9999f)
-        {
-            error = "CityMap은 활성 상태, 월드 스케일 1, XY 평면이어야 합니다.";
-            return false;
-        }
-        GameObject candidate = null;
-        try
-        {
-            CityLayout layout = new CityLayout(seed, width, height, density);
-            Variant[] catalog = BuildCatalog();
-            candidate = new GameObject("City_" + seed);
-            candidate.transform.SetParent(transform, false);
-            RoadChunk[] built = new RoadChunk[width * height];
-            RoadConnection[,] builtPorts = new RoadConnection[width * height, 4];
-            List<TrafficLane> builtLanes = new List<TrafficLane>();
-            for (int y = 0; y < height; y++)
-            {
-                for (int x = 0; x < width; x++)
-                {
-                    int mask = layout.GetMask(x, y);
-                    if (mask == 0)
-                        continue;
-                    Variant variant = catalog[mask];
-                    if (variant == null)
-                        throw new InvalidOperationException("연결 마스크에 맞는 도로 Prefab이 없습니다: " + mask);
-                    RoadChunk road = Instantiate(variant.prefab, candidate.transform, false);
-                    road.name = x + "_" + y + "_" + variant.prefab.name;
-                    road.transform.localPosition = new Vector3(x * cellSize, y * cellSize, 0f);
-                    road.transform.localRotation = Quaternion.Euler(0f, 0f, -90f * variant.rotation);
-                    int index = y * width + x;
-                    built[index] = road;
-                    for (int d = 0; d < 4; d++)
-                    {
-                        if (variant.portIndices[d] >= 0)
-                            builtPorts[index, d] = road.GetConnection(variant.portIndices[d]);
-                    }
-                    for (int i = 0; i < road.LaneCount; i++)
-                        builtLanes.Add(road.GetLane(i));
-                }
-            }
-            TrafficLane[] laneArray = builtLanes.ToArray();
-            if (!Connect(layout, builtPorts, out error) || !ValidateCity(layout, built, builtPorts, laneArray, out error))
-                throw new InvalidOperationException(error);
 
-            Populate(candidate, seed, out EnvironmentSlot[] hospitals, out EnvironmentSlot[] incidents, out SidewalkPath[] paths);
-            CameraTurnZone[] zones = candidate.GetComponentsInChildren<CameraTurnZone>();
-            if (!boundCamera && Camera.main)
-                boundCamera = Camera.main.GetComponent<AmbulanceCamera>();
-
-            GameObject previous = cityRoot;
-            cityRoot = candidate;
-            roads = built;
-            ports = builtPorts;
-            lanes = laneArray;
-            sidewalks = paths;
-            sidewalkSet = new HashSet<SidewalkPath>(paths);
-            hospitalSlots = hospitals;
-            incidentSlots = incidents;
-            turnZones = zones;
-            BindCamera(boundCamera);
-            laneSet = new HashSet<TrafficLane>(laneArray);
-            Layout = layout;
-            CellSize = cellSize;
-            ready = true;
-            candidate = null;
-            StateChanged?.Invoke();
-            Release(previous);
-        }
-        catch (Exception exception)
-        {
-            Release(candidate);
-            error = "도시 생성 실패: " + exception.Message;
-            return false;
-        }
-        Generated?.Invoke(this);
-        return true;
-    }
-
-    // Prefab 포트의 규격을 검사하고 16개 방향 마스크 조회표를 만든다
-    private Variant[] BuildCatalog()
-    {
-        if (float.IsNaN(cellSize) || float.IsInfinity(cellSize) || cellSize < 4f)
-            throw new InvalidOperationException("Cell Size가 올바르지 않습니다.");
-        Variant[] catalog = new Variant[16];
-        RoadChunk[] prefabs = { straight, corner, tJunction, intersection };
-        int[] expected = { 5, 6, 7, 15 };
-        for (int p = 0; p < prefabs.Length; p++)
-        {
-            RoadChunk prefab = prefabs[p];
-            if (!prefab || !prefab.gameObject.activeSelf || prefab.transform.localScale != Vector3.one)
-                throw new InvalidOperationException("도로 Prefab 누락 또는 활성 상태/스케일 오류입니다: " + p);
-            if (!prefab.Validate(out string error))
-                throw new InvalidOperationException(prefab.name + ": " + error);
-            int[] indices = { -1, -1, -1, -1 };
-            int mask = 0;
-            for (int i = 0; i < prefab.ConnectionCount; i++)
-            {
-                RoadConnection port = prefab.GetConnection(i);
-                Vector3 point = prefab.transform.InverseTransformPoint(port.Position);
-                Vector3 direction = prefab.transform.InverseTransformDirection(port.Outward);
-                int matched = -1;
-                for (int d = 0; d < 4; d++)
-                {
-                    Vector3 axis = (Vector2)CityLayout.Direction(d);
-                    if (Vector3.Distance(point, axis * cellSize * 0.5f) < RoadConnection.PositionTolerance && Vector3.Dot(direction, axis) > 0.999f)
-                        matched = d;
-                }
-                if (matched < 0 || indices[matched] >= 0 || port.HasTarget || !port.enabled || !port.gameObject.activeSelf)
-                    throw new InvalidOperationException(prefab.name + ": 포트는 셀 변 중앙에 하나씩 있어야 하며 Target은 비워야 합니다.");
-                indices[matched] = i;
-                mask |= 1 << matched;
-            }
-            bool correctShape = false;
-            for (int r = 0; r < 4; r++)
-            {
-                int rotated = 0;
-                int[] rotatedIndices = { -1, -1, -1, -1 };
-                for (int d = 0; d < 4; d++)
-                {
-                    if ((mask & (1 << d)) == 0)
-                        continue;
-                    int rotatedDirection = (d + r) % 4;
-                    rotated |= 1 << rotatedDirection;
-                    rotatedIndices[rotatedDirection] = indices[d];
-                }
-                if (rotated == expected[p])
-                    correctShape = true;
-                catalog[rotated] = new Variant { prefab = prefab, rotation = r, portIndices = rotatedIndices };
-            }
-            if (!correctShape)
-                throw new InvalidOperationException(prefab.name + ": Inspector의 도로 종류와 포트 방향이 일치하지 않습니다.");
-        }
-        return catalog;
-    }
-
-    // 북쪽과 동쪽 이웃만 처리하여 각 도로 접속을 한 번씩 연결한다
-    private static bool Connect(CityLayout layout, RoadConnection[,] points, out string error)
-    {
-        error = null;
-        for (int y = 0; y < layout.Height; y++)
-        {
-            for (int x = 0; x < layout.Width; x++)
-            {
-                for (int d = 0; d < 2; d++)
-                {
-                    RoadConnection port = points[y * layout.Width + x, d];
-                    if (!port)
-                        continue;
-                    Vector2Int delta = CityLayout.Direction(d);
-                    int nx = x + delta.x;
-                    int ny = y + delta.y;
-                    if (nx >= layout.Width || ny >= layout.Height)
-                    {
-                        error = "도시 경계 밖으로 열린 도로입니다.";
-                        return false;
-                    }
-                    if (!port.TryConnect(points[ny * layout.Width + nx, d + 2], out error))
-                        return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    // 현재 도시의 경계와 방향 그래프가 여전히 완결되었는지 검사한다
+    // 편집 및 명시적 검증 요청에서만 고정 도로 그래프를 검사한다
     public bool Validate(out string error)
     {
-        error = "생성된 도시가 없습니다.";
-        bool previous = ready;
-        ready = isActiveAndEnabled && cityRoot && ValidateCity(Layout, roads, ports, lanes, out error);
-        if (previous != ready)
-            StateChanged?.Invoke();
-        return ready;
+        if (!Initialize(out error))
+            return false;
+        foreach (RoadChunk road in fixedRoads)
+            if (road && !road.Validate(out error))
+                return false;
+        return ValidateLanes(fixedLanes, out error);
     }
 
-    // 모든 도로 접속과 차선의 정방향 및 역방향 도달 가능성을 검사한다
-    private static bool ValidateCity(CityLayout layout, RoadChunk[] chunks, RoadConnection[,] points, TrafficLane[] paths, out string error)
+    // 저장된 후속 차선의 기하 연결과 양방향 도달 가능성을 검사한다
+    private static bool ValidateLanes(TrafficLane[] paths, out string error)
     {
         error = null;
-        for (int y = 0; y < layout.Height; y++)
-        {
-            for (int x = 0; x < layout.Width; x++)
-            {
-                int index = y * layout.Width + x;
-                if (layout.GetMask(x, y) == 0)
-                    continue;
-                if (!chunks[index] || !chunks[index].Validate(out error))
-                {
-                    error = error ?? "도로 인스턴스가 누락되었습니다.";
-                    return false;
-                }
-                for (int d = 0; d < 4; d++)
-                {
-                    if ((layout.GetMask(x, y) & (1 << d)) == 0)
-                        continue;
-                    Vector2Int delta = CityLayout.Direction(d);
-                    int nx = x + delta.x;
-                    int ny = y + delta.y;
-                    RoadConnection port = points[index, d];
-                    if (!port || !port.isActiveAndEnabled || nx < 0 || ny < 0 || nx >= layout.Width || ny >= layout.Height || !port.ConnectedTo || port.ConnectedTo != points[ny * layout.Width + nx, (d + 2) % 4] || port.ConnectedTo.ConnectedTo != port)
-                    {
-                        error = "미연결 또는 잘못된 이웃 도로가 있습니다: " + x + ", " + y;
-                        return false;
-                    }
-                }
-            }
-        }
         Dictionary<TrafficLane, int> indices = new Dictionary<TrafficLane, int>(paths.Length);
         List<int>[] forward = new List<int>[paths.Length];
         List<int>[] backward = new List<int>[paths.Length];
@@ -521,15 +226,5 @@ public sealed class CityMap : MonoBehaviour
         return count == edges.Length;
     }
 
-    // 소유한 도시를 즉시 비활성화하고 실행 환경에 맞게 해제한다
-    private static void Release(GameObject root)
-    {
-        if (!root)
-            return;
-        root.SetActive(false);
-        if (Application.isPlaying)
-            Destroy(root);
-        else
-            DestroyImmediate(root);
-    }
+
 }

@@ -101,8 +101,6 @@ public static class SignalValidation
         var scene = EditorSceneManager.OpenScene("Assets/Scenes/LaneChangeDemo.unity");
         CityMap map = Object.FindFirstObjectByType<CityMap>();
         SerializedObject data = new SerializedObject(map);
-        data.FindProperty("randomSeedOnStart").boolValue = false;
-        data.FindProperty("initialSeed").intValue = 12345;
         data.ApplyModifiedPropertiesWithoutUndo();
         EditorSceneManager.SaveScene(scene, "Assets/Scenes/TrafficSignalDemo.unity");
         AssetDatabase.SaveAssets();
@@ -356,7 +354,7 @@ public static class SignalValidation
         }
         Check(phases.Count == 5, "한 루틴에서 네 방향 및 전적색 순환, 동시 충돌 Green 없음");
         TrafficLane old = four.GetZone(0).Lane;
-        Check(map.TryStartNewCity(map.Seed + 1, out _), "새 도시 생성 유지");
+        Check(FixedMapScene.ReloadFixture(map, out _), "새 도시 생성 유지");
         yield return null;
         Check(!TrafficSignalController.ForLane(old) && spawner.ActiveCount == 0, "이전 도시 신호 및 차량 점유 참조 정리");
         spawner.enabled = false;

@@ -34,10 +34,10 @@ public static class NavigationValidation
             NavigationRoute route = source.AddComponent<NavigationRoute>();
             route.Configure(map, source.transform);
             Check(!route.Recalculate() && route.Status == NavigationRoute.RouteStatus.NoDestination, "목적지 없음");
-            Check(!route.SetDestination(Vector3.zero) && route.Status == NavigationRoute.RouteStatus.MapUnavailable, "생성 전 요청");
-            for (int seed = -3; seed <= 3; seed++)
+            Check(map.Initialize(out _), "고정 맵 초기화");
+            for (int cycle = 0; cycle < 2; cycle++)
             {
-                Check(map.TryStartNewCity(seed, out string error), "Seed 생성: " + error);
+                Check(FixedMapScene.ReloadFixture(map, out string error), "고정 World 로드: " + error);
                 TrafficLane start = map.GetLane(0);
                 start.TrySample(start.Length * 0.4f, out Vector3 position, out _);
                 source.transform.position = position;
@@ -45,9 +45,9 @@ public static class NavigationValidation
                 for (int target = 0; target < map.LaneCount; target += Math.Max(1, map.LaneCount / 12))
                 {
                     TrafficLane end = map.GetLane(target);
-                    Check(route.SetDestination(end, end.Length * 0.6f), "랜덤 도시 목적지 경로");
+                    Check(route.SetDestination(end, end.Length * 0.6f), "고정 맵 목적지 경로");
                     VerifyPath(route, map);
-                    Check(map.GetRoad(0, 0) == first && map.Seed == seed, "목적지 변경 시 도시 보존");
+                    Check(map.GetRoad(0, 0) == first, "목적지 변경 시 도시 보존");
                 }
                 Check(route.SetDestination(position) && route.Lanes.Count == 1 && route.Points.Count == 1, "현재 위치와 같은 목적지");
                 Check(route.SetDestination(start, start.Length * 0.2f) && route.Lanes.Count > 1, "뒤쪽 목적지는 실제 순환 경로");
@@ -95,7 +95,7 @@ public static class NavigationValidation
             Check(!route.Recalculate() && route.Status == NavigationRoute.RouteStatus.NoPath && route.Points.Count == 0, "단절 경로 안전 실패");
             Check(!route.SetDestination(origin, origin.Length * 0.2f), "순환 없는 일방향 차선 역주행 차단");
             Check(route.SetDestination(origin, origin.Length * 0.8f) && route.Lanes.Count == 1, "단절 차선 내부 정방향 허용");
-            Check(map.TryStartNewCity(45, out _), "도시 교체");
+            Check(FixedMapScene.ReloadFixture(map, out _), "도시 교체");
             Check(route.Status == NavigationRoute.RouteStatus.InvalidDestination && route.Lanes.Count == 0, "이전 도시 차선 목적지 거절");
             origin = map.GetLane(0);
             origin.TrySample(origin.Length * 0.5f, out from, out _);

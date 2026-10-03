@@ -9,7 +9,7 @@ public sealed class SidewalkPath : MonoBehaviour
     [SerializeField] private Vector2[] points = Array.Empty<Vector2>();
     [SerializeField] private VehicleStopZone crosswalk;
     [SerializeField] private SidewalkPath across;
-    private readonly List<SidewalkPath> next = new List<SidewalkPath>();
+    [SerializeField] private List<SidewalkPath> next = new List<SidewalkPath>();
     public RoadChunk Road => road;
     public int PointCount => points == null ? 0 : points.Length;
     public int NextCount => next.Count;

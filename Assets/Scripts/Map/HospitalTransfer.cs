@@ -15,7 +15,7 @@ public sealed class HospitalTransfer : MonoBehaviour
     private PatientECG subscribedECG;
     private CityMap subscribedMap;
     private HospitalArrivalZone[] subscribedZones;
-    private CityLayout layout;
+    private CityMap layout;
     private TrafficLane destinationLane;
     private float destinationDistance;
     private bool selecting;
@@ -119,7 +119,7 @@ public sealed class HospitalTransfer : MonoBehaviour
     // 도시가 바뀌거나 사용 불가능하면 이전 병원을 정리한다
     private void HandleMap()
     {
-        if (layout != null && (!navigation || !navigation.Map || !navigation.Map.IsReady || layout != navigation.Map.Layout))
+        if (layout != null && (!navigation || !navigation.Map || !navigation.Map.IsReady || layout != navigation.Map))
             ResetTransfer();
     }
 
@@ -148,7 +148,7 @@ public sealed class HospitalTransfer : MonoBehaviour
             Status = TransferStatus.PatientDied;
             return false;
         }
-        layout = navigation.Map.Layout;
+        layout = navigation.Map;
         Status = TransferStatus.NoHospital;
         selecting = true;
         try
@@ -165,7 +165,7 @@ public sealed class HospitalTransfer : MonoBehaviour
                         break;
                     continue;
                 }
-                if (!report.IsPatientOnBoard || report.MissionId != MissionId || layout != navigation.Map.Layout)
+                if (!report.IsPatientOnBoard || report.MissionId != MissionId || layout != navigation.Map)
                     return false;
                 Destination = zone;
                 destinationLane = zone.Lane;
@@ -191,7 +191,7 @@ public sealed class HospitalTransfer : MonoBehaviour
     // 살아 있는 현재 환자와 올바른 현장만 한 번 도착 확정한다
     public bool TryArrive(HospitalArrivalZone zone)
     {
-        if (!isActiveAndEnabled || Status != TransferStatus.Transporting || !report || !report.IsActive || !report.IsPatientOnBoard || report.MissionId != MissionId || !navigation || !navigation.isActiveAndEnabled || navigation.Status != NavigationRoute.RouteStatus.Ready || !ecg || !ecg.isActiveAndEnabled || !ecg.HasPatient || ecg.Value <= 0f || !zone || zone != Destination || zone.Lane != destinationLane || !zone.IsValidFor(navigation.Map) || layout != navigation.Map.Layout || !zone.Contains(ambulance))
+        if (!isActiveAndEnabled || Status != TransferStatus.Transporting || !report || !report.IsActive || !report.IsPatientOnBoard || report.MissionId != MissionId || !navigation || !navigation.isActiveAndEnabled || navigation.Status != NavigationRoute.RouteStatus.Ready || !ecg || !ecg.isActiveAndEnabled || !ecg.HasPatient || ecg.Value <= 0f || !zone || zone != Destination || zone.Lane != destinationLane || !zone.IsValidFor(navigation.Map) || layout != navigation.Map || !zone.Contains(ambulance))
             return false;
         Status = TransferStatus.Arrived;
         ecg.StopDecay();

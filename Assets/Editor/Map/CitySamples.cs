@@ -65,7 +65,7 @@ public static class CitySamples
             {
                 if ((mask & (1 << d)) == 0)
                     continue;
-                Vector2 outward = CityLayout.Direction(d);
+                Vector2 outward = CitySamples.Direction(d);
                 Vector2 right = new Vector2(outward.y, -outward.x);
                 entries[d] = CreateLane(root.transform, "Entry" + d, new[] { outward * 10f - right, outward * 4f - right });
                 exits[d] = CreateLane(root.transform, "Exit" + d, new[] { outward * 4f + right, outward * 10f + right });
@@ -147,7 +147,7 @@ public static class CitySamples
         {
             if ((mask & (1 << d)) == 0)
                 continue;
-            Vector2 axis = CityLayout.Direction(d);
+            Vector2 axis = CitySamples.Direction(d);
             Vector2 right = new Vector2(axis.y, -axis.x);
             Vector2[] start = { axis * 4f - right * 2f, axis * 10f - right * 2f };
             Vector2[] end = { axis * 4f + right * 2f, axis * 10f + right * 2f };
@@ -187,19 +187,23 @@ public static class CitySamples
         PrefabUtility.SaveAsPrefabAsset(root, path);
     }
 
-    // 예제 Prefab 참조와 재현 가능한 초기 Seed를 설정한다
+    // 검증과 데모에서 저장된 고정 World를 사용한다
     internal static void Configure(CityMap map)
     {
-        SerializedObject data = new SerializedObject(map);
-        string[] fields = { "straight", "corner", "tJunction", "intersection" };
-        string[] names = { "Straight", "Corner", "TJunction", "Intersection" };
-        for (int i = 0; i < fields.Length; i++)
+        FixedMapScene.AttachWorld(map);
+    }
+
+    // 도로 자산 편집에 사용하는 북동남서 방향을 반환한다
+    internal static Vector2Int Direction(int index)
+    {
+        switch (index)
         {
-            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(Folder + "/" + names[i] + ".prefab");
-            data.FindProperty(fields[i]).objectReferenceValue = prefab ? prefab.GetComponent<RoadChunk>() : null;
+            case 0: return Vector2Int.up;
+            case 1: return Vector2Int.right;
+            case 2: return Vector2Int.down;
+            case 3: return Vector2Int.left;
+            default: throw new ArgumentOutOfRangeException(nameof(index));
         }
-        data.FindProperty("randomSeedOnStart").boolValue = false;
-        data.ApplyModifiedPropertiesWithoutUndo();
     }
 
     // Play에서 한 번 생성되는 별도 도시 데모 씬을 만든다
@@ -214,7 +218,6 @@ public static class CitySamples
     {
         if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
             return null;
-        CreatePrefabs();
         Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
         CityMap map = new GameObject("CityMap").AddComponent<CityMap>();
         Configure(map);

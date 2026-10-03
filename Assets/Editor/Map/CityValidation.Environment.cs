@@ -23,72 +23,6 @@ public static partial class CityValidation
     private static double environmentStart;
     private static Type existingValidation;
 
-    // 기존 도로 도시 네비게이션 보고 검증을 동일 데이터 계약으로 실행한다
-    public static void RunEnvironment()
-    {
-        CreateEnvironmentPrefabs();
-        PatientReportValidation.Run();
-        checks = 0;
-        GameObject root = new GameObject("Environment validation");
-        GameObject copyRoot = new GameObject("Environment replica");
-        try
-        {
-            CityMap map = root.AddComponent<CityMap>();
-            CityMap copy = copyRoot.AddComponent<CityMap>();
-            CitySamples.Configure(map);
-            CitySamples.Configure(copy);
-            Check(map.EnsureGenerated(out _) && copy.EnsureGenerated(out _), "환경 도시 생성");
-            string signature = EnvironmentSignature(map);
-            Check(signature == EnvironmentSignature(copy), "동일 Seed 환경 재현");
-            Check(copy.TryStartNewCity(copy.Seed + 1, out _) && signature != EnvironmentSignature(copy), "다른 Seed 배치 변화");
-            Check(map.HospitalSlotCount > 0 && map.IncidentSlotCount > 0, "유효 병원 사고 Slot 확보");
-            foreach (EnvironmentSlot slot in root.GetComponentsInChildren<EnvironmentSlot>())
-            {
-                if (slot.Lane)
-                {
-                    Check(slot.Road.ConnectionCount == 2 && slot.IsValidFor(map, slot.Uses), "교차로 내부 후보 제외 및 차선 참조");
-                    slot.Lane.TrySample(slot.Distance, out Vector3 access, out _);
-                    Check(Vector3.Distance(access, slot.transform.position) < 2f, "도로 접근 가능한 Slot 거리");
-                }
-                if (slot.Uses == EnvironmentSlot.Usage.Building)
-                    for (int i = 0; i < slot.Road.LaneCount; i++)
-                    {
-                        slot.Road.GetLane(i).TryProject(slot.transform.position, out _, out float offset);
-                        Check(offset > 16f, "건물 배치 영역과 도로 분리");
-                    }
-            }
-            int crossRoad = 0;
-            foreach (SidewalkPath path in root.GetComponentsInChildren<SidewalkPath>())
-            {
-                Check(path.Road && path.PointCount >= 2 && path.NextCount > 0, "보도 소유권 Point 및 연결");
-                for (int i = 0; i < path.NextCount; i++)
-                    if (path.GetNext(i).Road != path.Road) crossRoad++;
-                if (path.Crosswalk) Check(path.Across && path.Across.Crosswalk == path.Crosswalk, "기존 횡단보도 양쪽 연결 데이터");
-            }
-            Check(crossRoad > 0, "인접 RoadChunk 보도 연결");
-            EnvironmentSlot old = map.GetIncidentSlot(0);
-            Check(map.TryStartNewCity(map.Seed + 1, out _) && !old, "도시 교체 시 이전 Slot 파괴");
-            Debug.Log("Environment data validation passed: " + checks + " checks");
-        }
-        finally
-        {
-            Object.DestroyImmediate(root);
-            Object.DestroyImmediate(copyRoot);
-        }
-    }
-
-    // 위치와 선택된 Placeholder 이름으로 재현성을 비교한다
-    private static string EnvironmentSignature(CityMap map)
-    {
-        StringBuilder value = new StringBuilder();
-        foreach (EnvironmentSlot slot in map.GetComponentsInChildren<EnvironmentSlot>())
-        {
-            value.Append(slot.transform.position).Append(slot.Uses);
-            if (slot.transform.childCount > 0) value.Append(slot.transform.GetChild(0).name);
-        }
-        return value.ToString();
-    }
-
     // 기존 검증의 Scene 생성 단계를 건너뛰고 저장된 Scene에서 Play만 실행한다
     public static void RunExistingPlay()
     {
@@ -336,7 +270,7 @@ public static partial class CityValidation
         Check((CameraTurnZone)active.GetValue(camera) == adjacent, "연속 Corner에서 이전 Exit 무시");
         camera.ExitTurnZone(adjacent);
         camera.EnterTurnZone(generated);
-        Check(map.TryStartNewCity(map.Seed + 1, out _), "새 Seed 도시 생성");
+        Check(FixedMapScene.ReloadFixture(map, out _), "고정 World 검증용 재로드");
         yield return null;
         Check(!generated && !(CameraTurnZone)active.GetValue(camera), "이전 도시 활성 Corner 참조 정리");
         foreach (CameraTurnZone zone in map.GetComponentsInChildren<CameraTurnZone>())
@@ -395,7 +329,7 @@ public static partial class CityValidation
         Check(!report.Patient.TryGetPose(out _, out _), "비활성 사고 Slot 거절");
         old.enabled = true;
         camera.EnterTurnZone(first);
-        Check(map.TryStartNewCity(map.Seed + 1, out _), "새 도시 교체");
+        Check(FixedMapScene.ReloadFixture(map, out _), "새 도시 교체");
         yield return null;
         Check(!old && !first && !report.IsActive && label.text == string.Empty, "이전 Slot Zone 미션 UI 참조 정리");
         Check(!((CameraTurnZone)typeof(AmbulanceCamera).GetField("activeZone", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(camera)), "이전 카메라 영역 해제");
@@ -589,7 +523,7 @@ public static partial class CityValidation
             Vector2 axis = road.transform.InverseTransformDirection(port.Outward);
             Vector2 right = new Vector2(axis.y, -axis.x);
             for (int d = 0; d < 4; d++)
-                if (Vector2.Dot(axis, CityLayout.Direction(d)) > 0.99f) open[d] = true;
+                if (Vector2.Dot(axis, CitySamples.Direction(d)) > 0.99f) open[d] = true;
             SidewalkPath a = Walk(road, parent, prefab, axis * 10f - right * 5f, axis * 5f - right * 5f);
             SidewalkPath b = Walk(road, parent, prefab, axis * 10f + right * 5f, axis * 5f + right * 5f);
             if (signal)
@@ -606,7 +540,7 @@ public static partial class CityValidation
         for (int d = 0; d < 4; d++)
         {
             if (open[d]) continue;
-            Vector2 axis = CityLayout.Direction(d);
+            Vector2 axis = CitySamples.Direction(d);
             Vector2 right = new Vector2(axis.y, -axis.x);
             Walk(road, parent, prefab, axis * 5f - right * 5f, axis * 5f + right * 5f);
         }

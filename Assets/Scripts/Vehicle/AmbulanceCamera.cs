@@ -17,6 +17,23 @@ public class AmbulanceCamera : MonoBehaviour
     private float targetAngle;
     private bool followRotation;
 
+    // 미션 복귀 시 이전 회전 영역과 보간 속도를 제거한다
+    public void ResetFollow()
+    {
+        activeZone = null;
+        followRotation = false;
+        moveVelocity = Vector3.zero;
+        rotateVelocity = 0f;
+        targetAngle = target ? Mathf.Round(target.rotation / 90f) * 90f : 0f;
+        transform.rotation = Quaternion.Euler(0f, 0f, targetAngle);
+        if (target)
+        {
+            Vector3 position = target.transform.position + transform.up * baseOffset;
+            position.z = transform.position.z;
+            transform.position = position;
+        }
+    }
+
     // 현재 카메라 각도를 초기 고정 방향으로 저장한다
     private void Awake()
     {

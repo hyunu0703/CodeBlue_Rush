@@ -244,7 +244,7 @@ public static class PatientPickupValidation
         until = Time.time + 3f;
         while (!pickup.IsBoarding && Time.time < until) yield return null;
         Check(pickup.IsBoarding, "새 미션 픽업 시작: vehicle=" + body.position + ", site=" + pickup.transform.position + ", velocity=" + body.linearVelocity + ", active=" + report.IsActive + ", actors=" + patient.gameObject.activeInHierarchy + "/" + medic.gameObject.activeInHierarchy + ", error=" + pickup.Error);
-        Check(route.Map.TryStartNewCity(618, out _), "이동 중 새 도시 생성");
+        Check(FixedMapScene.ReloadFixture(route.Map, out _), "이동 중 새 도시 생성");
         Check(!report.IsActive && !pickup.IsBoarding && !patient.gameObject.activeSelf && !medic.gameObject.activeSelf, "이전 도시 현장과 픽업 정리");
         NavigationEditor.Preview(route);
         route.ClearDestination();

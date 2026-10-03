@@ -27,7 +27,7 @@ public sealed class TrafficSpawner : MonoBehaviour
     private CitizenSpawner citizens;
     private ContactFilter2D filter;
     private CityMap subscribedMap;
-    private CityLayout layout;
+    private CityMap layout;
     private Coroutine routine;
     private uint random;
     public CityMap Map => map;
@@ -105,11 +105,11 @@ public sealed class TrafficSpawner : MonoBehaviour
     // 도시가 교체되면 이전 차량을 즉시 풀로 돌려보낸다
     private void HandleMap()
     {
-        if (!map || !map.IsReady || layout != map.Layout)
+        if (!map || !map.IsReady || layout != map)
         {
             ClearVehicles();
-            layout = map && map.IsReady ? map.Layout : null;
-            random = map ? unchecked((uint)map.Seed) ^ 0xA37F81u : 1u;
+            layout = map && map.IsReady ? map : null;
+            random = unchecked((uint)System.Guid.NewGuid().GetHashCode());
         }
     }
 
@@ -126,7 +126,7 @@ public sealed class TrafficSpawner : MonoBehaviour
         return index >= 0 && index < active.Count ? active[index] : null;
     }
 
-    // Seed 기반 난수 진행을 다른 시스템과 분리한다
+    // 콘텐츠 난수 진행을 다른 시스템과 분리한다
     private int Next(int count)
     {
         random = unchecked(random * 1664525u + 1013904223u);
@@ -175,7 +175,7 @@ public sealed class TrafficSpawner : MonoBehaviour
         return false;
     }
 
-    // 차선 변경 판단의 확률을 도시 Seed 난수 진행에서 얻는다
+    // 차선 변경 판단의 확률을 콘텐츠 난수 진행에서 얻는다
     internal bool Roll(float chance)
     {
         return chance > 0f && (chance >= 1f || Next(100000) < chance * 100000f);

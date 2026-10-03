@@ -20,7 +20,7 @@ public sealed class CitizenSpawner : MonoBehaviour
     private readonly Collider2D[] hits = new Collider2D[32];
     private SirenController siren;
     private CityMap subscribedMap;
-    private CityLayout layout;
+    private CityMap layout;
     private Coroutine routine;
     private uint random;
     internal CityMap Map => map;
@@ -77,11 +77,11 @@ public sealed class CitizenSpawner : MonoBehaviour
     // 도시가 비활성화되거나 교체될 때 이전 시민을 즉시 정리한다
     private void HandleMap()
     {
-        if (!map || !map.IsReady || layout != map.Layout)
+        if (!map || !map.IsReady || layout != map)
         {
             ClearCitizens();
-            layout = map && map.IsReady ? map.Layout : null;
-            random = map ? unchecked((uint)map.Seed) ^ 0xC17593u : 1u;
+            layout = map && map.IsReady ? map : null;
+            random = unchecked((uint)System.Guid.NewGuid().GetHashCode());
         }
     }
 
@@ -91,7 +91,7 @@ public sealed class CitizenSpawner : MonoBehaviour
             Release(active[active.Count - 1]);
     }
 
-    // 도시 Seed와 분리된 생성기 난수를 사용한다
+    // 콘텐츠와 분리된 생성기 난수를 사용한다
     internal int Next(int count)
     {
         random = unchecked(random * 1664525u + 1013904223u);

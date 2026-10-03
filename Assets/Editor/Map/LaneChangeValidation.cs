@@ -127,7 +127,7 @@ public static class LaneChangeValidation
         var scene = EditorSceneManager.OpenScene("Assets/Scenes/TrafficDemo.unity");
         CityMap map = Object.FindFirstObjectByType<CityMap>();
         SerializedObject data = new SerializedObject(map);
-        data.FindProperty("straight").objectReferenceValue = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/City/PassingStraight.prefab").GetComponent<RoadChunk>();
+        FixedMapScene.AttachWorld(map);
         data.ApplyModifiedPropertiesWithoutUndo();
         EditorSceneManager.SaveScene(scene, "Assets/Scenes/LaneChangeDemo.unity");
     }

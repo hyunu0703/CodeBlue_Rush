@@ -28,9 +28,8 @@ public static class MapAssetStage4
         CreateWater();
         CreateCoast();
         CreateRocks();
-        ConnectScene();
         AssetDatabase.SaveAssets();
-        Debug.Log("STAGE4_APPLIED: 지형 재사용 Prefab 및 Gameplay CityTerrain 연결 완료");
+        Debug.Log("STAGE4_APPLIED: 지형 재사용 Prefab 및 Gameplay 자산 작성 완료");
     }
 
     // 새 이미지에만 PPU와 최소 해상도 및 WebGL 압축을 적용한다
@@ -171,35 +170,6 @@ public static class MapAssetStage4
             }
             finally { Object.DestroyImmediate(root); }
         }
-    }
-
-    // 기존 Scene의 생성기를 그대로 참조하는 표시 컴포넌트 하나만 추가한다
-    private static void ConnectScene()
-    {
-        const string path = "Assets/Scenes/Gameplay.unity";
-        Scene scene = SceneManager.GetSceneByPath(path);
-        bool added = !scene.isLoaded;
-        if (added) scene = EditorSceneManager.OpenScene(path, OpenSceneMode.Additive);
-        CityMap city = null;
-        foreach (GameObject root in scene.GetRootGameObjects())
-        {
-            if (!city) city = root.GetComponentInChildren<CityMap>(true);
-            if (root.name == "MapGround" && root.TryGetComponent(out SpriteRenderer renderer)) renderer.sortingOrder = -40;
-        }
-        if (!city) throw new InvalidOperationException("Gameplay CityMap 누락");
-        if (!city.TryGetComponent(out CityTerrain terrain)) terrain = city.gameObject.AddComponent<CityTerrain>();
-        var data = new SerializedObject(terrain);
-        data.FindProperty("map").objectReferenceValue = city;
-        foreach (var pair in new Dictionary<string, string> {
-            { "ground", "Ground_Grass_Default_01" }, { "grassBright", "Ground_Grass_Bright_01" }, { "grassDark", "Ground_Grass_Dark_01" },
-            { "grassPark", "Ground_Grass_Park_01" }, { "dirtPath", "Ground_Dirt_Path_01" }, { "sea", "Water_Sea_01" },
-            { "shallow", "Water_Shallow_01" }, { "pond", "Water_Pond_01" }, { "harbor", "Water_Harbor_01" },
-            { "coastStraight", "Coast_Straight_01" }, { "coastCurve", "Coast_Curve_01" }, { "rockSmall", "Rock_Small_01" },
-            { "rockMedium", "Rock_Medium_01" }, { "rockCoastal", "Rock_Coastal_01" } })
-            data.FindProperty(pair.Key).objectReferenceValue = prefabs[pair.Value];
-        data.ApplyModifiedPropertiesWithoutUndo();
-        EditorSceneManager.SaveScene(scene);
-        if (added) EditorSceneManager.CloseScene(scene, true);
     }
 
     // 사분원 끝점을 중간 변의 같은 위치에 작성한다
