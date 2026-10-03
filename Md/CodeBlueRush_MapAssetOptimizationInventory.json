@@ -1,0 +1,2781 @@
+{
+  "summary": {
+    "baseMain": "c772709",
+    "pngCount": 24,
+    "sourceChanged": 4,
+    "metaChanged": 23,
+    "totalBytesBefore": 8953731,
+    "totalBytesAfter": 6006613,
+    "savedBytes": 2947118,
+    "savedPercent": 32.91497142364451,
+    "runtimeCandidateBytesBefore": 5186645,
+    "runtimeCandidateBytesAfter": 2239527,
+    "estimatedTexturePayloadBefore": 298511828,
+    "estimatedTexturePayloadAfter": 6223048,
+    "checks": 92,
+    "unityChecks": 243,
+    "consoleErrors": 0,
+    "existingGameplayPixelIdentical": true
+  },
+  "assets": [
+    {
+      "before": {
+        "path": "Assets/Images/Maps/Ground/Ground_Grass_Default_01.png",
+        "bytes": 1053904,
+        "width": 1254,
+        "height": 1254,
+        "mode": "RGB",
+        "sha256": "c415299e6408c4d47fa0bf9f748f01935d6907b722dac474101364956986d3c8",
+        "guid": "e2f8f5350581f24488c0b87114158a41",
+        "alphaBBox": [
+          0,
+          0,
+          1254,
+          1254
+        ],
+        "visibleBBox": [
+          0,
+          0,
+          1254,
+          1254
+        ],
+        "solidBBox": [
+          0,
+          0,
+          1254,
+          1254
+        ],
+        "transparentFraction": 0.0,
+        "nearlyTransparentFraction": 0.0,
+        "ppu": 100.0,
+        "maxSize": 4096,
+        "compression": "0",
+        "mipmaps": "0",
+        "readable": "0",
+        "filter": "1",
+        "spriteMode": "1",
+        "mesh": "0",
+        "pivot": "{x: 0.5, y: 0.5}",
+        "scenePrefabRefs": [],
+        "allGuidRefs": [],
+        "stringRefs": [],
+        "buildForced": false,
+        "category": "A"
+      },
+      "after": {
+        "bytes": 203109,
+        "width": 512,
+        "height": 512,
+        "sha256": "f25df53255f347126f01ef8977cf65342a64a1837de760f2b18e6fbe17b1430e",
+        "alphaBBox": [
+          0,
+          0,
+          512,
+          512
+        ],
+        "visibleBBox": [
+          0,
+          0,
+          512,
+          512
+        ],
+        "solidBBox": [
+          0,
+          0,
+          512,
+          512
+        ],
+        "transparentFraction": 0.0,
+        "nearlyTransparentFraction": 0.0,
+        "ppu": 40.82934609250399,
+        "maxSize": 512,
+        "format": "DXT1",
+        "compression": "CompressedHQ Quality100",
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "unity": {
+          "path": "Assets/Images/Maps/Ground/Ground_Grass_Default_01.png",
+          "label": "Ground_Grass_Default_01",
+          "format": "DXT1",
+          "guid": "e2f8f5350581f24488c0b87114158a41",
+          "fileId": 21300000,
+          "textureWidth": 512,
+          "textureHeight": 512,
+          "worldWidth": 12.539999961853027,
+          "worldHeight": 12.539999961853027,
+          "ppu": 40.829345703125
+        }
+      },
+      "sourceChanged": true,
+      "metaChanged": true,
+      "selection": {
+        "path": "Assets/Images/Maps/Ground/Ground_Grass_Default_01.png",
+        "name": "Ground_Grass_Default_01",
+        "crop": null,
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "width": 512,
+        "height": 512,
+        "ppu": 40.82934609250399,
+        "cap": 512,
+        "format": "DXT1",
+        "compressed": true
+      }
+    },
+    {
+      "before": {
+        "path": "Assets/Images/Maps/Nature/Tree/Tree_Medium_01.png",
+        "bytes": 440420,
+        "width": 1254,
+        "height": 1254,
+        "mode": "RGBA",
+        "sha256": "66761dd0db1503f3dd0fa4eb2f7ab6134428c736406b8408b0dc7a647adb493f",
+        "guid": "ea2398eb3ccac45498f8804b55470354",
+        "alphaBBox": [
+          0,
+          0,
+          1212,
+          1214
+        ],
+        "visibleBBox": [
+          267,
+          225,
+          983,
+          1069
+        ],
+        "solidBBox": [
+          269,
+          226,
+          981,
+          1007
+        ],
+        "transparentFraction": 0.7389762647884028,
+        "nearlyTransparentFraction": 0.7491872896682769,
+        "ppu": 100.0,
+        "maxSize": 4096,
+        "compression": "0",
+        "mipmaps": "0",
+        "readable": "0",
+        "filter": "1",
+        "spriteMode": "1",
+        "mesh": "0",
+        "pivot": "{x: 0.5, y: 0.5}",
+        "scenePrefabRefs": [],
+        "allGuidRefs": [],
+        "stringRefs": [],
+        "buildForced": false,
+        "category": "A"
+      },
+      "after": {
+        "bytes": 38652,
+        "width": 224,
+        "height": 256,
+        "sha256": "0af2c69a2f2f891ee259d541b1a9eed6205b28eeae2af0aa58ce42de0ff8625c",
+        "alphaBBox": [
+          21,
+          0,
+          204,
+          240
+        ],
+        "visibleBBox": [
+          23,
+          24,
+          202,
+          235
+        ],
+        "solidBBox": [
+          23,
+          24,
+          201,
+          220
+        ],
+        "transparentFraction": 0.5450788225446429,
+        "nearlyTransparentFraction": 0.5673304966517857,
+        "ppu": 25.0,
+        "maxSize": 256,
+        "format": "DXT5",
+        "compression": "CompressedHQ Quality100",
+        "pivot": [
+          0.5033482142857143,
+          0.5126953125
+        ],
+        "unity": {
+          "path": "Assets/Images/Maps/Nature/Tree/Tree_Medium_01.png",
+          "label": "Tree_Medium_01",
+          "format": "DXT5",
+          "guid": "ea2398eb3ccac45498f8804b55470354",
+          "fileId": 21300000,
+          "textureWidth": 224,
+          "textureHeight": 256,
+          "worldWidth": 8.960000038146973,
+          "worldHeight": 10.239999771118164,
+          "ppu": 25.0
+        }
+      },
+      "sourceChanged": true,
+      "metaChanged": true,
+      "selection": {
+        "path": "Assets/Images/Maps/Nature/Tree/Tree_Medium_01.png",
+        "name": "Tree_Medium_01",
+        "crop": [
+          176,
+          128,
+          1072,
+          1152
+        ],
+        "pivot": [
+          0.5033482142857143,
+          0.5126953125
+        ],
+        "width": 224,
+        "height": 256,
+        "ppu": 25.0,
+        "cap": 256,
+        "format": "DXT5",
+        "compressed": true
+      }
+    },
+    {
+      "before": {
+        "path": "Assets/Images/Maps/Reference/CodeBlueRush_Map_MasterReference.png",
+        "bytes": 3767086,
+        "width": 941,
+        "height": 1672,
+        "mode": "RGBA",
+        "sha256": "e99b3c14abbc68a851a3be858862238f9987d8f9ff47d0b186bcfa48df824701",
+        "guid": "a564578579fc7f14c9033e6dc1273c4c",
+        "alphaBBox": [
+          0,
+          0,
+          941,
+          1672
+        ],
+        "visibleBBox": [
+          0,
+          0,
+          941,
+          1672
+        ],
+        "solidBBox": [
+          0,
+          0,
+          941,
+          1672
+        ],
+        "transparentFraction": 0.0,
+        "nearlyTransparentFraction": 0.0,
+        "ppu": 100.0,
+        "maxSize": 2048,
+        "compression": "1",
+        "mipmaps": "0",
+        "readable": "0",
+        "filter": "1",
+        "spriteMode": "2",
+        "mesh": "1",
+        "pivot": "{x: 0.5, y: 0.5}",
+        "scenePrefabRefs": [],
+        "allGuidRefs": [],
+        "stringRefs": [],
+        "buildForced": false,
+        "category": "C"
+      },
+      "after": {
+        "bytes": 3767086,
+        "width": 941,
+        "height": 1672,
+        "sha256": "e99b3c14abbc68a851a3be858862238f9987d8f9ff47d0b186bcfa48df824701",
+        "alphaBBox": [
+          0,
+          0,
+          941,
+          1672
+        ],
+        "visibleBBox": [
+          0,
+          0,
+          941,
+          1672
+        ],
+        "solidBBox": [
+          0,
+          0,
+          941,
+          1672
+        ],
+        "transparentFraction": 0.0,
+        "nearlyTransparentFraction": 0.0,
+        "ppu": 100.0,
+        "maxSize": 2048,
+        "format": "Unchanged Reference",
+        "compression": "Uncompressed",
+        "pivot": "{x: 0.5, y: 0.5}",
+        "unity": null
+      },
+      "sourceChanged": false,
+      "metaChanged": false,
+      "selection": null
+    },
+    {
+      "before": {
+        "path": "Assets/Images/Maps/Road/Road_Corner_NE.png",
+        "bytes": 94146,
+        "width": 2000,
+        "height": 2000,
+        "mode": "RGBA",
+        "sha256": "da4d524fa64748a7c2edf4efb99fd416f161f6246fd53ffe77e785a9c1a39237",
+        "guid": "eeefe660e90943ae9ab33b63e7443b04",
+        "alphaBBox": [
+          796,
+          0,
+          2000,
+          1204
+        ],
+        "visibleBBox": [
+          796,
+          0,
+          2000,
+          1204
+        ],
+        "solidBBox": [
+          796,
+          0,
+          2000,
+          1204
+        ],
+        "transparentFraction": 0.83942325,
+        "nearlyTransparentFraction": 0.83943425,
+        "ppu": 100.0,
+        "maxSize": 4096,
+        "compression": "0",
+        "mipmaps": "0",
+        "readable": "0",
+        "filter": "1",
+        "spriteMode": "1",
+        "mesh": "0",
+        "pivot": "{x: 0.5, y: 0.5}",
+        "scenePrefabRefs": [],
+        "allGuidRefs": [],
+        "stringRefs": [],
+        "buildForced": false,
+        "category": "B"
+      },
+      "after": {
+        "bytes": 94146,
+        "width": 2000,
+        "height": 2000,
+        "sha256": "da4d524fa64748a7c2edf4efb99fd416f161f6246fd53ffe77e785a9c1a39237",
+        "alphaBBox": [
+          796,
+          0,
+          2000,
+          1204
+        ],
+        "visibleBBox": [
+          796,
+          0,
+          2000,
+          1204
+        ],
+        "solidBBox": [
+          796,
+          0,
+          2000,
+          1204
+        ],
+        "transparentFraction": 0.83942325,
+        "nearlyTransparentFraction": 0.83943425,
+        "ppu": 100.0,
+        "maxSize": 512,
+        "format": "DXT5",
+        "compression": "CompressedHQ Quality100",
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "unity": {
+          "path": "Assets/Images/Maps/Road/Road_Corner_NE.png",
+          "label": "Road_Corner_NE",
+          "format": "DXT5",
+          "guid": "eeefe660e90943ae9ab33b63e7443b04",
+          "fileId": 21300000,
+          "textureWidth": 512,
+          "textureHeight": 512,
+          "worldWidth": 20.0,
+          "worldHeight": 20.0,
+          "ppu": 25.600000381469727
+        }
+      },
+      "sourceChanged": false,
+      "metaChanged": true,
+      "selection": {
+        "path": "Assets/Images/Maps/Road/Road_Corner_NE.png",
+        "name": "Road_Corner_NE",
+        "crop": null,
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "width": 2000,
+        "height": 2000,
+        "ppu": 100.0,
+        "cap": 512,
+        "format": "DXT5",
+        "compressed": true
+      }
+    },
+    {
+      "before": {
+        "path": "Assets/Images/Maps/Road/Road_Corner_NW.png",
+        "bytes": 81808,
+        "width": 2000,
+        "height": 2000,
+        "mode": "RGBA",
+        "sha256": "0f2eff1405f6c9048a1bdfa1817d8ffecf5352c04246ee86f675de429d4e6393",
+        "guid": "f46da016a4ca43d490396b920c5f1b0d",
+        "alphaBBox": [
+          0,
+          0,
+          1204,
+          1204
+        ],
+        "visibleBBox": [
+          0,
+          0,
+          1204,
+          1204
+        ],
+        "solidBBox": [
+          0,
+          0,
+          1204,
+          1204
+        ],
+        "transparentFraction": 0.83942325,
+        "nearlyTransparentFraction": 0.83943425,
+        "ppu": 100.0,
+        "maxSize": 4096,
+        "compression": "0",
+        "mipmaps": "0",
+        "readable": "0",
+        "filter": "1",
+        "spriteMode": "1",
+        "mesh": "0",
+        "pivot": "{x: 0.5, y: 0.5}",
+        "scenePrefabRefs": [],
+        "allGuidRefs": [],
+        "stringRefs": [],
+        "buildForced": false,
+        "category": "B"
+      },
+      "after": {
+        "bytes": 81808,
+        "width": 2000,
+        "height": 2000,
+        "sha256": "0f2eff1405f6c9048a1bdfa1817d8ffecf5352c04246ee86f675de429d4e6393",
+        "alphaBBox": [
+          0,
+          0,
+          1204,
+          1204
+        ],
+        "visibleBBox": [
+          0,
+          0,
+          1204,
+          1204
+        ],
+        "solidBBox": [
+          0,
+          0,
+          1204,
+          1204
+        ],
+        "transparentFraction": 0.83942325,
+        "nearlyTransparentFraction": 0.83943425,
+        "ppu": 100.0,
+        "maxSize": 512,
+        "format": "DXT5",
+        "compression": "CompressedHQ Quality100",
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "unity": {
+          "path": "Assets/Images/Maps/Road/Road_Corner_NW.png",
+          "label": "Road_Corner_NW",
+          "format": "DXT5",
+          "guid": "f46da016a4ca43d490396b920c5f1b0d",
+          "fileId": 21300000,
+          "textureWidth": 512,
+          "textureHeight": 512,
+          "worldWidth": 20.0,
+          "worldHeight": 20.0,
+          "ppu": 25.600000381469727
+        }
+      },
+      "sourceChanged": false,
+      "metaChanged": true,
+      "selection": {
+        "path": "Assets/Images/Maps/Road/Road_Corner_NW.png",
+        "name": "Road_Corner_NW",
+        "crop": null,
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "width": 2000,
+        "height": 2000,
+        "ppu": 100.0,
+        "cap": 512,
+        "format": "DXT5",
+        "compressed": true
+      }
+    },
+    {
+      "before": {
+        "path": "Assets/Images/Maps/Road/Road_Corner_SE.png",
+        "bytes": 81842,
+        "width": 2000,
+        "height": 2000,
+        "mode": "RGBA",
+        "sha256": "62a83845c6b427724b452145a007c97cd7140a4683b0372a04319f3d970d2ec1",
+        "guid": "c28149e205aa4b449e59c51b8c7be96d",
+        "alphaBBox": [
+          796,
+          796,
+          2000,
+          2000
+        ],
+        "visibleBBox": [
+          796,
+          796,
+          2000,
+          2000
+        ],
+        "solidBBox": [
+          796,
+          796,
+          2000,
+          2000
+        ],
+        "transparentFraction": 0.83942325,
+        "nearlyTransparentFraction": 0.83943425,
+        "ppu": 100.0,
+        "maxSize": 4096,
+        "compression": "0",
+        "mipmaps": "0",
+        "readable": "0",
+        "filter": "1",
+        "spriteMode": "1",
+        "mesh": "0",
+        "pivot": "{x: 0.5, y: 0.5}",
+        "scenePrefabRefs": [],
+        "allGuidRefs": [],
+        "stringRefs": [],
+        "buildForced": false,
+        "category": "B"
+      },
+      "after": {
+        "bytes": 81842,
+        "width": 2000,
+        "height": 2000,
+        "sha256": "62a83845c6b427724b452145a007c97cd7140a4683b0372a04319f3d970d2ec1",
+        "alphaBBox": [
+          796,
+          796,
+          2000,
+          2000
+        ],
+        "visibleBBox": [
+          796,
+          796,
+          2000,
+          2000
+        ],
+        "solidBBox": [
+          796,
+          796,
+          2000,
+          2000
+        ],
+        "transparentFraction": 0.83942325,
+        "nearlyTransparentFraction": 0.83943425,
+        "ppu": 100.0,
+        "maxSize": 512,
+        "format": "DXT5",
+        "compression": "CompressedHQ Quality100",
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "unity": {
+          "path": "Assets/Images/Maps/Road/Road_Corner_SE.png",
+          "label": "Road_Corner_SE",
+          "format": "DXT5",
+          "guid": "c28149e205aa4b449e59c51b8c7be96d",
+          "fileId": 21300000,
+          "textureWidth": 512,
+          "textureHeight": 512,
+          "worldWidth": 20.0,
+          "worldHeight": 20.0,
+          "ppu": 25.600000381469727
+        }
+      },
+      "sourceChanged": false,
+      "metaChanged": true,
+      "selection": {
+        "path": "Assets/Images/Maps/Road/Road_Corner_SE.png",
+        "name": "Road_Corner_SE",
+        "crop": null,
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "width": 2000,
+        "height": 2000,
+        "ppu": 100.0,
+        "cap": 512,
+        "format": "DXT5",
+        "compressed": true
+      }
+    },
+    {
+      "before": {
+        "path": "Assets/Images/Maps/Road/Road_Corner_SW.png",
+        "bytes": 91964,
+        "width": 2000,
+        "height": 2000,
+        "mode": "RGBA",
+        "sha256": "f4e1173ecb3756d1ec052d21c3ba0b112a0e8ab3b4eafe0d1aec8c40a67c90fb",
+        "guid": "653bcd24b5a9400d98b2ce346f356690",
+        "alphaBBox": [
+          0,
+          796,
+          1204,
+          2000
+        ],
+        "visibleBBox": [
+          0,
+          796,
+          1204,
+          2000
+        ],
+        "solidBBox": [
+          0,
+          796,
+          1204,
+          2000
+        ],
+        "transparentFraction": 0.83942325,
+        "nearlyTransparentFraction": 0.83943425,
+        "ppu": 100.0,
+        "maxSize": 4096,
+        "compression": "0",
+        "mipmaps": "0",
+        "readable": "0",
+        "filter": "1",
+        "spriteMode": "1",
+        "mesh": "0",
+        "pivot": "{x: 0.5, y: 0.5}",
+        "scenePrefabRefs": [],
+        "allGuidRefs": [],
+        "stringRefs": [],
+        "buildForced": false,
+        "category": "B"
+      },
+      "after": {
+        "bytes": 91964,
+        "width": 2000,
+        "height": 2000,
+        "sha256": "f4e1173ecb3756d1ec052d21c3ba0b112a0e8ab3b4eafe0d1aec8c40a67c90fb",
+        "alphaBBox": [
+          0,
+          796,
+          1204,
+          2000
+        ],
+        "visibleBBox": [
+          0,
+          796,
+          1204,
+          2000
+        ],
+        "solidBBox": [
+          0,
+          796,
+          1204,
+          2000
+        ],
+        "transparentFraction": 0.83942325,
+        "nearlyTransparentFraction": 0.83943425,
+        "ppu": 100.0,
+        "maxSize": 512,
+        "format": "DXT5",
+        "compression": "CompressedHQ Quality100",
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "unity": {
+          "path": "Assets/Images/Maps/Road/Road_Corner_SW.png",
+          "label": "Road_Corner_SW",
+          "format": "DXT5",
+          "guid": "653bcd24b5a9400d98b2ce346f356690",
+          "fileId": 21300000,
+          "textureWidth": 512,
+          "textureHeight": 512,
+          "worldWidth": 20.0,
+          "worldHeight": 20.0,
+          "ppu": 25.600000381469727
+        }
+      },
+      "sourceChanged": false,
+      "metaChanged": true,
+      "selection": {
+        "path": "Assets/Images/Maps/Road/Road_Corner_SW.png",
+        "name": "Road_Corner_SW",
+        "crop": null,
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "width": 2000,
+        "height": 2000,
+        "ppu": 100.0,
+        "cap": 512,
+        "format": "DXT5",
+        "compressed": true
+      }
+    },
+    {
+      "before": {
+        "path": "Assets/Images/Maps/Road/Road_Curve_Tight_01.png",
+        "bytes": 23572,
+        "width": 2000,
+        "height": 2000,
+        "mode": "RGBA",
+        "sha256": "37774e1ce5d8243f90fe8a3f757f3d7cb689441a68809150053319e4dfa3291c",
+        "guid": "217f9083527b4766be5767e6117b200d",
+        "alphaBBox": [
+          796,
+          0,
+          2000,
+          1204
+        ],
+        "visibleBBox": [
+          796,
+          0,
+          2000,
+          1204
+        ],
+        "solidBBox": [
+          796,
+          0,
+          2000,
+          1204
+        ],
+        "transparentFraction": 0.81335875,
+        "nearlyTransparentFraction": 0.81336625,
+        "ppu": 100.0,
+        "maxSize": 4096,
+        "compression": "0",
+        "mipmaps": "0",
+        "readable": "0",
+        "filter": "1",
+        "spriteMode": "1",
+        "mesh": "0",
+        "pivot": "{x: 0.5, y: 0.5}",
+        "scenePrefabRefs": [],
+        "allGuidRefs": [],
+        "stringRefs": [],
+        "buildForced": false,
+        "category": "B"
+      },
+      "after": {
+        "bytes": 23572,
+        "width": 2000,
+        "height": 2000,
+        "sha256": "37774e1ce5d8243f90fe8a3f757f3d7cb689441a68809150053319e4dfa3291c",
+        "alphaBBox": [
+          796,
+          0,
+          2000,
+          1204
+        ],
+        "visibleBBox": [
+          796,
+          0,
+          2000,
+          1204
+        ],
+        "solidBBox": [
+          796,
+          0,
+          2000,
+          1204
+        ],
+        "transparentFraction": 0.81335875,
+        "nearlyTransparentFraction": 0.81336625,
+        "ppu": 100.0,
+        "maxSize": 512,
+        "format": "DXT5",
+        "compression": "CompressedHQ Quality100",
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "unity": {
+          "path": "Assets/Images/Maps/Road/Road_Curve_Tight_01.png",
+          "label": "Road_Curve_Tight_01",
+          "format": "DXT5",
+          "guid": "217f9083527b4766be5767e6117b200d",
+          "fileId": 21300000,
+          "textureWidth": 512,
+          "textureHeight": 512,
+          "worldWidth": 20.0,
+          "worldHeight": 20.0,
+          "ppu": 25.600000381469727
+        }
+      },
+      "sourceChanged": false,
+      "metaChanged": true,
+      "selection": {
+        "path": "Assets/Images/Maps/Road/Road_Curve_Tight_01.png",
+        "name": "Road_Curve_Tight_01",
+        "crop": null,
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "width": 2000,
+        "height": 2000,
+        "ppu": 100.0,
+        "cap": 512,
+        "format": "DXT5",
+        "compressed": true
+      }
+    },
+    {
+      "before": {
+        "path": "Assets/Images/Maps/Road/Road_Curve_Wide_01.png",
+        "bytes": 30638,
+        "width": 2000,
+        "height": 2000,
+        "mode": "RGBA",
+        "sha256": "1ad9702ca1f987bc5b3f881a29d6187e27b608dbb7fd440939c7329a38d0e9ee",
+        "guid": "1cca3c7ba3494919a10917eb810c0318",
+        "alphaBBox": [
+          796,
+          0,
+          2000,
+          1204
+        ],
+        "visibleBBox": [
+          796,
+          0,
+          2000,
+          1204
+        ],
+        "solidBBox": [
+          796,
+          0,
+          2000,
+          1204
+        ],
+        "transparentFraction": 0.83071325,
+        "nearlyTransparentFraction": 0.83072575,
+        "ppu": 100.0,
+        "maxSize": 4096,
+        "compression": "0",
+        "mipmaps": "0",
+        "readable": "0",
+        "filter": "1",
+        "spriteMode": "1",
+        "mesh": "0",
+        "pivot": "{x: 0.5, y: 0.5}",
+        "scenePrefabRefs": [],
+        "allGuidRefs": [],
+        "stringRefs": [],
+        "buildForced": false,
+        "category": "B"
+      },
+      "after": {
+        "bytes": 30638,
+        "width": 2000,
+        "height": 2000,
+        "sha256": "1ad9702ca1f987bc5b3f881a29d6187e27b608dbb7fd440939c7329a38d0e9ee",
+        "alphaBBox": [
+          796,
+          0,
+          2000,
+          1204
+        ],
+        "visibleBBox": [
+          796,
+          0,
+          2000,
+          1204
+        ],
+        "solidBBox": [
+          796,
+          0,
+          2000,
+          1204
+        ],
+        "transparentFraction": 0.83071325,
+        "nearlyTransparentFraction": 0.83072575,
+        "ppu": 100.0,
+        "maxSize": 512,
+        "format": "DXT5",
+        "compression": "CompressedHQ Quality100",
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "unity": {
+          "path": "Assets/Images/Maps/Road/Road_Curve_Wide_01.png",
+          "label": "Road_Curve_Wide_01",
+          "format": "DXT5",
+          "guid": "1cca3c7ba3494919a10917eb810c0318",
+          "fileId": 21300000,
+          "textureWidth": 512,
+          "textureHeight": 512,
+          "worldWidth": 20.0,
+          "worldHeight": 20.0,
+          "ppu": 25.600000381469727
+        }
+      },
+      "sourceChanged": false,
+      "metaChanged": true,
+      "selection": {
+        "path": "Assets/Images/Maps/Road/Road_Curve_Wide_01.png",
+        "name": "Road_Curve_Wide_01",
+        "crop": null,
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "width": 2000,
+        "height": 2000,
+        "ppu": 100.0,
+        "cap": 512,
+        "format": "DXT5",
+        "compressed": true
+      }
+    },
+    {
+      "before": {
+        "path": "Assets/Images/Maps/Road/Road_Entrance_Building_01.png",
+        "bytes": 47662,
+        "width": 2000,
+        "height": 2000,
+        "mode": "RGBA",
+        "sha256": "02c61722032c08365a5f6bde32412ce5b27ab093c8095cf90dbd85ea9c147c63",
+        "guid": "59ee38dce78647548a1da2017ade1f07",
+        "alphaBBox": [
+          796,
+          898,
+          2000,
+          2000
+        ],
+        "visibleBBox": [
+          796,
+          898,
+          2000,
+          2000
+        ],
+        "solidBBox": [
+          796,
+          898,
+          2000,
+          2000
+        ],
+        "transparentFraction": 0.8882385,
+        "nearlyTransparentFraction": 0.888242,
+        "ppu": 100.0,
+        "maxSize": 4096,
+        "compression": "0",
+        "mipmaps": "0",
+        "readable": "0",
+        "filter": "1",
+        "spriteMode": "1",
+        "mesh": "0",
+        "pivot": "{x: 0.5, y: 0.5}",
+        "scenePrefabRefs": [],
+        "allGuidRefs": [],
+        "stringRefs": [],
+        "buildForced": false,
+        "category": "B"
+      },
+      "after": {
+        "bytes": 47662,
+        "width": 2000,
+        "height": 2000,
+        "sha256": "02c61722032c08365a5f6bde32412ce5b27ab093c8095cf90dbd85ea9c147c63",
+        "alphaBBox": [
+          796,
+          898,
+          2000,
+          2000
+        ],
+        "visibleBBox": [
+          796,
+          898,
+          2000,
+          2000
+        ],
+        "solidBBox": [
+          796,
+          898,
+          2000,
+          2000
+        ],
+        "transparentFraction": 0.8882385,
+        "nearlyTransparentFraction": 0.888242,
+        "ppu": 100.0,
+        "maxSize": 512,
+        "format": "DXT5",
+        "compression": "CompressedHQ Quality100",
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "unity": {
+          "path": "Assets/Images/Maps/Road/Road_Entrance_Building_01.png",
+          "label": "Road_Entrance_Building_01",
+          "format": "DXT5",
+          "guid": "59ee38dce78647548a1da2017ade1f07",
+          "fileId": 21300000,
+          "textureWidth": 512,
+          "textureHeight": 512,
+          "worldWidth": 20.0,
+          "worldHeight": 20.0,
+          "ppu": 25.600000381469727
+        }
+      },
+      "sourceChanged": false,
+      "metaChanged": true,
+      "selection": {
+        "path": "Assets/Images/Maps/Road/Road_Entrance_Building_01.png",
+        "name": "Road_Entrance_Building_01",
+        "crop": null,
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "width": 2000,
+        "height": 2000,
+        "ppu": 100.0,
+        "cap": 512,
+        "format": "DXT5",
+        "compressed": true
+      }
+    },
+    {
+      "before": {
+        "path": "Assets/Images/Maps/Road/Road_Entrance_Harbor_01.png",
+        "bytes": 133261,
+        "width": 2000,
+        "height": 2000,
+        "mode": "RGBA",
+        "sha256": "aa6cacfd8a352038522f4800d3fc4e20b95283120f8a731ce4533ef1ea79f2ed",
+        "guid": "fd4ab3b6956a45c08907c2a5072140db",
+        "alphaBBox": [
+          0,
+          0,
+          1404,
+          2000
+        ],
+        "visibleBBox": [
+          0,
+          0,
+          1404,
+          2000
+        ],
+        "solidBBox": [
+          0,
+          0,
+          1404,
+          2000
+        ],
+        "transparentFraction": 0.5308315,
+        "nearlyTransparentFraction": 0.5308375,
+        "ppu": 100.0,
+        "maxSize": 4096,
+        "compression": "0",
+        "mipmaps": "0",
+        "readable": "0",
+        "filter": "1",
+        "spriteMode": "1",
+        "mesh": "0",
+        "pivot": "{x: 0.5, y: 0.5}",
+        "scenePrefabRefs": [],
+        "allGuidRefs": [],
+        "stringRefs": [],
+        "buildForced": false,
+        "category": "B"
+      },
+      "after": {
+        "bytes": 133261,
+        "width": 2000,
+        "height": 2000,
+        "sha256": "aa6cacfd8a352038522f4800d3fc4e20b95283120f8a731ce4533ef1ea79f2ed",
+        "alphaBBox": [
+          0,
+          0,
+          1404,
+          2000
+        ],
+        "visibleBBox": [
+          0,
+          0,
+          1404,
+          2000
+        ],
+        "solidBBox": [
+          0,
+          0,
+          1404,
+          2000
+        ],
+        "transparentFraction": 0.5308315,
+        "nearlyTransparentFraction": 0.5308375,
+        "ppu": 100.0,
+        "maxSize": 512,
+        "format": "DXT5",
+        "compression": "CompressedHQ Quality100",
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "unity": {
+          "path": "Assets/Images/Maps/Road/Road_Entrance_Harbor_01.png",
+          "label": "Road_Entrance_Harbor_01",
+          "format": "DXT5",
+          "guid": "fd4ab3b6956a45c08907c2a5072140db",
+          "fileId": 21300000,
+          "textureWidth": 512,
+          "textureHeight": 512,
+          "worldWidth": 20.0,
+          "worldHeight": 20.0,
+          "ppu": 25.600000381469727
+        }
+      },
+      "sourceChanged": false,
+      "metaChanged": true,
+      "selection": {
+        "path": "Assets/Images/Maps/Road/Road_Entrance_Harbor_01.png",
+        "name": "Road_Entrance_Harbor_01",
+        "crop": null,
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "width": 2000,
+        "height": 2000,
+        "ppu": 100.0,
+        "cap": 512,
+        "format": "DXT5",
+        "compressed": true
+      }
+    },
+    {
+      "before": {
+        "path": "Assets/Images/Maps/Road/Road_Entrance_Parking_01.png",
+        "bytes": 170637,
+        "width": 2000,
+        "height": 2000,
+        "mode": "RGBA",
+        "sha256": "3368d43a7005e86574f0a73b8dcfe751f135527ff75ac266637071de5d2c2f37",
+        "guid": "a9e30431de504d33b061ed25d3b8cfe7",
+        "alphaBBox": [
+          596,
+          0,
+          1404,
+          2000
+        ],
+        "visibleBBox": [
+          596,
+          0,
+          1404,
+          2000
+        ],
+        "solidBBox": [
+          596,
+          0,
+          1404,
+          2000
+        ],
+        "transparentFraction": 0.695702,
+        "nearlyTransparentFraction": 0.6957165,
+        "ppu": 100.0,
+        "maxSize": 4096,
+        "compression": "0",
+        "mipmaps": "0",
+        "readable": "0",
+        "filter": "1",
+        "spriteMode": "1",
+        "mesh": "0",
+        "pivot": "{x: 0.5, y: 0.5}",
+        "scenePrefabRefs": [],
+        "allGuidRefs": [],
+        "stringRefs": [],
+        "buildForced": false,
+        "category": "B"
+      },
+      "after": {
+        "bytes": 170637,
+        "width": 2000,
+        "height": 2000,
+        "sha256": "3368d43a7005e86574f0a73b8dcfe751f135527ff75ac266637071de5d2c2f37",
+        "alphaBBox": [
+          596,
+          0,
+          1404,
+          2000
+        ],
+        "visibleBBox": [
+          596,
+          0,
+          1404,
+          2000
+        ],
+        "solidBBox": [
+          596,
+          0,
+          1404,
+          2000
+        ],
+        "transparentFraction": 0.695702,
+        "nearlyTransparentFraction": 0.6957165,
+        "ppu": 100.0,
+        "maxSize": 512,
+        "format": "DXT5",
+        "compression": "CompressedHQ Quality100",
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "unity": {
+          "path": "Assets/Images/Maps/Road/Road_Entrance_Parking_01.png",
+          "label": "Road_Entrance_Parking_01",
+          "format": "DXT5",
+          "guid": "a9e30431de504d33b061ed25d3b8cfe7",
+          "fileId": 21300000,
+          "textureWidth": 512,
+          "textureHeight": 512,
+          "worldWidth": 20.0,
+          "worldHeight": 20.0,
+          "ppu": 25.600000381469727
+        }
+      },
+      "sourceChanged": false,
+      "metaChanged": true,
+      "selection": {
+        "path": "Assets/Images/Maps/Road/Road_Entrance_Parking_01.png",
+        "name": "Road_Entrance_Parking_01",
+        "crop": null,
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "width": 2000,
+        "height": 2000,
+        "ppu": 100.0,
+        "cap": 512,
+        "format": "DXT5",
+        "compressed": true
+      }
+    },
+    {
+      "before": {
+        "path": "Assets/Images/Maps/Road/Road_Entrance_Residential_01.png",
+        "bytes": 95971,
+        "width": 2000,
+        "height": 2000,
+        "mode": "RGBA",
+        "sha256": "244b3b1ce714cca8127385c6c5ed6b2072d1e4e6dc0945b039f9ae6830020073",
+        "guid": "6ff6007b3d8d49579bf95ee3c757b8f5",
+        "alphaBBox": [
+          796,
+          0,
+          1204,
+          2000
+        ],
+        "visibleBBox": [
+          796,
+          0,
+          1204,
+          2000
+        ],
+        "solidBBox": [
+          796,
+          0,
+          1204,
+          2000
+        ],
+        "transparentFraction": 0.8467015,
+        "nearlyTransparentFraction": 0.8467125,
+        "ppu": 100.0,
+        "maxSize": 4096,
+        "compression": "0",
+        "mipmaps": "0",
+        "readable": "0",
+        "filter": "1",
+        "spriteMode": "1",
+        "mesh": "0",
+        "pivot": "{x: 0.5, y: 0.5}",
+        "scenePrefabRefs": [],
+        "allGuidRefs": [],
+        "stringRefs": [],
+        "buildForced": false,
+        "category": "B"
+      },
+      "after": {
+        "bytes": 95971,
+        "width": 2000,
+        "height": 2000,
+        "sha256": "244b3b1ce714cca8127385c6c5ed6b2072d1e4e6dc0945b039f9ae6830020073",
+        "alphaBBox": [
+          796,
+          0,
+          1204,
+          2000
+        ],
+        "visibleBBox": [
+          796,
+          0,
+          1204,
+          2000
+        ],
+        "solidBBox": [
+          796,
+          0,
+          1204,
+          2000
+        ],
+        "transparentFraction": 0.8467015,
+        "nearlyTransparentFraction": 0.8467125,
+        "ppu": 100.0,
+        "maxSize": 512,
+        "format": "DXT5",
+        "compression": "CompressedHQ Quality100",
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "unity": {
+          "path": "Assets/Images/Maps/Road/Road_Entrance_Residential_01.png",
+          "label": "Road_Entrance_Residential_01",
+          "format": "DXT5",
+          "guid": "6ff6007b3d8d49579bf95ee3c757b8f5",
+          "fileId": 21300000,
+          "textureWidth": 512,
+          "textureHeight": 512,
+          "worldWidth": 20.0,
+          "worldHeight": 20.0,
+          "ppu": 25.600000381469727
+        }
+      },
+      "sourceChanged": false,
+      "metaChanged": true,
+      "selection": {
+        "path": "Assets/Images/Maps/Road/Road_Entrance_Residential_01.png",
+        "name": "Road_Entrance_Residential_01",
+        "crop": null,
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "width": 2000,
+        "height": 2000,
+        "ppu": 100.0,
+        "cap": 512,
+        "format": "DXT5",
+        "compressed": true
+      }
+    },
+    {
+      "before": {
+        "path": "Assets/Images/Maps/Road/Road_Intersection_4Way.png",
+        "bytes": 139000,
+        "width": 2000,
+        "height": 2000,
+        "mode": "RGBA",
+        "sha256": "6b529783f063cd0cee1c69676c9a980b529365683e1c7e9a410ed6f5cf0cc5c6",
+        "guid": "50fbbc1ea11b405a9a5c393f29289f33",
+        "alphaBBox": [
+          0,
+          0,
+          2000,
+          2000
+        ],
+        "visibleBBox": [
+          0,
+          0,
+          2000,
+          2000
+        ],
+        "solidBBox": [
+          0,
+          0,
+          2000,
+          2000
+        ],
+        "transparentFraction": 0.624863,
+        "nearlyTransparentFraction": 0.624875,
+        "ppu": 100.0,
+        "maxSize": 4096,
+        "compression": "0",
+        "mipmaps": "0",
+        "readable": "0",
+        "filter": "1",
+        "spriteMode": "1",
+        "mesh": "0",
+        "pivot": "{x: 0.5, y: 0.5}",
+        "scenePrefabRefs": [],
+        "allGuidRefs": [],
+        "stringRefs": [],
+        "buildForced": false,
+        "category": "B"
+      },
+      "after": {
+        "bytes": 139000,
+        "width": 2000,
+        "height": 2000,
+        "sha256": "6b529783f063cd0cee1c69676c9a980b529365683e1c7e9a410ed6f5cf0cc5c6",
+        "alphaBBox": [
+          0,
+          0,
+          2000,
+          2000
+        ],
+        "visibleBBox": [
+          0,
+          0,
+          2000,
+          2000
+        ],
+        "solidBBox": [
+          0,
+          0,
+          2000,
+          2000
+        ],
+        "transparentFraction": 0.624863,
+        "nearlyTransparentFraction": 0.624875,
+        "ppu": 100.0,
+        "maxSize": 512,
+        "format": "DXT5",
+        "compression": "CompressedHQ Quality100",
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "unity": {
+          "path": "Assets/Images/Maps/Road/Road_Intersection_4Way.png",
+          "label": "Road_Intersection_4Way",
+          "format": "DXT5",
+          "guid": "50fbbc1ea11b405a9a5c393f29289f33",
+          "fileId": 21300000,
+          "textureWidth": 512,
+          "textureHeight": 512,
+          "worldWidth": 20.0,
+          "worldHeight": 20.0,
+          "ppu": 25.600000381469727
+        }
+      },
+      "sourceChanged": false,
+      "metaChanged": true,
+      "selection": {
+        "path": "Assets/Images/Maps/Road/Road_Intersection_4Way.png",
+        "name": "Road_Intersection_4Way",
+        "crop": null,
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "width": 2000,
+        "height": 2000,
+        "ppu": 100.0,
+        "cap": 512,
+        "format": "DXT5",
+        "compressed": true
+      }
+    },
+    {
+      "before": {
+        "path": "Assets/Images/Maps/Road/Road_Intersection_Large_01.png",
+        "bytes": 188232,
+        "width": 2000,
+        "height": 2000,
+        "mode": "RGBA",
+        "sha256": "c85189e04826278a990df6db339d1632ce9859643c89141d4790546568dd50f6",
+        "guid": "0de698eedf964c19b99d07364cd5ac9e",
+        "alphaBBox": [
+          0,
+          0,
+          2000,
+          2000
+        ],
+        "visibleBBox": [
+          0,
+          0,
+          2000,
+          2000
+        ],
+        "solidBBox": [
+          0,
+          0,
+          2000,
+          2000
+        ],
+        "transparentFraction": 0.346463,
+        "nearlyTransparentFraction": 0.346475,
+        "ppu": 100.0,
+        "maxSize": 4096,
+        "compression": "0",
+        "mipmaps": "0",
+        "readable": "0",
+        "filter": "1",
+        "spriteMode": "1",
+        "mesh": "0",
+        "pivot": "{x: 0.5, y: 0.5}",
+        "scenePrefabRefs": [],
+        "allGuidRefs": [],
+        "stringRefs": [],
+        "buildForced": false,
+        "category": "B"
+      },
+      "after": {
+        "bytes": 188232,
+        "width": 2000,
+        "height": 2000,
+        "sha256": "c85189e04826278a990df6db339d1632ce9859643c89141d4790546568dd50f6",
+        "alphaBBox": [
+          0,
+          0,
+          2000,
+          2000
+        ],
+        "visibleBBox": [
+          0,
+          0,
+          2000,
+          2000
+        ],
+        "solidBBox": [
+          0,
+          0,
+          2000,
+          2000
+        ],
+        "transparentFraction": 0.346463,
+        "nearlyTransparentFraction": 0.346475,
+        "ppu": 100.0,
+        "maxSize": 512,
+        "format": "DXT5",
+        "compression": "CompressedHQ Quality100",
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "unity": {
+          "path": "Assets/Images/Maps/Road/Road_Intersection_Large_01.png",
+          "label": "Road_Intersection_Large_01",
+          "format": "DXT5",
+          "guid": "0de698eedf964c19b99d07364cd5ac9e",
+          "fileId": 21300000,
+          "textureWidth": 512,
+          "textureHeight": 512,
+          "worldWidth": 20.0,
+          "worldHeight": 20.0,
+          "ppu": 25.600000381469727
+        }
+      },
+      "sourceChanged": false,
+      "metaChanged": true,
+      "selection": {
+        "path": "Assets/Images/Maps/Road/Road_Intersection_Large_01.png",
+        "name": "Road_Intersection_Large_01",
+        "crop": null,
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "width": 2000,
+        "height": 2000,
+        "ppu": 100.0,
+        "cap": 512,
+        "format": "DXT5",
+        "compressed": true
+      }
+    },
+    {
+      "before": {
+        "path": "Assets/Images/Maps/Road/Road_Small_Straight_01.png",
+        "bytes": 34228,
+        "width": 204,
+        "height": 2000,
+        "mode": "RGBA",
+        "sha256": "4b1ce7dc08b828d8f0ccba8a450e94afe10b0b1ab6c91a83bb9c0d43cb9d913f",
+        "guid": "b5cfd716f3434a93b32a637aadb13e1a",
+        "alphaBBox": [
+          0,
+          0,
+          204,
+          2000
+        ],
+        "visibleBBox": [
+          0,
+          0,
+          204,
+          2000
+        ],
+        "solidBBox": [
+          0,
+          0,
+          204,
+          2000
+        ],
+        "transparentFraction": 0.0,
+        "nearlyTransparentFraction": 0.0,
+        "ppu": 100.0,
+        "maxSize": 4096,
+        "compression": "0",
+        "mipmaps": "0",
+        "readable": "0",
+        "filter": "1",
+        "spriteMode": "1",
+        "mesh": "0",
+        "pivot": "{x: 0.5, y: 0.5}",
+        "scenePrefabRefs": [],
+        "allGuidRefs": [],
+        "stringRefs": [],
+        "buildForced": false,
+        "category": "B"
+      },
+      "after": {
+        "bytes": 34228,
+        "width": 204,
+        "height": 2000,
+        "sha256": "4b1ce7dc08b828d8f0ccba8a450e94afe10b0b1ab6c91a83bb9c0d43cb9d913f",
+        "alphaBBox": [
+          0,
+          0,
+          204,
+          2000
+        ],
+        "visibleBBox": [
+          0,
+          0,
+          204,
+          2000
+        ],
+        "solidBBox": [
+          0,
+          0,
+          204,
+          2000
+        ],
+        "transparentFraction": 0.0,
+        "nearlyTransparentFraction": 0.0,
+        "ppu": 100.0,
+        "maxSize": 2048,
+        "format": "DXT1",
+        "compression": "CompressedHQ Quality100",
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "unity": {
+          "path": "Assets/Images/Maps/Road/Road_Small_Straight_01.png",
+          "label": "Road_Small_Straight_01",
+          "format": "DXT1",
+          "guid": "b5cfd716f3434a93b32a637aadb13e1a",
+          "fileId": 21300000,
+          "textureWidth": 204,
+          "textureHeight": 2000,
+          "worldWidth": 2.0399999618530273,
+          "worldHeight": 20.0,
+          "ppu": 100.0
+        }
+      },
+      "sourceChanged": false,
+      "metaChanged": true,
+      "selection": {
+        "path": "Assets/Images/Maps/Road/Road_Small_Straight_01.png",
+        "name": "Road_Small_Straight_01",
+        "crop": null,
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "width": 204,
+        "height": 2000,
+        "ppu": 100.0,
+        "cap": 2048,
+        "format": "DXT1",
+        "compressed": true
+      }
+    },
+    {
+      "before": {
+        "path": "Assets/Images/Maps/Road/Road_Straight_2Lane.png",
+        "bytes": 874130,
+        "width": 897,
+        "height": 1752,
+        "mode": "RGB",
+        "sha256": "871457284e266f558fc469937e7d5f65b96219ab44981fd6efe34f32cc44da22",
+        "guid": "473d1dd183d523b4da07da3db4f8c6f8",
+        "alphaBBox": [
+          0,
+          0,
+          897,
+          1752
+        ],
+        "visibleBBox": [
+          0,
+          0,
+          897,
+          1752
+        ],
+        "solidBBox": [
+          0,
+          0,
+          897,
+          1752
+        ],
+        "transparentFraction": 0.0,
+        "nearlyTransparentFraction": 0.0,
+        "ppu": 100.0,
+        "maxSize": 4096,
+        "compression": "0",
+        "mipmaps": "0",
+        "readable": "0",
+        "filter": "1",
+        "spriteMode": "1",
+        "mesh": "0",
+        "pivot": "{x: 0.5, y: 0.5}",
+        "scenePrefabRefs": [],
+        "allGuidRefs": [],
+        "stringRefs": [],
+        "buildForced": false,
+        "category": "A"
+      },
+      "after": {
+        "bytes": 109175,
+        "width": 299,
+        "height": 584,
+        "sha256": "d03d80196f4176fafb1c8eee6e822cafb4b6458d2fc8ec8b3fc4b6df5c2bbe60",
+        "alphaBBox": [
+          0,
+          0,
+          299,
+          584
+        ],
+        "visibleBBox": [
+          0,
+          0,
+          299,
+          584
+        ],
+        "solidBBox": [
+          0,
+          0,
+          299,
+          584
+        ],
+        "transparentFraction": 0.0,
+        "nearlyTransparentFraction": 0.0,
+        "ppu": 33.333333333333336,
+        "maxSize": 1024,
+        "format": "RGB24",
+        "compression": "Uncompressed",
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "unity": {
+          "path": "Assets/Images/Maps/Road/Road_Straight_2Lane.png",
+          "label": "Road_Straight_2Lane",
+          "format": "RGB24",
+          "guid": "473d1dd183d523b4da07da3db4f8c6f8",
+          "fileId": 21300000,
+          "textureWidth": 299,
+          "textureHeight": 584,
+          "worldWidth": 8.970000267028809,
+          "worldHeight": 17.520000457763672,
+          "ppu": 33.33333206176758
+        }
+      },
+      "sourceChanged": true,
+      "metaChanged": true,
+      "selection": {
+        "path": "Assets/Images/Maps/Road/Road_Straight_2Lane.png",
+        "name": "Road_Straight_2Lane",
+        "crop": null,
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "width": 299,
+        "height": 584,
+        "ppu": 33.333333333333336,
+        "cap": 1024,
+        "format": "RGB24",
+        "compressed": false
+      }
+    },
+    {
+      "before": {
+        "path": "Assets/Images/Maps/Road/Road_Straight_4Lane.png",
+        "bytes": 127049,
+        "width": 808,
+        "height": 2000,
+        "mode": "RGBA",
+        "sha256": "ba7e76d189a065bd085e84ea4c1915cf7f874bb70ebaecb3ea26230add91b536",
+        "guid": "d57040743ad445efa0fe697a6fb03ba0",
+        "alphaBBox": [
+          0,
+          0,
+          808,
+          2000
+        ],
+        "visibleBBox": [
+          0,
+          0,
+          808,
+          2000
+        ],
+        "solidBBox": [
+          0,
+          0,
+          808,
+          2000
+        ],
+        "transparentFraction": 0.0,
+        "nearlyTransparentFraction": 0.0,
+        "ppu": 100.0,
+        "maxSize": 4096,
+        "compression": "0",
+        "mipmaps": "0",
+        "readable": "0",
+        "filter": "1",
+        "spriteMode": "1",
+        "mesh": "0",
+        "pivot": "{x: 0.5, y: 0.5}",
+        "scenePrefabRefs": [],
+        "allGuidRefs": [],
+        "stringRefs": [],
+        "buildForced": false,
+        "category": "B"
+      },
+      "after": {
+        "bytes": 127049,
+        "width": 808,
+        "height": 2000,
+        "sha256": "ba7e76d189a065bd085e84ea4c1915cf7f874bb70ebaecb3ea26230add91b536",
+        "alphaBBox": [
+          0,
+          0,
+          808,
+          2000
+        ],
+        "visibleBBox": [
+          0,
+          0,
+          808,
+          2000
+        ],
+        "solidBBox": [
+          0,
+          0,
+          808,
+          2000
+        ],
+        "transparentFraction": 0.0,
+        "nearlyTransparentFraction": 0.0,
+        "ppu": 100.0,
+        "maxSize": 2048,
+        "format": "DXT1",
+        "compression": "CompressedHQ Quality100",
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "unity": {
+          "path": "Assets/Images/Maps/Road/Road_Straight_4Lane.png",
+          "label": "Road_Straight_4Lane",
+          "format": "DXT1",
+          "guid": "d57040743ad445efa0fe697a6fb03ba0",
+          "fileId": 21300000,
+          "textureWidth": 808,
+          "textureHeight": 2000,
+          "worldWidth": 8.079999923706055,
+          "worldHeight": 20.0,
+          "ppu": 100.0
+        }
+      },
+      "sourceChanged": false,
+      "metaChanged": true,
+      "selection": {
+        "path": "Assets/Images/Maps/Road/Road_Straight_4Lane.png",
+        "name": "Road_Straight_4Lane",
+        "crop": null,
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "width": 808,
+        "height": 2000,
+        "ppu": 100.0,
+        "cap": 2048,
+        "format": "DXT1",
+        "compressed": true
+      }
+    },
+    {
+      "before": {
+        "path": "Assets/Images/Maps/Road/Road_TJunction_E.png",
+        "bytes": 100853,
+        "width": 2000,
+        "height": 2000,
+        "mode": "RGBA",
+        "sha256": "5310efacc4f119e5fa28e1ed0a81a3bdedf8a5f23790e9b24fc848703af24be3",
+        "guid": "34e101f067574c7c9492d0a0bc0fa548",
+        "alphaBBox": [
+          0,
+          0,
+          1204,
+          2000
+        ],
+        "visibleBBox": [
+          0,
+          0,
+          1204,
+          2000
+        ],
+        "solidBBox": [
+          0,
+          0,
+          1204,
+          2000
+        ],
+        "transparentFraction": 0.7104315,
+        "nearlyTransparentFraction": 0.7104375,
+        "ppu": 100.0,
+        "maxSize": 4096,
+        "compression": "0",
+        "mipmaps": "0",
+        "readable": "0",
+        "filter": "1",
+        "spriteMode": "1",
+        "mesh": "0",
+        "pivot": "{x: 0.5, y: 0.5}",
+        "scenePrefabRefs": [],
+        "allGuidRefs": [],
+        "stringRefs": [],
+        "buildForced": false,
+        "category": "B"
+      },
+      "after": {
+        "bytes": 100853,
+        "width": 2000,
+        "height": 2000,
+        "sha256": "5310efacc4f119e5fa28e1ed0a81a3bdedf8a5f23790e9b24fc848703af24be3",
+        "alphaBBox": [
+          0,
+          0,
+          1204,
+          2000
+        ],
+        "visibleBBox": [
+          0,
+          0,
+          1204,
+          2000
+        ],
+        "solidBBox": [
+          0,
+          0,
+          1204,
+          2000
+        ],
+        "transparentFraction": 0.7104315,
+        "nearlyTransparentFraction": 0.7104375,
+        "ppu": 100.0,
+        "maxSize": 512,
+        "format": "DXT5",
+        "compression": "CompressedHQ Quality100",
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "unity": {
+          "path": "Assets/Images/Maps/Road/Road_TJunction_E.png",
+          "label": "Road_TJunction_E",
+          "format": "DXT5",
+          "guid": "34e101f067574c7c9492d0a0bc0fa548",
+          "fileId": 21300000,
+          "textureWidth": 512,
+          "textureHeight": 512,
+          "worldWidth": 20.0,
+          "worldHeight": 20.0,
+          "ppu": 25.600000381469727
+        }
+      },
+      "sourceChanged": false,
+      "metaChanged": true,
+      "selection": {
+        "path": "Assets/Images/Maps/Road/Road_TJunction_E.png",
+        "name": "Road_TJunction_E",
+        "crop": null,
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "width": 2000,
+        "height": 2000,
+        "ppu": 100.0,
+        "cap": 512,
+        "format": "DXT5",
+        "compressed": true
+      }
+    },
+    {
+      "before": {
+        "path": "Assets/Images/Maps/Road/Road_TJunction_N.png",
+        "bytes": 94071,
+        "width": 2000,
+        "height": 2000,
+        "mode": "RGBA",
+        "sha256": "59924ef830d287ea012e010c9627ef75d058338b7db30edbe92fde6be7bfab5c",
+        "guid": "f1e06dc6091c4b7d9724cfb98ec53af8",
+        "alphaBBox": [
+          0,
+          796,
+          2000,
+          2000
+        ],
+        "visibleBBox": [
+          0,
+          796,
+          2000,
+          2000
+        ],
+        "solidBBox": [
+          0,
+          796,
+          2000,
+          2000
+        ],
+        "transparentFraction": 0.7104315,
+        "nearlyTransparentFraction": 0.7104375,
+        "ppu": 100.0,
+        "maxSize": 4096,
+        "compression": "0",
+        "mipmaps": "0",
+        "readable": "0",
+        "filter": "1",
+        "spriteMode": "1",
+        "mesh": "0",
+        "pivot": "{x: 0.5, y: 0.5}",
+        "scenePrefabRefs": [],
+        "allGuidRefs": [],
+        "stringRefs": [],
+        "buildForced": false,
+        "category": "B"
+      },
+      "after": {
+        "bytes": 94071,
+        "width": 2000,
+        "height": 2000,
+        "sha256": "59924ef830d287ea012e010c9627ef75d058338b7db30edbe92fde6be7bfab5c",
+        "alphaBBox": [
+          0,
+          796,
+          2000,
+          2000
+        ],
+        "visibleBBox": [
+          0,
+          796,
+          2000,
+          2000
+        ],
+        "solidBBox": [
+          0,
+          796,
+          2000,
+          2000
+        ],
+        "transparentFraction": 0.7104315,
+        "nearlyTransparentFraction": 0.7104375,
+        "ppu": 100.0,
+        "maxSize": 512,
+        "format": "DXT5",
+        "compression": "CompressedHQ Quality100",
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "unity": {
+          "path": "Assets/Images/Maps/Road/Road_TJunction_N.png",
+          "label": "Road_TJunction_N",
+          "format": "DXT5",
+          "guid": "f1e06dc6091c4b7d9724cfb98ec53af8",
+          "fileId": 21300000,
+          "textureWidth": 512,
+          "textureHeight": 512,
+          "worldWidth": 20.0,
+          "worldHeight": 20.0,
+          "ppu": 25.600000381469727
+        }
+      },
+      "sourceChanged": false,
+      "metaChanged": true,
+      "selection": {
+        "path": "Assets/Images/Maps/Road/Road_TJunction_N.png",
+        "name": "Road_TJunction_N",
+        "crop": null,
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "width": 2000,
+        "height": 2000,
+        "ppu": 100.0,
+        "cap": 512,
+        "format": "DXT5",
+        "compressed": true
+      }
+    },
+    {
+      "before": {
+        "path": "Assets/Images/Maps/Road/Road_TJunction_S.png",
+        "bytes": 93832,
+        "width": 2000,
+        "height": 2000,
+        "mode": "RGBA",
+        "sha256": "1d5002709dc3e5162ff69e6473b243991c48ab171cb3b6d3ef99b5e0a9c05cf3",
+        "guid": "2b8f57c1b4ad4e248a3f4f20846f6a18",
+        "alphaBBox": [
+          0,
+          0,
+          2000,
+          1204
+        ],
+        "visibleBBox": [
+          0,
+          0,
+          2000,
+          1204
+        ],
+        "solidBBox": [
+          0,
+          0,
+          2000,
+          1204
+        ],
+        "transparentFraction": 0.7104315,
+        "nearlyTransparentFraction": 0.7104375,
+        "ppu": 100.0,
+        "maxSize": 4096,
+        "compression": "0",
+        "mipmaps": "0",
+        "readable": "0",
+        "filter": "1",
+        "spriteMode": "1",
+        "mesh": "0",
+        "pivot": "{x: 0.5, y: 0.5}",
+        "scenePrefabRefs": [],
+        "allGuidRefs": [],
+        "stringRefs": [],
+        "buildForced": false,
+        "category": "B"
+      },
+      "after": {
+        "bytes": 93832,
+        "width": 2000,
+        "height": 2000,
+        "sha256": "1d5002709dc3e5162ff69e6473b243991c48ab171cb3b6d3ef99b5e0a9c05cf3",
+        "alphaBBox": [
+          0,
+          0,
+          2000,
+          1204
+        ],
+        "visibleBBox": [
+          0,
+          0,
+          2000,
+          1204
+        ],
+        "solidBBox": [
+          0,
+          0,
+          2000,
+          1204
+        ],
+        "transparentFraction": 0.7104315,
+        "nearlyTransparentFraction": 0.7104375,
+        "ppu": 100.0,
+        "maxSize": 512,
+        "format": "DXT5",
+        "compression": "CompressedHQ Quality100",
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "unity": {
+          "path": "Assets/Images/Maps/Road/Road_TJunction_S.png",
+          "label": "Road_TJunction_S",
+          "format": "DXT5",
+          "guid": "2b8f57c1b4ad4e248a3f4f20846f6a18",
+          "fileId": 21300000,
+          "textureWidth": 512,
+          "textureHeight": 512,
+          "worldWidth": 20.0,
+          "worldHeight": 20.0,
+          "ppu": 25.600000381469727
+        }
+      },
+      "sourceChanged": false,
+      "metaChanged": true,
+      "selection": {
+        "path": "Assets/Images/Maps/Road/Road_TJunction_S.png",
+        "name": "Road_TJunction_S",
+        "crop": null,
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "width": 2000,
+        "height": 2000,
+        "ppu": 100.0,
+        "cap": 512,
+        "format": "DXT5",
+        "compressed": true
+      }
+    },
+    {
+      "before": {
+        "path": "Assets/Images/Maps/Road/Road_TJunction_W.png",
+        "bytes": 100896,
+        "width": 2000,
+        "height": 2000,
+        "mode": "RGBA",
+        "sha256": "50eff9e80aa8dafd3da87331c6fa077ce75ab93f89c36d9b0ae34848d0a5708b",
+        "guid": "1fc4a3ad601644e6bffad4bfacf9c6f3",
+        "alphaBBox": [
+          796,
+          0,
+          2000,
+          2000
+        ],
+        "visibleBBox": [
+          796,
+          0,
+          2000,
+          2000
+        ],
+        "solidBBox": [
+          796,
+          0,
+          2000,
+          2000
+        ],
+        "transparentFraction": 0.7104315,
+        "nearlyTransparentFraction": 0.7104375,
+        "ppu": 100.0,
+        "maxSize": 4096,
+        "compression": "0",
+        "mipmaps": "0",
+        "readable": "0",
+        "filter": "1",
+        "spriteMode": "1",
+        "mesh": "0",
+        "pivot": "{x: 0.5, y: 0.5}",
+        "scenePrefabRefs": [],
+        "allGuidRefs": [],
+        "stringRefs": [],
+        "buildForced": false,
+        "category": "B"
+      },
+      "after": {
+        "bytes": 100896,
+        "width": 2000,
+        "height": 2000,
+        "sha256": "50eff9e80aa8dafd3da87331c6fa077ce75ab93f89c36d9b0ae34848d0a5708b",
+        "alphaBBox": [
+          796,
+          0,
+          2000,
+          2000
+        ],
+        "visibleBBox": [
+          796,
+          0,
+          2000,
+          2000
+        ],
+        "solidBBox": [
+          796,
+          0,
+          2000,
+          2000
+        ],
+        "transparentFraction": 0.7104315,
+        "nearlyTransparentFraction": 0.7104375,
+        "ppu": 100.0,
+        "maxSize": 512,
+        "format": "DXT5",
+        "compression": "CompressedHQ Quality100",
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "unity": {
+          "path": "Assets/Images/Maps/Road/Road_TJunction_W.png",
+          "label": "Road_TJunction_W",
+          "format": "DXT5",
+          "guid": "1fc4a3ad601644e6bffad4bfacf9c6f3",
+          "fileId": 21300000,
+          "textureWidth": 512,
+          "textureHeight": 512,
+          "worldWidth": 20.0,
+          "worldHeight": 20.0,
+          "ppu": 25.600000381469727
+        }
+      },
+      "sourceChanged": false,
+      "metaChanged": true,
+      "selection": {
+        "path": "Assets/Images/Maps/Road/Road_TJunction_W.png",
+        "name": "Road_TJunction_W",
+        "crop": null,
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "width": 2000,
+        "height": 2000,
+        "ppu": 100.0,
+        "cap": 512,
+        "format": "DXT5",
+        "compressed": true
+      }
+    },
+    {
+      "before": {
+        "path": "Assets/Images/Maps/Road/Road_YJunction_01.png",
+        "bytes": 104383,
+        "width": 2000,
+        "height": 2000,
+        "mode": "RGBA",
+        "sha256": "1572b9fa13b34dff2ec181023f793e15d695771ded9d68c2f1d8fcb2ea84a54d",
+        "guid": "904f1e4da4a3488f9bd3a8c5b2251818",
+        "alphaBBox": [
+          573,
+          0,
+          2000,
+          2000
+        ],
+        "visibleBBox": [
+          573,
+          0,
+          2000,
+          2000
+        ],
+        "solidBBox": [
+          573,
+          0,
+          2000,
+          2000
+        ],
+        "transparentFraction": 0.69274375,
+        "nearlyTransparentFraction": 0.69274375,
+        "ppu": 100.0,
+        "maxSize": 4096,
+        "compression": "0",
+        "mipmaps": "0",
+        "readable": "0",
+        "filter": "1",
+        "spriteMode": "1",
+        "mesh": "0",
+        "pivot": "{x: 0.5, y: 0.5}",
+        "scenePrefabRefs": [],
+        "allGuidRefs": [],
+        "stringRefs": [],
+        "buildForced": false,
+        "category": "B"
+      },
+      "after": {
+        "bytes": 104383,
+        "width": 2000,
+        "height": 2000,
+        "sha256": "1572b9fa13b34dff2ec181023f793e15d695771ded9d68c2f1d8fcb2ea84a54d",
+        "alphaBBox": [
+          573,
+          0,
+          2000,
+          2000
+        ],
+        "visibleBBox": [
+          573,
+          0,
+          2000,
+          2000
+        ],
+        "solidBBox": [
+          573,
+          0,
+          2000,
+          2000
+        ],
+        "transparentFraction": 0.69274375,
+        "nearlyTransparentFraction": 0.69274375,
+        "ppu": 100.0,
+        "maxSize": 512,
+        "format": "DXT5",
+        "compression": "CompressedHQ Quality100",
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "unity": {
+          "path": "Assets/Images/Maps/Road/Road_YJunction_01.png",
+          "label": "Road_YJunction_01",
+          "format": "DXT5",
+          "guid": "904f1e4da4a3488f9bd3a8c5b2251818",
+          "fileId": 21300000,
+          "textureWidth": 512,
+          "textureHeight": 512,
+          "worldWidth": 20.0,
+          "worldHeight": 20.0,
+          "ppu": 25.600000381469727
+        }
+      },
+      "sourceChanged": false,
+      "metaChanged": true,
+      "selection": {
+        "path": "Assets/Images/Maps/Road/Road_YJunction_01.png",
+        "name": "Road_YJunction_01",
+        "crop": null,
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "width": 2000,
+        "height": 2000,
+        "ppu": 100.0,
+        "cap": 512,
+        "format": "DXT5",
+        "compressed": true
+      }
+    },
+    {
+      "before": {
+        "path": "Assets/Images/Maps/Sidewalk/Sidewalk_Straight_01.png",
+        "bytes": 984146,
+        "width": 724,
+        "height": 2172,
+        "mode": "RGB",
+        "sha256": "b2b6c33864072c8d730f086149daf783988728b218bbc77aeb99066adbc0270d",
+        "guid": "8ba787e10b383d8498675352c8342247",
+        "alphaBBox": [
+          0,
+          0,
+          724,
+          2172
+        ],
+        "visibleBBox": [
+          0,
+          0,
+          724,
+          2172
+        ],
+        "solidBBox": [
+          0,
+          0,
+          724,
+          2172
+        ],
+        "transparentFraction": 0.0,
+        "nearlyTransparentFraction": 0.0,
+        "ppu": 100.0,
+        "maxSize": 4096,
+        "compression": "0",
+        "mipmaps": "0",
+        "readable": "0",
+        "filter": "1",
+        "spriteMode": "1",
+        "mesh": "0",
+        "pivot": "{x: 0.5, y: 0.5}",
+        "scenePrefabRefs": [],
+        "allGuidRefs": [],
+        "stringRefs": [],
+        "buildForced": false,
+        "category": "A"
+      },
+      "after": {
+        "bytes": 54546,
+        "width": 168,
+        "height": 504,
+        "sha256": "d939478a985aa3e2bbf68d10b41d7ddb8cb34e0b414efb0b417e88261d8841ea",
+        "alphaBBox": [
+          0,
+          0,
+          168,
+          504
+        ],
+        "visibleBBox": [
+          0,
+          0,
+          168,
+          504
+        ],
+        "solidBBox": [
+          0,
+          0,
+          168,
+          504
+        ],
+        "transparentFraction": 0.0,
+        "nearlyTransparentFraction": 0.0,
+        "ppu": 23.204419889502763,
+        "maxSize": 512,
+        "format": "DXT1",
+        "compression": "CompressedHQ Quality100",
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "unity": {
+          "path": "Assets/Images/Maps/Sidewalk/Sidewalk_Straight_01.png",
+          "label": "Sidewalk_Straight_01",
+          "format": "DXT1",
+          "guid": "8ba787e10b383d8498675352c8342247",
+          "fileId": 21300000,
+          "textureWidth": 168,
+          "textureHeight": 504,
+          "worldWidth": 7.239999771118164,
+          "worldHeight": 21.719999313354492,
+          "ppu": 23.20442008972168
+        }
+      },
+      "sourceChanged": true,
+      "metaChanged": true,
+      "selection": {
+        "path": "Assets/Images/Maps/Sidewalk/Sidewalk_Straight_01.png",
+        "name": "Sidewalk_Straight_01",
+        "crop": null,
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "width": 168,
+        "height": 504,
+        "ppu": 23.204419889502763,
+        "cap": 512,
+        "format": "DXT1",
+        "compressed": true
+      }
+    }
+  ],
+  "folderMetas": [
+    {
+      "path": "Assets/Images/Maps/Ground.meta",
+      "bytes": 172,
+      "guid": "2e7f79a9767c25743aaf85cbd448260d",
+      "sha256": "03146cf5abbc522a38dd98a6611f6686a008cb8841b3d5edf049439aafb54751",
+      "folderAsset": true,
+      "textureImporter": false
+    },
+    {
+      "path": "Assets/Images/Maps/Nature/Tree.meta",
+      "bytes": 172,
+      "guid": "3c8465fc6d4ad4645a90bd8458b0d8ef",
+      "sha256": "cda02b89822e6e768134a38d8fe05af97060b191fa263054bcbe6777e7b80a65",
+      "folderAsset": true,
+      "textureImporter": false
+    },
+    {
+      "path": "Assets/Images/Maps/Nature.meta",
+      "bytes": 172,
+      "guid": "14b803c355ed7124ba2468e6357f14b6",
+      "sha256": "b67cc94cf67d41ea50b7f1d362c26927008a236374cb485f30804621560eb843",
+      "folderAsset": true,
+      "textureImporter": false
+    },
+    {
+      "path": "Assets/Images/Maps/Reference.meta",
+      "bytes": 172,
+      "guid": "2629d2aad0f4f7a42b0058f5f06ab196",
+      "sha256": "1e5fee00399716c67a90c771010b3983ab16b800440d57c3ca2c221ef878b97f",
+      "folderAsset": true,
+      "textureImporter": false
+    },
+    {
+      "path": "Assets/Images/Maps/Road.meta",
+      "bytes": 172,
+      "guid": "e9240ea1042529c4295cf429d4f2120a",
+      "sha256": "7044dbc85200db3ecb2e2d4c4ee953c5a2a7845b73954b554a1960209723800b",
+      "folderAsset": true,
+      "textureImporter": false
+    },
+    {
+      "path": "Assets/Images/Maps/Sidewalk.meta",
+      "bytes": 172,
+      "guid": "c6f42d8105cad2f4f842b0817d413f5e",
+      "sha256": "31f1f2157be56e8d358346b85b79bd8c19a5e6a5f727bb7f85e8022c4287c6f7",
+      "folderAsset": true,
+      "textureImporter": false
+    }
+  ],
+  "renderComparison": [
+    {
+      "name": "Ground_Grass_Default_01",
+      "meanAbsoluteRGBError": 1.1506220725995315,
+      "rmsRGBError": 1.6071655895116503,
+      "percentPixelsChannelErrorOver10": 0.033909055425448864
+    },
+    {
+      "name": "Tree_Medium_01",
+      "meanAbsoluteRGBError": 0.10351044106167057,
+      "rmsRGBError": 0.899443893158373,
+      "percentPixelsChannelErrorOver10": 0.2656615925058548
+    },
+    {
+      "name": "Road_Corner_NE",
+      "meanAbsoluteRGBError": 0.11638368462138954,
+      "rmsRGBError": 0.9513752252143759,
+      "percentPixelsChannelErrorOver10": 0.3442135050741608
+    },
+    {
+      "name": "Road_Corner_NW",
+      "meanAbsoluteRGBError": 0.11633489461358314,
+      "rmsRGBError": 0.9510657634416457,
+      "percentPixelsChannelErrorOver10": 0.34396955503512877
+    },
+    {
+      "name": "Road_Corner_SE",
+      "meanAbsoluteRGBError": 0.11633814728077023,
+      "rmsRGBError": 0.9510221571433389,
+      "percentPixelsChannelErrorOver10": 0.3442135050741608
+    },
+    {
+      "name": "Road_Corner_SW",
+      "meanAbsoluteRGBError": 0.11637636612021858,
+      "rmsRGBError": 0.9512166600044921,
+      "percentPixelsChannelErrorOver10": 0.3444574551131928
+    },
+    {
+      "name": "Road_Curve_Tight_01",
+      "meanAbsoluteRGBError": 0.125017889669529,
+      "rmsRGBError": 0.809736161705954,
+      "percentPixelsChannelErrorOver10": 0.4635050741608119
+    },
+    {
+      "name": "Road_Curve_Wide_01",
+      "meanAbsoluteRGBError": 0.12032916991933386,
+      "rmsRGBError": 0.9130107708606291,
+      "percentPixelsChannelErrorOver10": 0.3695843091334895
+    },
+    {
+      "name": "Road_Entrance_Building_01",
+      "meanAbsoluteRGBError": 0.10313313166796774,
+      "rmsRGBError": 1.0403238808165165,
+      "percentPixelsChannelErrorOver10": 0.4052010148321624
+    },
+    {
+      "name": "Road_Entrance_Harbor_01",
+      "meanAbsoluteRGBError": 0.2945550351288056,
+      "rmsRGBError": 1.4493643568032826,
+      "percentPixelsChannelErrorOver10": 0.5581576893052302
+    },
+    {
+      "name": "Road_Entrance_Parking_01",
+      "meanAbsoluteRGBError": 0.22994649362477232,
+      "rmsRGBError": 1.201229488221283,
+      "percentPixelsChannelErrorOver10": 0.48790007806401253
+    },
+    {
+      "name": "Road_Entrance_Residential_01",
+      "meanAbsoluteRGBError": 0.1315890905542545,
+      "rmsRGBError": 1.0179900940784967,
+      "percentPixelsChannelErrorOver10": 0.4130074160811866
+    },
+    {
+      "name": "Road_Intersection_4Way",
+      "meanAbsoluteRGBError": 0.23546626984126984,
+      "rmsRGBError": 0.989796779437557,
+      "percentPixelsChannelErrorOver10": 0.70160031225605
+    },
+    {
+      "name": "Road_Intersection_Large_01",
+      "meanAbsoluteRGBError": 0.3626943468644288,
+      "rmsRGBError": 1.4567036729151064,
+      "percentPixelsChannelErrorOver10": 0.4869242779078845
+    },
+    {
+      "name": "Road_Small_Straight_01",
+      "meanAbsoluteRGBError": 0.04140482695810565,
+      "rmsRGBError": 0.21621507613138388,
+      "percentPixelsChannelErrorOver10": 0.0
+    },
+    {
+      "name": "Road_Straight_2Lane",
+      "meanAbsoluteRGBError": 0.48100198412698414,
+      "rmsRGBError": 3.697485647110842,
+      "percentPixelsChannelErrorOver10": 1.6664227166276346
+    },
+    {
+      "name": "Road_Straight_4Lane",
+      "meanAbsoluteRGBError": 0.1558377244340359,
+      "rmsRGBError": 0.4244003208275191,
+      "percentPixelsChannelErrorOver10": 0.0
+    },
+    {
+      "name": "Road_TJunction_E",
+      "meanAbsoluteRGBError": 0.17268247462919595,
+      "rmsRGBError": 0.8302822756743548,
+      "percentPixelsChannelErrorOver10": 0.548643637782982
+    },
+    {
+      "name": "Road_TJunction_N",
+      "meanAbsoluteRGBError": 0.16947615794951862,
+      "rmsRGBError": 0.8380249470425865,
+      "percentPixelsChannelErrorOver10": 0.5754781420765027
+    },
+    {
+      "name": "Road_TJunction_S",
+      "meanAbsoluteRGBError": 0.16947615794951862,
+      "rmsRGBError": 0.8380841355227626,
+      "percentPixelsChannelErrorOver10": 0.5754781420765027
+    },
+    {
+      "name": "Road_TJunction_W",
+      "meanAbsoluteRGBError": 0.17268247462919595,
+      "rmsRGBError": 0.8303420160681931,
+      "percentPixelsChannelErrorOver10": 0.548643637782982
+    },
+    {
+      "name": "Road_YJunction_01",
+      "meanAbsoluteRGBError": 0.22423806271142338,
+      "rmsRGBError": 1.3042093299469157,
+      "percentPixelsChannelErrorOver10": 0.5962138953942233
+    },
+    {
+      "name": "Sidewalk_Straight_01",
+      "meanAbsoluteRGBError": 0.4017637587822014,
+      "rmsRGBError": 2.2564251439240586,
+      "percentPixelsChannelErrorOver10": 1.0033665105386418
+    }
+  ]
+}
