@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>완성된 도시의 도로 외부에 지형 시각 자료만 배치하고 생성 수명을 소유한다</summary>
@@ -22,6 +24,9 @@ public sealed class CityTerrain : MonoBehaviour
     private GameObject root;
     private int seed;
     private MaterialPropertyBlock surface;
+    private readonly HashSet<Vector2Int> ponds = new HashSet<Vector2Int>();
+    public bool IsReady => root && map && map.IsReady && seed == map.Seed;
+    public event Action<CityTerrain> Rebuilt;
     public int ParkCount { get; private set; }
     public int PondCount { get; private set; }
     public int RockCount { get; private set; }
@@ -60,6 +65,7 @@ public sealed class CityTerrain : MonoBehaviour
         root.transform.SetParent(map.transform, false);
         seed = city.Seed;
         ParkCount = PondCount = RockCount = 0;
+        ponds.Clear();
         surface = new MaterialPropertyBlock();
         Matrix4x4 inverse = map.transform.worldToLocalMatrix;
         surface.SetVector("_MapRowX", inverse.GetRow(0));
@@ -85,6 +91,13 @@ public sealed class CityTerrain : MonoBehaviour
                 AddPark(new Vector2(x * cell, y * cell), ref state);
             }
         }
+        Rebuilt?.Invoke(this);
+    }
+
+    // 식생 배치에서 수면을 피할 수 있도록 연못 셀만 조회한다
+    public bool IsPond(int x, int y)
+    {
+        return ponds.Contains(new Vector2Int(x, y));
     }
 
     // 남쪽 외곽에 동일한 폭의 해안과 연속 수면을 조립한다
@@ -121,6 +134,7 @@ public sealed class CityTerrain : MonoBehaviour
         if (PondCount < 2 && (kind == 2 || ParkCount == 1))
         {
             Place(pond, point, 0f);
+            ponds.Add(new Vector2Int(Mathf.RoundToInt(point.x / map.CellSize), Mathf.RoundToInt(point.y / map.CellSize)));
             PondCount++;
         }
         else

@@ -2822,7 +2822,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: -30
+  m_SortingOrder: -40
   m_MaskInteraction: 0
   m_Sprite: {fileID: 21300000, guid: e2f8f5350581f24488c0b87114158a41, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -2933,6 +2933,8 @@ GameObject:
   - component: {fileID: 2139703594}
   - component: {fileID: 2139703596}
   - component: {fileID: 2139703595}
+  - component: {fileID: 2139703598}
+  - component: {fileID: 2139703599}
   m_Layer: 0
   m_Name: City
   m_TagString: Untagged
@@ -3020,6 +3022,60 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2139703598
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2139703593}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c10f4f9deb42404981e18ea17845cd5, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::CityTerrain
+  map: {fileID: 2139703594}
+  ground: {fileID: 485159486464067495, guid: 2b23b90ed4951be479963e8ad73c9c27, type: 3}
+  grassBright: {fileID: 6524842588775621499, guid: 070150822ec76f44ca6e165cca8f2235, type: 3}
+  grassDark: {fileID: 4037922334358321462, guid: 9e0c73cadbd491a4bb6cc1a59dcf61e4, type: 3}
+  grassPark: {fileID: 4120894061256520381, guid: 5dde15bbacfba424d9f9de153eef6f99, type: 3}
+  dirtPath: {fileID: 6105801950120609113, guid: 42f434a4d116a6d4da5b86ec105f2a9c, type: 3}
+  sea: {fileID: 4045490967414824363, guid: 1e4391c6544f2b64cb59811c548ee5bf, type: 3}
+  shallow: {fileID: 6362593166986455829, guid: bce26d05c6878e540894c4f5db30d150, type: 3}
+  pond: {fileID: 9201651784795191000, guid: df0d4c71fbfbc364da6ec51a9e48722e, type: 3}
+  harbor: {fileID: 3532699688726682171, guid: 71a6c130b41a21a4fa65ce9221fae690, type: 3}
+  coastStraight: {fileID: 3204657272942250823, guid: a6d5c97bddb281c44ac70d934a1faa4f, type: 3}
+  coastCurve: {fileID: 335536926248171583, guid: 090ecd29ce2326e48bb67c4e03f5c160, type: 3}
+  rockSmall: {fileID: 6192044926945723785, guid: bb92f7db3d243c64c930a26dd99f9a1b, type: 3}
+  rockMedium: {fileID: 5818392421967229114, guid: b0c8b35ff6be5ec46b71b201a59aec3f, type: 3}
+  rockCoastal: {fileID: 3741111964925996729, guid: fc895f0e5bec41e46892744456038c16, type: 3}
+--- !u!114 &2139703599
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2139703593}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1565df99ffa446f9ad9739d9556c85a5, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::CityVegetation
+  map: {fileID: 2139703594}
+  terrain: {fileID: 2139703598}
+  treeSmall: {fileID: 4329149033081151339, guid: 48e41e6aa4a32664f99bb49d8a389691, type: 3}
+  treeMedium: {fileID: 5645051110130205687, guid: 7cc6c82e02ea39145b0b88286767d595, type: 3}
+  treeLarge: {fileID: 6532623370562985794, guid: c7eccd81f60df4f429639d54d9a2eb78, type: 3}
+  bushRound: {fileID: 57363643998436944, guid: 03d3014cedaa7de408bcf15216a4ea1b, type: 3}
+  bushLow: {fileID: 2239890771279832469, guid: b567fa3ce4419e64b9fda1ac42e00561, type: 3}
+  hedgeShort: {fileID: 1941530292748643028, guid: 1bbb21ad631eec2408130ff27de97e99, type: 3}
+  hedgeLong: {fileID: 996373041270813587, guid: a765d84c6b60ee74098f11f769d5fe41, type: 3}
+  flowerPatchPink: {fileID: 5109580041149341199, guid: 9dde850c2edcb724bbaed573fa776048, type: 3}
+  flowerPatchYellow: {fileID: 6284961017549495656, guid: b2c0c03da70c15143a280fe68fc0a6ff, type: 3}
+  flowerBush: {fileID: 8150744360107442653, guid: 065b95c7ae7ccc14a83aad5a1311d093, type: 3}
+  flowerBedSmall: {fileID: 2576913807753645987, guid: 5dce379addea0ae4dbdad39b64d12fe1, type: 3}
+  flowerBedMedium: {fileID: 6293692518966330876, guid: 155327ab58930e6409cfe407bfb583b2, type: 3}
+  planter: {fileID: 4218150666141636841, guid: bb6b5b7c9e1acaa4496cf84a274bae5e, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
