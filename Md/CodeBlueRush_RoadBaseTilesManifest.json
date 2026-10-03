@@ -1,0 +1,516 @@
+{
+  "baseMain": "6072e41f2bcbe7eb7ff00c26713552f749093526",
+  "canonicalPortRGB": [
+    83,
+    93,
+    109
+  ],
+  "tiles": [
+    {
+      "name": "Road_Straight_4Lane",
+      "width": 808,
+      "height": 2000,
+      "ppu": 100,
+      "worldWidth": 8.08,
+      "worldHeight": 20.0,
+      "ports": [
+        {
+          "side": "N",
+          "width": 8.08,
+          "widthPx": 808
+        },
+        {
+          "side": "S",
+          "width": 8.08,
+          "widthPx": 808
+        }
+      ],
+      "geometry": "straight",
+      "source": "Road_Straight_4Lane",
+      "rotationCCW": 0,
+      "sha256": "ba7e76d189a065bd085e84ea4c1915cf7f874bb70ebaecb3ea26230add91b536"
+    },
+    {
+      "name": "Road_Small_Straight_01",
+      "width": 204,
+      "height": 2000,
+      "ppu": 100,
+      "worldWidth": 2.04,
+      "worldHeight": 20.0,
+      "ports": [
+        {
+          "side": "N",
+          "width": 2.04,
+          "widthPx": 204
+        },
+        {
+          "side": "S",
+          "width": 2.04,
+          "widthPx": 204
+        }
+      ],
+      "geometry": "small straight",
+      "source": "Road_Small_Straight_01",
+      "rotationCCW": 0,
+      "sha256": "4b1ce7dc08b828d8f0ccba8a450e94afe10b0b1ab6c91a83bb9c0d43cb9d913f"
+    },
+    {
+      "name": "Road_Corner_NE",
+      "width": 2000,
+      "height": 2000,
+      "ppu": 100,
+      "worldWidth": 20.0,
+      "worldHeight": 20.0,
+      "ports": [
+        {
+          "side": "N",
+          "width": 4.08,
+          "widthPx": 408
+        },
+        {
+          "side": "E",
+          "width": 4.08,
+          "widthPx": 408
+        }
+      ],
+      "geometry": "quarter circle radius 10",
+      "source": "Road_Corner_NE",
+      "rotationCCW": 0,
+      "sha256": "da4d524fa64748a7c2edf4efb99fd416f161f6246fd53ffe77e785a9c1a39237"
+    },
+    {
+      "name": "Road_Corner_NW",
+      "width": 2000,
+      "height": 2000,
+      "ppu": 100,
+      "worldWidth": 20.0,
+      "worldHeight": 20.0,
+      "ports": [
+        {
+          "side": "N",
+          "width": 4.08,
+          "widthPx": 408
+        },
+        {
+          "side": "W",
+          "width": 4.08,
+          "widthPx": 408
+        }
+      ],
+      "geometry": "quarter circle radius 10",
+      "source": "Road_Corner_NE",
+      "rotationCCW": 90,
+      "sha256": "0f2eff1405f6c9048a1bdfa1817d8ffecf5352c04246ee86f675de429d4e6393"
+    },
+    {
+      "name": "Road_Corner_SW",
+      "width": 2000,
+      "height": 2000,
+      "ppu": 100,
+      "worldWidth": 20.0,
+      "worldHeight": 20.0,
+      "ports": [
+        {
+          "side": "S",
+          "width": 4.08,
+          "widthPx": 408
+        },
+        {
+          "side": "W",
+          "width": 4.08,
+          "widthPx": 408
+        }
+      ],
+      "geometry": "quarter circle radius 10",
+      "source": "Road_Corner_NE",
+      "rotationCCW": 180,
+      "sha256": "f4e1173ecb3756d1ec052d21c3ba0b112a0e8ab3b4eafe0d1aec8c40a67c90fb"
+    },
+    {
+      "name": "Road_Corner_SE",
+      "width": 2000,
+      "height": 2000,
+      "ppu": 100,
+      "worldWidth": 20.0,
+      "worldHeight": 20.0,
+      "ports": [
+        {
+          "side": "S",
+          "width": 4.08,
+          "widthPx": 408
+        },
+        {
+          "side": "E",
+          "width": 4.08,
+          "widthPx": 408
+        }
+      ],
+      "geometry": "quarter circle radius 10",
+      "source": "Road_Corner_NE",
+      "rotationCCW": 270,
+      "sha256": "62a83845c6b427724b452145a007c97cd7140a4683b0372a04319f3d970d2ec1"
+    },
+    {
+      "name": "Road_TJunction_N",
+      "width": 2000,
+      "height": 2000,
+      "ppu": 100,
+      "worldWidth": 20.0,
+      "worldHeight": 20.0,
+      "ports": [
+        {
+          "side": "E",
+          "width": 4.08,
+          "widthPx": 408
+        },
+        {
+          "side": "S",
+          "width": 4.08,
+          "widthPx": 408
+        },
+        {
+          "side": "W",
+          "width": 4.08,
+          "widthPx": 408
+        }
+      ],
+      "geometry": "T: suffix is CLOSED side",
+      "source": "Road_TJunction_N",
+      "rotationCCW": 0,
+      "sha256": "59924ef830d287ea012e010c9627ef75d058338b7db30edbe92fde6be7bfab5c"
+    },
+    {
+      "name": "Road_TJunction_W",
+      "width": 2000,
+      "height": 2000,
+      "ppu": 100,
+      "worldWidth": 20.0,
+      "worldHeight": 20.0,
+      "ports": [
+        {
+          "side": "N",
+          "width": 4.08,
+          "widthPx": 408
+        },
+        {
+          "side": "E",
+          "width": 4.08,
+          "widthPx": 408
+        },
+        {
+          "side": "S",
+          "width": 4.08,
+          "widthPx": 408
+        }
+      ],
+      "geometry": "T: suffix is CLOSED side",
+      "source": "Road_TJunction_N",
+      "rotationCCW": 90,
+      "sha256": "50eff9e80aa8dafd3da87331c6fa077ce75ab93f89c36d9b0ae34848d0a5708b"
+    },
+    {
+      "name": "Road_TJunction_S",
+      "width": 2000,
+      "height": 2000,
+      "ppu": 100,
+      "worldWidth": 20.0,
+      "worldHeight": 20.0,
+      "ports": [
+        {
+          "side": "N",
+          "width": 4.08,
+          "widthPx": 408
+        },
+        {
+          "side": "E",
+          "width": 4.08,
+          "widthPx": 408
+        },
+        {
+          "side": "W",
+          "width": 4.08,
+          "widthPx": 408
+        }
+      ],
+      "geometry": "T: suffix is CLOSED side",
+      "source": "Road_TJunction_N",
+      "rotationCCW": 180,
+      "sha256": "1d5002709dc3e5162ff69e6473b243991c48ab171cb3b6d3ef99b5e0a9c05cf3"
+    },
+    {
+      "name": "Road_TJunction_E",
+      "width": 2000,
+      "height": 2000,
+      "ppu": 100,
+      "worldWidth": 20.0,
+      "worldHeight": 20.0,
+      "ports": [
+        {
+          "side": "N",
+          "width": 4.08,
+          "widthPx": 408
+        },
+        {
+          "side": "S",
+          "width": 4.08,
+          "widthPx": 408
+        },
+        {
+          "side": "W",
+          "width": 4.08,
+          "widthPx": 408
+        }
+      ],
+      "geometry": "T: suffix is CLOSED side",
+      "source": "Road_TJunction_N",
+      "rotationCCW": 270,
+      "sha256": "5310efacc4f119e5fa28e1ed0a81a3bdedf8a5f23790e9b24fc848703af24be3"
+    },
+    {
+      "name": "Road_Intersection_4Way",
+      "width": 2000,
+      "height": 2000,
+      "ppu": 100,
+      "worldWidth": 20.0,
+      "worldHeight": 20.0,
+      "ports": [
+        {
+          "side": "N",
+          "width": 4.08,
+          "widthPx": 408
+        },
+        {
+          "side": "E",
+          "width": 4.08,
+          "widthPx": 408
+        },
+        {
+          "side": "S",
+          "width": 4.08,
+          "widthPx": 408
+        },
+        {
+          "side": "W",
+          "width": 4.08,
+          "widthPx": 408
+        }
+      ],
+      "geometry": "two-lane cross, radius-2 inner fillets",
+      "source": "Road_Intersection_4Way",
+      "rotationCCW": 0,
+      "sha256": "6b529783f063cd0cee1c69676c9a980b529365683e1c7e9a410ed6f5cf0cc5c6"
+    },
+    {
+      "name": "Road_YJunction_01",
+      "width": 2000,
+      "height": 2000,
+      "ppu": 100,
+      "worldWidth": 20.0,
+      "worldHeight": 20.0,
+      "ports": [
+        {
+          "side": "N",
+          "width": 4.08,
+          "widthPx": 408
+        },
+        {
+          "side": "E",
+          "width": 4.08,
+          "widthPx": 408
+        },
+        {
+          "side": "S",
+          "width": 4.08,
+          "widthPx": 408
+        }
+      ],
+      "geometry": "Y with orthogonal N/E/S boundary tangents",
+      "source": "Road_YJunction_01",
+      "rotationCCW": 0,
+      "sha256": "1572b9fa13b34dff2ec181023f793e15d695771ded9d68c2f1d8fcb2ea84a54d"
+    },
+    {
+      "name": "Road_Intersection_Large_01",
+      "width": 2000,
+      "height": 2000,
+      "ppu": 100,
+      "worldWidth": 20.0,
+      "worldHeight": 20.0,
+      "ports": [
+        {
+          "side": "N",
+          "width": 8.08,
+          "widthPx": 808
+        },
+        {
+          "side": "E",
+          "width": 8.08,
+          "widthPx": 808
+        },
+        {
+          "side": "S",
+          "width": 8.08,
+          "widthPx": 808
+        },
+        {
+          "side": "W",
+          "width": 8.08,
+          "widthPx": 808
+        }
+      ],
+      "geometry": "four-lane cross",
+      "source": "Road_Intersection_Large_01",
+      "rotationCCW": 0,
+      "sha256": "c85189e04826278a990df6db339d1632ce9859643c89141d4790546568dd50f6"
+    },
+    {
+      "name": "Road_Entrance_Parking_01",
+      "width": 2000,
+      "height": 2000,
+      "ppu": 100,
+      "worldWidth": 20.0,
+      "worldHeight": 20.0,
+      "ports": [
+        {
+          "side": "S",
+          "width": 4.08,
+          "widthPx": 408
+        },
+        {
+          "side": "N",
+          "width": 8.08,
+          "widthPx": 808
+        }
+      ],
+      "geometry": "smooth 2-to-4-lane width transition; no parking lot",
+      "source": "Road_Entrance_Parking_01",
+      "rotationCCW": 0,
+      "sha256": "3368d43a7005e86574f0a73b8dcfe751f135527ff75ac266637071de5d2c2f37"
+    },
+    {
+      "name": "Road_Entrance_Building_01",
+      "width": 2000,
+      "height": 2000,
+      "ppu": 100,
+      "worldWidth": 20.0,
+      "worldHeight": 20.0,
+      "ports": [
+        {
+          "side": "S",
+          "width": 4.08,
+          "widthPx": 408
+        },
+        {
+          "side": "E",
+          "width": 2.04,
+          "widthPx": 204
+        }
+      ],
+      "geometry": "2-lane south to narrow east access",
+      "source": "Road_Entrance_Building_01",
+      "rotationCCW": 0,
+      "sha256": "02c61722032c08365a5f6bde32412ce5b27ab093c8095cf90dbd85ea9c147c63"
+    },
+    {
+      "name": "Road_Entrance_Harbor_01",
+      "width": 2000,
+      "height": 2000,
+      "ppu": 100,
+      "worldWidth": 20.0,
+      "worldHeight": 20.0,
+      "ports": [
+        {
+          "side": "N",
+          "width": 8.08,
+          "widthPx": 808
+        },
+        {
+          "side": "S",
+          "width": 8.08,
+          "widthPx": 808
+        },
+        {
+          "side": "W",
+          "width": 4.08,
+          "widthPx": 408
+        }
+      ],
+      "geometry": "4-lane logistics access with 2-lane west connector",
+      "source": "Road_Entrance_Harbor_01",
+      "rotationCCW": 0,
+      "sha256": "aa6cacfd8a352038522f4800d3fc4e20b95283120f8a731ce4533ef1ea79f2ed"
+    },
+    {
+      "name": "Road_Entrance_Residential_01",
+      "width": 2000,
+      "height": 2000,
+      "ppu": 100,
+      "worldWidth": 20.0,
+      "worldHeight": 20.0,
+      "ports": [
+        {
+          "side": "S",
+          "width": 4.08,
+          "widthPx": 408
+        },
+        {
+          "side": "N",
+          "width": 2.04,
+          "widthPx": 204
+        }
+      ],
+      "geometry": "smooth 2-lane to narrow local access",
+      "source": "Road_Entrance_Residential_01",
+      "rotationCCW": 0,
+      "sha256": "244b3b1ce714cca8127385c6c5ed6b2072d1e4e6dc0945b039f9ae6830020073"
+    },
+    {
+      "name": "Road_Curve_Wide_01",
+      "width": 2000,
+      "height": 2000,
+      "ppu": 100,
+      "worldWidth": 20.0,
+      "worldHeight": 20.0,
+      "ports": [
+        {
+          "side": "N",
+          "width": 4.08,
+          "widthPx": 408
+        },
+        {
+          "side": "E",
+          "width": 4.08,
+          "widthPx": 408
+        }
+      ],
+      "geometry": "radius 8 plus 2-unit approaches",
+      "source": "Road_Curve_Wide_01",
+      "rotationCCW": 0,
+      "sha256": "1ad9702ca1f987bc5b3f881a29d6187e27b608dbb7fd440939c7329a38d0e9ee"
+    },
+    {
+      "name": "Road_Curve_Tight_01",
+      "width": 2000,
+      "height": 2000,
+      "ppu": 100,
+      "worldWidth": 20.0,
+      "worldHeight": 20.0,
+      "ports": [
+        {
+          "side": "N",
+          "width": 4.08,
+          "widthPx": 408
+        },
+        {
+          "side": "E",
+          "width": 4.08,
+          "widthPx": 408
+        }
+      ],
+      "geometry": "radius 4 plus 6-unit approaches",
+      "source": "Road_Curve_Tight_01",
+      "rotationCCW": 0,
+      "sha256": "37774e1ce5d8243f90fe8a3f757f3d7cb689441a68809150053319e4dfa3291c"
+    }
+  ]
+}
