@@ -14,6 +14,8 @@ public sealed class CityMap : MonoBehaviour
     [SerializeField, Min(1)] private int width = 9;
     [SerializeField, Min(1)] private int height = 9;
     [SerializeField, Min(4f)] private float cellSize = 20f;
+    [SerializeField] private bool useRoadGrid = true;
+    private readonly Dictionary<Vector2Int, List<TrafficLane>> laneCells = new Dictionary<Vector2Int, List<TrafficLane>>();
     private readonly HashSet<TrafficLane> laneSet = new HashSet<TrafficLane>();
     private readonly HashSet<SidewalkPath> sidewalkSet = new HashSet<SidewalkPath>();
     private bool ready;
@@ -24,6 +26,7 @@ public sealed class CityMap : MonoBehaviour
     public int LaneCount => fixedLanes.Length;
     public int SidewalkPathCount => fixedSidewalks.Length;
     public int IncidentSlotCount => patientPoints.Length;
+    public bool UsesRoadGrid => useRoadGrid;
     public event Action StateChanged;
 
     // 저장된 참조만 준비하며 도로와 환경 객체를 생성하지 않는다
@@ -45,13 +48,14 @@ public sealed class CityMap : MonoBehaviour
         error = null;
         if (IsReady)
             return true;
-        if (!isActiveAndEnabled || fixedRoads.Length != width * height || fixedLanes.Length == 0 || !float.IsFinite(cellSize) || cellSize < 4f)
+        if (!isActiveAndEnabled || fixedRoads.Length == 0 || (useRoadGrid && fixedRoads.Length != width * height) || fixedLanes.Length == 0 || !float.IsFinite(cellSize) || cellSize < 4f)
         {
             error = "고정 맵의 도로와 차선 및 격자 참조를 확인하세요.";
             return false;
         }
         laneSet.Clear();
         sidewalkSet.Clear();
+        laneCells.Clear();
         foreach (TrafficLane lane in fixedLanes)
         {
             if (!lane || !laneSet.Add(lane))
@@ -59,6 +63,8 @@ public sealed class CityMap : MonoBehaviour
                 error = "고정 맵의 차선이 누락되었거나 중복되었습니다.";
                 return false;
             }
+            if (!useRoadGrid)
+                CacheLane(lane);
         }
         foreach (SidewalkPath path in fixedSidewalks)
             if (path)
@@ -120,6 +126,8 @@ public sealed class CityMap : MonoBehaviour
         if (!IsReady || !float.IsFinite(position.x) || !float.IsFinite(position.y) || !float.IsFinite(position.z) || !float.IsFinite(maxOffset) || maxOffset < 0f || maxOffset > CellSize * 0.5f)
             return false;
         Vector3 local = transform.InverseTransformPoint(position);
+        if (!useRoadGrid)
+            return TryLocateInCells(local, position, maxOffset, out lane, out distance);
         if (local.x < -CellSize || local.y < -CellSize || local.x > width * CellSize || local.y > height * CellSize)
             return false;
         int cx = Mathf.RoundToInt(local.x / CellSize);
@@ -143,6 +151,53 @@ public sealed class CityMap : MonoBehaviour
                 }
             }
         }
+        return lane;
+    }
+
+    // 비격자 Scene도 초기화 시 차선의 공간 목록을 만들어 같은 위치 조회 API를 사용한다.
+    private void CacheLane(TrafficLane lane)
+    {
+        Bounds bounds = new Bounds(transform.InverseTransformPoint(lane.StartPoint), Vector3.zero);
+        for (int i = 1; i < lane.PointCount; i++)
+            bounds.Encapsulate(transform.InverseTransformPoint(lane.GetWorldPoint(i)));
+        Vector2Int min = Cell(bounds.min);
+        Vector2Int max = Cell(bounds.max);
+        for (int y = min.y; y <= max.y; y++)
+            for (int x = min.x; x <= max.x; x++)
+            {
+                Vector2Int key = new Vector2Int(x, y);
+                if (!laneCells.TryGetValue(key, out List<TrafficLane> list))
+                    laneCells.Add(key, list = new List<TrafficLane>());
+                list.Add(lane);
+            }
+    }
+
+    private Vector2Int Cell(Vector3 position)
+    {
+        return new Vector2Int(Mathf.FloorToInt(position.x / cellSize), Mathf.FloorToInt(position.y / cellSize));
+    }
+
+    // 저장된 주변 셀만 검사하며 Scene 검색이나 매번 목록 생성을 하지 않는다.
+    private bool TryLocateInCells(Vector3 local, Vector3 position, float maxOffset, out TrafficLane lane, out float distance)
+    {
+        lane = null;
+        distance = 0f;
+        Vector2Int center = Cell(local);
+        float best = maxOffset * maxOffset;
+        for (int y = center.y - 1; y <= center.y + 1; y++)
+            for (int x = center.x - 1; x <= center.x + 1; x++)
+            {
+                if (!laneCells.TryGetValue(new Vector2Int(x, y), out List<TrafficLane> list))
+                    continue;
+                foreach (TrafficLane candidate in list)
+                {
+                    if (!ContainsLane(candidate) || !candidate.TryProject(position, out float along, out float offset) || offset > best || (lane && offset == best))
+                        continue;
+                    lane = candidate;
+                    distance = along;
+                    best = offset;
+                }
+            }
         return lane;
     }
 

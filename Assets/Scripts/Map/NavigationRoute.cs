@@ -13,6 +13,8 @@ public sealed class NavigationRoute : MonoBehaviour
     [SerializeField] private CityMap map;
     [SerializeField] private Transform player;
     [SerializeField, Min(0f)] private float snapDistance = 2f;
+    [SerializeField] private bool followPlayer;
+    private Coroutine tracking;
 
     private readonly List<TrafficLane> lanes = new List<TrafficLane>();
     private readonly List<Vector3> points = new List<Vector3>();
@@ -55,15 +57,32 @@ public sealed class NavigationRoute : MonoBehaviour
         Subscribe();
         if (HasDestination)
             Recalculate();
+        if (Application.isPlaying && followPlayer)
+            tracking = StartCoroutine(TrackPlayer());
     }
 
     // 비활성화 시 결과와 예약된 재탐색 및 구독을 정리한다
     private void OnDisable()
     {
+        if (tracking != null)
+            StopCoroutine(tracking);
+        tracking = null;
         Unsubscribe();
         CancelPending();
         ResetPath();
         Publish(HasDestination ? RouteStatus.Invalidated : RouteStatus.NoDestination);
+    }
+
+    // 이동한 경우에만 경로를 갱신하고, 도로를 잠시 벗어난 동안에는 현장 보고를 유지한다.
+    private IEnumerator TrackPlayer()
+    {
+        var interval = new WaitForSeconds(0.5f);
+        while (true)
+        {
+            yield return interval;
+            if (HasDestination && player && map && (player.position - Origin).sqrMagnitude >= 4f && map.TryLocate(player.position, snapDistance, out _, out _))
+                Recalculate();
+        }
     }
 
     // 중복 없이 도시 이벤트를 구독한다

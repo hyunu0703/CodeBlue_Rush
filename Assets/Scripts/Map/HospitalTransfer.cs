@@ -11,6 +11,8 @@ public sealed class HospitalTransfer : MonoBehaviour
     [SerializeField] private PatientECG ecg;
     [SerializeField] private Rigidbody2D ambulance;
     [SerializeField] private HospitalArrivalZone[] hospitals = Array.Empty<HospitalArrivalZone>();
+    [SerializeField, Min(0f)] private float stoppedSpeed = 0.15f;
+    [SerializeField, Min(0f)] private float stoppedAngularSpeed = 5f;
     private PatientReport subscribedReport;
     private PatientECG subscribedECG;
     private CityMap subscribedMap;
@@ -191,6 +193,8 @@ public sealed class HospitalTransfer : MonoBehaviour
     // 살아 있는 현재 환자와 올바른 현장만 한 번 도착 확정한다
     public bool TryArrive(HospitalArrivalZone zone)
     {
+        if (!ambulance || ambulance.linearVelocity.sqrMagnitude > stoppedSpeed * stoppedSpeed || Mathf.Abs(ambulance.angularVelocity) > stoppedAngularSpeed)
+            return false;
         if (!isActiveAndEnabled || Status != TransferStatus.Transporting || !report || !report.IsActive || !report.IsPatientOnBoard || report.MissionId != MissionId || !navigation || !navigation.isActiveAndEnabled || navigation.Status != NavigationRoute.RouteStatus.Ready || !ecg || !ecg.isActiveAndEnabled || !ecg.HasPatient || ecg.Value <= 0f || !zone || zone != Destination || zone.Lane != destinationLane || !zone.IsValidFor(navigation.Map) || layout != navigation.Map || !zone.Contains(ambulance))
             return false;
         Status = TransferStatus.Arrived;

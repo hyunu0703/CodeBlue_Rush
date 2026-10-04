@@ -27,9 +27,9 @@ public sealed class RoadChunk : MonoBehaviour
     public bool Validate(out string error)
     {
         error = null;
-        if (LaneCount < 2 || ConnectionCount < 2)
+        if (LaneCount < 2 || ConnectionCount < 1)
         {
-            error = "차선과 도로 연결 지점이 각각 두 개 이상 필요합니다.";
+            error = "차선 두 개 이상과 도로 연결 지점이 필요합니다.";
             return false;
         }
 

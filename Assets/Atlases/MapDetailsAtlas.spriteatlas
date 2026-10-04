@@ -58,18 +58,17 @@ SpriteAtlas:
     secondaryTextureSettings: {}
     variantMultiplier: 1
     packables:
-    - {fileID: 21300000, guid: 4d9766d07d0250f48bceb9e89ffbb37e, type: 3}
-    - {fileID: 21300000, guid: 191758e2290c5518801cca251f669fb3, type: 3}
-    - {fileID: 21300000, guid: 1af5fd5db38756568f55da671b0ed7a4, type: 3}
-    - {fileID: 21300000, guid: 6585109cc6a55230b396efbda1090413, type: 3}
     - {fileID: 21300000, guid: 56babc5d9ff7c4246bb4bc47aafaaa66, type: 3}
     bindAsDefault: 1
     isAtlasV2: 0
     cachedData: {fileID: 0}
-    packedSpriteRenderDataKeys: []
+    packedSpriteRenderDataKeys:
+    - 56babc5d9ff7c4246bb4bc47aafaaa66: 21300000
   m_MasterAtlas: {fileID: 0}
-  m_PackedSprites: []
-  m_PackedSpriteNamesToIndex: []
+  m_PackedSprites:
+  - {fileID: 21300000, guid: 56babc5d9ff7c4246bb4bc47aafaaa66, type: 3}
+  m_PackedSpriteNamesToIndex:
+  - Ambulance
   m_RenderDataMap: {}
   m_Tag: MapDetailsAtlas
   m_IsVariant: 0

@@ -244,15 +244,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d9b4d6cddecced548bb26eb0343947d5, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AmbulanceController
-  maxSpeed: 10
+  maxSpeed: 6
   acceleration: 5
   brakePower: 15
   coastPower: 2
-  maxSteerAngle: 35
-  steerAngleSpeed: 300
-  wheelBase: 5
+  maxSteerAngle: 40
+  steerAngleSpeed: 150
+  wheelBase: 2.5
   grip: 8
 --- !u!114 &2162470331066435328
 MonoBehaviour:
@@ -276,7 +276,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4bd825113cb1b8f40891aaec0aa98a61, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SirenController
   audioSource: {fileID: 0}
 --- !u!114 &1300000000000000001
@@ -289,7 +289,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8417c99ec02640358f78a6ac26e2cff8, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AmbulanceCollision
   report: {fileID: 0}
   ecg: {fileID: 0}

@@ -16,6 +16,7 @@ public sealed class TrafficSpawner : MonoBehaviour
     [SerializeField, Min(15f)] private float despawnDistance = 60f;
     [SerializeField, Min(0.1f)] private float interval = 0.5f;
     [SerializeField, Range(1, 64)] private int attempts = 24;
+    [SerializeField] private bool spawnCitizens = true;
     private readonly List<VehicleAI> active = new List<VehicleAI>();
     private readonly Stack<VehicleAI> pool = new Stack<VehicleAI>();
     private readonly Dictionary<Collider2D, VehicleAI> vehicles = new Dictionary<Collider2D, VehicleAI>();
@@ -75,7 +76,7 @@ public sealed class TrafficSpawner : MonoBehaviour
         Unbind();
         ambulanceBody = player ? player.GetComponent<Rigidbody2D>() : null;
         siren = player ? player.GetComponent<SirenController>() : null;
-        if (Application.isPlaying && map && player)
+        if (spawnCitizens && Application.isPlaying && map && player)
         {
             if (!citizens)
                 citizens = GetComponent<CitizenSpawner>();
@@ -331,10 +332,16 @@ public sealed class TrafficSpawner : MonoBehaviour
             int added = 0;
             for (int attempt = 0; attempt < attempts && active.Count < maxVehicles && added < 3; attempt++)
             {
-                RoadChunk road = map.GetRoad(cx + Next(cells * 2 + 1) - cells, cy + Next(cells * 2 + 1) - cells);
-                if (!road || road.LaneCount == 0)
-                    continue;
-                TrafficLane lane = road.GetLane(Next(road.LaneCount));
+                TrafficLane lane;
+                if (map.UsesRoadGrid)
+                {
+                    RoadChunk road = map.GetRoad(cx + Next(cells * 2 + 1) - cells, cy + Next(cells * 2 + 1) - cells);
+                    if (!road || road.LaneCount == 0)
+                        continue;
+                    lane = road.GetLane(Next(road.LaneCount));
+                }
+                else
+                    lane = map.LaneCount > 0 ? map.GetLane(Next(map.LaneCount)) : null;
                 if (lane && TrySpawn(lane, lane.Length * (0.15f + Next(700) / 1000f), out _))
                     added++;
             }

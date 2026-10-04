@@ -98,7 +98,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 0.9
+  m_Radius: 0.48
 --- !u!114 &8980536470854877442
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -111,11 +111,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6abf1d75bdf149d99cb19ba25311ae80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VehicleAI
-  cruiseSpeed: 5
+  cruiseSpeed: 3.5
   acceleration: 3
   braking: 8
   turnSpeed: 360
   sensorDistance: 7
+  changeDuration: 1.1
+  changeCooldown: 6
+  decisionInterval: 0.8
+  frontGap: 4
+  rearGap: 3
+  cutInChance: 0.15
+  cutInDistance: 18
+  allowLaneChanges: 1
+  signalViolationChance: 0
 --- !u!1 &3167608248802999757
 GameObject:
   m_ObjectHideFlags: 0
@@ -143,7 +152,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 5.625, y: 10.625001, z: 1}
+  m_LocalScale: {x: 1.4423077, y: 1.4423077, z: 1.4423077}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6060018877803408503}
@@ -195,10 +204,10 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 5
+  m_SortingOrder: 110
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  m_Color: {r: 0.95, g: 0.65, b: 0.15, a: 1}
+  m_Sprite: {fileID: -5010411466902409352, guid: 0f75eb2d9f913d247bfbcd1062c59f3b, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -223,7 +232,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5108924154600567925
 Transform:
   m_ObjectHideFlags: 0

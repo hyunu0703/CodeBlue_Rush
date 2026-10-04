@@ -121,7 +121,6 @@ public sealed class PatientReport : MonoBehaviour
                 map.StateChanged += HandleMapChanged;
             }
         }
-        RefreshCandidates();
     }
 
     // 구독에 사용한 실제 참조에서 이벤트를 해제한다
@@ -171,6 +170,7 @@ public sealed class PatientReport : MonoBehaviour
         if (!isActiveAndEnabled || !navigation || !navigation.isActiveAndEnabled)
             return Fail(ReportStatus.NavigationUnavailable, "활성 네비게이션 참조가 필요합니다.", out error);
         Bind();
+        RefreshCandidates();
         if (!map || !map.IsReady)
             return Fail(ReportStatus.MapUnavailable, "현재 도시가 준비되지 않았습니다.", out error);
         if (candidates.Count == 0)
@@ -295,7 +295,6 @@ public sealed class PatientReport : MonoBehaviour
             CancelReport();
             ClearCache();
         }
-        RefreshCandidates();
     }
 
     // 임시 재탐색은 기다리고 사라진 목적지나 확정된 경로 실패는 보고 취소로 반영한다
