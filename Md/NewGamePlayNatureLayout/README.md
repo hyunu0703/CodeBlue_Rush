@@ -1,6 +1,6 @@
 # NewGamePlay 나무·하천 주변 돌 추가 및 배치
 
-후속 작업에서 소방서·외곽 수목, 공장 컨테이너와 살구색 길을 보강했다. **현재 Scene 검증과 화면은 [최신 도시 녹지 보강 기록](../NewGamePlayCityDetailLayout/README.md)을 참고한다.** 아래 수량과 화면은 첫 나무·돌 배치 단계의 기록이다.
+후속 작업에서 도시 녹지와 Maps.png 비교·명암을 보강했다. **현재 Scene 검증과 화면은 [최신 비교 및 그래픽 보강 기록](../NewGamePlayVisualPolish/README.md)을 참고한다.** 아래 수량과 화면은 첫 나무·돌 배치 단계의 기록이다.
 
 최신 main `34575d290f756faf95a6aee69a129437fd276579`의 산책로 배치 위에 작업했다. 원본 `Assets/Images/Maps/Reference/Maps.png`를 디자인과 위치의 기준으로 사용했다. 이번 요청은 새 나무·돌 리소스 제작을 허용하므로 이전 단계의 새 이미지 금지와 리소스 부족 상태를 대체한다.
 

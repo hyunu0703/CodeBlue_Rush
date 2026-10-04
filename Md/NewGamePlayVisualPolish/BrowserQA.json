@@ -1,0 +1,37 @@
+{
+  "title": "Unity Web Player | My project",
+  "canvas": {
+    "width": 480,
+    "height": 854
+  },
+  "webgl2": true,
+  "context": {
+    "alpha": true,
+    "antialias": false,
+    "depth": true,
+    "desynchronized": false,
+    "failIfMajorPerformanceCaveat": false,
+    "powerPreference": "high-performance",
+    "premultipliedAlpha": false,
+    "preserveDrawingBuffer": false,
+    "stencil": true,
+    "xrCompatible": false
+  },
+  "css": {
+    "opacity": "1",
+    "filter": "none",
+    "background": "rgb(35, 31, 32)"
+  },
+  "cornerPixel": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "loadingHidden": true,
+  "banner": " ",
+  "errors": [],
+  "failed": [],
+  "failedResponses": [],
+  "passed": true
+}
