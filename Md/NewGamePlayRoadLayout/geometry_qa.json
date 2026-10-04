@@ -1,0 +1,86 @@
+{
+  "referenceSize": [
+    941,
+    1672
+  ],
+  "roadSegments": 33,
+  "crosswalkBands": 158,
+  "roadBridges": 5,
+  "parkFootbridges": 3,
+  "coastCauseway": 1,
+  "layers": [
+    {
+      "name": "LandDatum",
+      "rectangles": 1793
+    },
+    {
+      "name": "WaterDatum",
+      "rectangles": 1503
+    },
+    {
+      "name": "SidewalkPaving",
+      "rectangles": 1789
+    },
+    {
+      "name": "Asphalt",
+      "rectangles": 977
+    },
+    {
+      "name": "HospitalCirculation",
+      "rectangles": 291
+    },
+    {
+      "name": "Curb",
+      "rectangles": 1706
+    },
+    {
+      "name": "SlabJoints",
+      "rectangles": 4627
+    },
+    {
+      "name": "BridgeDeck",
+      "rectangles": 5
+    },
+    {
+      "name": "FootbridgeDeck",
+      "rectangles": 11
+    },
+    {
+      "name": "BridgeJointsAndRails",
+      "rectangles": 158
+    },
+    {
+      "name": "CoastDeck",
+      "rectangles": 14
+    },
+    {
+      "name": "HospitalIsland",
+      "rectangles": 51
+    },
+    {
+      "name": "MediansAndIsland",
+      "rectangles": 45
+    },
+    {
+      "name": "CenterDashes",
+      "rectangles": 838
+    },
+    {
+      "name": "EdgeLines",
+      "rectangles": 1693
+    },
+    {
+      "name": "Crosswalks",
+      "rectangles": 1361
+    },
+    {
+      "name": "DrivewayPaving",
+      "rectangles": 5
+    }
+  ],
+  "checks": {
+    "sidewalkRoadOverlap": false,
+    "markingsOutsideRoad": false,
+    "zebraOutsideRoad": false
+  }
+}
