@@ -1,0 +1,41 @@
+{
+  "regions": [
+    {
+      "region": "A_NorthCity",
+      "description": "북쪽 주거·업무·병원: 실제 건물 사이의 녹지 위주",
+      "trees": 166,
+      "rocks": 0
+    },
+    {
+      "region": "B_Riverside",
+      "description": "중앙 하천: 돌·수목 군집과 산책로, 교량 입구는 확보",
+      "trees": 192,
+      "rocks": 128
+    },
+    {
+      "region": "C_IndustrialPort",
+      "description": "남서 산업·항만: 희소한 식재, 작업장 및 진입부 보존",
+      "trees": 11,
+      "rocks": 0
+    },
+    {
+      "region": "D_SoutheastCity",
+      "description": "남동 도시: 공원·분수·시설 경계에 집중, 출동 야드 보존",
+      "trees": 204,
+      "rocks": 0
+    },
+    {
+      "region": "E_OuterGreenbelt",
+      "description": "도시 외곽: 좁은 확정 녹지에는 작은 크기, 넓은 남쪽 녹지에는 군집",
+      "trees": 141,
+      "rocks": 0
+    },
+    {
+      "region": "F_PocketGardens",
+      "description": "건물 사이 소규모 녹지: 선택적으로 배치",
+      "trees": 10,
+      "rocks": 0
+    }
+  ],
+  "reference": "Maps.png"
+}

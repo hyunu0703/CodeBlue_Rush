@@ -1,0 +1,61 @@
+{
+  "addedTrees": 193,
+  "fireStationTrees": 28,
+  "outerRoadTrees": 165,
+  "totalTrees": 917,
+  "rocksPreserved": 128,
+  "addedContainers": 24,
+  "addedPathMeshes": 7,
+  "pathColor": "#EBC097",
+  "pathProtectedOverlapPixels": 0,
+  "pathBuildingOrYardOverlapPixels": 0,
+  "pathWaterOverlapPixels": 0,
+  "pathTrunkOverlapPixels": 0,
+  "containerProtectedOverlapPixels": 0,
+  "addedColliders": 0,
+  "addedScripts": 0,
+  "changedExistingSceneBlocks": [
+    1301038354,
+    1653188920,
+    810000001
+  ],
+  "originalNatureInstancesPreserved": true,
+  "originalSceneObjectsPreserved": true,
+  "sourceCommit": "34575d290f756faf95a6aee69a129437fd276579",
+  "sourceSceneSha256": "2960ebfcf905cbd25b5e23707179063249ce54456865b5ccedd62e872bde0f8d",
+  "walkAccessSpurs": 32,
+  "unanchoredWalkComponents": [],
+  "omittedDisconnectedWalks": [
+    {
+      "mesh": "ApricotRiverGardens",
+      "sourcePixelArea": 195,
+      "reason": "No safe sidewalk/walk access within the existing lawn"
+    },
+    {
+      "mesh": "ApricotOuterVergeWalks",
+      "sourcePixelArea": 463,
+      "reason": "Removed after independent final mesh access check"
+    }
+  ],
+  "totalContainers": 44,
+  "geometryHashes": {
+    "ApricotFactoryVergeWalks.asset": "76b5917f278984d735f6fb71ee3d5b2447456a23cf1c58e2a967a24b0683c61b",
+    "ApricotFireStationGardens.asset": "9c38dfeca775909a118cc6d6129dabced452a0d78bbdf7dcc3f32ad4e4e6e183",
+    "ApricotHospitalGardens.asset": "702ea500fb08442d39eae34b112c2a64a603a67121da1440368d90edddcc5585",
+    "ApricotNorthGardens.asset": "3811c079409dda6594c5bdcb347819cb3e9181749e29679e19248b0b37a37a49",
+    "ApricotOuterVergeWalks.asset": "c40976b3db69d236804cb2d8acf026614518d65ebb0a4efdea3328a5b9cc9e97",
+    "ApricotRiverGardens.asset": "0d3a83217cef96f03cbc9fdc97b9f421a38a8aad06d8ee9b680bafcd2118602f",
+    "ApricotSoutheastGardens.asset": "eae5bbc22e28c5d6163cb952513aa407b4b59a673ac3e3e33dfd64796d7a9cd8",
+    "CentralFountainGarden.asset": "023692f5fa2ffd549ea36c9c1e63c8faa1040df858fc4db0d9b3ded66b856823",
+    "CivicFountainGarden.asset": "e5f2b4f3118eaa20b1ed7b594114e9f7e5fefd603584666acd77b07a5f2065a7",
+    "NorthResidentialGarden.asset": "b26fc4a084930f520c1376cf1238343dcecc81667e9a2fde6cf497f9ccbb9486",
+    "RiversideBendGarden.asset": "3c985ab7f9598aba7c105b1680fa9f7f27fcff1598aadd2a94620ff197545bc0",
+    "RiversideEastPavilionWalk.asset": "6246974eb4359769e72cf7c3387263823896192ed47016899cabdc03cf0734e5",
+    "RiversideNorthMeadow.asset": "4348c50152e888dab183683c2fe100808d3180bee809a6f1ccd2778031a858f0",
+    "RiversideWestPavilionWalk.asset": "2bea799563915c4c0b8492fc5fa4a9d072c1764da0711f370c43e27d53f11e5b"
+  },
+  "existingPathVerticesUVAndTrianglesPreserved": true,
+  "connectedWalkComponents": 41,
+  "independentWalkAccessCheck": [],
+  "accessToleranceSourcePixels": 2
+}
