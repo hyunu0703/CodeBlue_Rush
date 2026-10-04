@@ -1336,7 +1336,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &13010290
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -1372,7 +1372,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1 &13110942
 GameObject:
   m_ObjectHideFlags: 0
@@ -3518,6 +3518,172 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!1 &53183890
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 53183893}
+  - component: {fileID: 53183892}
+  - component: {fileID: 53183891}
+  m_Layer: 0
+  m_Name: CameraTurn_OuterCircuit_06
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &53183891
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 53183890}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
+  cameraController: {fileID: 1535307459}
+--- !u!60 &53183892
+PolygonCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 53183890}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Points:
+    m_Paths:
+    - - {x: 6.17771, y: 4.360349}
+      - {x: 6.1573305, y: 3.7084985}
+      - {x: 6.092082, y: 3.0219145}
+      - {x: 5.98238, y: 2.3420215}
+      - {x: 5.827974, y: 1.6690528}
+      - {x: 5.6300564, y: 1.008341}
+      - {x: 5.3894444, y: 0.36207652}
+      - {x: 5.1074286, y: -0.26636147}
+      - {x: 4.784545, y: -0.87564903}
+      - {x: 4.1830516, y: -1.8084813}
+      - {x: 3.7615397, y: -2.3536975}
+      - {x: 3.3053532, y: -2.8700876}
+      - {x: 2.8159356, y: -3.3560336}
+      - {x: 2.2954452, y: -3.8092413}
+      - {x: 1.7473923, y: -4.2266827}
+      - {x: 1.1734632, y: -4.6071343}
+      - {x: 0.6402081, y: -4.9151106}
+      - {x: 0.022920508, y: -5.2222443}
+      - {x: -0.6125175, y: -5.4881353}
+      - {x: -1.2647818, y: -5.712122}
+      - {x: -2.3414624, y: -5.981821}
+      - {x: -3.0213554, y: -6.091523}
+      - {x: -3.7079394, y: -6.156771}
+      - {x: -4.35979, y: -6.1771507}
+      - {x: -7.24729, y: -6.1771507}
+      - {x: -7.693559, y: -6.1331973}
+      - {x: -8.122679, y: -6.0030255}
+      - {x: -8.518157, y: -5.791638}
+      - {x: -8.864797, y: -5.507158}
+      - {x: -9.149277, y: -5.1605177}
+      - {x: -9.360664, y: -4.7650394}
+      - {x: -9.490836, y: -4.33592}
+      - {x: -9.53479, y: -3.8896508}
+      - {x: -9.490836, y: -3.4433818}
+      - {x: -9.360664, y: -3.0142627}
+      - {x: -9.149277, y: -2.618784}
+      - {x: -8.864797, y: -2.272144}
+      - {x: -8.518157, y: -1.9876642}
+      - {x: -8.122679, y: -1.7762765}
+      - {x: -7.693559, y: -1.6461046}
+      - {x: -7.24729, y: -1.6021509}
+      - {x: -3.9700744, y: -1.5891315}
+      - {x: -3.1963189, y: -1.4872382}
+      - {x: -2.6291645, y: -1.3451431}
+      - {x: -2.259415, y: -1.2196695}
+      - {x: -1.722804, y: -0.9870345}
+      - {x: -1.0469316, y: -0.59676415}
+      - {x: -0.5773323, y: -0.24845184}
+      - {x: -0.28404108, y: 0.008810287}
+      - {x: 0.24901088, y: 0.57789135}
+      - {x: 0.5973232, y: 1.0474906}
+      - {x: 0.98759353, y: 1.723363}
+      - {x: 1.2858909, y: 2.4436843}
+      - {x: 1.4877973, y: 3.1968777}
+      - {x: 1.5513699, y: 3.5822368}
+      - {x: 1.599245, y: 4.1651464}
+      - {x: 1.60271, y: 7.247849}
+      - {x: 1.6466637, y: 7.694118}
+      - {x: 1.7768356, y: 8.123238}
+      - {x: 1.9882232, y: 8.518716}
+      - {x: 2.2727032, y: 8.8653555}
+      - {x: 2.619343, y: 9.149836}
+      - {x: 3.0148215, y: 9.361223}
+      - {x: 3.4439409, y: 9.491395}
+      - {x: 3.89021, y: 9.535349}
+      - {x: 4.336479, y: 9.491395}
+      - {x: 4.7655983, y: 9.361223}
+      - {x: 5.161077, y: 9.149836}
+      - {x: 5.5077167, y: 8.8653555}
+      - {x: 5.7921968, y: 8.518716}
+      - {x: 6.0035844, y: 8.123238}
+      - {x: 6.133756, y: 7.694118}
+      - {x: 6.17771, y: 7.247849}
+  m_UseDelaunayMesh: 1
+--- !u!4 &53183893
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 53183890}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 111.04729, y: 31.639648, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1310610397}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &53375658
 GameObject:
   m_ObjectHideFlags: 0
@@ -4120,6 +4286,139 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1027874140}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &60187907
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 60187910}
+  - component: {fileID: 60187909}
+  - component: {fileID: 60187908}
+  m_Layer: 0
+  m_Name: CameraTurn_HospitalNorthAccess_01
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &60187908
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 60187907}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
+  cameraController: {fileID: 1535307459}
+--- !u!60 &60187909
+PolygonCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 60187907}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Points:
+    m_Paths:
+    - - {x: 0.27251524, y: 2.321798}
+      - {x: 0.63915145, y: 2.2823849}
+      - {x: 0.98903364, y: 2.1659462}
+      - {x: 1.3061736, y: 1.9778033}
+      - {x: 1.5760789, y: 1.7265532}
+      - {x: 3.0987923, y: -0.030423885}
+      - {x: 3.2941492, y: -0.30644447}
+      - {x: 3.4319031, y: -0.6152736}
+      - {x: 3.5067606, y: -0.94504315}
+      - {x: 3.515845, y: -1.2830802}
+      - {x: 3.458807, y: -1.6163943}
+      - {x: 3.3378386, y: -1.9321762}
+      - {x: 3.1575887, y: -2.2182908}
+      - {x: 2.924984, y: -2.4637427}
+      - {x: 2.6489632, y: -2.6590993}
+      - {x: 2.3401341, y: -2.7968535}
+      - {x: 2.0103648, y: -2.871711}
+      - {x: 1.6723275, y: -2.8807952}
+      - {x: 1.3390135, y: -2.8237574}
+      - {x: 1.0232315, y: -2.702789}
+      - {x: 0.737117, y: -2.522539}
+      - {x: 0.49166507, y: -2.2899342}
+      - {x: -0.5151696, y: -1.128202}
+      - {x: -2.0524848, y: -1.128202}
+      - {x: -2.3890157, y: -1.0950565}
+      - {x: -2.7126136, y: -0.9968941}
+      - {x: -3.0108435, y: -0.83748704}
+      - {x: -3.272244, y: -0.62296116}
+      - {x: -3.48677, y: -0.3615606}
+      - {x: -3.646177, y: -0.06333087}
+      - {x: -3.7443395, y: 0.26026726}
+      - {x: -3.7774847, y: 0.59679806}
+      - {x: -3.7443395, y: 0.93332887}
+      - {x: -3.646177, y: 1.256927}
+      - {x: -3.48677, y: 1.5551567}
+      - {x: -3.272244, y: 1.8165573}
+      - {x: -3.0108435, y: 2.031083}
+      - {x: -2.7126136, y: 2.1904902}
+      - {x: -2.3890157, y: 2.2886527}
+      - {x: -2.0524848, y: 2.321798}
+  m_UseDelaunayMesh: 1
+--- !u!4 &60187910
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 60187907}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 96.164986, y: 157.7782, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1310610397}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &60719860
 GameObject:
@@ -5229,7 +5528,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &73601402
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -5265,7 +5564,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1 &74596408
 GameObject:
   m_ObjectHideFlags: 0
@@ -6941,7 +7240,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &105883178
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -6977,7 +7276,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1 &106200971
 GameObject:
   m_ObjectHideFlags: 0
@@ -7111,7 +7410,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &106200976
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -7147,7 +7446,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1 &106233955
 GameObject:
   m_ObjectHideFlags: 0
@@ -9056,7 +9355,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &139352162
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -9092,7 +9391,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1 &139871389
 GameObject:
   m_ObjectHideFlags: 0
@@ -9897,7 +10196,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &150688301
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -9933,7 +10232,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1 &151382049
 GameObject:
   m_ObjectHideFlags: 0
@@ -11162,7 +11461,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &168661747
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -11198,7 +11497,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1 &169089196
 GameObject:
   m_ObjectHideFlags: 0
@@ -15996,7 +16295,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &242240752
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -16032,7 +16331,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1 &243738270
 GameObject:
   m_ObjectHideFlags: 0
@@ -21101,7 +21400,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &322146753
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -21137,7 +21436,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1 &322375261
 GameObject:
   m_ObjectHideFlags: 0
@@ -21251,7 +21550,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &322375266
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -21287,7 +21586,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1 &322723955
 GameObject:
   m_ObjectHideFlags: 0
@@ -22086,7 +22385,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &329446736
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -22122,7 +22421,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1 &330207184
 GameObject:
   m_ObjectHideFlags: 0
@@ -26508,7 +26807,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &399069591
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -26544,7 +26843,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1 &399478647
 GameObject:
   m_ObjectHideFlags: 0
@@ -28982,7 +29281,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &422627628
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -29018,7 +29317,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1 &422864580
 GameObject:
   m_ObjectHideFlags: 0
@@ -29397,7 +29696,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &425160588
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -29433,7 +29732,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1001 &425472156
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -35293,7 +35592,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &499798799
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -35329,7 +35628,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1 &499807899
 GameObject:
   m_ObjectHideFlags: 0
@@ -36718,6 +37017,168 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1679132665}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &518820966
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 518820969}
+  - component: {fileID: 518820968}
+  - component: {fileID: 518820967}
+  m_Layer: 0
+  m_Name: CameraTurn_OuterCircuit_08
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &518820967
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 518820966}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
+  cameraController: {fileID: 1535307459}
+--- !u!60 &518820968
+PolygonCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 518820966}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Points:
+    m_Paths:
+    - - {x: -5.049068, y: -3.7818205}
+      - {x: -4.9943147, y: -2.711636}
+      - {x: -4.901988, y: -2.029118}
+      - {x: -4.781997, y: -1.4254594}
+      - {x: -4.4777355, y: -0.36003938}
+      - {x: -4.2608023, y: 0.21645197}
+      - {x: -3.9787865, y: 0.84488994}
+      - {x: -3.4403992, y: 1.8135885}
+      - {x: -3.0985994, y: 2.3253617}
+      - {x: -2.6811583, y: 2.8734148}
+      - {x: -1.9360046, y: 3.6955726}
+      - {x: -1.4314896, y: 4.164759}
+      - {x: -0.9553031, y: 4.5555196}
+      - {x: -0.39675012, y: 4.958836}
+      - {x: 0.18667889, y: 5.3245378}
+      - {x: 0.7941634, y: 5.6520815}
+      - {x: 1.4216613, y: 5.9390364}
+      - {x: 2.0666509, y: 6.184347}
+      - {x: 2.7251773, y: 6.38666}
+      - {x: 3.395946, y: 6.545609}
+      - {x: 4.0757513, y: 6.660272}
+      - {x: 5.181479, y: 6.7510037}
+      - {x: 5.451354, y: 6.7553787}
+      - {x: 5.898277, y: 6.7186646}
+      - {x: 6.3294497, y: 6.5954657}
+      - {x: 6.7283025, y: 6.390516}
+      - {x: 7.0795083, y: 6.111692}
+      - {x: 7.3695693, y: 5.7697086}
+      - {x: 7.58734, y: 5.3777084}
+      - {x: 7.72445, y: 4.9507556}
+      - {x: 7.7756314, y: 4.5052576}
+      - {x: 7.7389174, y: 4.058335}
+      - {x: 7.6157184, y: 3.627162}
+      - {x: 7.4107685, y: 3.228309}
+      - {x: 7.1319447, y: 2.8771036}
+      - {x: 6.7899613, y: 2.587042}
+      - {x: 6.397961, y: 2.369272}
+      - {x: 5.9710083, y: 2.2321615}
+      - {x: 5.5255103, y: 2.18098}
+      - {x: 4.9044023, y: 2.1516778}
+      - {x: 4.134713, y: 2.024671}
+      - {x: 3.388057, y: 1.798198}
+      - {x: 2.6779132, y: 1.4764026}
+      - {x: 2.0158048, y: 1.0647318}
+      - {x: 1.4126832, y: 0.5697182}
+      - {x: 0.8796312, y: 0.0006371318}
+      - {x: 0.4253368, y: -0.63346094}
+      - {x: 0.14104861, y: -1.1448345}
+      - {x: -0.09158637, y: -1.6814455}
+      - {x: -0.31805944, y: -2.4281015}
+      - {x: -0.4227278, y: -3.0037084}
+      - {x: -0.4706028, y: -3.5866177}
+      - {x: -0.47406784, y: -6.6693206}
+      - {x: -0.5180215, y: -7.1155896}
+      - {x: -0.6481934, y: -7.5447087}
+      - {x: -0.8595811, y: -7.9401875}
+      - {x: -1.1440611, y: -8.286827}
+      - {x: -1.490701, y: -8.571307}
+      - {x: -1.8861794, y: -8.782695}
+      - {x: -2.3152988, y: -8.912867}
+      - {x: -2.7615678, y: -8.9568205}
+      - {x: -3.2078369, y: -8.912867}
+      - {x: -3.6369562, y: -8.782695}
+      - {x: -4.032435, y: -8.571307}
+      - {x: -4.3790746, y: -8.286827}
+      - {x: -4.6635547, y: -7.9401875}
+      - {x: -4.8749423, y: -7.5447087}
+      - {x: -5.005114, y: -7.1155896}
+      - {x: -5.049068, y: -6.6693206}
+  m_UseDelaunayMesh: 1
+--- !u!4 &518820969
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 518820966}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 8.699066, y: 197.90683, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1310610397}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &518973375
 GameObject:
   m_ObjectHideFlags: 0
@@ -38055,6 +38516,88 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1539446406}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &533315493
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 533315494}
+  - component: {fileID: 533315496}
+  - component: {fileID: 533315495}
+  m_Layer: 0
+  m_Name: CameraTurn_FireDispatchDriveway_Entrance
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &533315494
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 533315493}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 73.4375, y: 52, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1310610397}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &533315495
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 533315493}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
+  cameraController: {fileID: 1535307459}
+--- !u!58 &533315496
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 533315493}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_Radius: 2.575
 --- !u!1 &534425321
 GameObject:
   m_ObjectHideFlags: 0
@@ -39699,7 +40242,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &567972214
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -39735,7 +40278,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1 &568484109
 GameObject:
   m_ObjectHideFlags: 0
@@ -39972,7 +40515,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &570796972
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -40008,7 +40551,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1 &570950100
 GameObject:
   m_ObjectHideFlags: 0
@@ -41096,7 +41639,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &581374660
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -41132,7 +41675,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1 &582178633
 GameObject:
   m_ObjectHideFlags: 0
@@ -44537,7 +45080,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &626799391
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -44573,7 +45116,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1001 &627050196
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -45826,7 +46369,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &647357867
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -45862,7 +46405,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1 &648774079
 GameObject:
   m_ObjectHideFlags: 0
@@ -47083,7 +47626,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &664188191
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -47119,7 +47662,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1 &664815694
 GameObject:
   m_ObjectHideFlags: 0
@@ -48634,7 +49177,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &681128374
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -48670,7 +49213,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1 &681994558
 GameObject:
   m_ObjectHideFlags: 0
@@ -50444,7 +50987,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &704499997
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -50480,7 +51023,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1 &704810455
 GameObject:
   m_ObjectHideFlags: 0
@@ -54489,7 +55032,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &747824540
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -54525,7 +55068,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1 &748496071
 GameObject:
   m_ObjectHideFlags: 0
@@ -55250,7 +55793,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &758749186
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -55286,7 +55829,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1 &760140356
 GameObject:
   m_ObjectHideFlags: 0
@@ -55800,6 +56343,172 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1696995567}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &766103794
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 766103797}
+  - component: {fileID: 766103796}
+  - component: {fileID: 766103795}
+  m_Layer: 0
+  m_Name: CameraTurn_OuterCircuit_01
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &766103795
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 766103794}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
+  cameraController: {fileID: 1535307459}
+--- !u!60 &766103796
+PolygonCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 766103794}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Points:
+    m_Paths:
+    - - {x: -4.360349, y: 6.17771}
+      - {x: -3.7084985, y: 6.1573305}
+      - {x: -3.0219145, y: 6.092082}
+      - {x: -2.3420215, y: 5.98238}
+      - {x: -1.6690528, y: 5.827974}
+      - {x: -1.008341, y: 5.6300564}
+      - {x: -0.36207652, y: 5.3894444}
+      - {x: 0.26636147, y: 5.1074286}
+      - {x: 0.87564903, y: 4.784545}
+      - {x: 1.8084813, y: 4.1830516}
+      - {x: 2.3536975, y: 3.7615397}
+      - {x: 2.8700876, y: 3.3053532}
+      - {x: 3.3560336, y: 2.8159356}
+      - {x: 3.8092413, y: 2.2954452}
+      - {x: 4.2266827, y: 1.7473923}
+      - {x: 4.6071343, y: 1.1734632}
+      - {x: 4.9151106, y: 0.6402081}
+      - {x: 5.2222443, y: 0.022920508}
+      - {x: 5.4881353, y: -0.6125175}
+      - {x: 5.712122, y: -1.2647818}
+      - {x: 5.981821, y: -2.3414624}
+      - {x: 6.091523, y: -3.0213554}
+      - {x: 6.156771, y: -3.7079394}
+      - {x: 6.1771507, y: -4.35979}
+      - {x: 6.1771507, y: -7.24729}
+      - {x: 6.1331973, y: -7.693559}
+      - {x: 6.0030255, y: -8.122679}
+      - {x: 5.791638, y: -8.518157}
+      - {x: 5.507158, y: -8.864797}
+      - {x: 5.1605177, y: -9.149277}
+      - {x: 4.7650394, y: -9.360664}
+      - {x: 4.33592, y: -9.490836}
+      - {x: 3.8896508, y: -9.53479}
+      - {x: 3.4433818, y: -9.490836}
+      - {x: 3.0142627, y: -9.360664}
+      - {x: 2.618784, y: -9.149277}
+      - {x: 2.272144, y: -8.864797}
+      - {x: 1.9876642, y: -8.518157}
+      - {x: 1.7762765, y: -8.122679}
+      - {x: 1.6461046, y: -7.693559}
+      - {x: 1.6021509, y: -7.24729}
+      - {x: 1.5891315, y: -3.9700744}
+      - {x: 1.4872382, y: -3.1963189}
+      - {x: 1.3451431, y: -2.6291645}
+      - {x: 1.2196695, y: -2.259415}
+      - {x: 0.9870345, y: -1.722804}
+      - {x: 0.59676415, y: -1.0469316}
+      - {x: 0.24845184, y: -0.5773323}
+      - {x: -0.008810287, y: -0.28404108}
+      - {x: -0.57789135, y: 0.24901088}
+      - {x: -1.0474906, y: 0.5973232}
+      - {x: -1.723363, y: 0.98759353}
+      - {x: -2.4436843, y: 1.2858909}
+      - {x: -3.1968777, y: 1.4877973}
+      - {x: -3.5822368, y: 1.5513699}
+      - {x: -4.1651464, y: 1.599245}
+      - {x: -7.247849, y: 1.60271}
+      - {x: -7.694118, y: 1.6466637}
+      - {x: -8.123238, y: 1.7768356}
+      - {x: -8.518716, y: 1.9882232}
+      - {x: -8.8653555, y: 2.2727032}
+      - {x: -9.149836, y: 2.619343}
+      - {x: -9.361223, y: 3.0148215}
+      - {x: -9.491395, y: 3.4439409}
+      - {x: -9.535349, y: 3.89021}
+      - {x: -9.491395, y: 4.336479}
+      - {x: -9.361223, y: 4.7655983}
+      - {x: -9.149836, y: 5.161077}
+      - {x: -8.8653555, y: 5.5077167}
+      - {x: -8.518716, y: 5.7921968}
+      - {x: -8.123238, y: 6.0035844}
+      - {x: -7.694118, y: 6.133756}
+      - {x: -7.247849, y: 6.17771}
+  m_UseDelaunayMesh: 1
+--- !u!4 &766103797
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 766103794}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 110.04785, y: 198.48479, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1310610397}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &768736902
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -55862,7 +56571,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3526043532117664516, guid: 9d9dbdbda344a2245872c4e3994603e1, type: 3}
       propertyPath: maxSteerAngle
-      value: 40
+      value: 35
       objectReference: {fileID: 0}
     - target: {fileID: 3526043532117664516, guid: 9d9dbdbda344a2245872c4e3994603e1, type: 3}
       propertyPath: steerAngleSpeed
@@ -59011,6 +59720,88 @@ Transform:
   - {fileID: 820001701}
   - {fileID: 820001703}
   m_Father: {fileID: 810000001}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &811667052
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 811667055}
+  - component: {fileID: 811667054}
+  - component: {fileID: 811667053}
+  m_Layer: 0
+  m_Name: CameraTurn_PortYardDriveway_Entrance
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &811667053
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 811667052}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
+  cameraController: {fileID: 1535307459}
+--- !u!58 &811667054
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 811667052}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_Radius: 2.825
+--- !u!4 &811667055
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 811667052}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 38.6875, y: 65.5, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1310610397}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &811719692
 GameObject:
@@ -116613,6 +117404,168 @@ Transform:
   m_Children: []
   m_Father: {fileID: 841487033}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &828347214
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 828347217}
+  - component: {fileID: 828347216}
+  - component: {fileID: 828347215}
+  m_Layer: 0
+  m_Name: CameraTurn_OuterCircuit_02
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &828347215
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 828347214}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
+  cameraController: {fileID: 1535307459}
+--- !u!60 &828347216
+PolygonCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 828347214}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Points:
+    m_Paths:
+    - - {x: 5.641918, y: 6.2850313}
+      - {x: 5.6246443, y: 2.843413}
+      - {x: 5.5691648, y: 2.2549677}
+      - {x: 5.4750843, y: 1.670431}
+      - {x: 5.3434668, y: 1.0951219}
+      - {x: 5.17392, y: 0.5277435}
+      - {x: 4.967633, y: -0.027108021}
+      - {x: 4.7260675, y: -0.5662148}
+      - {x: 4.4493117, y: -1.089036}
+      - {x: 4.13901, y: -1.5926498}
+      - {x: 3.7965102, y: -2.074755}
+      - {x: 3.4233782, y: -2.533237}
+      - {x: 3.0212417, y: -2.9662235}
+      - {x: 2.590944, y: -3.3725324}
+      - {x: 2.1352577, y: -3.749627}
+      - {x: 1.6558031, y: -4.0961676}
+      - {x: 1.1548041, y: -4.410522}
+      - {x: 0.29922286, y: -4.849957}
+      - {x: -0.24764225, y: -5.0737853}
+      - {x: -0.80829513, y: -5.261476}
+      - {x: -1.3799094, y: -5.412037}
+      - {x: -1.9608047, y: -5.52514}
+      - {x: -2.5475261, y: -5.5998588}
+      - {x: -3.1371694, y: -5.6360354}
+      - {x: -6.2830815, y: -5.6399684}
+      - {x: -6.729351, y: -5.596015}
+      - {x: -7.15847, y: -5.465843}
+      - {x: -7.5539484, y: -5.2544556}
+      - {x: -7.9005885, y: -4.9699755}
+      - {x: -8.185068, y: -4.6233354}
+      - {x: -8.396456, y: -4.227857}
+      - {x: -8.5266285, y: -3.7987378}
+      - {x: -8.570581, y: -3.3524687}
+      - {x: -8.5266285, y: -2.9061995}
+      - {x: -8.396456, y: -2.4770803}
+      - {x: -8.185068, y: -2.0816016}
+      - {x: -7.9005885, y: -1.7349619}
+      - {x: -7.5539484, y: -1.4504819}
+      - {x: -7.15847, y: -1.2390941}
+      - {x: -6.729351, y: -1.1089222}
+      - {x: -6.2830815, y: -1.0649686}
+      - {x: -3.2498047, y: -1.062268}
+      - {x: -2.6689355, y: -1.0051154}
+      - {x: -2.2404015, y: -0.9125332}
+      - {x: -1.5537423, y: -0.6668254}
+      - {x: -1.0391375, y: -0.39173287}
+      - {x: -0.45337504, y: 0.042745247}
+      - {x: 0.053751357, y: 0.5667314}
+      - {x: 0.39368257, y: 1.0410872}
+      - {x: 0.6687751, y: 1.555692}
+      - {x: 0.8745069, y: 2.1023114}
+      - {x: 1.007065, y: 2.6708853}
+      - {x: 1.0642178, y: 3.2517545}
+      - {x: 1.0669183, y: 6.2850313}
+      - {x: 1.110872, y: 6.7313004}
+      - {x: 1.2410439, y: 7.16042}
+      - {x: 1.4524316, y: 7.555898}
+      - {x: 1.7369115, y: 7.9025383}
+      - {x: 2.0835514, y: 8.187018}
+      - {x: 2.47903, y: 8.398406}
+      - {x: 2.9081492, y: 8.528578}
+      - {x: 3.3544183, y: 8.572532}
+      - {x: 3.8006873, y: 8.528578}
+      - {x: 4.2298064, y: 8.398406}
+      - {x: 4.625285, y: 8.187018}
+      - {x: 4.9719253, y: 7.9025383}
+      - {x: 5.256405, y: 7.555898}
+      - {x: 5.4677925, y: 7.16042}
+      - {x: 5.597965, y: 6.7313004}
+  m_UseDelaunayMesh: 1
+--- !u!4 &828347217
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 828347214}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 110.583084, y: 141.35248, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1310610397}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &829566654
 GameObject:
   m_ObjectHideFlags: 0
@@ -122771,7 +123724,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &841487037
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -122807,7 +123760,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1001 &841839904
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -152552,7 +153505,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &914336250
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -152588,7 +153541,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1 &917235471
 GameObject:
   m_ObjectHideFlags: 0
@@ -152946,7 +153899,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &921482602
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -152982,7 +153935,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1 &921969036
 GameObject:
   m_ObjectHideFlags: 0
@@ -154574,7 +155527,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &936550323
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -154610,7 +155563,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1001 &937106105
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -156048,6 +157001,163 @@ MonoBehaviour:
   internalNext:
   - {fileID: 1649856816}
   nextLane: {fileID: 0}
+--- !u!1 &953135696
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 953135699}
+  - component: {fileID: 953135698}
+  - component: {fileID: 953135697}
+  m_Layer: 0
+  m_Name: CameraTurn_HospitalRoundabout_01
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &953135697
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 953135696}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
+  cameraController: {fileID: 1535307459}
+--- !u!60 &953135698
+PolygonCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 953135696}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Points:
+    m_Paths:
+    - - {x: 6.470771, y: 0.12917589}
+      - {x: 6.432271, y: -0.7165509}
+      - {x: 6.398517, y: -0.97284895}
+      - {x: 6.216935, y: -1.7991047}
+      - {x: 6.02781, y: -2.3566048}
+      - {x: 5.928749, y: -2.5957959}
+      - {x: 5.539262, y: -3.3472745}
+      - {x: 5.055086, y: -4.0414944}
+      - {x: 4.666961, y: -4.4841194}
+      - {x: 4.4841194, y: -4.666961}
+      - {x: 3.8366497, y: -5.2122617}
+      - {x: 3.1236708, y: -5.6683745}
+      - {x: 2.5957959, y: -5.928749}
+      - {x: 2.3566048, y: -6.02781}
+      - {x: 1.5500989, y: -6.283642}
+      - {x: 0.7165509, y: -6.432271}
+      - {x: 0.12917589, y: -6.470771}
+      - {x: -0.7165509, y: -6.432271}
+      - {x: -0.97284895, y: -6.398517}
+      - {x: -1.7991047, y: -6.216935}
+      - {x: -2.3566048, y: -6.02781}
+      - {x: -2.5957959, y: -5.928749}
+      - {x: -3.3472745, y: -5.539262}
+      - {x: -4.0414944, y: -5.055086}
+      - {x: -4.4841194, y: -4.666961}
+      - {x: -4.666961, y: -4.4841194}
+      - {x: -5.2122617, y: -3.8366497}
+      - {x: -5.6683745, y: -3.1236708}
+      - {x: -5.928749, y: -2.5957959}
+      - {x: -6.02781, y: -2.3566048}
+      - {x: -6.283642, y: -1.5500989}
+      - {x: -6.432271, y: -0.7165509}
+      - {x: -6.470771, y: -0.12917589}
+      - {x: -6.432271, y: 0.7165509}
+      - {x: -6.398517, y: 0.97284895}
+      - {x: -6.216935, y: 1.7991047}
+      - {x: -6.02781, y: 2.3566048}
+      - {x: -5.928749, y: 2.5957959}
+      - {x: -5.539262, y: 3.3472745}
+      - {x: -5.055086, y: 4.0414944}
+      - {x: -4.666961, y: 4.4841194}
+      - {x: -4.4841194, y: 4.666961}
+      - {x: -3.8366497, y: 5.2122617}
+      - {x: -3.1236708, y: 5.6683745}
+      - {x: -2.5957959, y: 5.928749}
+      - {x: -2.3566048, y: 6.02781}
+      - {x: -1.5500989, y: 6.283642}
+      - {x: -0.7165509, y: 6.432271}
+      - {x: -0.12917589, y: 6.470771}
+      - {x: 0.7165509, y: 6.432271}
+      - {x: 0.97284895, y: 6.398517}
+      - {x: 1.7991047, y: 6.216935}
+      - {x: 2.3566048, y: 6.02781}
+      - {x: 2.5957959, y: 5.928749}
+      - {x: 3.3472745, y: 5.539262}
+      - {x: 4.0414944, y: 5.055086}
+      - {x: 4.4841194, y: 4.666961}
+      - {x: 4.666961, y: 4.4841194}
+      - {x: 5.2122617, y: 3.8366497}
+      - {x: 5.6683745, y: 3.1236708}
+      - {x: 5.928749, y: 2.5957959}
+      - {x: 6.02781, y: 2.3566048}
+      - {x: 6.283642, y: 1.5500989}
+      - {x: 6.432271, y: 0.7165509}
+  m_UseDelaunayMesh: 1
+--- !u!4 &953135699
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 953135696}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 100.5625, y: 153.25, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1310610397}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &953337837
 GameObject:
   m_ObjectHideFlags: 0
@@ -157644,7 +158754,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &974847866
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -157680,7 +158790,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1 &975219849
 GameObject:
   m_ObjectHideFlags: 0
@@ -158426,6 +159536,7 @@ Transform:
   - {fileID: 299959308}
   - {fileID: 414697515}
   - {fileID: 2048333954}
+  - {fileID: 1310610397}
   m_Father: {fileID: 1446612557}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &985633187
@@ -159770,72 +160881,92 @@ MonoBehaviour:
   - {fileID: 55940590}
   - {fileID: 2021768109}
   fixedTurnZones:
-  - {fileID: 13010289}
-  - {fileID: 2052034607}
-  - {fileID: 1300654595}
-  - {fileID: 1183024481}
-  - {fileID: 841487036}
-  - {fileID: 1837761252}
-  - {fileID: 1583219233}
-  - {fileID: 747824539}
-  - {fileID: 1646783160}
-  - {fileID: 422627627}
-  - {fileID: 1328681470}
-  - {fileID: 704499996}
-  - {fileID: 921482601}
-  - {fileID: 73601401}
-  - {fileID: 1018464507}
-  - {fileID: 570796971}
-  - {fileID: 1782724218}
-  - {fileID: 1090955670}
-  - {fileID: 1976916591}
-  - {fileID: 1720410698}
-  - {fileID: 581374659}
-  - {fileID: 1816548581}
-  - {fileID: 1231353049}
-  - {fileID: 425160587}
-  - {fileID: 758749185}
-  - {fileID: 2124231184}
-  - {fileID: 1755445606}
-  - {fileID: 399069590}
-  - {fileID: 1335988380}
-  - {fileID: 2111189796}
-  - {fileID: 1657802328}
-  - {fileID: 626799390}
-  - {fileID: 1595789379}
-  - {fileID: 168661746}
-  - {fileID: 329446735}
-  - {fileID: 936550322}
-  - {fileID: 664188190}
-  - {fileID: 1019137521}
-  - {fileID: 1809498697}
-  - {fileID: 105883177}
-  - {fileID: 1161194780}
   - {fileID: 139352161}
-  - {fileID: 2107778505}
-  - {fileID: 322146752}
-  - {fileID: 1027874143}
-  - {fileID: 322375265}
-  - {fileID: 567972213}
-  - {fileID: 1679132668}
-  - {fileID: 914336249}
-  - {fileID: 1896352388}
-  - {fileID: 647357866}
-  - {fileID: 106200975}
-  - {fileID: 150688300}
-  - {fileID: 1189852973}
-  - {fileID: 2104794169}
-  - {fileID: 1417879097}
-  - {fileID: 1049239611}
-  - {fileID: 1539446409}
-  - {fileID: 499798798}
-  - {fileID: 1037510889}
-  - {fileID: 242240751}
-  - {fileID: 1861403357}
   - {fileID: 681128373}
-  - {fileID: 974847865}
-  - {fileID: 1743953757}
+  - {fileID: 150688300}
+  - {fileID: 1027874143}
+  - {fileID: 60187908}
+  - {fileID: 1361304699}
+  - {fileID: 1231353049}
+  - {fileID: 1328681470}
+  - {fileID: 1755445606}
+  - {fileID: 758749185}
+  - {fileID: 1759621283}
+  - {fileID: 533315495}
+  - {fileID: 647357866}
+  - {fileID: 626799390}
+  - {fileID: 1679132668}
+  - {fileID: 106200975}
+  - {fileID: 828347215}
+  - {fileID: 1854376986}
+  - {fileID: 1445849823}
+  - {fileID: 1335988380}
+  - {fileID: 1976916591}
+  - {fileID: 1861403357}
+  - {fileID: 747824539}
+  - {fileID: 1186200214}
+  - {fileID: 53183891}
+  - {fileID: 73601401}
+  - {fileID: 2052034607}
+  - {fileID: 425160587}
+  - {fileID: 168661746}
+  - {fileID: 570796971}
+  - {fileID: 811667053}
+  - {fileID: 1657802328}
+  - {fileID: 581374659}
+  - {fileID: 322375265}
+  - {fileID: 329446735}
+  - {fileID: 499798798}
+  - {fileID: 1018464507}
+  - {fileID: 1115311756}
+  - {fileID: 664188190}
+  - {fileID: 322146752}
+  - {fileID: 953135697}
+  - {fileID: 841487036}
+  - {fileID: 936550322}
+  - {fileID: 2044285975}
+  - {fileID: 2107762954}
+  - {fileID: 1782724218}
+  - {fileID: 1809498697}
+  - {fileID: 1837761252}
+  - {fileID: 518820967}
+  - {fileID: 1222719188}
+  - {fileID: 2144302710}
+  - {fileID: 1646783160}
+  - {fileID: 1539446409}
+  - {fileID: 1037510889}
+  - {fileID: 1720410698}
+  - {fileID: 704499996}
+  - {fileID: 1189852973}
+  - {fileID: 766103795}
+  - {fileID: 991803610}
+  - {fileID: 567972213}
+  - {fileID: 2104794169}
+  - {fileID: 2111189796}
+  - {fileID: 1300654595}
+  - {fileID: 1049239611}
+  - {fileID: 921482601}
+  - {fileID: 1896352388}
+  - {fileID: 1417879097}
+  - {fileID: 1161194780}
+  - {fileID: 1595789379}
+  - {fileID: 1583219233}
+  - {fileID: 2107778505}
   - {fileID: 1382109961}
+  - {fileID: 1743953757}
+  - {fileID: 2124231184}
+  - {fileID: 1090955670}
+  - {fileID: 2145984010}
+  - {fileID: 13010289}
+  - {fileID: 105883177}
+  - {fileID: 1816548581}
+  - {fileID: 422627627}
+  - {fileID: 242240751}
+  - {fileID: 914336249}
+  - {fileID: 399069590}
+  - {fileID: 1019137521}
+  - {fileID: 974847865}
+  - {fileID: 1183024481}
   width: 6
   height: 11
   cellSize: 20
@@ -160262,6 +161393,138 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 991073262}
   m_CullTransparentMesh: 1
+--- !u!1 &991803609
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 991803612}
+  - component: {fileID: 991803611}
+  - component: {fileID: 991803610}
+  m_Layer: 0
+  m_Name: CameraTurn_HospitalEastParkingAccess_01
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &991803610
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 991803609}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
+  cameraController: {fileID: 1535307459}
+--- !u!60 &991803611
+PolygonCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 991803609}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Points:
+    m_Paths:
+    - - {x: -0.13295326, y: -2.1641147}
+      - {x: -0.46889415, y: -2.1310866}
+      - {x: -0.7919707, y: -2.033267}
+      - {x: -1.0898111, y: -1.8744016}
+      - {x: -3.024328, y: -0.5847236}
+      - {x: -3.2859528, y: -0.37047127}
+      - {x: -3.500752, y: -0.10929526}
+      - {x: -3.660471, y: 0.18876757}
+      - {x: -3.758972, y: 0.5122628}
+      - {x: -3.7924693, y: 0.84875876}
+      - {x: -3.759676, y: 1.1853241}
+      - {x: -3.6618521, y: 1.5090247}
+      - {x: -3.502757, y: 1.807421}
+      - {x: -3.2885046, y: 2.0690458}
+      - {x: -3.0273287, y: 2.283845}
+      - {x: -2.7292657, y: 2.443564}
+      - {x: -2.4057705, y: 2.542065}
+      - {x: -2.0692747, y: 2.5755622}
+      - {x: -1.7327093, y: 2.542769}
+      - {x: -1.4090086, y: 2.444945}
+      - {x: -1.1106124, y: 2.2858498}
+      - {x: 0.3893347, y: 1.2858852}
+      - {x: 2.1920466, y: 1.2858852}
+      - {x: 2.5285776, y: 1.2527398}
+      - {x: 2.8521757, y: 1.1545774}
+      - {x: 3.1504054, y: 0.9951703}
+      - {x: 3.4118059, y: 0.7806444}
+      - {x: 3.6263318, y: 0.51924384}
+      - {x: 3.785739, y: 0.22101413}
+      - {x: 3.8839014, y: -0.10258399}
+      - {x: 3.9170468, y: -0.43911478}
+      - {x: 3.8839014, y: -0.7756456}
+      - {x: 3.785739, y: -1.0992438}
+      - {x: 3.6263318, y: -1.3974735}
+      - {x: 3.4118059, y: -1.658874}
+      - {x: 3.1504054, y: -1.8733999}
+      - {x: 2.8521757, y: -2.0328069}
+      - {x: 2.5285776, y: -2.1309693}
+      - {x: 2.1920466, y: -2.1641147}
+  m_UseDelaunayMesh: 1
+--- !u!4 &991803612
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 991803609}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 105.94545, y: 149.18912, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1310610397}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &992137525
 GameObject:
   m_ObjectHideFlags: 0
@@ -161576,7 +162839,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &1018464508
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -161612,7 +162875,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1 &1018963108
 GameObject:
   m_ObjectHideFlags: 0
@@ -161795,7 +163058,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &1019137522
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -161831,7 +163094,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1001 &1019338966
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -162337,7 +163600,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &1027874144
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -162373,7 +163636,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1 &1028824953
 GameObject:
   m_ObjectHideFlags: 0
@@ -162981,7 +164244,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &1037510890
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -163017,7 +164280,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1 &1038626016
 GameObject:
   m_ObjectHideFlags: 0
@@ -163835,7 +165098,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &1049239612
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -163871,7 +165134,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1001 &1050127088
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -167476,7 +168739,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &1090955671
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -167512,7 +168775,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1 &1091556521
 GameObject:
   m_ObjectHideFlags: 0
@@ -168889,6 +170152,173 @@ Transform:
   m_Children:
   - {fileID: 286156109}
   m_Father: {fileID: 570796968}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1115311755
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1115311758}
+  - component: {fileID: 1115311757}
+  - component: {fileID: 1115311756}
+  m_Layer: 0
+  m_Name: CameraTurn_OuterCircuit_05
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1115311756
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1115311755}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
+  cameraController: {fileID: 1535307459}
+--- !u!60 &1115311757
+PolygonCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1115311755}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Points:
+    m_Paths:
+    - - {x: -4.0388947, y: 5.9975286}
+      - {x: -3.4192495, y: 5.978122}
+      - {x: -2.766864, y: 5.916408}
+      - {x: -2.117595, y: 5.811738}
+      - {x: -1.4771582, y: 5.664839}
+      - {x: -0.8484673, y: 5.4767666}
+      - {x: -0.23273744, y: 5.2476807}
+      - {x: 0.36742446, y: 4.9784}
+      - {x: 0.9470137, y: 4.6714134}
+      - {x: 1.5068457, y: 4.326082}
+      - {x: 2.0415344, y: 3.9459462}
+      - {x: 2.5511997, y: 3.5307992}
+      - {x: 3.0320258, y: 3.083938}
+      - {x: 3.743815, y: 2.298494}
+      - {x: 4.1416135, y: 1.7759948}
+      - {x: 4.5044928, y: 1.2286085}
+      - {x: 4.8308153, y: 0.65844077}
+      - {x: 5.1192093, y: 0.068182155}
+      - {x: 5.368054, y: -0.5391028}
+      - {x: 5.5553436, y: -1.0909191}
+      - {x: 5.727541, y: -1.724235}
+      - {x: 5.85819, y: -2.3681717}
+      - {x: 5.94636, y: -3.0199409}
+      - {x: 5.991699, y: -3.6735764}
+      - {x: 5.9986053, y: -6.927471}
+      - {x: 5.954652, y: -7.3737407}
+      - {x: 5.82448, y: -7.80286}
+      - {x: 5.6130924, y: -8.1983385}
+      - {x: 5.3286123, y: -8.544978}
+      - {x: 4.981972, y: -8.829458}
+      - {x: 4.586494, y: -9.040846}
+      - {x: 4.1573744, y: -9.171018}
+      - {x: 3.7111053, y: -9.214972}
+      - {x: 3.2648363, y: -9.171018}
+      - {x: 2.8357172, y: -9.040846}
+      - {x: 2.4402385, y: -8.829458}
+      - {x: 2.0935986, y: -8.544978}
+      - {x: 1.8091187, y: -8.1983385}
+      - {x: 1.597731, y: -7.80286}
+      - {x: 1.4675591, y: -7.3737407}
+      - {x: 1.4236054, y: -6.927471}
+      - {x: 1.4203979, y: -3.8613515}
+      - {x: 1.3765643, y: -3.3266146}
+      - {x: 1.2371174, y: -2.6261737}
+      - {x: 1.1334208, y: -2.2841325}
+      - {x: 0.9365479, y: -1.785841}
+      - {x: 0.59985715, y: -1.1558973}
+      - {x: 0.29449323, y: -0.7147292}
+      - {x: 0.067617, y: -0.43833598}
+      - {x: -0.17649333, y: -0.17757018}
+      - {x: -0.57388073, y: 0.18249628}
+      - {x: -1.1548204, y: 0.5987803}
+      - {x: -1.784764, y: 0.93547106}
+      - {x: -2.2830555, y: 1.132344}
+      - {x: -2.97351, y: 1.3173556}
+      - {x: -3.3255377, y: 1.3754874}
+      - {x: -3.8602746, y: 1.419321}
+      - {x: -6.9263945, y: 1.4225286}
+      - {x: -7.3726635, y: 1.4664823}
+      - {x: -7.801783, y: 1.5966542}
+      - {x: -8.197262, y: 1.8080418}
+      - {x: -8.543901, y: 2.092522}
+      - {x: -8.828382, y: 2.4391618}
+      - {x: -9.039769, y: 2.8346403}
+      - {x: -9.169941, y: 3.2637596}
+      - {x: -9.213895, y: 3.7100286}
+      - {x: -9.169941, y: 4.1562977}
+      - {x: -9.039769, y: 4.585417}
+      - {x: -8.828382, y: 4.9808955}
+      - {x: -8.543901, y: 5.327535}
+      - {x: -8.197262, y: 5.6120152}
+      - {x: -7.801783, y: 5.823403}
+      - {x: -7.3726635, y: 5.953575}
+      - {x: -6.9263945, y: 5.9975286}
+  m_UseDelaunayMesh: 1
+--- !u!4 &1115311758
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1115311755}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 111.226395, y: 126.78997, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1310610397}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1117209773
 GameObject:
@@ -172668,7 +174098,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &1161194781
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -172704,7 +174134,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1 &1162099249
 GameObject:
   m_ObjectHideFlags: 0
@@ -174513,7 +175943,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &1183024482
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -174549,7 +175979,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1 &1183628115
 GameObject:
   m_ObjectHideFlags: 0
@@ -174705,6 +176135,143 @@ MonoBehaviour:
   outgoing:
   - {fileID: 174892391}
   target: {fileID: 579638638}
+--- !u!1 &1186200213
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1186200216}
+  - component: {fileID: 1186200215}
+  - component: {fileID: 1186200214}
+  m_Layer: 0
+  m_Name: CameraTurn_FireStationServiceLoop_02
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1186200214
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1186200213}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
+  cameraController: {fileID: 1535307459}
+--- !u!60 &1186200215
+PolygonCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1186200213}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Points:
+    m_Paths:
+    - - {x: 1.1076043, y: 1.1076043}
+      - {x: 1.7076043, y: 1.1076043}
+      - {x: 2.0929077, y: 1.0696553}
+      - {x: 2.4634042, y: 0.9572664}
+      - {x: 2.8048556, y: 0.7747568}
+      - {x: 3.1041403, y: 0.52914023}
+      - {x: 3.3497567, y: 0.22985552}
+      - {x: 3.5322664, y: -0.11159591}
+      - {x: 3.6446552, y: -0.4820923}
+      - {x: 3.6826043, y: -0.8673957}
+      - {x: 3.6446552, y: -1.252699}
+      - {x: 3.5322664, y: -1.6231954}
+      - {x: 3.3497567, y: -1.9646469}
+      - {x: 3.1041403, y: -2.2639315}
+      - {x: 2.8048556, y: -2.5095482}
+      - {x: 2.4634042, y: -2.6920578}
+      - {x: 2.0929077, y: -2.8044467}
+      - {x: 1.7076043, y: -2.8423958}
+      - {x: -0.8673957, y: -2.8423958}
+      - {x: -1.252699, y: -2.8044467}
+      - {x: -1.6231954, y: -2.6920578}
+      - {x: -1.9646469, y: -2.5095482}
+      - {x: -2.2639315, y: -2.2639315}
+      - {x: -2.5095482, y: -1.9646469}
+      - {x: -2.6920578, y: -1.6231954}
+      - {x: -2.8044467, y: -1.252699}
+      - {x: -2.8423958, y: -0.8673957}
+      - {x: -2.8423958, y: 1.7076043}
+      - {x: -2.8044467, y: 2.0929077}
+      - {x: -2.6920578, y: 2.4634042}
+      - {x: -2.5095482, y: 2.8048556}
+      - {x: -2.2639315, y: 3.1041403}
+      - {x: -1.9646469, y: 3.3497567}
+      - {x: -1.6231954, y: 3.5322664}
+      - {x: -1.252699, y: 3.6446552}
+      - {x: -0.8673957, y: 3.6826043}
+      - {x: -0.4820923, y: 3.6446552}
+      - {x: -0.11159591, y: 3.5322664}
+      - {x: 0.22985552, y: 3.3497567}
+      - {x: 0.52914023, y: 3.1041403}
+      - {x: 0.7747568, y: 2.8048556}
+      - {x: 0.9572664, y: 2.4634042}
+      - {x: 1.0696553, y: 2.0929077}
+      - {x: 1.1076043, y: 1.7076043}
+  m_UseDelaunayMesh: 1
+--- !u!4 &1186200216
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1186200213}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 74.30489, y: 39.367393, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1310610397}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1186221640
 GameObject:
   m_ObjectHideFlags: 0
@@ -175098,7 +176665,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &1189852974
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -175134,7 +176701,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1 &1190206670
 GameObject:
   m_ObjectHideFlags: 0
@@ -176764,6 +178331,172 @@ MonoBehaviour:
   internalNext:
   - {fileID: 748496072}
   nextLane: {fileID: 0}
+--- !u!1 &1222719187
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1222719190}
+  - component: {fileID: 1222719189}
+  - component: {fileID: 1222719188}
+  m_Layer: 0
+  m_Name: CameraTurn_OuterCircuit_07
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1222719188
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1222719187}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
+  cameraController: {fileID: 1535307459}
+--- !u!60 &1222719189
+PolygonCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1222719187}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Points:
+    m_Paths:
+    - - {x: 4.360349, y: -6.17771}
+      - {x: 3.7084985, y: -6.1573305}
+      - {x: 3.0219145, y: -6.092082}
+      - {x: 2.3420215, y: -5.98238}
+      - {x: 1.6690528, y: -5.827974}
+      - {x: 1.008341, y: -5.6300564}
+      - {x: 0.36207652, y: -5.3894444}
+      - {x: -0.26636147, y: -5.1074286}
+      - {x: -0.87564903, y: -4.784545}
+      - {x: -1.8084813, y: -4.1830516}
+      - {x: -2.3536975, y: -3.7615397}
+      - {x: -2.8700876, y: -3.3053532}
+      - {x: -3.3560336, y: -2.8159356}
+      - {x: -3.8092413, y: -2.2954452}
+      - {x: -4.2266827, y: -1.7473923}
+      - {x: -4.6071343, y: -1.1734632}
+      - {x: -4.9151106, y: -0.6402081}
+      - {x: -5.2222443, y: -0.022920508}
+      - {x: -5.4881353, y: 0.6125175}
+      - {x: -5.712122, y: 1.2647818}
+      - {x: -5.981821, y: 2.3414624}
+      - {x: -6.091523, y: 3.0213554}
+      - {x: -6.156771, y: 3.7079394}
+      - {x: -6.1771507, y: 4.35979}
+      - {x: -6.1771507, y: 7.24729}
+      - {x: -6.1331973, y: 7.693559}
+      - {x: -6.0030255, y: 8.122679}
+      - {x: -5.791638, y: 8.518157}
+      - {x: -5.507158, y: 8.864797}
+      - {x: -5.1605177, y: 9.149277}
+      - {x: -4.7650394, y: 9.360664}
+      - {x: -4.33592, y: 9.490836}
+      - {x: -3.8896508, y: 9.53479}
+      - {x: -3.4433818, y: 9.490836}
+      - {x: -3.0142627, y: 9.360664}
+      - {x: -2.618784, y: 9.149277}
+      - {x: -2.272144, y: 8.864797}
+      - {x: -1.9876642, y: 8.518157}
+      - {x: -1.7762765, y: 8.122679}
+      - {x: -1.6461046, y: 7.693559}
+      - {x: -1.6021509, y: 7.24729}
+      - {x: -1.5891315, y: 3.9700744}
+      - {x: -1.4872382, y: 3.1963189}
+      - {x: -1.3451431, y: 2.6291645}
+      - {x: -1.2196695, y: 2.259415}
+      - {x: -0.9870345, y: 1.722804}
+      - {x: -0.59676415, y: 1.0469316}
+      - {x: -0.24845184, y: 0.5773323}
+      - {x: 0.008810287, y: 0.28404108}
+      - {x: 0.57789135, y: -0.24901088}
+      - {x: 1.0474906, y: -0.5973232}
+      - {x: 1.723363, y: -0.98759353}
+      - {x: 2.4436843, y: -1.2858909}
+      - {x: 3.1968777, y: -1.4877973}
+      - {x: 3.5822368, y: -1.5513699}
+      - {x: 4.1651464, y: -1.599245}
+      - {x: 7.247849, y: -1.60271}
+      - {x: 7.694118, y: -1.6466637}
+      - {x: 8.123238, y: -1.7768356}
+      - {x: 8.518716, y: -1.9882232}
+      - {x: 8.8653555, y: -2.2727032}
+      - {x: 9.149836, y: -2.619343}
+      - {x: 9.361223, y: -3.0148215}
+      - {x: 9.491395, y: -3.4439409}
+      - {x: 9.535349, y: -3.89021}
+      - {x: 9.491395, y: -4.336479}
+      - {x: 9.361223, y: -4.7655983}
+      - {x: 9.149836, y: -5.161077}
+      - {x: 8.8653555, y: -5.5077167}
+      - {x: 8.518716, y: -5.7921968}
+      - {x: 8.123238, y: -6.0035844}
+      - {x: 7.694118, y: -6.133756}
+      - {x: 7.247849, y: -6.17771}
+  m_UseDelaunayMesh: 1
+--- !u!4 &1222719190
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1222719187}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 9.827152, y: 31.640213, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1310610397}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1223497118
 GameObject:
   m_ObjectHideFlags: 0
@@ -177490,7 +179223,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &1231353050
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -177526,7 +179259,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1 &1233115683
 GameObject:
   m_ObjectHideFlags: 0
@@ -181698,7 +183431,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &1300654596
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -181734,7 +183467,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1 &1300778872
 GameObject:
   m_ObjectHideFlags: 0
@@ -182530,6 +184263,57 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 231983460}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1310610396
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1310610397}
+  m_Layer: 0
+  m_Name: CameraTurnZones
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1310610397
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1310610396}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 766103797}
+  - {fileID: 828347217}
+  - {fileID: 2107762956}
+  - {fileID: 2145984012}
+  - {fileID: 1115311758}
+  - {fileID: 53183893}
+  - {fileID: 1222719190}
+  - {fileID: 518820969}
+  - {fileID: 1445849825}
+  - {fileID: 1186200216}
+  - {fileID: 60187910}
+  - {fileID: 2044285977}
+  - {fileID: 1854376988}
+  - {fileID: 991803612}
+  - {fileID: 953135699}
+  - {fileID: 2144302712}
+  - {fileID: 1759621285}
+  - {fileID: 811667055}
+  - {fileID: 1361304701}
+  - {fileID: 533315494}
+  m_Father: {fileID: 985633186}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1312115168
 GameObject:
@@ -183481,7 +185265,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &1328681471
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -183517,7 +185301,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1 &1329839525
 GameObject:
   m_ObjectHideFlags: 0
@@ -184521,7 +186305,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &1335988381
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -184557,7 +186341,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1 &1337767836
 GameObject:
   m_ObjectHideFlags: 0
@@ -185949,6 +187733,88 @@ Transform:
   - {fileID: 775162837}
   m_Father: {fileID: 168661743}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1361304698
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1361304701}
+  - component: {fileID: 1361304700}
+  - component: {fileID: 1361304699}
+  m_Layer: 0
+  m_Name: CameraTurn_CivicParkingDriveway_Entrance
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1361304699
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1361304698}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
+  cameraController: {fileID: 1535307459}
+--- !u!58 &1361304700
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1361304698}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_Radius: 2.825
+--- !u!4 &1361304701
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1361304698}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 80.9375, y: 84.5, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1310610397}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1364476404
 GameObject:
   m_ObjectHideFlags: 0
@@ -186798,7 +188664,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &1382109962
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -186834,7 +188700,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1 &1382937040
 GameObject:
   m_ObjectHideFlags: 0
@@ -189201,7 +191067,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &1417879098
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -189237,7 +191103,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1 &1420944278
 GameObject:
   m_ObjectHideFlags: 0
@@ -191265,6 +193131,143 @@ Transform:
   m_Children:
   - {fileID: 1738848857}
   m_Father: {fileID: 1816548578}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1445849822
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1445849825}
+  - component: {fileID: 1445849824}
+  - component: {fileID: 1445849823}
+  m_Layer: 0
+  m_Name: CameraTurn_FireStationServiceLoop_01
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1445849823
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1445849822}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
+  cameraController: {fileID: 1535307459}
+--- !u!60 &1445849824
+PolygonCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1445849822}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Points:
+    m_Paths:
+    - - {x: 1.1076043, y: -1.1076043}
+      - {x: 1.1076043, y: -1.7076043}
+      - {x: 1.0696553, y: -2.0929077}
+      - {x: 0.9572664, y: -2.4634042}
+      - {x: 0.7747568, y: -2.8048556}
+      - {x: 0.52914023, y: -3.1041403}
+      - {x: 0.22985552, y: -3.3497567}
+      - {x: -0.11159591, y: -3.5322664}
+      - {x: -0.4820923, y: -3.6446552}
+      - {x: -0.8673957, y: -3.6826043}
+      - {x: -1.252699, y: -3.6446552}
+      - {x: -1.6231954, y: -3.5322664}
+      - {x: -1.9646469, y: -3.3497567}
+      - {x: -2.2639315, y: -3.1041403}
+      - {x: -2.5095482, y: -2.8048556}
+      - {x: -2.6920578, y: -2.4634042}
+      - {x: -2.8044467, y: -2.0929077}
+      - {x: -2.8423958, y: -1.7076043}
+      - {x: -2.8423958, y: 0.8673957}
+      - {x: -2.8044467, y: 1.252699}
+      - {x: -2.6920578, y: 1.6231954}
+      - {x: -2.5095482, y: 1.9646469}
+      - {x: -2.2639315, y: 2.2639315}
+      - {x: -1.9646469, y: 2.5095482}
+      - {x: -1.6231954, y: 2.6920578}
+      - {x: -1.252699, y: 2.8044467}
+      - {x: -0.8673957, y: 2.8423958}
+      - {x: 1.7076043, y: 2.8423958}
+      - {x: 2.0929077, y: 2.8044467}
+      - {x: 2.4634042, y: 2.6920578}
+      - {x: 2.8048556, y: 2.5095482}
+      - {x: 3.1041403, y: 2.2639315}
+      - {x: 3.3497567, y: 1.9646469}
+      - {x: 3.5322664, y: 1.6231954}
+      - {x: 3.6446552, y: 1.252699}
+      - {x: 3.6826043, y: 0.8673957}
+      - {x: 3.6446552, y: 0.4820923}
+      - {x: 3.5322664, y: 0.11159591}
+      - {x: 3.3497567, y: -0.22985552}
+      - {x: 3.1041403, y: -0.52914023}
+      - {x: 2.8048556, y: -0.7747568}
+      - {x: 2.4634042, y: -0.9572664}
+      - {x: 2.0929077, y: -1.0696553}
+      - {x: 1.7076043, y: -1.1076043}
+  m_UseDelaunayMesh: 1
+--- !u!4 &1445849825
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1445849822}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 74.30489, y: 68.6326, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1310610397}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1446612555
 GameObject:
@@ -197823,7 +199826,7 @@ MonoBehaviour:
   target: {fileID: 768736906}
   maxSpeed: 6
   maxOffset: 3
-  moveSmoothTime: 0.3
+  moveSmoothTime: 0.4
   rotateSmoothTime: 0.5
   baseOffset: 1.5
   map: {fileID: 985633188}
@@ -198413,7 +200416,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &1539446410
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -198449,7 +200452,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1 &1543069840
 GameObject:
   m_ObjectHideFlags: 0
@@ -200874,7 +202877,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &1583219234
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -200910,7 +202913,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1 &1585011489
 GameObject:
   m_ObjectHideFlags: 0
@@ -201554,7 +203557,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &1595789380
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -201590,7 +203593,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1 &1595798934
 GameObject:
   m_ObjectHideFlags: 0
@@ -205017,7 +207020,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &1646783161
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -205053,7 +207056,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1 &1647045122
 GameObject:
   m_ObjectHideFlags: 0
@@ -205943,7 +207946,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &1657802329
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -205979,7 +207982,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1 &1658679439
 GameObject:
   m_ObjectHideFlags: 0
@@ -207475,7 +209478,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &1679132669
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -207511,7 +209514,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1 &1679414008
 GameObject:
   m_ObjectHideFlags: 0
@@ -209508,7 +211511,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &1720410699
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -209544,7 +211547,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1 &1721726684
 GameObject:
   m_ObjectHideFlags: 0
@@ -210883,7 +212886,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &1743953758
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -210919,7 +212922,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1 &1745622668
 GameObject:
   m_ObjectHideFlags: 0
@@ -211634,7 +213637,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &1755445607
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -211670,7 +213673,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1 &1758861831
 GameObject:
   m_ObjectHideFlags: 0
@@ -211778,6 +213781,88 @@ MonoBehaviour:
   connections:
   - {fileID: 2027175273}
   - {fileID: 306328176}
+--- !u!1 &1759621282
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1759621285}
+  - component: {fileID: 1759621284}
+  - component: {fileID: 1759621283}
+  m_Layer: 0
+  m_Name: CameraTurn_LogisticsLoadingDriveway_Entrance
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1759621283
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1759621282}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
+  cameraController: {fileID: 1535307459}
+--- !u!58 &1759621284
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1759621282}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_Radius: 2.825
+--- !u!4 &1759621285
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1759621282}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 21.9375, y: 83.5, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1310610397}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1761846800
 GameObject:
   m_ObjectHideFlags: 0
@@ -213095,7 +215180,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &1782724219
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -213131,7 +215216,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1 &1783123340
 GameObject:
   m_ObjectHideFlags: 0
@@ -214644,7 +216729,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &1809498698
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -214680,7 +216765,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1 &1810171038
 GameObject:
   m_ObjectHideFlags: 0
@@ -215530,7 +217615,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &1816548582
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -215566,7 +217651,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1 &1819310908
 GameObject:
   m_ObjectHideFlags: 0
@@ -216806,7 +218891,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &1837761253
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -216842,7 +218927,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!114 &1837761254
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -217464,6 +219549,138 @@ Transform:
   m_Children: []
   m_Father: {fileID: 2052034604}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1854376985
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1854376988}
+  - component: {fileID: 1854376987}
+  - component: {fileID: 1854376986}
+  m_Layer: 0
+  m_Name: CameraTurn_HospitalWestParkingAccess_01
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1854376986
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1854376985}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
+  cameraController: {fileID: 1535307459}
+--- !u!60 &1854376987
+PolygonCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1854376985}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Points:
+    m_Paths:
+    - - {x: -0.37680006, y: 1.3022274}
+      - {x: 1.1669532, y: 2.2772295}
+      - {x: 1.4691857, y: 2.4289105}
+      - {x: 1.7952024, y: 2.5187144}
+      - {x: 2.1324747, y: 2.54319}
+      - {x: 2.4680412, y: 2.501397}
+      - {x: 2.7890065, y: 2.3949409}
+      - {x: 3.083036, y: 2.2279134}
+      - {x: 3.3388302, y: 2.0067327}
+      - {x: 3.5465596, y: 1.739899}
+      - {x: 3.6982405, y: 1.4376665}
+      - {x: 3.7880445, y: 1.1116499}
+      - {x: 3.81252, y: 0.7743777}
+      - {x: 3.770727, y: 0.43881112}
+      - {x: 3.6642709, y: 0.11784581}
+      - {x: 3.4972432, y: -0.17618372}
+      - {x: 3.2760627, y: -0.43197808}
+      - {x: 3.009229, y: -0.6397072}
+      - {x: 1.0434673, y: -1.881241}
+      - {x: 0.7550229, y: -2.0275543}
+      - {x: 0.44433624, y: -2.1174514}
+      - {x: 0.12232942, y: -2.1477726}
+      - {x: -2.2026706, y: -2.1477726}
+      - {x: -2.5392015, y: -2.1146271}
+      - {x: -2.8627994, y: -2.0164647}
+      - {x: -3.1610293, y: -1.8570577}
+      - {x: -3.4224298, y: -1.6425318}
+      - {x: -3.6369557, y: -1.3811312}
+      - {x: -3.7963629, y: -1.0829015}
+      - {x: -3.8945253, y: -0.7593034}
+      - {x: -3.9276705, y: -0.4227726}
+      - {x: -3.8945253, y: -0.08624177}
+      - {x: -3.7963629, y: 0.23735635}
+      - {x: -3.6369557, y: 0.53558606}
+      - {x: -3.4224298, y: 0.79698664}
+      - {x: -3.1610293, y: 1.0115125}
+      - {x: -2.8627994, y: 1.1709197}
+      - {x: -2.5392015, y: 1.2690821}
+      - {x: -2.2026706, y: 1.3022274}
+  m_UseDelaunayMesh: 1
+--- !u!4 &1854376988
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1854376985}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 95.31517, y: 149.17278, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1310610397}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1855336777
 GameObject:
   m_ObjectHideFlags: 0
@@ -217874,7 +220091,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &1861403358
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -217910,7 +220127,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1 &1861496831
 GameObject:
   m_ObjectHideFlags: 0
@@ -220074,7 +222291,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &1896352389
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -220110,7 +222327,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1 &1899497795
 GameObject:
   m_ObjectHideFlags: 0
@@ -224883,7 +227100,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &1976916592
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -224919,7 +227136,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1 &1978554782
 GameObject:
   m_ObjectHideFlags: 0
@@ -230304,6 +232521,139 @@ MonoBehaviour:
   internalNext:
   - {fileID: 1771796822}
   nextLane: {fileID: 0}
+--- !u!1 &2044285974
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2044285977}
+  - component: {fileID: 2044285976}
+  - component: {fileID: 2044285975}
+  m_Layer: 0
+  m_Name: CameraTurn_HospitalNorthEastAccess_01
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2044285975
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2044285974}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
+  cameraController: {fileID: 1535307459}
+--- !u!60 &2044285976
+PolygonCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2044285974}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Points:
+    m_Paths:
+    - - {x: 0.48308313, y: -1.1662658}
+      - {x: -0.6556993, y: -2.3050482}
+      - {x: -0.9170999, y: -2.5195742}
+      - {x: -1.2153296, y: -2.6789813}
+      - {x: -1.5389277, y: -2.7771437}
+      - {x: -1.8754585, y: -2.8102891}
+      - {x: -2.2119894, y: -2.7771437}
+      - {x: -2.5355875, y: -2.6789813}
+      - {x: -2.8338172, y: -2.5195742}
+      - {x: -3.0952177, y: -2.3050482}
+      - {x: -3.3097436, y: -2.0436478}
+      - {x: -3.4691508, y: -1.7454181}
+      - {x: -3.5673132, y: -1.4218199}
+      - {x: -3.6004586, y: -1.0852891}
+      - {x: -3.5673132, y: -0.7487583}
+      - {x: -3.4691508, y: -0.4251602}
+      - {x: -3.3097436, y: -0.12693046}
+      - {x: -3.0952177, y: 0.13447008}
+      - {x: -1.4511944, y: 1.7784934}
+      - {x: -1.189794, y: 1.9930192}
+      - {x: -0.8915642, y: 2.1524262}
+      - {x: -0.56796604, y: 2.2505887}
+      - {x: -0.23143527, y: 2.283734}
+      - {x: 2.0935647, y: 2.283734}
+      - {x: 2.4300954, y: 2.2505887}
+      - {x: 2.7536936, y: 2.1524262}
+      - {x: 3.0519233, y: 1.9930192}
+      - {x: 3.313324, y: 1.7784934}
+      - {x: 3.52785, y: 1.5170928}
+      - {x: 3.6872568, y: 1.2188631}
+      - {x: 3.7854195, y: 0.895265}
+      - {x: 3.8185647, y: 0.5587342}
+      - {x: 3.7854195, y: 0.22220334}
+      - {x: 3.6872568, y: -0.10139477}
+      - {x: 3.52785, y: -0.3996245}
+      - {x: 3.313324, y: -0.66102505}
+      - {x: 3.0519233, y: -0.8755509}
+      - {x: 2.7536936, y: -1.034958}
+      - {x: 2.4300954, y: -1.1331204}
+      - {x: 2.0935647, y: -1.1662658}
+  m_UseDelaunayMesh: 1
+--- !u!4 &2044285977
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2044285974}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 105.29393, y: 157.81627, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1310610397}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2048333953
 GameObject:
   m_ObjectHideFlags: 0
@@ -230799,7 +233149,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &2052034608
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -230835,7 +233185,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1 &2052445177
 GameObject:
   m_ObjectHideFlags: 0
@@ -234322,7 +236672,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &2104794170
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -234358,7 +236708,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1 &2105754829
 GameObject:
   m_ObjectHideFlags: 0
@@ -234550,6 +236900,143 @@ MonoBehaviour:
   outgoing:
   - {fileID: 2131296733}
   target: {fileID: 287819044}
+--- !u!1 &2107762953
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2107762956}
+  - component: {fileID: 2107762955}
+  - component: {fileID: 2107762954}
+  m_Layer: 0
+  m_Name: CameraTurn_OuterCircuit_03
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2107762954
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2107762953}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
+  cameraController: {fileID: 1535307459}
+--- !u!60 &2107762955
+PolygonCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2107762953}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Points:
+    m_Paths:
+    - - {x: 1.3111573, y: -1.3111573}
+      - {x: 1.3111573, y: -1.9111573}
+      - {x: 1.2672037, y: -2.3574264}
+      - {x: 1.1370317, y: -2.7865458}
+      - {x: 0.92564404, y: -3.1820242}
+      - {x: 0.64116406, y: -3.528664}
+      - {x: 0.29452422, y: -3.813144}
+      - {x: -0.10095435, y: -4.024532}
+      - {x: -0.5300736, y: -4.1547036}
+      - {x: -0.9763427, y: -4.1986575}
+      - {x: -1.4226118, y: -4.1547036}
+      - {x: -1.8517311, y: -4.024532}
+      - {x: -2.2472095, y: -3.813144}
+      - {x: -2.5938494, y: -3.528664}
+      - {x: -2.8783295, y: -3.1820242}
+      - {x: -3.0897171, y: -2.7865458}
+      - {x: -3.219889, y: -2.3574264}
+      - {x: -3.2638426, y: -1.9111573}
+      - {x: -3.2638426, y: 0.9763427}
+      - {x: -3.219889, y: 1.4226118}
+      - {x: -3.0897171, y: 1.8517311}
+      - {x: -2.8783295, y: 2.2472095}
+      - {x: -2.5938494, y: 2.5938494}
+      - {x: -2.2472095, y: 2.8783295}
+      - {x: -1.8517311, y: 3.0897171}
+      - {x: -1.4226118, y: 3.219889}
+      - {x: -0.9763427, y: 3.2638426}
+      - {x: 1.9111573, y: 3.2638426}
+      - {x: 2.3574264, y: 3.219889}
+      - {x: 2.7865458, y: 3.0897171}
+      - {x: 3.1820242, y: 2.8783295}
+      - {x: 3.528664, y: 2.5938494}
+      - {x: 3.813144, y: 2.2472095}
+      - {x: 4.024532, y: 1.8517311}
+      - {x: 4.1547036, y: 1.4226118}
+      - {x: 4.1986575, y: 0.9763427}
+      - {x: 4.1547036, y: 0.5300736}
+      - {x: 4.024532, y: 0.10095435}
+      - {x: 3.813144, y: -0.29452422}
+      - {x: 3.528664, y: -0.64116406}
+      - {x: 3.1820242, y: -0.92564404}
+      - {x: 2.7865458, y: -1.1370317}
+      - {x: 2.3574264, y: -1.2672037}
+      - {x: 1.9111573, y: -1.3111573}
+  m_UseDelaunayMesh: 1
+--- !u!4 &2107762956
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2107762953}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 101.53884, y: 137.02365, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1310610397}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2107778501
 GameObject:
   m_ObjectHideFlags: 0
@@ -234663,7 +237150,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &2107778506
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -234699,7 +237186,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1 &2110003645
 GameObject:
   m_ObjectHideFlags: 0
@@ -234915,7 +237402,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &2111189797
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -234951,7 +237438,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1 &2114472412
 GameObject:
   m_ObjectHideFlags: 0
@@ -236034,7 +238521,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 1535307459}
 --- !u!58 &2124231185
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -236070,7 +238557,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.2
+  m_Radius: 3.25
 --- !u!1 &2124682212
 GameObject:
   m_ObjectHideFlags: 0
@@ -237163,6 +239650,225 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!1 &2144302709
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2144302712}
+  - component: {fileID: 2144302711}
+  - component: {fileID: 2144302710}
+  m_Layer: 0
+  m_Name: CameraTurn_LogisticsNorthDriveway_Entrance
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2144302710
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2144302709}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
+  cameraController: {fileID: 1535307459}
+--- !u!58 &2144302711
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2144302709}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_Radius: 2.825
+--- !u!4 &2144302712
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2144302709}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 21.9375, y: 120.375, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1310610397}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2145984009
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2145984012}
+  - component: {fileID: 2145984011}
+  - component: {fileID: 2145984010}
+  m_Layer: 0
+  m_Name: CameraTurn_OuterCircuit_04
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2145984010
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2145984009}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5a04b22dc53af84db405fe802e02876, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraTurnZone
+  cameraController: {fileID: 1535307459}
+--- !u!60 &2145984011
+PolygonCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2145984009}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Points:
+    m_Paths:
+    - - {x: 1.3111573, y: 1.3111573}
+      - {x: 1.9111573, y: 1.3111573}
+      - {x: 2.3574264, y: 1.2672037}
+      - {x: 2.7865458, y: 1.1370317}
+      - {x: 3.1820242, y: 0.92564404}
+      - {x: 3.528664, y: 0.64116406}
+      - {x: 3.813144, y: 0.29452422}
+      - {x: 4.024532, y: -0.10095435}
+      - {x: 4.1547036, y: -0.5300736}
+      - {x: 4.1986575, y: -0.9763427}
+      - {x: 4.1547036, y: -1.4226118}
+      - {x: 4.024532, y: -1.8517311}
+      - {x: 3.813144, y: -2.2472095}
+      - {x: 3.528664, y: -2.5938494}
+      - {x: 3.1820242, y: -2.8783295}
+      - {x: 2.7865458, y: -3.0897171}
+      - {x: 2.3574264, y: -3.219889}
+      - {x: 1.9111573, y: -3.2638426}
+      - {x: -0.9763427, y: -3.2638426}
+      - {x: -1.4226118, y: -3.219889}
+      - {x: -1.8517311, y: -3.0897171}
+      - {x: -2.2472095, y: -2.8783295}
+      - {x: -2.5938494, y: -2.5938494}
+      - {x: -2.8783295, y: -2.2472095}
+      - {x: -3.0897171, y: -1.8517311}
+      - {x: -3.219889, y: -1.4226118}
+      - {x: -3.2638426, y: -0.9763427}
+      - {x: -3.2638426, y: 1.9111573}
+      - {x: -3.219889, y: 2.3574264}
+      - {x: -3.0897171, y: 2.7865458}
+      - {x: -2.8783295, y: 3.1820242}
+      - {x: -2.5938494, y: 3.528664}
+      - {x: -2.2472095, y: 3.813144}
+      - {x: -1.8517311, y: 4.024532}
+      - {x: -1.4226118, y: 4.1547036}
+      - {x: -0.9763427, y: 4.1986575}
+      - {x: -0.5300736, y: 4.1547036}
+      - {x: -0.10095435, y: 4.024532}
+      - {x: 0.29452422, y: 3.813144}
+      - {x: 0.64116406, y: 3.528664}
+      - {x: 0.92564404, y: 3.1820242}
+      - {x: 1.1370317, y: 2.7865458}
+      - {x: 1.2672037, y: 2.3574264}
+      - {x: 1.3111573, y: 1.9111573}
+  m_UseDelaunayMesh: 1
+--- !u!4 &2145984012
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2145984009}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 101.53884, y: 131.47635, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1310610397}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

@@ -11,7 +11,7 @@ public class AmbulanceCamera : MonoBehaviour
     [SerializeField] private float baseOffset = 1.5f;
     [SerializeField] private CityMap map;
 
-    private CameraTurnZone activeZone;
+    private readonly System.Collections.Generic.HashSet<CameraTurnZone> activeZones = new System.Collections.Generic.HashSet<CameraTurnZone>();
     private Vector3 moveVelocity;
     private float rotateVelocity;
     private float targetAngle;
@@ -20,7 +20,7 @@ public class AmbulanceCamera : MonoBehaviour
     // 미션 복귀 시 이전 회전 영역과 보간 속도를 제거한다
     public void ResetFollow()
     {
-        activeZone = null;
+        activeZones.Clear();
         followRotation = false;
         moveVelocity = Vector3.zero;
         rotateVelocity = 0f;
@@ -52,7 +52,7 @@ public class AmbulanceCamera : MonoBehaviour
     {
         if (map)
             map.BindCamera(null);
-        activeZone = null;
+        activeZones.Clear();
         followRotation = false;
     }
 
@@ -99,17 +99,17 @@ public class AmbulanceCamera : MonoBehaviour
     // 교차로 진입 시 차량 방향 추적을 시작한다
     public void EnterTurnZone(CameraTurnZone zone)
     {
-        activeZone = zone;
+        if (!zone) return;
+        activeZones.Add(zone);
         followRotation = true;
     }
 
     // 교차로 탈출 시 차량 방향과 가장 가까운 90도로 카메라를 고정한다
     public void ExitTurnZone(CameraTurnZone zone)
     {
-        if (activeZone != zone) return;
+        if (!activeZones.Remove(zone) || activeZones.Count > 0) return;
 
         targetAngle = Mathf.Round((target ? target.rotation : transform.eulerAngles.z) / 90f) * 90f;
         followRotation = false;
-        activeZone = null;
     }
 }

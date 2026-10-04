@@ -247,10 +247,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AmbulanceController
   maxSpeed: 6
-  acceleration: 5
+  acceleration: 2
   brakePower: 15
   coastPower: 2
-  maxSteerAngle: 40
+  maxSteerAngle: 35
   steerAngleSpeed: 150
   wheelBase: 2.5
   grip: 8
