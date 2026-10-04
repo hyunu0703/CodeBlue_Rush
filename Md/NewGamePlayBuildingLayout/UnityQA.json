@@ -1,0 +1,25 @@
+{
+    "passed": true,
+    "roadsPreserved": true,
+    "cameraPreserved": true,
+    "referenceExcluded": true,
+    "gameView480x854": true,
+    "spriteRenderers": 79,
+    "boxColliders": 79,
+    "behaviours": 0,
+    "atlasSprites": 20,
+    "buildDependencies": 86,
+    "regions": [
+        "Residential",
+        "Commercial",
+        "Hospital",
+        "IndustrialPort",
+        "ParkRiver",
+        "FireStation"
+    ],
+    "atlasPages": [
+        "BuildingCommonAtlas:12",
+        "BuildingLandmarkAtlas:4",
+        "PropAtlas:4"
+    ]
+}

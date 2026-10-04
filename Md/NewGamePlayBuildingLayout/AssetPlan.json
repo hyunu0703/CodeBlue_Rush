@@ -1,0 +1,128 @@
+{
+  "reference": "Assets/Images/Maps/Reference/Maps.png",
+  "main": "42b948309c1fcd31022b540ee0a531c8d45e2d91",
+  "mode": "built-in imagegen, one isolated object per call",
+  "prompt": "Use case: stylized-concept. Asset type: independent production Unity 2D environment sprite for CodeBlueRush. Input image: Maps.png is the highest-priority style and subject reference; replace the full map with ONLY the isolated specified object, reconstructed cleanly at higher resolution. Preserve that exact city's near-orthographic VERY HIGH top-down angle: roof dominates, just a shallow south/east wall edge; north-up rectangular buildings with horizontal/vertical footprint edges, NOT a rotated diamond or 45-degree isometric view. Bright casual low-poly toy city, clean flat color planes, white/gray walls, saturated blue glass, crisp readable silhouette, no photoreal textures. Upper-left light and SHORT baked shadow to lower-right, 2-3 steps of planar shading. Center the complete object with minimal transparent margin on a GENUINELY TRANSPARENT alpha PNG. No background, backdrop, grass pad, road, trees, cars, people, labels, letters, watermark, decorative extras, or detached parts. Exactly ONE object. All geometry including any shadow must stay within canvas. Subject: ",
+  "assets": [
+    {
+      "name": "House_A",
+      "folder": "Buildings",
+      "size": 256,
+      "subject": "one compact two-storey white detached family house, warm terracotta red hipped roof with intersecting short gables, a few blue windows, small front porch. Rectangular footprint, long sides aligned horizontally/vertically. Match the red-roof houses in the upper-left blocks of reference."
+    },
+    {
+      "name": "House_B",
+      "folder": "Buildings",
+      "size": 256,
+      "subject": "one compact two-storey white detached family house, cobalt blue hipped roof with two short gables, a few blue windows, small front porch. Similar to the blue roof house at the far left in the second row of the reference."
+    },
+    {
+      "name": "House_C",
+      "folder": "Buildings",
+      "size": 256,
+      "subject": "one taller three-storey white villa with slate-blue multi-gable roof, compact rectangular footprint, blue windows and beige front entry. Match the blue-roof villa in the upper-left residential grid."
+    },
+    {
+      "name": "ResidentialMidrise_A",
+      "folder": "Buildings",
+      "size": 256,
+      "subject": "one narrow rectangular 5-storey white residential midrise with flat gray roof, two simple rooftop vents, vivid blue glazing grids and a shallow front wall. Match the slender white-blue buildings in the reference's left residential blocks."
+    },
+    {
+      "name": "ResidentialMidrise_B",
+      "folder": "Buildings",
+      "size": 256,
+      "subject": "one compact rectangular 6-storey white apartment block, broad cobalt-blue glass grid on front, flat warm gray roof, small boxed rooftop HVAC, golden beige entry. Match the paired apartment buildings near the reference upper-left center."
+    },
+    {
+      "name": "Office_A",
+      "folder": "Buildings",
+      "size": 256,
+      "subject": "one slender rectangular white office building with tall vivid blue glazed front, flat pale roof with one large round yellow-gray HVAC disc and a small vent, 7 storeys, shallow front-side depth. Match the upper central office blocks."
+    },
+    {
+      "name": "Office_B",
+      "folder": "Buildings",
+      "size": 256,
+      "subject": "one medium broad white office tower with blue glass, flat pale-gray roof with inset box HVAC, clean rectangular footprint and slightly stepped roof terrace, 6 storeys. Match the middle-right civic office blocks."
+    },
+    {
+      "name": "CivicMidrise_A",
+      "folder": "Buildings",
+      "size": 256,
+      "subject": "one medium white L-shaped civic office building, broad blue glazed front, 5 storeys, flat pale roof with a small raised rectangular core, warm beige front entrance, no lettering. Match the building just below the first central horizontal office road."
+    },
+    {
+      "name": "Commercial_A",
+      "folder": "Buildings",
+      "size": 256,
+      "subject": "one small two-storey commercial building with warm ochre-yellow walls, saturated orange hipped roof, simple blue glass storefront panels and pale front steps. Match the distinctive yellow shop in the upper central block."
+    },
+    {
+      "name": "Warehouse_A",
+      "folder": "Buildings",
+      "size": 512,
+      "subject": "one wide rectangular industrial warehouse, flat pale-gray metal roof with parallel fine seams, three cobalt blue loading bays across shallow front wall, white-gray structural frame and small orange bay details. Match the leftmost industrial warehouse just below the median roads."
+    },
+    {
+      "name": "Warehouse_B",
+      "folder": "Buildings",
+      "size": 512,
+      "subject": "one long north-south industrial shed, three connected shallow pale-gray corrugated roof spans, blue trim and blue loading doors down its side. Match the long warehouse in the lower-left industrial block. No surrounding yard."
+    },
+    {
+      "name": "LogisticsCenter",
+      "folder": "Buildings",
+      "size": 512,
+      "subject": "one rectangular low-rise white logistics hall, flat cobalt blue roof with fine broad ridges, white gray frame, three dark-blue loading bays and small orange safety details on the shallow front wall. Match the second-column industrial building in the reference."
+    },
+    {
+      "name": "Hospital_Main",
+      "folder": "Landmarks",
+      "size": 512,
+      "subject": "one very large white L-shaped hospital main building, massive cobalt-blue gridded glass front and left wing, broad flat pale roof with small service boxes and a large clearly visible red medical plus symbol on roof. North-up block axes. Match the large hospital at reference upper right, especially its white massing and shallow blue front facade. Hospital building ONLY, no parking or roundabout."
+    },
+    {
+      "name": "Hospital_Secondary",
+      "folder": "Landmarks",
+      "size": 512,
+      "subject": "one broad low white hospital medical wing, elongated horizontal rectangular footprint, blue gridded glass front, pale flat roof with a large red medical plus symbol, central gently arched white entry canopy protruding slightly south. Match the reference hospital building immediately above the circular driveway. Building only."
+    },
+    {
+      "name": "FireStation_Main",
+      "folder": "Landmarks",
+      "size": 512,
+      "subject": "one very wide low red-and-white fire station building with six dark garage bays along its shallow south-facing facade, white-gray flat roof, tall narrow red training tower rising from the rear center with white horizontal bands and a small red roof. Match the prominent fire station in the reference bottom-right. Combine main hall and its tower into this one reusable landmark sprite. No fire engines, no yard, no road."
+    },
+    {
+      "name": "ContainerCrane",
+      "folder": "Landmarks",
+      "size": 512,
+      "subject": "one large orange-yellow port container gantry crane, clear rectangular gantry legs and long bridge arm, simplified lattice supports, compact pale cabin, hoist beam. High nearly vertical overhead view matching the cranes in the reference bottom-left harbor, very shallow visible structure sides. All empty gaps genuinely transparent. Crane alone, no ship, no containers, no ground."
+    },
+    {
+      "name": "Container_Base",
+      "folder": "BuildingProps",
+      "size": 128,
+      "subject": "one rectangular corrugated shipping container, muted medium blue, high nearly overhead view, roof plane dominates with a short visible south side, no text or logos. North-south long axis, squat height. This container will be reused with Unity tint."
+    },
+    {
+      "name": "Tank_Silo",
+      "folder": "BuildingProps",
+      "size": 256,
+      "subject": "one upright white industrial tank/silo, circular pale-gray top cap with a small simple hatch, shallow white cylinder side visible toward bottom, blue-gray small base rim. Match the vertical line of white tanks alongside the reference harbor."
+    },
+    {
+      "name": "Pavilion_A",
+      "folder": "BuildingProps",
+      "size": 256,
+      "subject": "one small octagonal park pavilion, charcoal slate-blue faceted conical roof with little warm gold finial, warm tan wooden pillars and tiny base platform, high nearly-overhead view. Match the pavilion beside the winding reference river. No plants, trees or surrounding path."
+    },
+    {
+      "name": "Fountain_A",
+      "folder": "BuildingProps",
+      "size": 128,
+      "subject": "one small round two-tier blue-water plaza fountain, bright white-beige rim, clear vivid cyan water and a very small central white sculpted jet, high nearly-overhead view, compact clean toy-like low-poly. Match the circular fountains in the reference residential and civic plazas. Fountain alone, no plaza, no trees."
+    }
+  ]
+}

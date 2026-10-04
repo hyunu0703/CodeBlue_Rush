@@ -1,0 +1,4296 @@
+{
+  "sourcePixelWidth": 941,
+  "sourcePixelHeight": 1672,
+  "pixelsPerUnit": 8,
+  "instances": [
+    {
+      "name": "Residential_ResidentialMidrise_A_01",
+      "region": "Residential",
+      "asset": "ResidentialMidrise_A",
+      "x": 106,
+      "y": 141,
+      "width": 53,
+      "height": 68,
+      "color": "#FFFFFF",
+      "collider": true
+    },
+    {
+      "name": "Residential_ResidentialMidrise_B_01",
+      "region": "Residential",
+      "asset": "ResidentialMidrise_B",
+      "x": 218,
+      "y": 137,
+      "width": 48,
+      "height": 73,
+      "color": "#FFFFFF",
+      "collider": true
+    },
+    {
+      "name": "Residential_ResidentialMidrise_B_02",
+      "region": "Residential",
+      "asset": "ResidentialMidrise_B",
+      "x": 262,
+      "y": 137,
+      "width": 42,
+      "height": 73,
+      "color": "#FFFFFF",
+      "collider": true
+    },
+    {
+      "name": "Residential_House_A_01",
+      "region": "Residential",
+      "asset": "House_A",
+      "x": 110,
+      "y": 246,
+      "width": 52,
+      "height": 61,
+      "color": "#FFFFFF",
+      "collider": true
+    },
+    {
+      "name": "Residential_House_B_01",
+      "region": "Residential",
+      "asset": "House_B",
+      "x": 107,
+      "y": 315,
+      "width": 48,
+      "height": 58,
+      "color": "#FFFFFF",
+      "collider": true
+    },
+    {
+      "name": "Residential_House_B_02",
+      "region": "Residential",
+      "asset": "House_B",
+      "x": 210,
+      "y": 245,
+      "width": 51,
+      "height": 59,
+      "color": "#FFFFFF",
+      "collider": true
+    },
+    {
+      "name": "Residential_House_C_01",
+      "region": "Residential",
+      "asset": "House_C",
+      "x": 206,
+      "y": 313,
+      "width": 45,
+      "height": 61,
+      "color": "#FFFFFF",
+      "collider": true
+    },
+    {
+      "name": "Residential_ResidentialMidrise_A_02",
+      "region": "Residential",
+      "asset": "ResidentialMidrise_A",
+      "x": 262,
+      "y": 251,
+      "width": 42,
+      "height": 65,
+      "color": "#FFFFFF",
+      "collider": true
+    },
+    {
+      "name": "Residential_House_B_03",
+      "region": "Residential",
+      "asset": "House_B",
+      "x": 96,
+      "y": 420,
+      "width": 54,
+      "height": 63,
+      "color": "#FFFFFF",
+      "collider": true
+    },
+    {
+      "name": "Residential_ResidentialMidrise_A_03",
+      "region": "Residential",
+      "asset": "ResidentialMidrise_A",
+      "x": 102,
+      "y": 515,
+      "width": 54,
+      "height": 72,
+      "color": "#FFFFFF",
+      "collider": true
+    },
+    {
+      "name": "Residential_House_B_04",
+      "region": "Residential",
+      "asset": "House_B",
+      "x": 177,
+      "y": 517,
+      "width": 52,
+      "height": 60,
+      "color": "#FFFFFF",
+      "collider": true
+    },
+    {
+      "name": "Residential_House_A_02",
+      "region": "Residential",
+      "asset": "House_A",
+      "x": 246,
+      "y": 517,
+      "width": 50,
+      "height": 60,
+      "color": "#FFFFFF",
+      "collider": true
+    },
+    {
+      "name": "Residential_ResidentialMidrise_A_04",
+      "region": "Residential",
+      "asset": "ResidentialMidrise_A",
+      "x": 265,
+      "y": 424,
+      "width": 37,
+      "height": 65,
+      "color": "#FFFFFF",
+      "collider": true
+    },
+    {
+      "name": "Residential_Fountain_A_01",
+      "region": "Residential",
+      "asset": "Fountain_A",
+      "x": 190,
+      "y": 439,
+      "width": 30,
+      "height": 33,
+      "color": "#FFFFFF",
+      "collider": true
+    },
+    {
+      "name": "Commercial_ResidentialMidrise_A_01",
+      "region": "Commercial",
+      "asset": "ResidentialMidrise_A",
+      "x": 455,
+      "y": 141,
+      "width": 32,
+      "height": 70,
+      "color": "#FFFFFF",
+      "collider": true
+    },
+    {
+      "name": "Commercial_Office_A_01",
+      "region": "Commercial",
+      "asset": "Office_A",
+      "x": 493,
+      "y": 108,
+      "width": 32,
+      "height": 61,
+      "color": "#FFFFFF",
+      "collider": true
+    },
+    {
+      "name": "Commercial_Office_B_01",
+      "region": "Commercial",
+      "asset": "Office_B",
+      "x": 537,
+      "y": 111,
+      "width": 35,
+      "height": 62,
+      "color": "#FFFFFF",
+      "collider": true
+    },
+    {
+      "name": "Commercial_Office_B_02",
+      "region": "Commercial",
+      "asset": "Office_B",
+      "x": 584,
+      "y": 110,
+      "width": 42,
+      "height": 62,
+      "color": "#FFFFFF",
+      "collider": true
+    },
+    {
+      "name": "Commercial_CivicMidrise_A_01",
+      "region": "Commercial",
+      "asset": "CivicMidrise_A",
+      "x": 489,
+      "y": 177,
+      "width": 39,
+      "height": 46,
+      "color": "#FFFFFF",
+      "collider": true
+    },
+    {
+      "name": "Commercial_Office_A_02",
+      "region": "Commercial",
+      "asset": "Office_A",
+      "x": 535,
+      "y": 175,
+      "width": 36,
+      "height": 48,
+      "color": "#FFFFFF",
+      "collider": true
+    },
+    {
+      "name": "Commercial_Office_B_03",
+      "region": "Commercial",
+      "asset": "Office_B",
+      "x": 595,
+      "y": 176,
+      "width": 36,
+      "height": 48,
+      "color": "#FFFFFF",
+      "collider": true
+    },
+    {
+      "name": "Commercial_CivicMidrise_A_02",
+      "region": "Commercial",
+      "asset": "CivicMidrise_A",
+      "x": 465,
+      "y": 286,
+      "width": 52,
+      "height": 94,
+      "color": "#FFFFFF",
+      "collider": true
+    },
+    {
+      "name": "Commercial_Commercial_A_01",
+      "region": "Commercial",
+      "asset": "Commercial_A",
+      "x": 532,
+      "y": 261,
+      "width": 48,
+      "height": 46,
+      "color": "#FFFFFF",
+      "collider": true
+    },
+    {
+      "name": "Commercial_Office_B_04",
+      "region": "Commercial",
+      "asset": "Office_B",
+      "x": 536,
+      "y": 321,
+      "width": 44,
+      "height": 48,
+      "color": "#FFFFFF",
+      "collider": true
+    },
+    {
+      "name": "Commercial_Office_A_03",
+      "region": "Commercial",
+      "asset": "Office_A",
+      "x": 594,
+      "y": 288,
+      "width": 38,
+      "height": 91,
+      "color": "#FFFFFF",
+      "collider": true
+    },
+    {
+      "name": "Commercial_CivicMidrise_A_03",
+      "region": "Commercial",
+      "asset": "CivicMidrise_A",
+      "x": 465,
+      "y": 427,
+      "width": 49,
+      "height": 86,
+      "color": "#FFFFFF",
+      "collider": true
+    },
+    {
+      "name": "Commercial_House_A_01",
+      "region": "Commercial",
+      "asset": "House_A",
+      "x": 594,
+      "y": 427,
+      "width": 50,
+      "height": 85,
+      "color": "#FFFFFF",
+      "collider": true
+    },
+    {
+      "name": "Commercial_House_B_01",
+      "region": "Commercial",
+      "asset": "House_B",
+      "x": 532,
+      "y": 520,
+      "width": 56,
+      "height": 63,
+      "color": "#FFFFFF",
+      "collider": true
+    },
+    {
+      "name": "Commercial_Office_B_05",
+      "region": "Commercial",
+      "asset": "Office_B",
+      "x": 595,
+      "y": 520,
+      "width": 39,
+      "height": 64,
+      "color": "#FFFFFF",
+      "collider": true
+    },
+    {
+      "name": "Commercial_Fountain_A_01",
+      "region": "Commercial",
+      "asset": "Fountain_A",
+      "x": 530,
+      "y": 439,
+      "width": 30,
+      "height": 32,
+      "color": "#FFFFFF",
+      "collider": true
+    },
+    {
+      "name": "Hospital_Office_B_01",
+      "region": "Hospital",
+      "asset": "Office_B",
+      "x": 706,
+      "y": 137,
+      "width": 60,
+      "height": 44,
+      "color": "#FFFFFF",
+      "collider": true
+    },
+    {
+      "name": "Hospital_Office_B_02",
+      "region": "Hospital",
+      "asset": "Office_B",
+      "x": 822,
+      "y": 136,
+      "width": 87,
+      "height": 47,
+      "color": "#FFFFFF",
+      "collider": true
+    },
+    {
+      "name": "Hospital_Hospital_Main_01",
+      "region": "Hospital",
+      "asset": "Hospital_Main",
+      "x": 784,
+      "y": 215,
+      "width": 181,
+      "height": 103,
+      "color": "#FFFFFF",
+      "collider": true
+    },
+    {
+      "name": "Hospital_Office_B_03",
+      "region": "Hospital",
+      "asset": "Office_B",
+      "x": 721,
+      "y": 286,
+      "width": 61,
+      "height": 74,
+      "color": "#FFFFFF",
+      "collider": true
+    },
+    {
+      "name": "Hospital_Hospital_Secondary_01",
+      "region": "Hospital",
+      "asset": "Hospital_Secondary",
+      "x": 811,
+      "y": 335,
+      "width": 136,
+      "height": 89,
+      "color": "#FFFFFF",
+      "collider": true
+    },
+    {
+      "name": "Hospital_ResidentialMidrise_A_01",
+      "region": "Hospital",
+      "asset": "ResidentialMidrise_A",
+      "x": 697,
+      "y": 367,
+      "width": 33,
+      "height": 54,
+      "color": "#FFFFFF",
+      "collider": true
+    },
+    {
+      "name": "IndustrialPort_Warehouse_A_01",
+      "region": "IndustrialPort",
+      "asset": "Warehouse_A",
+      "x": 96,
+      "y": 690,
+      "width": 77.28,
+      "height": 68.08,
+      "color": "#FFFFFF",
+      "collider": true
+    },
+    {
+      "name": "IndustrialPort_Office_B_01",
+      "region": "IndustrialPort",
+      "asset": "Office_B",
+      "x": 208,
+      "y": 717,
+      "width": 39,
+      "height": 50,
+      "color": "#FFFFFF",
+      "collider": true
+    },
+    {
+      "name": "IndustrialPort_Warehouse_B_01",
+      "region": "IndustrialPort",
+      "asset": "Warehouse_B",
+      "x": 99,
+      "y": 922,
+      "width": 70,
+      "height": 121,
+      "color": "#FFFFFF",
+      "collider": true
+    },
+    {
+      "name": "IndustrialPort_LogisticsCenter_01",
+      "region": "IndustrialPort",
+      "asset": "LogisticsCenter",
+      "x": 233,
+      "y": 847,
+      "width": 79,
+      "height": 90,
+      "color": "#FFFFFF",
+      "collider": true
+    },
+    {
+      "name": "IndustrialPort_Warehouse_A_02",
+      "region": "IndustrialPort",
+      "asset": "Warehouse_A",
+      "x": 239,
+      "y": 977,
+      "width": 82,
+      "height": 82,
+      "color": "#FFFFFF",
+      "collider": true
+    },
+    {
+      "name": "IndustrialPort_ContainerCrane_01",
+      "region": "IndustrialPort",
+      "asset": "ContainerCrane",
+      "x": 91,
+      "y": 1149,
+      "width": 49,
+      "height": 90,
+      "color": "#FFFFFF",
+      "collider": true
+    },
+    {
+      "name": "IndustrialPort_ContainerCrane_02",
+      "region": "IndustrialPort",
+      "asset": "ContainerCrane",
+      "x": 145,
+      "y": 1188,
+      "width": 84,
+      "height": 110,
+      "color": "#FFFFFF",
+      "collider": true
+    },
+    {
+      "name": "IndustrialPort_Tank_Silo_01",
+      "region": "IndustrialPort",
+      "asset": "Tank_Silo",
+      "x": 270,
+      "y": 1115,
+      "width": 18,
+      "height": 20,
+      "color": "#FFFFFF",
+      "collider": true
+    },
+    {
+      "name": "IndustrialPort_Tank_Silo_02",
+      "region": "IndustrialPort",
+      "asset": "Tank_Silo",
+      "x": 270,
+      "y": 1131,
+      "width": 18,
+      "height": 20,
+      "color": "#FFFFFF",
+      "collider": true
+    },
+    {
+      "name": "IndustrialPort_Tank_Silo_03",
+      "region": "IndustrialPort",
+      "asset": "Tank_Silo",
+      "x": 270,
+      "y": 1180,
+      "width": 18,
+      "height": 20,
+      "color": "#FFFFFF",
+      "collider": true
+    },
+    {
+      "name": "IndustrialPort_Tank_Silo_04",
+      "region": "IndustrialPort",
+      "asset": "Tank_Silo",
+      "x": 270,
+      "y": 1206,
+      "width": 18,
+      "height": 20,
+      "color": "#FFFFFF",
+      "collider": true
+    },
+    {
+      "name": "IndustrialPort_Tank_Silo_05",
+      "region": "IndustrialPort",
+      "asset": "Tank_Silo",
+      "x": 270,
+      "y": 1232,
+      "width": 18,
+      "height": 20,
+      "color": "#FFFFFF",
+      "collider": true
+    },
+    {
+      "name": "IndustrialPort_Container_Base_01",
+      "region": "IndustrialPort",
+      "asset": "Container_Base",
+      "x": 206,
+      "y": 1127,
+      "width": 12,
+      "height": 21,
+      "color": "#A9C7F0",
+      "collider": true,
+      "rotation": 90
+    },
+    {
+      "name": "IndustrialPort_Container_Base_02",
+      "region": "IndustrialPort",
+      "asset": "Container_Base",
+      "x": 220,
+      "y": 1127,
+      "width": 12,
+      "height": 21,
+      "color": "#EDB64E",
+      "collider": true,
+      "rotation": 90
+    },
+    {
+      "name": "IndustrialPort_Container_Base_03",
+      "region": "IndustrialPort",
+      "asset": "Container_Base",
+      "x": 234,
+      "y": 1127,
+      "width": 12,
+      "height": 21,
+      "color": "#D97555",
+      "collider": true,
+      "rotation": 90
+    },
+    {
+      "name": "IndustrialPort_Container_Base_04",
+      "region": "IndustrialPort",
+      "asset": "Container_Base",
+      "x": 248,
+      "y": 1127,
+      "width": 12,
+      "height": 21,
+      "color": "#E1B241",
+      "collider": true,
+      "rotation": 90
+    },
+    {
+      "name": "IndustrialPort_Container_Base_05",
+      "region": "IndustrialPort",
+      "asset": "Container_Base",
+      "x": 206,
+      "y": 1151,
+      "width": 12,
+      "height": 21,
+      "color": "#EDB64E",
+      "collider": true,
+      "rotation": 90
+    },
+    {
+      "name": "IndustrialPort_Container_Base_06",
+      "region": "IndustrialPort",
+      "asset": "Container_Base",
+      "x": 220,
+      "y": 1151,
+      "width": 12,
+      "height": 21,
+      "color": "#D97555",
+      "collider": true,
+      "rotation": 90
+    },
+    {
+      "name": "IndustrialPort_Container_Base_07",
+      "region": "IndustrialPort",
+      "asset": "Container_Base",
+      "x": 234,
+      "y": 1151,
+      "width": 12,
+      "height": 21,
+      "color": "#E1B241",
+      "collider": true,
+      "rotation": 90
+    },
+    {
+      "name": "IndustrialPort_Container_Base_08",
+      "region": "IndustrialPort",
+      "asset": "Container_Base",
+      "x": 248,
+      "y": 1151,
+      "width": 12,
+      "height": 21,
+      "color": "#7394C5",
+      "collider": true,
+      "rotation": 90
+    },
+    {
+      "name": "IndustrialPort_Container_Base_09",
+      "region": "IndustrialPort",
+      "asset": "Container_Base",
+      "x": 206,
+      "y": 1175,
+      "width": 12,
+      "height": 21,
+      "color": "#D97555",
+      "collider": true,
+      "rotation": 90
+    },
+    {
+      "name": "IndustrialPort_Container_Base_10",
+      "region": "IndustrialPort",
+      "asset": "Container_Base",
+      "x": 220,
+      "y": 1175,
+      "width": 12,
+      "height": 21,
+      "color": "#E1B241",
+      "collider": true,
+      "rotation": 90
+    },
+    {
+      "name": "IndustrialPort_Container_Base_11",
+      "region": "IndustrialPort",
+      "asset": "Container_Base",
+      "x": 234,
+      "y": 1175,
+      "width": 12,
+      "height": 21,
+      "color": "#7394C5",
+      "collider": true,
+      "rotation": 90
+    },
+    {
+      "name": "IndustrialPort_Container_Base_12",
+      "region": "IndustrialPort",
+      "asset": "Container_Base",
+      "x": 248,
+      "y": 1175,
+      "width": 12,
+      "height": 21,
+      "color": "#C9D7E1",
+      "collider": true,
+      "rotation": 90
+    },
+    {
+      "name": "IndustrialPort_Container_Base_13",
+      "region": "IndustrialPort",
+      "asset": "Container_Base",
+      "x": 206,
+      "y": 1199,
+      "width": 12,
+      "height": 21,
+      "color": "#E1B241",
+      "collider": true,
+      "rotation": 90
+    },
+    {
+      "name": "IndustrialPort_Container_Base_14",
+      "region": "IndustrialPort",
+      "asset": "Container_Base",
+      "x": 220,
+      "y": 1199,
+      "width": 12,
+      "height": 21,
+      "color": "#7394C5",
+      "collider": true,
+      "rotation": 90
+    },
+    {
+      "name": "IndustrialPort_Container_Base_15",
+      "region": "IndustrialPort",
+      "asset": "Container_Base",
+      "x": 234,
+      "y": 1199,
+      "width": 12,
+      "height": 21,
+      "color": "#C9D7E1",
+      "collider": true,
+      "rotation": 90
+    },
+    {
+      "name": "IndustrialPort_Container_Base_16",
+      "region": "IndustrialPort",
+      "asset": "Container_Base",
+      "x": 248,
+      "y": 1199,
+      "width": 12,
+      "height": 21,
+      "color": "#A9C7F0",
+      "collider": true,
+      "rotation": 90
+    },
+    {
+      "name": "IndustrialPort_Container_Base_17",
+      "region": "IndustrialPort",
+      "asset": "Container_Base",
+      "x": 206,
+      "y": 1223,
+      "width": 12,
+      "height": 21,
+      "color": "#7394C5",
+      "collider": true,
+      "rotation": 90
+    },
+    {
+      "name": "IndustrialPort_Container_Base_18",
+      "region": "IndustrialPort",
+      "asset": "Container_Base",
+      "x": 220,
+      "y": 1223,
+      "width": 12,
+      "height": 21,
+      "color": "#C9D7E1",
+      "collider": true,
+      "rotation": 90
+    },
+    {
+      "name": "IndustrialPort_Container_Base_19",
+      "region": "IndustrialPort",
+      "asset": "Container_Base",
+      "x": 234,
+      "y": 1223,
+      "width": 12,
+      "height": 21,
+      "color": "#A9C7F0",
+      "collider": true,
+      "rotation": 90
+    },
+    {
+      "name": "IndustrialPort_Container_Base_20",
+      "region": "IndustrialPort",
+      "asset": "Container_Base",
+      "x": 248,
+      "y": 1223,
+      "width": 12,
+      "height": 21,
+      "color": "#EDB64E",
+      "collider": true,
+      "rotation": 90
+    },
+    {
+      "name": "ParkRiver_Pavilion_A_01",
+      "region": "ParkRiver",
+      "asset": "Pavilion_A",
+      "x": 374,
+      "y": 1058,
+      "width": 44,
+      "height": 48,
+      "color": "#FFFFFF",
+      "collider": true
+    },
+    {
+      "name": "ParkRiver_Pavilion_A_02",
+      "region": "ParkRiver",
+      "asset": "Pavilion_A",
+      "x": 442,
+      "y": 1236,
+      "width": 54,
+      "height": 57,
+      "color": "#FFFFFF",
+      "collider": true
+    },
+    {
+      "name": "FireStation_Office_B_01",
+      "region": "FireStation",
+      "asset": "Office_B",
+      "x": 582,
+      "y": 708,
+      "width": 60,
+      "height": 79,
+      "color": "#FFFFFF",
+      "collider": true
+    },
+    {
+      "name": "FireStation_Office_A_01",
+      "region": "FireStation",
+      "asset": "Office_A",
+      "x": 700,
+      "y": 708,
+      "width": 44,
+      "height": 86,
+      "color": "#FFFFFF",
+      "collider": true
+    },
+    {
+      "name": "FireStation_Office_B_02",
+      "region": "FireStation",
+      "asset": "Office_B",
+      "x": 763,
+      "y": 732,
+      "width": 29,
+      "height": 51,
+      "color": "#FFFFFF",
+      "collider": true
+    },
+    {
+      "name": "FireStation_Office_B_03",
+      "region": "FireStation",
+      "asset": "Office_B",
+      "x": 849,
+      "y": 711,
+      "width": 51,
+      "height": 78,
+      "color": "#FFFFFF",
+      "collider": true
+    },
+    {
+      "name": "FireStation_Office_B_04",
+      "region": "FireStation",
+      "asset": "Office_B",
+      "x": 582,
+      "y": 853,
+      "width": 59,
+      "height": 97,
+      "color": "#FFFFFF",
+      "collider": true
+    },
+    {
+      "name": "FireStation_Office_B_05",
+      "region": "FireStation",
+      "asset": "Office_B",
+      "x": 850,
+      "y": 858,
+      "width": 51,
+      "height": 89,
+      "color": "#FFFFFF",
+      "collider": true
+    },
+    {
+      "name": "FireStation_Warehouse_A_01",
+      "region": "FireStation",
+      "asset": "Warehouse_A",
+      "x": 853,
+      "y": 1009,
+      "width": 79.04,
+      "height": 57.76,
+      "color": "#FFFFFF",
+      "collider": true
+    },
+    {
+      "name": "FireStation_FireStation_Main_01",
+      "region": "FireStation",
+      "asset": "FireStation_Main",
+      "x": 731,
+      "y": 1196,
+      "width": 267,
+      "height": 106,
+      "color": "#FFFFFF",
+      "collider": true
+    },
+    {
+      "name": "FireStation_Fountain_A_01",
+      "region": "FireStation",
+      "asset": "Fountain_A",
+      "x": 711,
+      "y": 851,
+      "width": 33,
+      "height": 37,
+      "color": "#FFFFFF",
+      "collider": true
+    }
+  ],
+  "sites": [
+    {
+      "region": "IndustrialPort",
+      "name": "CraneQuay",
+      "x0": 59,
+      "y0": 1106,
+      "x1": 110,
+      "y1": 1147,
+      "color": "#A9A393",
+      "order": -12
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "WestPier",
+      "x0": 80,
+      "y0": 1184,
+      "x1": 97,
+      "y1": 1320,
+      "color": "#B8B2A2",
+      "order": -12
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "ContainerPier",
+      "x0": 156,
+      "y0": 1236,
+      "x1": 175,
+      "y1": 1356,
+      "color": "#A9A393",
+      "order": -12
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "QuayCrossbar",
+      "x0": 156,
+      "y0": 1246,
+      "x1": 256,
+      "y1": 1264,
+      "color": "#B8B2A2",
+      "order": -12
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "EastPier",
+      "x0": 245,
+      "y0": 1246,
+      "x1": 261,
+      "y1": 1365,
+      "color": "#B8B2A2",
+      "order": -12
+    },
+    {
+      "region": "Residential",
+      "name": "ResidentialPlaza",
+      "x0": 173,
+      "y0": 422,
+      "x1": 209,
+      "y1": 464,
+      "color": "#DACBA8",
+      "order": -12
+    },
+    {
+      "region": "Commercial",
+      "name": "CentralPlaza",
+      "x0": 511,
+      "y0": 419,
+      "x1": 551,
+      "y1": 466,
+      "color": "#DACBA8",
+      "order": -12
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicPlaza",
+      "x0": 679,
+      "y0": 817,
+      "x1": 746,
+      "y1": 886,
+      "color": "#D9CBA9",
+      "order": -12
+    },
+    {
+      "region": "FireStation",
+      "name": "DispatchApron",
+      "x0": 600.0,
+      "y0": 1250.0,
+      "x1": 878.0,
+      "y1": 1250.5,
+      "color": "#AAA7A0",
+      "order": -12
+    },
+    {
+      "region": "FireStation",
+      "name": "DispatchApron",
+      "x0": 601.0,
+      "y0": 1250.5,
+      "x1": 878.0,
+      "y1": 1251.0,
+      "color": "#AAA7A0",
+      "order": -12
+    },
+    {
+      "region": "FireStation",
+      "name": "DispatchApron",
+      "x0": 602.0,
+      "y0": 1251.0,
+      "x1": 878.0,
+      "y1": 1251.5,
+      "color": "#AAA7A0",
+      "order": -12
+    },
+    {
+      "region": "FireStation",
+      "name": "DispatchApron",
+      "x0": 602.5,
+      "y0": 1251.5,
+      "x1": 878.0,
+      "y1": 1252.0,
+      "color": "#AAA7A0",
+      "order": -12
+    },
+    {
+      "region": "FireStation",
+      "name": "DispatchApron",
+      "x0": 603.0,
+      "y0": 1252.0,
+      "x1": 878.0,
+      "y1": 1252.5,
+      "color": "#AAA7A0",
+      "order": -12
+    },
+    {
+      "region": "FireStation",
+      "name": "DispatchApron",
+      "x0": 603.5,
+      "y0": 1252.5,
+      "x1": 878.0,
+      "y1": 1253.5,
+      "color": "#AAA7A0",
+      "order": -12
+    },
+    {
+      "region": "FireStation",
+      "name": "DispatchApron",
+      "x0": 604.0,
+      "y0": 1253.5,
+      "x1": 878.0,
+      "y1": 1254.5,
+      "color": "#AAA7A0",
+      "order": -12
+    },
+    {
+      "region": "FireStation",
+      "name": "DispatchApron",
+      "x0": 604.5,
+      "y0": 1254.5,
+      "x1": 878.0,
+      "y1": 1266.0,
+      "color": "#AAA7A0",
+      "order": -12
+    },
+    {
+      "region": "FireStation",
+      "name": "DispatchApron",
+      "x0": 604.0,
+      "y0": 1266.0,
+      "x1": 878.0,
+      "y1": 1267.0,
+      "color": "#AAA7A0",
+      "order": -12
+    },
+    {
+      "region": "FireStation",
+      "name": "DispatchApron",
+      "x0": 603.5,
+      "y0": 1267.0,
+      "x1": 878.0,
+      "y1": 1268.0,
+      "color": "#AAA7A0",
+      "order": -12
+    },
+    {
+      "region": "FireStation",
+      "name": "DispatchApron",
+      "x0": 603.0,
+      "y0": 1268.0,
+      "x1": 878.0,
+      "y1": 1268.5,
+      "color": "#AAA7A0",
+      "order": -12
+    },
+    {
+      "region": "FireStation",
+      "name": "DispatchApron",
+      "x0": 602.5,
+      "y0": 1268.5,
+      "x1": 878.0,
+      "y1": 1269.0,
+      "color": "#AAA7A0",
+      "order": -12
+    },
+    {
+      "region": "FireStation",
+      "name": "DispatchApron",
+      "x0": 602.0,
+      "y0": 1269.0,
+      "x1": 878.0,
+      "y1": 1269.5,
+      "color": "#AAA7A0",
+      "order": -12
+    },
+    {
+      "region": "FireStation",
+      "name": "DispatchApron",
+      "x0": 601.0,
+      "y0": 1269.5,
+      "x1": 878.0,
+      "y1": 1270.0,
+      "color": "#AAA7A0",
+      "order": -12
+    },
+    {
+      "region": "FireStation",
+      "name": "DispatchApron",
+      "x0": 600.0,
+      "y0": 1270.0,
+      "x1": 878.0,
+      "y1": 1270.5,
+      "color": "#AAA7A0",
+      "order": -12
+    },
+    {
+      "region": "FireStation",
+      "name": "DispatchApron",
+      "x0": 595.0,
+      "y0": 1270.5,
+      "x1": 878.0,
+      "y1": 1340.0,
+      "color": "#AAA7A0",
+      "order": -12
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingNW",
+      "x0": 664.0,
+      "y0": 431.0,
+      "x1": 746.0,
+      "y1": 432.5,
+      "color": "#555F68",
+      "order": -12
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingNW",
+      "x0": 664.0,
+      "y0": 432.5,
+      "x1": 745.5,
+      "y1": 434.5,
+      "color": "#555F68",
+      "order": -12
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingNW",
+      "x0": 664.0,
+      "y0": 434.5,
+      "x1": 745.0,
+      "y1": 438.5,
+      "color": "#555F68",
+      "order": -12
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingNW",
+      "x0": 664.0,
+      "y0": 438.5,
+      "x1": 744.5,
+      "y1": 443.0,
+      "color": "#555F68",
+      "order": -12
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingNW",
+      "x0": 664.0,
+      "y0": 443.0,
+      "x1": 744.0,
+      "y1": 457.5,
+      "color": "#555F68",
+      "order": -12
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingNW",
+      "x0": 664.0,
+      "y0": 457.5,
+      "x1": 744.5,
+      "y1": 462.0,
+      "color": "#555F68",
+      "order": -12
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingNW",
+      "x0": 664.0,
+      "y0": 462.0,
+      "x1": 745.0,
+      "y1": 466.0,
+      "color": "#555F68",
+      "order": -12
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingNW",
+      "x0": 664.0,
+      "y0": 466.0,
+      "x1": 745.5,
+      "y1": 468.0,
+      "color": "#555F68",
+      "order": -12
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingNW",
+      "x0": 664.0,
+      "y0": 468.0,
+      "x1": 746.0,
+      "y1": 469.5,
+      "color": "#555F68",
+      "order": -12
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingNW",
+      "x0": 664.0,
+      "y0": 469.5,
+      "x1": 746.5,
+      "y1": 471.0,
+      "color": "#555F68",
+      "order": -12
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingNW",
+      "x0": 664.0,
+      "y0": 471.0,
+      "x1": 747.0,
+      "y1": 472.0,
+      "color": "#555F68",
+      "order": -12
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingNW_Stall",
+      "x0": 668.0,
+      "y0": 439.0,
+      "x1": 676.0,
+      "y1": 441.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingNW_StallEdge",
+      "x0": 668.0,
+      "y0": 434.0,
+      "x1": 670.0,
+      "y1": 439.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingNW_Stall",
+      "x0": 681.0,
+      "y0": 439.0,
+      "x1": 689.0,
+      "y1": 441.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingNW_StallEdge",
+      "x0": 681.0,
+      "y0": 434.0,
+      "x1": 683.0,
+      "y1": 439.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingNW_Stall",
+      "x0": 694.0,
+      "y0": 439.0,
+      "x1": 702.0,
+      "y1": 441.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingNW_StallEdge",
+      "x0": 694.0,
+      "y0": 434.0,
+      "x1": 696.0,
+      "y1": 439.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingNW_Stall",
+      "x0": 707.0,
+      "y0": 439.0,
+      "x1": 715.0,
+      "y1": 441.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingNW_StallEdge",
+      "x0": 707.0,
+      "y0": 434.0,
+      "x1": 709.0,
+      "y1": 439.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingNW_Stall",
+      "x0": 720.0,
+      "y0": 439.0,
+      "x1": 728.0,
+      "y1": 441.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingNW_StallEdge",
+      "x0": 720.0,
+      "y0": 434.0,
+      "x1": 722.0,
+      "y1": 439.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingNW_Stall",
+      "x0": 733.0,
+      "y0": 439.0,
+      "x1": 741.0,
+      "y1": 441.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingNW_StallEdge",
+      "x0": 733.0,
+      "y0": 434.0,
+      "x1": 735.0,
+      "y1": 439.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingNW_Stall",
+      "x0": 668.0,
+      "y0": 454.0,
+      "x1": 676.0,
+      "y1": 456.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingNW_StallEdge",
+      "x0": 668.0,
+      "y0": 449.0,
+      "x1": 670.0,
+      "y1": 454.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingNW_Stall",
+      "x0": 681.0,
+      "y0": 454.0,
+      "x1": 689.0,
+      "y1": 456.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingNW_StallEdge",
+      "x0": 681.0,
+      "y0": 449.0,
+      "x1": 683.0,
+      "y1": 454.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingNW_Stall",
+      "x0": 694.0,
+      "y0": 454.0,
+      "x1": 702.0,
+      "y1": 456.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingNW_StallEdge",
+      "x0": 694.0,
+      "y0": 449.0,
+      "x1": 696.0,
+      "y1": 454.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingNW_Stall",
+      "x0": 707.0,
+      "y0": 454.0,
+      "x1": 715.0,
+      "y1": 456.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingNW_StallEdge",
+      "x0": 707.0,
+      "y0": 449.0,
+      "x1": 709.0,
+      "y1": 454.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingNW_Stall",
+      "x0": 720.0,
+      "y0": 454.0,
+      "x1": 728.0,
+      "y1": 456.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingNW_StallEdge",
+      "x0": 720.0,
+      "y0": 449.0,
+      "x1": 722.0,
+      "y1": 454.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingNW_Stall",
+      "x0": 733.0,
+      "y0": 454.0,
+      "x1": 741.0,
+      "y1": 456.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingNW_StallEdge",
+      "x0": 733.0,
+      "y0": 449.0,
+      "x1": 735.0,
+      "y1": 454.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingNE",
+      "x0": 844.5,
+      "y0": 431.0,
+      "x1": 878.0,
+      "y1": 432.5,
+      "color": "#555F68",
+      "order": -12
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingNE",
+      "x0": 845.0,
+      "y0": 432.5,
+      "x1": 878.0,
+      "y1": 434.5,
+      "color": "#555F68",
+      "order": -12
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingNE",
+      "x0": 845.5,
+      "y0": 434.5,
+      "x1": 878.0,
+      "y1": 438.5,
+      "color": "#555F68",
+      "order": -12
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingNE",
+      "x0": 846.0,
+      "y0": 438.5,
+      "x1": 878.0,
+      "y1": 443.0,
+      "color": "#555F68",
+      "order": -12
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingNE",
+      "x0": 846.5,
+      "y0": 443.0,
+      "x1": 878.0,
+      "y1": 457.5,
+      "color": "#555F68",
+      "order": -12
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingNE",
+      "x0": 846.0,
+      "y0": 457.5,
+      "x1": 878.0,
+      "y1": 462.0,
+      "color": "#555F68",
+      "order": -12
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingNE",
+      "x0": 845.5,
+      "y0": 462.0,
+      "x1": 878.0,
+      "y1": 466.0,
+      "color": "#555F68",
+      "order": -12
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingNE",
+      "x0": 845.0,
+      "y0": 466.0,
+      "x1": 878.0,
+      "y1": 468.0,
+      "color": "#555F68",
+      "order": -12
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingNE",
+      "x0": 844.5,
+      "y0": 468.0,
+      "x1": 878.0,
+      "y1": 469.5,
+      "color": "#555F68",
+      "order": -12
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingNE",
+      "x0": 844.0,
+      "y0": 469.5,
+      "x1": 878.0,
+      "y1": 471.0,
+      "color": "#555F68",
+      "order": -12
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingNE",
+      "x0": 843.5,
+      "y0": 471.0,
+      "x1": 878.0,
+      "y1": 472.0,
+      "color": "#555F68",
+      "order": -12
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingNE_Stall",
+      "x0": 846.0,
+      "y0": 439.0,
+      "x1": 852.0,
+      "y1": 441.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingNE_StallEdge",
+      "x0": 845.0,
+      "y0": 434.0,
+      "x1": 846.0,
+      "y1": 434.5,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingNE_StallEdge",
+      "x0": 845.5,
+      "y0": 434.5,
+      "x1": 846.0,
+      "y1": 438.5,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingNE_Stall",
+      "x0": 857.0,
+      "y0": 439.0,
+      "x1": 865.0,
+      "y1": 441.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingNE_StallEdge",
+      "x0": 857.0,
+      "y0": 434.0,
+      "x1": 859.0,
+      "y1": 439.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingNE_Stall",
+      "x0": 846.5,
+      "y0": 454.0,
+      "x1": 852.0,
+      "y1": 456.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingNE_Stall",
+      "x0": 857.0,
+      "y0": 454.0,
+      "x1": 865.0,
+      "y1": 456.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingNE_StallEdge",
+      "x0": 857.0,
+      "y0": 449.0,
+      "x1": 859.0,
+      "y1": 454.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingSW",
+      "x0": 664.0,
+      "y0": 499.5,
+      "x1": 747.0,
+      "y1": 538.0,
+      "color": "#555F68",
+      "order": -12
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingSW_Stall",
+      "x0": 668.0,
+      "y0": 504.0,
+      "x1": 676.0,
+      "y1": 506.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingSW_StallEdge",
+      "x0": 668.0,
+      "y0": 499.5,
+      "x1": 670.0,
+      "y1": 504.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingSW_Stall",
+      "x0": 681.0,
+      "y0": 504.0,
+      "x1": 689.0,
+      "y1": 506.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingSW_StallEdge",
+      "x0": 681.0,
+      "y0": 499.5,
+      "x1": 683.0,
+      "y1": 504.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingSW_Stall",
+      "x0": 694.0,
+      "y0": 504.0,
+      "x1": 702.0,
+      "y1": 506.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingSW_StallEdge",
+      "x0": 694.0,
+      "y0": 499.5,
+      "x1": 696.0,
+      "y1": 504.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingSW_Stall",
+      "x0": 707.0,
+      "y0": 504.0,
+      "x1": 715.0,
+      "y1": 506.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingSW_StallEdge",
+      "x0": 707.0,
+      "y0": 499.5,
+      "x1": 709.0,
+      "y1": 504.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingSW_Stall",
+      "x0": 720.0,
+      "y0": 504.0,
+      "x1": 728.0,
+      "y1": 506.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingSW_StallEdge",
+      "x0": 720.0,
+      "y0": 499.5,
+      "x1": 722.0,
+      "y1": 504.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingSW_Stall",
+      "x0": 733.0,
+      "y0": 504.0,
+      "x1": 741.0,
+      "y1": 506.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingSW_StallEdge",
+      "x0": 733.0,
+      "y0": 499.5,
+      "x1": 735.0,
+      "y1": 504.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingSW_Stall",
+      "x0": 668.0,
+      "y0": 519.0,
+      "x1": 676.0,
+      "y1": 521.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingSW_StallEdge",
+      "x0": 668.0,
+      "y0": 514.0,
+      "x1": 670.0,
+      "y1": 519.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingSW_Stall",
+      "x0": 681.0,
+      "y0": 519.0,
+      "x1": 689.0,
+      "y1": 521.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingSW_StallEdge",
+      "x0": 681.0,
+      "y0": 514.0,
+      "x1": 683.0,
+      "y1": 519.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingSW_Stall",
+      "x0": 694.0,
+      "y0": 519.0,
+      "x1": 702.0,
+      "y1": 521.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingSW_StallEdge",
+      "x0": 694.0,
+      "y0": 514.0,
+      "x1": 696.0,
+      "y1": 519.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingSW_Stall",
+      "x0": 707.0,
+      "y0": 519.0,
+      "x1": 715.0,
+      "y1": 521.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingSW_StallEdge",
+      "x0": 707.0,
+      "y0": 514.0,
+      "x1": 709.0,
+      "y1": 519.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingSW_Stall",
+      "x0": 720.0,
+      "y0": 519.0,
+      "x1": 728.0,
+      "y1": 521.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingSW_StallEdge",
+      "x0": 720.0,
+      "y0": 514.0,
+      "x1": 722.0,
+      "y1": 519.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingSW_Stall",
+      "x0": 733.0,
+      "y0": 519.0,
+      "x1": 741.0,
+      "y1": 521.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingSW_StallEdge",
+      "x0": 733.0,
+      "y0": 514.0,
+      "x1": 735.0,
+      "y1": 519.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingSW_Stall",
+      "x0": 668.0,
+      "y0": 534.0,
+      "x1": 676.0,
+      "y1": 536.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingSW_StallEdge",
+      "x0": 668.0,
+      "y0": 529.0,
+      "x1": 670.0,
+      "y1": 534.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingSW_Stall",
+      "x0": 681.0,
+      "y0": 534.0,
+      "x1": 689.0,
+      "y1": 536.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingSW_StallEdge",
+      "x0": 681.0,
+      "y0": 529.0,
+      "x1": 683.0,
+      "y1": 534.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingSW_Stall",
+      "x0": 694.0,
+      "y0": 534.0,
+      "x1": 702.0,
+      "y1": 536.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingSW_StallEdge",
+      "x0": 694.0,
+      "y0": 529.0,
+      "x1": 696.0,
+      "y1": 534.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingSW_Stall",
+      "x0": 707.0,
+      "y0": 534.0,
+      "x1": 715.0,
+      "y1": 536.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingSW_StallEdge",
+      "x0": 707.0,
+      "y0": 529.0,
+      "x1": 709.0,
+      "y1": 534.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingSW_Stall",
+      "x0": 720.0,
+      "y0": 534.0,
+      "x1": 728.0,
+      "y1": 536.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingSW_StallEdge",
+      "x0": 720.0,
+      "y0": 529.0,
+      "x1": 722.0,
+      "y1": 534.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingSW_Stall",
+      "x0": 733.0,
+      "y0": 534.0,
+      "x1": 741.0,
+      "y1": 536.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingSW_StallEdge",
+      "x0": 733.0,
+      "y0": 529.0,
+      "x1": 735.0,
+      "y1": 534.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingSE",
+      "x0": 843.5,
+      "y0": 499.0,
+      "x1": 878.0,
+      "y1": 499.5,
+      "color": "#555F68",
+      "order": -12
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingSE",
+      "x0": 840.0,
+      "y0": 499.5,
+      "x1": 878.0,
+      "y1": 537.0,
+      "color": "#555F68",
+      "order": -12
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingSE",
+      "x0": 840.0,
+      "y0": 537.0,
+      "x1": 877.5,
+      "y1": 537.5,
+      "color": "#555F68",
+      "order": -12
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingSE",
+      "x0": 840.0,
+      "y0": 537.5,
+      "x1": 877.0,
+      "y1": 538.0,
+      "color": "#555F68",
+      "order": -12
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingSE_Stall",
+      "x0": 844.0,
+      "y0": 504.0,
+      "x1": 852.0,
+      "y1": 506.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingSE_StallEdge",
+      "x0": 844.0,
+      "y0": 499.0,
+      "x1": 846.0,
+      "y1": 504.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingSE_Stall",
+      "x0": 857.0,
+      "y0": 504.0,
+      "x1": 865.0,
+      "y1": 506.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingSE_StallEdge",
+      "x0": 857.0,
+      "y0": 499.0,
+      "x1": 859.0,
+      "y1": 504.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingSE_Stall",
+      "x0": 844.0,
+      "y0": 519.0,
+      "x1": 852.0,
+      "y1": 521.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingSE_StallEdge",
+      "x0": 844.0,
+      "y0": 514.0,
+      "x1": 846.0,
+      "y1": 519.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingSE_Stall",
+      "x0": 857.0,
+      "y0": 519.0,
+      "x1": 865.0,
+      "y1": 521.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingSE_StallEdge",
+      "x0": 857.0,
+      "y0": 514.0,
+      "x1": 859.0,
+      "y1": 519.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingSE_Stall",
+      "x0": 844.0,
+      "y0": 534.0,
+      "x1": 852.0,
+      "y1": 536.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingSE_StallEdge",
+      "x0": 844.0,
+      "y0": 529.0,
+      "x1": 846.0,
+      "y1": 534.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingSE_Stall",
+      "x0": 857.0,
+      "y0": 534.0,
+      "x1": 865.0,
+      "y1": 536.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "Hospital",
+      "name": "HospitalParkingSE_StallEdge",
+      "x0": 857.0,
+      "y0": 529.0,
+      "x1": 859.0,
+      "y1": 534.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "LogisticsParking",
+      "x0": 192,
+      "y0": 689,
+      "x1": 279,
+      "y1": 752,
+      "color": "#555F68",
+      "order": -12
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "LogisticsParking_Stall",
+      "x0": 196.0,
+      "y0": 697.0,
+      "x1": 204.0,
+      "y1": 699.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "LogisticsParking_StallEdge",
+      "x0": 196.0,
+      "y0": 692.0,
+      "x1": 198.0,
+      "y1": 697.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "LogisticsParking_Stall",
+      "x0": 209.0,
+      "y0": 697.0,
+      "x1": 217.0,
+      "y1": 699.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "LogisticsParking_StallEdge",
+      "x0": 209.0,
+      "y0": 692.0,
+      "x1": 211.0,
+      "y1": 697.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "LogisticsParking_Stall",
+      "x0": 222.0,
+      "y0": 697.0,
+      "x1": 230.0,
+      "y1": 699.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "LogisticsParking_StallEdge",
+      "x0": 222.0,
+      "y0": 692.0,
+      "x1": 224.0,
+      "y1": 697.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "LogisticsParking_Stall",
+      "x0": 235.0,
+      "y0": 697.0,
+      "x1": 243.0,
+      "y1": 699.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "LogisticsParking_StallEdge",
+      "x0": 235.0,
+      "y0": 692.0,
+      "x1": 237.0,
+      "y1": 697.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "LogisticsParking_Stall",
+      "x0": 248.0,
+      "y0": 697.0,
+      "x1": 256.0,
+      "y1": 699.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "LogisticsParking_StallEdge",
+      "x0": 248.0,
+      "y0": 692.0,
+      "x1": 250.0,
+      "y1": 697.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "LogisticsParking_Stall",
+      "x0": 261.0,
+      "y0": 697.0,
+      "x1": 269.0,
+      "y1": 699.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "LogisticsParking_StallEdge",
+      "x0": 261.0,
+      "y0": 692.0,
+      "x1": 263.0,
+      "y1": 697.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "LogisticsParking_Stall",
+      "x0": 196.0,
+      "y0": 712.0,
+      "x1": 204.0,
+      "y1": 714.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "LogisticsParking_StallEdge",
+      "x0": 196.0,
+      "y0": 707.0,
+      "x1": 198.0,
+      "y1": 712.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "LogisticsParking_Stall",
+      "x0": 209.0,
+      "y0": 712.0,
+      "x1": 217.0,
+      "y1": 714.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "LogisticsParking_StallEdge",
+      "x0": 209.0,
+      "y0": 707.0,
+      "x1": 211.0,
+      "y1": 712.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "LogisticsParking_Stall",
+      "x0": 222.0,
+      "y0": 712.0,
+      "x1": 230.0,
+      "y1": 714.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "LogisticsParking_StallEdge",
+      "x0": 222.0,
+      "y0": 707.0,
+      "x1": 224.0,
+      "y1": 712.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "LogisticsParking_Stall",
+      "x0": 235.0,
+      "y0": 712.0,
+      "x1": 243.0,
+      "y1": 714.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "LogisticsParking_StallEdge",
+      "x0": 235.0,
+      "y0": 707.0,
+      "x1": 237.0,
+      "y1": 712.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "LogisticsParking_Stall",
+      "x0": 248.0,
+      "y0": 712.0,
+      "x1": 256.0,
+      "y1": 714.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "LogisticsParking_StallEdge",
+      "x0": 248.0,
+      "y0": 707.0,
+      "x1": 250.0,
+      "y1": 712.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "LogisticsParking_Stall",
+      "x0": 261.0,
+      "y0": 712.0,
+      "x1": 269.0,
+      "y1": 714.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "LogisticsParking_StallEdge",
+      "x0": 261.0,
+      "y0": 707.0,
+      "x1": 263.0,
+      "y1": 712.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "LogisticsParking_Stall",
+      "x0": 196.0,
+      "y0": 727.0,
+      "x1": 204.0,
+      "y1": 729.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "LogisticsParking_StallEdge",
+      "x0": 196.0,
+      "y0": 722.0,
+      "x1": 198.0,
+      "y1": 727.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "LogisticsParking_Stall",
+      "x0": 209.0,
+      "y0": 727.0,
+      "x1": 217.0,
+      "y1": 729.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "LogisticsParking_StallEdge",
+      "x0": 209.0,
+      "y0": 722.0,
+      "x1": 211.0,
+      "y1": 727.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "LogisticsParking_Stall",
+      "x0": 222.0,
+      "y0": 727.0,
+      "x1": 230.0,
+      "y1": 729.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "LogisticsParking_StallEdge",
+      "x0": 222.0,
+      "y0": 722.0,
+      "x1": 224.0,
+      "y1": 727.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "LogisticsParking_Stall",
+      "x0": 235.0,
+      "y0": 727.0,
+      "x1": 243.0,
+      "y1": 729.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "LogisticsParking_StallEdge",
+      "x0": 235.0,
+      "y0": 722.0,
+      "x1": 237.0,
+      "y1": 727.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "LogisticsParking_Stall",
+      "x0": 248.0,
+      "y0": 727.0,
+      "x1": 256.0,
+      "y1": 729.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "LogisticsParking_StallEdge",
+      "x0": 248.0,
+      "y0": 722.0,
+      "x1": 250.0,
+      "y1": 727.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "LogisticsParking_Stall",
+      "x0": 261.0,
+      "y0": 727.0,
+      "x1": 269.0,
+      "y1": 729.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "LogisticsParking_StallEdge",
+      "x0": 261.0,
+      "y0": 722.0,
+      "x1": 263.0,
+      "y1": 727.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "LogisticsParking_Stall",
+      "x0": 196.0,
+      "y0": 742.0,
+      "x1": 204.0,
+      "y1": 744.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "LogisticsParking_StallEdge",
+      "x0": 196.0,
+      "y0": 737.0,
+      "x1": 198.0,
+      "y1": 742.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "LogisticsParking_Stall",
+      "x0": 209.0,
+      "y0": 742.0,
+      "x1": 217.0,
+      "y1": 744.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "LogisticsParking_StallEdge",
+      "x0": 209.0,
+      "y0": 737.0,
+      "x1": 211.0,
+      "y1": 742.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "LogisticsParking_Stall",
+      "x0": 222.0,
+      "y0": 742.0,
+      "x1": 230.0,
+      "y1": 744.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "LogisticsParking_StallEdge",
+      "x0": 222.0,
+      "y0": 737.0,
+      "x1": 224.0,
+      "y1": 742.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "LogisticsParking_Stall",
+      "x0": 235.0,
+      "y0": 742.0,
+      "x1": 243.0,
+      "y1": 744.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "LogisticsParking_StallEdge",
+      "x0": 235.0,
+      "y0": 737.0,
+      "x1": 237.0,
+      "y1": 742.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "LogisticsParking_Stall",
+      "x0": 248.0,
+      "y0": 742.0,
+      "x1": 256.0,
+      "y1": 744.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "LogisticsParking_StallEdge",
+      "x0": 248.0,
+      "y0": 737.0,
+      "x1": 250.0,
+      "y1": 742.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "LogisticsParking_Stall",
+      "x0": 261.0,
+      "y0": 742.0,
+      "x1": 269.0,
+      "y1": 744.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "LogisticsParking_StallEdge",
+      "x0": 261.0,
+      "y0": 737.0,
+      "x1": 263.0,
+      "y1": 742.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "IndustrialParking",
+      "x0": 62,
+      "y0": 797,
+      "x1": 140,
+      "y1": 846,
+      "color": "#555F68",
+      "order": -12
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "IndustrialParking_Stall",
+      "x0": 66.0,
+      "y0": 805.0,
+      "x1": 74.0,
+      "y1": 807.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "IndustrialParking_StallEdge",
+      "x0": 66.0,
+      "y0": 800.0,
+      "x1": 68.0,
+      "y1": 805.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "IndustrialParking_Stall",
+      "x0": 79.0,
+      "y0": 805.0,
+      "x1": 87.0,
+      "y1": 807.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "IndustrialParking_StallEdge",
+      "x0": 79.0,
+      "y0": 800.0,
+      "x1": 81.0,
+      "y1": 805.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "IndustrialParking_Stall",
+      "x0": 92.0,
+      "y0": 805.0,
+      "x1": 100.0,
+      "y1": 807.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "IndustrialParking_StallEdge",
+      "x0": 92.0,
+      "y0": 800.0,
+      "x1": 94.0,
+      "y1": 805.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "IndustrialParking_Stall",
+      "x0": 105.0,
+      "y0": 805.0,
+      "x1": 113.0,
+      "y1": 807.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "IndustrialParking_StallEdge",
+      "x0": 105.0,
+      "y0": 800.0,
+      "x1": 107.0,
+      "y1": 805.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "IndustrialParking_Stall",
+      "x0": 118.0,
+      "y0": 805.0,
+      "x1": 126.0,
+      "y1": 807.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "IndustrialParking_StallEdge",
+      "x0": 118.0,
+      "y0": 800.0,
+      "x1": 120.0,
+      "y1": 805.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "IndustrialParking_Stall",
+      "x0": 131.0,
+      "y0": 805.0,
+      "x1": 139.0,
+      "y1": 807.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "IndustrialParking_StallEdge",
+      "x0": 131.0,
+      "y0": 800.0,
+      "x1": 133.0,
+      "y1": 805.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "IndustrialParking_Stall",
+      "x0": 66.0,
+      "y0": 820.0,
+      "x1": 74.0,
+      "y1": 822.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "IndustrialParking_StallEdge",
+      "x0": 66.0,
+      "y0": 815.0,
+      "x1": 68.0,
+      "y1": 820.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "IndustrialParking_Stall",
+      "x0": 79.0,
+      "y0": 820.0,
+      "x1": 87.0,
+      "y1": 822.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "IndustrialParking_StallEdge",
+      "x0": 79.0,
+      "y0": 815.0,
+      "x1": 81.0,
+      "y1": 820.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "IndustrialParking_Stall",
+      "x0": 92.0,
+      "y0": 820.0,
+      "x1": 100.0,
+      "y1": 822.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "IndustrialParking_StallEdge",
+      "x0": 92.0,
+      "y0": 815.0,
+      "x1": 94.0,
+      "y1": 820.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "IndustrialParking_Stall",
+      "x0": 105.0,
+      "y0": 820.0,
+      "x1": 113.0,
+      "y1": 822.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "IndustrialParking_StallEdge",
+      "x0": 105.0,
+      "y0": 815.0,
+      "x1": 107.0,
+      "y1": 820.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "IndustrialParking_Stall",
+      "x0": 118.0,
+      "y0": 820.0,
+      "x1": 126.0,
+      "y1": 822.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "IndustrialParking_StallEdge",
+      "x0": 118.0,
+      "y0": 815.0,
+      "x1": 120.0,
+      "y1": 820.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "IndustrialParking_Stall",
+      "x0": 131.0,
+      "y0": 820.0,
+      "x1": 139.0,
+      "y1": 822.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "IndustrialParking_StallEdge",
+      "x0": 131.0,
+      "y0": 815.0,
+      "x1": 133.0,
+      "y1": 820.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "IndustrialParking_Stall",
+      "x0": 66.0,
+      "y0": 835.0,
+      "x1": 74.0,
+      "y1": 837.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "IndustrialParking_StallEdge",
+      "x0": 66.0,
+      "y0": 830.0,
+      "x1": 68.0,
+      "y1": 835.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "IndustrialParking_Stall",
+      "x0": 79.0,
+      "y0": 835.0,
+      "x1": 87.0,
+      "y1": 837.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "IndustrialParking_StallEdge",
+      "x0": 79.0,
+      "y0": 830.0,
+      "x1": 81.0,
+      "y1": 835.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "IndustrialParking_Stall",
+      "x0": 92.0,
+      "y0": 835.0,
+      "x1": 100.0,
+      "y1": 837.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "IndustrialParking_StallEdge",
+      "x0": 92.0,
+      "y0": 830.0,
+      "x1": 94.0,
+      "y1": 835.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "IndustrialParking_Stall",
+      "x0": 105.0,
+      "y0": 835.0,
+      "x1": 113.0,
+      "y1": 837.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "IndustrialParking_StallEdge",
+      "x0": 105.0,
+      "y0": 830.0,
+      "x1": 107.0,
+      "y1": 835.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "IndustrialParking_Stall",
+      "x0": 118.0,
+      "y0": 835.0,
+      "x1": 126.0,
+      "y1": 837.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "IndustrialParking_StallEdge",
+      "x0": 118.0,
+      "y0": 830.0,
+      "x1": 120.0,
+      "y1": 835.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "IndustrialParking_Stall",
+      "x0": 131.0,
+      "y0": 835.0,
+      "x1": 139.0,
+      "y1": 837.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "IndustrialParking_StallEdge",
+      "x0": 131.0,
+      "y0": 830.0,
+      "x1": 133.0,
+      "y1": 835.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "LoadingApron",
+      "x0": 190,
+      "y0": 1021,
+      "x1": 274,
+      "y1": 1062,
+      "color": "#555F68",
+      "order": -12
+    },
+    {
+      "region": "IndustrialPort",
+      "name": "ContainerApron",
+      "x0": 194,
+      "y0": 1113,
+      "x1": 267,
+      "y1": 1240,
+      "color": "#555F68",
+      "order": -12
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingWest",
+      "x0": 543,
+      "y0": 970,
+      "x1": 600,
+      "y1": 1041,
+      "color": "#555F68",
+      "order": -12
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingWest_Stall",
+      "x0": 547.0,
+      "y0": 978.0,
+      "x1": 555.0,
+      "y1": 980.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingWest_StallEdge",
+      "x0": 547.0,
+      "y0": 973.0,
+      "x1": 549.0,
+      "y1": 978.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingWest_Stall",
+      "x0": 560.0,
+      "y0": 978.0,
+      "x1": 568.0,
+      "y1": 980.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingWest_StallEdge",
+      "x0": 560.0,
+      "y0": 973.0,
+      "x1": 562.0,
+      "y1": 978.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingWest_Stall",
+      "x0": 573.0,
+      "y0": 978.0,
+      "x1": 581.0,
+      "y1": 980.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingWest_StallEdge",
+      "x0": 573.0,
+      "y0": 973.0,
+      "x1": 575.0,
+      "y1": 978.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingWest_Stall",
+      "x0": 586.0,
+      "y0": 978.0,
+      "x1": 594.0,
+      "y1": 980.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingWest_StallEdge",
+      "x0": 586.0,
+      "y0": 973.0,
+      "x1": 588.0,
+      "y1": 978.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingWest_Stall",
+      "x0": 547.0,
+      "y0": 993.0,
+      "x1": 555.0,
+      "y1": 995.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingWest_StallEdge",
+      "x0": 547.0,
+      "y0": 988.0,
+      "x1": 549.0,
+      "y1": 993.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingWest_Stall",
+      "x0": 560.0,
+      "y0": 993.0,
+      "x1": 568.0,
+      "y1": 995.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingWest_StallEdge",
+      "x0": 560.0,
+      "y0": 988.0,
+      "x1": 562.0,
+      "y1": 993.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingWest_Stall",
+      "x0": 573.0,
+      "y0": 993.0,
+      "x1": 581.0,
+      "y1": 995.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingWest_StallEdge",
+      "x0": 573.0,
+      "y0": 988.0,
+      "x1": 575.0,
+      "y1": 993.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingWest_Stall",
+      "x0": 586.0,
+      "y0": 993.0,
+      "x1": 594.0,
+      "y1": 995.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingWest_StallEdge",
+      "x0": 586.0,
+      "y0": 988.0,
+      "x1": 588.0,
+      "y1": 993.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingWest_Stall",
+      "x0": 547.0,
+      "y0": 1008.0,
+      "x1": 555.0,
+      "y1": 1010.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingWest_StallEdge",
+      "x0": 547.0,
+      "y0": 1003.0,
+      "x1": 549.0,
+      "y1": 1008.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingWest_Stall",
+      "x0": 560.0,
+      "y0": 1008.0,
+      "x1": 568.0,
+      "y1": 1010.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingWest_StallEdge",
+      "x0": 560.0,
+      "y0": 1003.0,
+      "x1": 562.0,
+      "y1": 1008.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingWest_Stall",
+      "x0": 573.0,
+      "y0": 1008.0,
+      "x1": 581.0,
+      "y1": 1010.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingWest_StallEdge",
+      "x0": 573.0,
+      "y0": 1003.0,
+      "x1": 575.0,
+      "y1": 1008.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingWest_Stall",
+      "x0": 586.0,
+      "y0": 1008.0,
+      "x1": 594.0,
+      "y1": 1010.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingWest_StallEdge",
+      "x0": 586.0,
+      "y0": 1003.0,
+      "x1": 588.0,
+      "y1": 1008.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingWest_Stall",
+      "x0": 547.0,
+      "y0": 1023.0,
+      "x1": 555.0,
+      "y1": 1025.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingWest_StallEdge",
+      "x0": 547.0,
+      "y0": 1018.0,
+      "x1": 549.0,
+      "y1": 1023.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingWest_Stall",
+      "x0": 560.0,
+      "y0": 1023.0,
+      "x1": 568.0,
+      "y1": 1025.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingWest_StallEdge",
+      "x0": 560.0,
+      "y0": 1018.0,
+      "x1": 562.0,
+      "y1": 1023.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingWest_Stall",
+      "x0": 573.0,
+      "y0": 1023.0,
+      "x1": 581.0,
+      "y1": 1025.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingWest_StallEdge",
+      "x0": 573.0,
+      "y0": 1018.0,
+      "x1": 575.0,
+      "y1": 1023.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingWest_Stall",
+      "x0": 586.0,
+      "y0": 1023.0,
+      "x1": 594.0,
+      "y1": 1025.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingWest_StallEdge",
+      "x0": 586.0,
+      "y0": 1018.0,
+      "x1": 588.0,
+      "y1": 1023.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingCenter",
+      "x0": 666.0,
+      "y0": 946.0,
+      "x1": 742.0,
+      "y1": 991.5,
+      "color": "#555F68",
+      "order": -12
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingCenter",
+      "x0": 666.5,
+      "y0": 991.5,
+      "x1": 742.0,
+      "y1": 992.0,
+      "color": "#555F68",
+      "order": -12
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingCenter",
+      "x0": 667.0,
+      "y0": 992.0,
+      "x1": 742.0,
+      "y1": 992.5,
+      "color": "#555F68",
+      "order": -12
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingCenter",
+      "x0": 667.5,
+      "y0": 992.5,
+      "x1": 742.0,
+      "y1": 993.5,
+      "color": "#555F68",
+      "order": -12
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingCenter",
+      "x0": 668.0,
+      "y0": 993.5,
+      "x1": 742.0,
+      "y1": 994.5,
+      "color": "#555F68",
+      "order": -12
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingCenter",
+      "x0": 668.5,
+      "y0": 994.5,
+      "x1": 742.0,
+      "y1": 1006.0,
+      "color": "#555F68",
+      "order": -12
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingCenter",
+      "x0": 668.0,
+      "y0": 1006.0,
+      "x1": 742.0,
+      "y1": 1007.0,
+      "color": "#555F68",
+      "order": -12
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingCenter",
+      "x0": 667.5,
+      "y0": 1007.0,
+      "x1": 742.0,
+      "y1": 1008.0,
+      "color": "#555F68",
+      "order": -12
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingCenter",
+      "x0": 667.0,
+      "y0": 1008.0,
+      "x1": 742.0,
+      "y1": 1008.5,
+      "color": "#555F68",
+      "order": -12
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingCenter",
+      "x0": 666.5,
+      "y0": 1008.5,
+      "x1": 742.0,
+      "y1": 1009.0,
+      "color": "#555F68",
+      "order": -12
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingCenter",
+      "x0": 666.0,
+      "y0": 1009.0,
+      "x1": 742.0,
+      "y1": 1017.0,
+      "color": "#555F68",
+      "order": -12
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingCenter_Stall",
+      "x0": 670.0,
+      "y0": 954.0,
+      "x1": 678.0,
+      "y1": 956.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingCenter_StallEdge",
+      "x0": 670.0,
+      "y0": 949.0,
+      "x1": 672.0,
+      "y1": 954.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingCenter_Stall",
+      "x0": 683.0,
+      "y0": 954.0,
+      "x1": 691.0,
+      "y1": 956.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingCenter_StallEdge",
+      "x0": 683.0,
+      "y0": 949.0,
+      "x1": 685.0,
+      "y1": 954.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingCenter_Stall",
+      "x0": 696.0,
+      "y0": 954.0,
+      "x1": 704.0,
+      "y1": 956.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingCenter_StallEdge",
+      "x0": 696.0,
+      "y0": 949.0,
+      "x1": 698.0,
+      "y1": 954.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingCenter_Stall",
+      "x0": 709.0,
+      "y0": 954.0,
+      "x1": 717.0,
+      "y1": 956.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingCenter_StallEdge",
+      "x0": 709.0,
+      "y0": 949.0,
+      "x1": 711.0,
+      "y1": 954.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingCenter_Stall",
+      "x0": 722.0,
+      "y0": 954.0,
+      "x1": 730.0,
+      "y1": 956.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingCenter_StallEdge",
+      "x0": 722.0,
+      "y0": 949.0,
+      "x1": 724.0,
+      "y1": 954.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingCenter_Stall",
+      "x0": 670.0,
+      "y0": 969.0,
+      "x1": 678.0,
+      "y1": 971.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingCenter_StallEdge",
+      "x0": 670.0,
+      "y0": 964.0,
+      "x1": 672.0,
+      "y1": 969.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingCenter_Stall",
+      "x0": 683.0,
+      "y0": 969.0,
+      "x1": 691.0,
+      "y1": 971.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingCenter_StallEdge",
+      "x0": 683.0,
+      "y0": 964.0,
+      "x1": 685.0,
+      "y1": 969.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingCenter_Stall",
+      "x0": 696.0,
+      "y0": 969.0,
+      "x1": 704.0,
+      "y1": 971.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingCenter_StallEdge",
+      "x0": 696.0,
+      "y0": 964.0,
+      "x1": 698.0,
+      "y1": 969.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingCenter_Stall",
+      "x0": 709.0,
+      "y0": 969.0,
+      "x1": 717.0,
+      "y1": 971.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingCenter_StallEdge",
+      "x0": 709.0,
+      "y0": 964.0,
+      "x1": 711.0,
+      "y1": 969.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingCenter_Stall",
+      "x0": 722.0,
+      "y0": 969.0,
+      "x1": 730.0,
+      "y1": 971.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingCenter_StallEdge",
+      "x0": 722.0,
+      "y0": 964.0,
+      "x1": 724.0,
+      "y1": 969.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingCenter_Stall",
+      "x0": 670.0,
+      "y0": 984.0,
+      "x1": 678.0,
+      "y1": 986.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingCenter_StallEdge",
+      "x0": 670.0,
+      "y0": 979.0,
+      "x1": 672.0,
+      "y1": 984.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingCenter_Stall",
+      "x0": 683.0,
+      "y0": 984.0,
+      "x1": 691.0,
+      "y1": 986.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingCenter_StallEdge",
+      "x0": 683.0,
+      "y0": 979.0,
+      "x1": 685.0,
+      "y1": 984.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingCenter_Stall",
+      "x0": 696.0,
+      "y0": 984.0,
+      "x1": 704.0,
+      "y1": 986.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingCenter_StallEdge",
+      "x0": 696.0,
+      "y0": 979.0,
+      "x1": 698.0,
+      "y1": 984.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingCenter_Stall",
+      "x0": 709.0,
+      "y0": 984.0,
+      "x1": 717.0,
+      "y1": 986.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingCenter_StallEdge",
+      "x0": 709.0,
+      "y0": 979.0,
+      "x1": 711.0,
+      "y1": 984.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingCenter_Stall",
+      "x0": 722.0,
+      "y0": 984.0,
+      "x1": 730.0,
+      "y1": 986.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingCenter_StallEdge",
+      "x0": 722.0,
+      "y0": 979.0,
+      "x1": 724.0,
+      "y1": 984.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingCenter_Stall",
+      "x0": 670.0,
+      "y0": 999.0,
+      "x1": 678.0,
+      "y1": 1001.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingCenter_StallEdge",
+      "x0": 670.0,
+      "y0": 994.0,
+      "x1": 672.0,
+      "y1": 999.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingCenter_Stall",
+      "x0": 683.0,
+      "y0": 999.0,
+      "x1": 691.0,
+      "y1": 1001.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingCenter_StallEdge",
+      "x0": 683.0,
+      "y0": 994.0,
+      "x1": 685.0,
+      "y1": 999.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingCenter_Stall",
+      "x0": 696.0,
+      "y0": 999.0,
+      "x1": 704.0,
+      "y1": 1001.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingCenter_StallEdge",
+      "x0": 696.0,
+      "y0": 994.0,
+      "x1": 698.0,
+      "y1": 999.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingCenter_Stall",
+      "x0": 709.0,
+      "y0": 999.0,
+      "x1": 717.0,
+      "y1": 1001.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingCenter_StallEdge",
+      "x0": 709.0,
+      "y0": 994.0,
+      "x1": 711.0,
+      "y1": 999.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingCenter_Stall",
+      "x0": 722.0,
+      "y0": 999.0,
+      "x1": 730.0,
+      "y1": 1001.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "CivicParkingCenter_StallEdge",
+      "x0": 722.0,
+      "y0": 994.0,
+      "x1": 724.0,
+      "y1": 999.0,
+      "color": "#E5E3CE",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "DispatchBay",
+      "x0": 618,
+      "y0": 1253,
+      "x1": 620,
+      "y1": 1338,
+      "color": "#D0BA69",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "DispatchBay",
+      "x0": 653,
+      "y0": 1253,
+      "x1": 655,
+      "y1": 1338,
+      "color": "#D0BA69",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "DispatchBay",
+      "x0": 688,
+      "y0": 1253,
+      "x1": 690,
+      "y1": 1338,
+      "color": "#D0BA69",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "DispatchBay",
+      "x0": 723,
+      "y0": 1253,
+      "x1": 725,
+      "y1": 1338,
+      "color": "#D0BA69",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "DispatchBay",
+      "x0": 758,
+      "y0": 1253,
+      "x1": 760,
+      "y1": 1338,
+      "color": "#D0BA69",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "DispatchBay",
+      "x0": 793,
+      "y0": 1253,
+      "x1": 795,
+      "y1": 1338,
+      "color": "#D0BA69",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "DispatchBay",
+      "x0": 828,
+      "y0": 1253,
+      "x1": 830,
+      "y1": 1338,
+      "color": "#D0BA69",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "DispatchBay",
+      "x0": 863,
+      "y0": 1253,
+      "x1": 865,
+      "y1": 1338,
+      "color": "#D0BA69",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "DispatchBay",
+      "x0": 604.5,
+      "y0": 1262.0,
+      "x1": 876.0,
+      "y1": 1264.0,
+      "color": "#D0BA69",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "DispatchBay",
+      "x0": 597,
+      "y0": 1297,
+      "x1": 876,
+      "y1": 1299,
+      "color": "#D0BA69",
+      "order": -11
+    },
+    {
+      "region": "FireStation",
+      "name": "DispatchBay",
+      "x0": 597,
+      "y0": 1332,
+      "x1": 876,
+      "y1": 1334,
+      "color": "#D0BA69",
+      "order": -11
+    }
+  ],
+  "adjustments": [
+    {
+      "name": "Commercial_CivicMidrise_A_01",
+      "reason": "Native Collider overlap with adjacent building",
+      "reference": {
+        "x": 479,
+        "y": 177,
+        "width": 39,
+        "height": 46
+      },
+      "placed": {
+        "x": 489,
+        "y": 177,
+        "width": 39,
+        "height": 46
+      }
+    },
+    {
+      "name": "IndustrialPort_ContainerCrane_01",
+      "reason": "Reference crane upper structure projects over committed road; retain road visibility",
+      "reference": {
+        "x": 91,
+        "y": 1110,
+        "width": 49,
+        "height": 99
+      },
+      "placed": {
+        "x": 91,
+        "y": 1147,
+        "width": 49,
+        "height": 90
+      }
+    },
+    {
+      "name": "Residential_ResidentialMidrise_B_02",
+      "reason": "Existing road/sidewalk clearance",
+      "reference": {
+        "x": 266,
+        "y": 137,
+        "width": 42,
+        "height": 73
+      },
+      "placed": {
+        "x": 262,
+        "y": 137,
+        "width": 42,
+        "height": 73
+      }
+    },
+    {
+      "name": "Residential_House_A_01",
+      "reason": "Existing road/sidewalk clearance",
+      "reference": {
+        "x": 110,
+        "y": 242,
+        "width": 52,
+        "height": 61
+      },
+      "placed": {
+        "x": 110,
+        "y": 246,
+        "width": 52,
+        "height": 61
+      }
+    },
+    {
+      "name": "Residential_House_B_01",
+      "reason": "Existing road/sidewalk clearance",
+      "reference": {
+        "x": 107,
+        "y": 317,
+        "width": 48,
+        "height": 58
+      },
+      "placed": {
+        "x": 107,
+        "y": 315,
+        "width": 48,
+        "height": 58
+      }
+    },
+    {
+      "name": "Residential_House_B_02",
+      "reason": "Existing road/sidewalk clearance",
+      "reference": {
+        "x": 204,
+        "y": 239,
+        "width": 51,
+        "height": 59
+      },
+      "placed": {
+        "x": 210,
+        "y": 245,
+        "width": 51,
+        "height": 59
+      }
+    },
+    {
+      "name": "Residential_House_C_01",
+      "reason": "Existing road/sidewalk clearance",
+      "reference": {
+        "x": 202,
+        "y": 313,
+        "width": 45,
+        "height": 61
+      },
+      "placed": {
+        "x": 206,
+        "y": 313,
+        "width": 45,
+        "height": 61
+      }
+    },
+    {
+      "name": "Residential_ResidentialMidrise_A_02",
+      "reason": "Existing road/sidewalk clearance",
+      "reference": {
+        "x": 264,
+        "y": 251,
+        "width": 42,
+        "height": 65
+      },
+      "placed": {
+        "x": 262,
+        "y": 251,
+        "width": 42,
+        "height": 65
+      }
+    },
+    {
+      "name": "Commercial_Office_B_04",
+      "reason": "Existing road/sidewalk clearance",
+      "reference": {
+        "x": 536,
+        "y": 323,
+        "width": 44,
+        "height": 48
+      },
+      "placed": {
+        "x": 536,
+        "y": 321,
+        "width": 44,
+        "height": 48
+      }
+    },
+    {
+      "name": "Hospital_Hospital_Secondary_01",
+      "reason": "Existing road/sidewalk clearance",
+      "reference": {
+        "x": 811,
+        "y": 339,
+        "width": 136,
+        "height": 89
+      },
+      "placed": {
+        "x": 811,
+        "y": 335,
+        "width": 136,
+        "height": 89
+      }
+    },
+    {
+      "name": "IndustrialPort_Warehouse_A_01",
+      "reason": "Existing road/sidewalk clearance",
+      "reference": {
+        "x": 100,
+        "y": 690,
+        "width": 84,
+        "height": 74
+      },
+      "placed": {
+        "x": 96,
+        "y": 690,
+        "width": 77.28,
+        "height": 68.08
+      }
+    },
+    {
+      "name": "IndustrialPort_Warehouse_A_02",
+      "reason": "Existing road/sidewalk clearance",
+      "reference": {
+        "x": 231,
+        "y": 977,
+        "width": 82,
+        "height": 82
+      },
+      "placed": {
+        "x": 239,
+        "y": 977,
+        "width": 82,
+        "height": 82
+      }
+    },
+    {
+      "name": "IndustrialPort_ContainerCrane_01",
+      "reason": "Existing road/sidewalk clearance",
+      "reference": {
+        "x": 91,
+        "y": 1147,
+        "width": 49,
+        "height": 90
+      },
+      "placed": {
+        "x": 91,
+        "y": 1149,
+        "width": 49,
+        "height": 90
+      }
+    },
+    {
+      "name": "IndustrialPort_Tank_Silo_02",
+      "reason": "Existing road/sidewalk clearance",
+      "reference": {
+        "x": 270,
+        "y": 1137,
+        "width": 18,
+        "height": 20
+      },
+      "placed": {
+        "x": 270,
+        "y": 1131,
+        "width": 18,
+        "height": 20
+      }
+    },
+    {
+      "name": "FireStation_Office_B_02",
+      "reason": "Existing road/sidewalk clearance",
+      "reference": {
+        "x": 763,
+        "y": 734,
+        "width": 29,
+        "height": 51
+      },
+      "placed": {
+        "x": 763,
+        "y": 732,
+        "width": 29,
+        "height": 51
+      }
+    },
+    {
+      "name": "FireStation_Warehouse_A_01",
+      "reason": "Existing road/sidewalk clearance",
+      "reference": {
+        "x": 837,
+        "y": 1009,
+        "width": 104,
+        "height": 76
+      },
+      "placed": {
+        "x": 853,
+        "y": 1009,
+        "width": 79.04,
+        "height": 57.76
+      }
+    }
+  ]
+}

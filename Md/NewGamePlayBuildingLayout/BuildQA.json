@@ -1,0 +1,91 @@
+{
+  "cameraSerializationIdentical": true,
+  "atlasSprites": 20,
+  "atlasDuplicateSprites": 0,
+  "atlasGroups": {
+    "BuildingCommonAtlas.spriteatlas": 12,
+    "BuildingLandmarkAtlas.spriteatlas": 4,
+    "PropAtlas.spriteatlas": 4
+  },
+  "textureSettingsPassed": true,
+  "prefabMonoBehaviours": 0,
+  "polygonColliders": 0,
+  "newSourceAssetBytes": 2186321,
+  "webglDeploymentBytes": 13463651,
+  "webglBuild": {
+    "result": "Succeeded",
+    "bytes": 13463651,
+    "errors": 0
+  },
+  "webglFiles": [
+    {
+      "path": "index.html",
+      "bytes": 5619
+    },
+    {
+      "path": "Build\\WebGLRelease.data.br",
+      "bytes": 4738735
+    },
+    {
+      "path": "Build\\WebGLRelease.framework.js.br",
+      "bytes": 76574
+    },
+    {
+      "path": "Build\\WebGLRelease.loader.js",
+      "bytes": 26983
+    },
+    {
+      "path": "Build\\WebGLRelease.wasm.br",
+      "bytes": 8601844
+    },
+    {
+      "path": "TemplateData\\favicon.ico",
+      "bytes": 2305
+    },
+    {
+      "path": "TemplateData\\fullscreen-button.png",
+      "bytes": 175
+    },
+    {
+      "path": "TemplateData\\MemoryProfiler.png",
+      "bytes": 665
+    },
+    {
+      "path": "TemplateData\\progress-bar-empty-dark.png",
+      "bytes": 96
+    },
+    {
+      "path": "TemplateData\\progress-bar-empty-light.png",
+      "bytes": 109
+    },
+    {
+      "path": "TemplateData\\progress-bar-full-dark.png",
+      "bytes": 74
+    },
+    {
+      "path": "TemplateData\\progress-bar-full-light.png",
+      "bytes": 84
+    },
+    {
+      "path": "TemplateData\\style.css",
+      "bytes": 1448
+    },
+    {
+      "path": "TemplateData\\unity-logo-dark.png",
+      "bytes": 3042
+    },
+    {
+      "path": "TemplateData\\unity-logo-light.png",
+      "bytes": 3077
+    },
+    {
+      "path": "TemplateData\\unity-logo-title-footer.png",
+      "bytes": 1151
+    },
+    {
+      "path": "TemplateData\\webmemd-icon.png",
+      "bytes": 1670
+    }
+  ],
+  "referenceExcludedFromBuild": true
+}
