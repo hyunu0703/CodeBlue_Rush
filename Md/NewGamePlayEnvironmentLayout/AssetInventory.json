@@ -1,0 +1,605 @@
+{
+  "images": [
+    {
+      "path": "Assets/Images/Ambulance.png",
+      "size": [
+        160,
+        200
+      ],
+      "spriteMode": "1",
+      "subSpriteNames": [
+        "Ambulance2_0",
+        "Ambulance2_1",
+        "Ambulance2_2"
+      ]
+    },
+    {
+      "path": "Assets/Images/Handle.png",
+      "size": [
+        1254,
+        1254
+      ],
+      "spriteMode": "1",
+      "subSpriteNames": [
+        "Handle_0",
+        "Handle_1"
+      ]
+    },
+    {
+      "path": "Assets/Images/Maps/BuildingProps/Container_Base.png",
+      "size": [
+        128,
+        52
+      ],
+      "spriteMode": "1",
+      "subSpriteNames": [
+        "Container_Base_0"
+      ]
+    },
+    {
+      "path": "Assets/Images/Maps/BuildingProps/Fountain_A.png",
+      "size": [
+        128,
+        125
+      ],
+      "spriteMode": "1",
+      "subSpriteNames": [
+        "Fountain_A_0"
+      ]
+    },
+    {
+      "path": "Assets/Images/Maps/BuildingProps/Pavilion_A.png",
+      "size": [
+        222,
+        256
+      ],
+      "spriteMode": "1",
+      "subSpriteNames": [
+        "Pavilion_A_0"
+      ]
+    },
+    {
+      "path": "Assets/Images/Maps/BuildingProps/Tank_Silo.png",
+      "size": [
+        197,
+        256
+      ],
+      "spriteMode": "1",
+      "subSpriteNames": [
+        "Tank_Silo_0"
+      ]
+    },
+    {
+      "path": "Assets/Images/Maps/Buildings/CivicMidrise_A.png",
+      "size": [
+        253,
+        256
+      ],
+      "spriteMode": "1",
+      "subSpriteNames": [
+        "CivicMidrise_A_0"
+      ]
+    },
+    {
+      "path": "Assets/Images/Maps/Buildings/Commercial_A.png",
+      "size": [
+        195,
+        256
+      ],
+      "spriteMode": "1",
+      "subSpriteNames": [
+        "Commercial_A_0"
+      ]
+    },
+    {
+      "path": "Assets/Images/Maps/Buildings/House_A.png",
+      "size": [
+        243,
+        256
+      ],
+      "spriteMode": "1",
+      "subSpriteNames": [
+        "House_A_0"
+      ]
+    },
+    {
+      "path": "Assets/Images/Maps/Buildings/House_B.png",
+      "size": [
+        231,
+        256
+      ],
+      "spriteMode": "1",
+      "subSpriteNames": [
+        "House_B_0"
+      ]
+    },
+    {
+      "path": "Assets/Images/Maps/Buildings/House_C.png",
+      "size": [
+        236,
+        256
+      ],
+      "spriteMode": "1",
+      "subSpriteNames": [
+        "House_C_0"
+      ]
+    },
+    {
+      "path": "Assets/Images/Maps/Buildings/LogisticsCenter.png",
+      "size": [
+        512,
+        375
+      ],
+      "spriteMode": "1",
+      "subSpriteNames": [
+        "LogisticsCenter_0"
+      ]
+    },
+    {
+      "path": "Assets/Images/Maps/Buildings/Office_A.png",
+      "size": [
+        112,
+        256
+      ],
+      "spriteMode": "1",
+      "subSpriteNames": [
+        "Office_A_0"
+      ]
+    },
+    {
+      "path": "Assets/Images/Maps/Buildings/Office_B.png",
+      "size": [
+        229,
+        256
+      ],
+      "spriteMode": "1",
+      "subSpriteNames": [
+        "Office_B_0"
+      ]
+    },
+    {
+      "path": "Assets/Images/Maps/Buildings/ResidentialMidrise_A.png",
+      "size": [
+        113,
+        256
+      ],
+      "spriteMode": "1",
+      "subSpriteNames": [
+        "ResidentialMidrise_A_0"
+      ]
+    },
+    {
+      "path": "Assets/Images/Maps/Buildings/ResidentialMidrise_B.png",
+      "size": [
+        156,
+        256
+      ],
+      "spriteMode": "1",
+      "subSpriteNames": [
+        "ResidentialMidrise_B_0"
+      ]
+    },
+    {
+      "path": "Assets/Images/Maps/Buildings/Warehouse_A.png",
+      "size": [
+        512,
+        297
+      ],
+      "spriteMode": "1",
+      "subSpriteNames": [
+        "Warehouse_A_0"
+      ]
+    },
+    {
+      "path": "Assets/Images/Maps/Buildings/Warehouse_B.png",
+      "size": [
+        263,
+        512
+      ],
+      "spriteMode": "1",
+      "subSpriteNames": [
+        "Warehouse_B_0"
+      ]
+    },
+    {
+      "path": "Assets/Images/Maps/Landmarks/ContainerCrane.png",
+      "size": [
+        449,
+        512
+      ],
+      "spriteMode": "1",
+      "subSpriteNames": [
+        "ContainerCrane_0"
+      ]
+    },
+    {
+      "path": "Assets/Images/Maps/Landmarks/FireStation_Main.png",
+      "size": [
+        512,
+        249
+      ],
+      "spriteMode": "1",
+      "subSpriteNames": [
+        "FireStation_Main_0"
+      ]
+    },
+    {
+      "path": "Assets/Images/Maps/Landmarks/Hospital_Main.png",
+      "size": [
+        512,
+        289
+      ],
+      "spriteMode": "1",
+      "subSpriteNames": [
+        "Hospital_Main_0"
+      ]
+    },
+    {
+      "path": "Assets/Images/Maps/Landmarks/Hospital_Secondary.png",
+      "size": [
+        512,
+        240
+      ],
+      "spriteMode": "1",
+      "subSpriteNames": [
+        "Hospital_Secondary_0"
+      ]
+    },
+    {
+      "path": "Assets/Images/Maps/Reference/Maps.png",
+      "size": [
+        941,
+        1672
+      ],
+      "spriteMode": "2",
+      "subSpriteNames": [
+        "Maps_0"
+      ]
+    },
+    {
+      "path": "Assets/Images/Maps/Road/Road_Corner_NE.png",
+      "size": [
+        2000,
+        2000
+      ],
+      "spriteMode": "1",
+      "subSpriteNames": []
+    },
+    {
+      "path": "Assets/Images/Maps/Road/Road_Corner_NW.png",
+      "size": [
+        2000,
+        2000
+      ],
+      "spriteMode": "1",
+      "subSpriteNames": []
+    },
+    {
+      "path": "Assets/Images/Maps/Road/Road_Corner_SE.png",
+      "size": [
+        2000,
+        2000
+      ],
+      "spriteMode": "1",
+      "subSpriteNames": []
+    },
+    {
+      "path": "Assets/Images/Maps/Road/Road_Corner_SW.png",
+      "size": [
+        2000,
+        2000
+      ],
+      "spriteMode": "1",
+      "subSpriteNames": []
+    },
+    {
+      "path": "Assets/Images/Maps/Road/Road_Curve_Tight_01.png",
+      "size": [
+        2000,
+        2000
+      ],
+      "spriteMode": "1",
+      "subSpriteNames": []
+    },
+    {
+      "path": "Assets/Images/Maps/Road/Road_Curve_Wide_01.png",
+      "size": [
+        2000,
+        2000
+      ],
+      "spriteMode": "1",
+      "subSpriteNames": []
+    },
+    {
+      "path": "Assets/Images/Maps/Road/Road_Entrance_Building_01.png",
+      "size": [
+        2000,
+        2000
+      ],
+      "spriteMode": "1",
+      "subSpriteNames": []
+    },
+    {
+      "path": "Assets/Images/Maps/Road/Road_Entrance_Harbor_01.png",
+      "size": [
+        2000,
+        2000
+      ],
+      "spriteMode": "1",
+      "subSpriteNames": []
+    },
+    {
+      "path": "Assets/Images/Maps/Road/Road_Entrance_Parking_01.png",
+      "size": [
+        2000,
+        2000
+      ],
+      "spriteMode": "1",
+      "subSpriteNames": []
+    },
+    {
+      "path": "Assets/Images/Maps/Road/Road_Entrance_Residential_01.png",
+      "size": [
+        2000,
+        2000
+      ],
+      "spriteMode": "1",
+      "subSpriteNames": []
+    },
+    {
+      "path": "Assets/Images/Maps/Road/Road_Intersection_4Way.png",
+      "size": [
+        2000,
+        2000
+      ],
+      "spriteMode": "1",
+      "subSpriteNames": []
+    },
+    {
+      "path": "Assets/Images/Maps/Road/Road_Intersection_Large_01.png",
+      "size": [
+        2000,
+        2000
+      ],
+      "spriteMode": "1",
+      "subSpriteNames": []
+    },
+    {
+      "path": "Assets/Images/Maps/Road/Road_Small_Straight_01.png",
+      "size": [
+        204,
+        2000
+      ],
+      "spriteMode": "1",
+      "subSpriteNames": []
+    },
+    {
+      "path": "Assets/Images/Maps/Road/Road_Straight_2Lane.png",
+      "size": [
+        299,
+        584
+      ],
+      "spriteMode": "1",
+      "subSpriteNames": [
+        "Road_Straight_2Lane_0"
+      ]
+    },
+    {
+      "path": "Assets/Images/Maps/Road/Road_Straight_4Lane.png",
+      "size": [
+        808,
+        2000
+      ],
+      "spriteMode": "1",
+      "subSpriteNames": []
+    },
+    {
+      "path": "Assets/Images/Maps/Road/Road_TJunction_E.png",
+      "size": [
+        2000,
+        2000
+      ],
+      "spriteMode": "1",
+      "subSpriteNames": []
+    },
+    {
+      "path": "Assets/Images/Maps/Road/Road_TJunction_N.png",
+      "size": [
+        2000,
+        2000
+      ],
+      "spriteMode": "1",
+      "subSpriteNames": []
+    },
+    {
+      "path": "Assets/Images/Maps/Road/Road_TJunction_S.png",
+      "size": [
+        2000,
+        2000
+      ],
+      "spriteMode": "1",
+      "subSpriteNames": []
+    },
+    {
+      "path": "Assets/Images/Maps/Road/Road_TJunction_W.png",
+      "size": [
+        2000,
+        2000
+      ],
+      "spriteMode": "1",
+      "subSpriteNames": []
+    },
+    {
+      "path": "Assets/Images/Maps/Road/Road_YJunction_01.png",
+      "size": [
+        2000,
+        2000
+      ],
+      "spriteMode": "1",
+      "subSpriteNames": []
+    },
+    {
+      "path": "Assets/Images/Maps/RoadMarking/RoadMarking_Line_Solid_01.png",
+      "size": [
+        4,
+        16
+      ],
+      "spriteMode": "1",
+      "subSpriteNames": [
+        "Sidewalk_Straight_01_0"
+      ]
+    },
+    {
+      "path": "Assets/Images/Maps/Sidewalk/Sidewalk_Corner_01.png",
+      "size": [
+        512,
+        512
+      ],
+      "spriteMode": "1",
+      "subSpriteNames": [
+        "Sidewalk_Straight_01_0"
+      ]
+    },
+    {
+      "path": "Assets/Images/Maps/Sidewalk/Sidewalk_Crosswalk_01.png",
+      "size": [
+        24,
+        48
+      ],
+      "spriteMode": "1",
+      "subSpriteNames": [
+        "Sidewalk_Straight_01_0"
+      ]
+    },
+    {
+      "path": "Assets/Images/Maps/Sidewalk/Sidewalk_Intersection_01.png",
+      "size": [
+        512,
+        512
+      ],
+      "spriteMode": "1",
+      "subSpriteNames": [
+        "Sidewalk_Straight_01_0"
+      ]
+    },
+    {
+      "path": "Assets/Images/Maps/Sidewalk/Sidewalk_Straight_01.png",
+      "size": [
+        168,
+        504
+      ],
+      "spriteMode": "1",
+      "subSpriteNames": [
+        "Sidewalk_Straight_01_0"
+      ]
+    },
+    {
+      "path": "Assets/Images/Maps/Sidewalk/Sidewalk_TJunction_01.png",
+      "size": [
+        512,
+        512
+      ],
+      "spriteMode": "1",
+      "subSpriteNames": [
+        "Sidewalk_Straight_01_0"
+      ]
+    }
+  ],
+  "missing": [
+    "Tree_Small/Medium/Large",
+    "FlowerTree",
+    "Bush/Plant/Grass decoration",
+    "RiverRock_Small/Medium/Large",
+    "ParkPath sprite modules / corners / junctions",
+    "FlowerBed"
+  ],
+  "available": [
+    {
+      "name": "Fountain_A",
+      "size": [
+        128,
+        125
+      ],
+      "prefab": "Assets/Prefabs/MapAssets/Buildings/Fountain_A.prefab",
+      "sortingLayer": "Default",
+      "prefabOrder": 10,
+      "sceneLocations": [
+        {
+          "name": "Residential_Fountain_A_01",
+          "region": "Residential",
+          "asset": "Fountain_A",
+          "x": 190,
+          "y": 439,
+          "width": 30,
+          "height": 33,
+          "color": "#FFFFFF",
+          "collider": true
+        },
+        {
+          "name": "Commercial_Fountain_A_01",
+          "region": "Commercial",
+          "asset": "Fountain_A",
+          "x": 530,
+          "y": 439,
+          "width": 30,
+          "height": 32,
+          "color": "#FFFFFF",
+          "collider": true
+        },
+        {
+          "name": "FireStation_Fountain_A_01",
+          "region": "FireStation",
+          "asset": "Fountain_A",
+          "x": 711,
+          "y": 851,
+          "width": 33,
+          "height": 37,
+          "color": "#FFFFFF",
+          "collider": true
+        }
+      ],
+      "collider": "BoxCollider2D; unchanged",
+      "style": "Existing low-poly blue fountain matches reference"
+    },
+    {
+      "name": "Pavilion_A",
+      "prefab": "Assets/Prefabs/MapAssets/Buildings/Pavilion_A.prefab",
+      "size": [
+        222,
+        256
+      ],
+      "sortingLayer": "Default",
+      "prefabOrder": 10,
+      "sceneLocations": [
+        {
+          "name": "ParkRiver_Pavilion_A_01",
+          "region": "ParkRiver",
+          "asset": "Pavilion_A",
+          "x": 374,
+          "y": 1058,
+          "width": 44,
+          "height": 48,
+          "color": "#FFFFFF",
+          "collider": true
+        },
+        {
+          "name": "ParkRiver_Pavilion_A_02",
+          "region": "ParkRiver",
+          "asset": "Pavilion_A",
+          "x": 442,
+          "y": 1236,
+          "width": 54,
+          "height": 57,
+          "color": "#FFFFFF",
+          "collider": true
+        }
+      ],
+      "collider": "BoxCollider2D; unchanged",
+      "style": "Existing warm roof shelter matches reference"
+    },
+    {
+      "name": "BuildingSite.mat",
+      "use": "Shared existing paving material with vertex color matching existing plaza; no texture/material copy"
+    }
+  ]
+}
