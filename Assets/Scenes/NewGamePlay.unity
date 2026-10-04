@@ -55836,6 +55836,18 @@ PrefabInstance:
       propertyPath: transfer
       value: 
       objectReference: {fileID: 985633187}
+    - target: {fileID: 1300000000000000001, guid: 9d9dbdbda344a2245872c4e3994603e1, type: 3}
+      propertyPath: stunDuration
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1300000000000000001, guid: 9d9dbdbda344a2245872c4e3994603e1, type: 3}
+      propertyPath: knockbackSpeed
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1300000000000000001, guid: 9d9dbdbda344a2245872c4e3994603e1, type: 3}
+      propertyPath: knockbackDuration
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3155309600307615821, guid: 9d9dbdbda344a2245872c4e3994603e1, type: 3}
       propertyPath: m_SortingOrder
       value: 110
