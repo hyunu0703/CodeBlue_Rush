@@ -2066,952 +2066,1924 @@
   ],
   "crosswalks": [
     {
+      "x": 166.5,
+      "y": 57,
+      "orientation": "NS",
+      "width": 27,
+      "sourceX": 166.5,
+      "sourceY": 57.0,
+      "road": "OuterCircuit",
+      "referenceStripeCount": 9,
+      "verification": "visual + stripe pattern",
+      "id": 1
+    },
+    {
+      "x": 312.0,
+      "y": 57,
+      "orientation": "NS",
+      "width": 27,
+      "sourceX": 312.0,
+      "sourceY": 58.5,
+      "road": "OuterCircuit",
+      "referenceStripeCount": 9,
+      "verification": "visual + stripe pattern",
+      "id": 2
+    },
+    {
+      "x": 397.0,
+      "y": 57,
+      "orientation": "NS",
+      "width": 27,
+      "sourceX": 397.0,
+      "sourceY": 59.0,
+      "road": "OuterCircuit",
+      "referenceStripeCount": 7,
+      "verification": "visual + stripe pattern",
+      "id": 3
+    },
+    {
+      "x": 430.5,
+      "y": 57,
+      "orientation": "NS",
+      "width": 27,
+      "sourceX": 430.5,
+      "sourceY": 60.0,
+      "road": "OuterCircuit",
+      "referenceStripeCount": 9,
+      "verification": "visual + stripe pattern",
+      "id": 4
+    },
+    {
+      "x": 620.5,
+      "y": 57,
+      "orientation": "NS",
+      "width": 27,
+      "sourceX": 620.5,
+      "sourceY": 59.5,
+      "road": "OuterCircuit",
+      "referenceStripeCount": 9,
+      "verification": "visual + stripe pattern",
+      "id": 5
+    },
+    {
+      "x": 655.5,
+      "y": 57,
+      "orientation": "NS",
+      "width": 27,
+      "sourceX": 655.5,
+      "sourceY": 58.0,
+      "road": "OuterCircuit",
+      "referenceStripeCount": 11,
+      "verification": "visual + stripe pattern",
+      "id": 6
+    },
+    {
       "x": 166,
-      "y": 57,
-      "orientation": "NS",
-      "width": 26
+      "y": 74.5,
+      "orientation": "EW",
+      "width": 26,
+      "sourceX": 166.5,
+      "sourceY": 74.5,
+      "road": "UpperResidentialDivider",
+      "referenceStripeCount": 5,
+      "verification": "visual + stripe pattern",
+      "id": 7
     },
     {
-      "x": 315,
-      "y": 57,
-      "orientation": "NS",
-      "width": 26
+      "x": 412,
+      "y": 94.5,
+      "orientation": "EW",
+      "width": 26,
+      "sourceX": 411.0,
+      "sourceY": 94.5,
+      "road": "UpperEastRiverSpine",
+      "referenceStripeCount": 7,
+      "verification": "visual + stripe pattern",
+      "id": 8
     },
     {
-      "x": 397,
-      "y": 57,
-      "orientation": "NS",
-      "width": 26
+      "x": 638,
+      "y": 94.5,
+      "orientation": "EW",
+      "width": 26,
+      "sourceX": 636.0,
+      "sourceY": 94.5,
+      "road": "HospitalCivicSpine",
+      "referenceStripeCount": 8,
+      "verification": "visual + stripe pattern",
+      "id": 9
     },
     {
-      "x": 430,
-      "y": 57,
-      "orientation": "NS",
-      "width": 26
+      "x": 902.0,
+      "y": 149.0,
+      "orientation": "EW",
+      "width": 27,
+      "sourceX": 903.5,
+      "sourceY": 149.0,
+      "road": "OuterCircuit",
+      "referenceStripeCount": 8,
+      "verification": "visual + stripe pattern",
+      "id": 10
     },
     {
-      "x": 621,
-      "y": 57,
-      "orientation": "NS",
-      "width": 26
+      "x": 166,
+      "y": 180.5,
+      "orientation": "EW",
+      "width": 26,
+      "sourceX": 161.0,
+      "sourceY": 180.5,
+      "road": "UpperResidentialDivider",
+      "referenceStripeCount": 6,
+      "verification": "visual + stripe pattern",
+      "id": 11
     },
     {
-      "x": 655,
-      "y": 57,
-      "orientation": "NS",
-      "width": 26
+      "x": 300,
+      "y": 180.5,
+      "orientation": "EW",
+      "width": 26,
+      "sourceX": 299.0,
+      "sourceY": 180.5,
+      "road": "WestRiverSpine",
+      "referenceStripeCount": 6,
+      "verification": "visual + stripe pattern",
+      "id": 12
     },
     {
-      "x": 150,
+      "x": 412,
+      "y": 183.5,
+      "orientation": "EW",
+      "width": 26,
+      "sourceX": 411.0,
+      "sourceY": 183.5,
+      "road": "UpperEastRiverSpine",
+      "referenceStripeCount": 7,
+      "verification": "visual + stripe pattern",
+      "id": 13
+    },
+    {
+      "x": 638,
+      "y": 188.5,
+      "orientation": "EW",
+      "width": 26,
+      "sourceX": 636.5,
+      "sourceY": 188.5,
+      "road": "HospitalCivicSpine",
+      "referenceStripeCount": 8,
+      "verification": "visual + stripe pattern",
+      "id": 14
+    },
+    {
+      "x": 38.0,
+      "y": 196.5,
+      "orientation": "EW",
+      "width": 27,
+      "sourceX": 41.5,
+      "sourceY": 196.5,
+      "road": "OuterCircuit",
+      "referenceStripeCount": 7,
+      "verification": "visual + stripe pattern",
+      "id": 15
+    },
+    {
+      "x": 148.0,
       "y": 197,
       "orientation": "NS",
-      "width": 26
+      "width": 26,
+      "sourceX": 148.0,
+      "sourceY": 195.5,
+      "road": "NorthResidentialCrossing",
+      "referenceStripeCount": 8,
+      "verification": "visual + stripe pattern",
+      "id": 16
     },
     {
-      "x": 183,
+      "x": 176.0,
       "y": 197,
       "orientation": "NS",
-      "width": 26
+      "width": 26,
+      "sourceX": 176.0,
+      "sourceY": 195.0,
+      "road": "NorthResidentialCrossing",
+      "referenceStripeCount": 8,
+      "verification": "visual + stripe pattern",
+      "id": 17
     },
     {
-      "x": 284,
+      "x": 286.5,
       "y": 197,
       "orientation": "NS",
-      "width": 26
+      "width": 26,
+      "sourceX": 286.5,
+      "sourceY": 195.5,
+      "road": "NorthResidentialCrossing",
+      "referenceStripeCount": 8,
+      "verification": "visual + stripe pattern",
+      "id": 18
     },
     {
-      "x": 315,
+      "x": 314.5,
       "y": 197,
       "orientation": "NS",
-      "width": 26
+      "width": 26,
+      "sourceX": 314.5,
+      "sourceY": 196.0,
+      "road": "NorthResidentialCrossing",
+      "referenceStripeCount": 9,
+      "verification": "visual + stripe pattern",
+      "id": 19
     },
     {
-      "x": 397,
+      "x": 396.5,
       "y": 197,
       "orientation": "NS",
-      "width": 26
+      "width": 26,
+      "sourceX": 396.5,
+      "sourceY": 196.5,
+      "road": "NorthResidentialCrossing",
+      "referenceStripeCount": 7,
+      "verification": "visual + stripe pattern",
+      "id": 20
     },
     {
-      "x": 428,
+      "x": 166,
+      "y": 215.0,
+      "orientation": "EW",
+      "width": 26,
+      "sourceX": 163.0,
+      "sourceY": 215.0,
+      "road": "UpperResidentialDivider",
+      "referenceStripeCount": 7,
+      "verification": "visual + stripe pattern",
+      "id": 21
+    },
+    {
+      "x": 300,
+      "y": 215.0,
+      "orientation": "EW",
+      "width": 26,
+      "sourceX": 300.0,
+      "sourceY": 215.0,
+      "road": "WestRiverSpine",
+      "referenceStripeCount": 7,
+      "verification": "visual + stripe pattern",
+      "id": 22
+    },
+    {
+      "x": 430.5,
       "y": 218,
       "orientation": "NS",
-      "width": 26
+      "width": 26,
+      "sourceX": 430.5,
+      "sourceY": 222.5,
+      "road": "NorthOfficeCrossing",
+      "referenceStripeCount": 8,
+      "verification": "visual + stripe pattern",
+      "id": 23
     },
     {
-      "x": 621,
+      "x": 498.5,
       "y": 218,
       "orientation": "NS",
-      "width": 26
+      "width": 26,
+      "sourceX": 498.5,
+      "sourceY": 221.0,
+      "road": "NorthOfficeCrossing",
+      "referenceStripeCount": 9,
+      "verification": "visual + stripe pattern",
+      "id": 24
     },
     {
-      "x": 55,
+      "x": 619.5,
+      "y": 218,
+      "orientation": "NS",
+      "width": 26,
+      "sourceX": 619.5,
+      "sourceY": 222.5,
+      "road": "NorthOfficeCrossing",
+      "referenceStripeCount": 8,
+      "verification": "visual + stripe pattern",
+      "id": 25
+    },
+    {
+      "x": 412,
+      "y": 243.0,
+      "orientation": "EW",
+      "width": 26,
+      "sourceX": 413.0,
+      "sourceY": 243.0,
+      "road": "UpperEastRiverSpine",
+      "referenceStripeCount": 8,
+      "verification": "visual + stripe pattern",
+      "id": 26
+    },
+    {
+      "x": 638,
+      "y": 243.0,
+      "orientation": "EW",
+      "width": 26,
+      "sourceX": 639.0,
+      "sourceY": 243.0,
+      "road": "HospitalCivicSpine",
+      "referenceStripeCount": 5,
+      "verification": "visual + stripe pattern",
+      "id": 27
+    },
+    {
+      "x": 902.0,
+      "y": 273.5,
+      "orientation": "EW",
+      "width": 27,
+      "sourceX": 904.0,
+      "sourceY": 273.5,
+      "road": "OuterCircuit",
+      "referenceStripeCount": 8,
+      "verification": "visual + stripe pattern",
+      "id": 28
+    },
+    {
+      "x": 38.0,
+      "y": 347.0,
+      "orientation": "EW",
+      "width": 27,
+      "sourceX": 40.5,
+      "sourceY": 347.0,
+      "road": "OuterCircuit",
+      "referenceStripeCount": 7,
+      "verification": "visual + stripe pattern",
+      "id": 29
+    },
+    {
+      "x": 166,
+      "y": 347.0,
+      "orientation": "EW",
+      "width": 26,
+      "sourceX": 163.5,
+      "sourceY": 347.0,
+      "road": "UpperResidentialDivider",
+      "referenceStripeCount": 6,
+      "verification": "visual + stripe pattern",
+      "id": 30
+    },
+    {
+      "x": 300,
+      "y": 347.0,
+      "orientation": "EW",
+      "width": 26,
+      "sourceX": 299.0,
+      "sourceY": 347.0,
+      "road": "WestRiverSpine",
+      "referenceStripeCount": 6,
+      "verification": "visual + stripe pattern",
+      "id": 31
+    },
+    {
+      "x": 412,
+      "y": 347.0,
+      "orientation": "EW",
+      "width": 26,
+      "sourceX": 410.0,
+      "sourceY": 347.0,
+      "road": "UpperEastRiverSpine",
+      "referenceStripeCount": 8,
+      "verification": "visual + stripe pattern",
+      "id": 32
+    },
+    {
+      "x": 638,
+      "y": 347.0,
+      "orientation": "EW",
+      "width": 26,
+      "sourceX": 638.5,
+      "sourceY": 347.0,
+      "road": "HospitalCivicSpine",
+      "referenceStripeCount": 9,
+      "verification": "visual + stripe pattern",
+      "id": 33
+    },
+    {
+      "x": 55.5,
       "y": 362,
       "orientation": "NS",
-      "width": 26
+      "width": 26,
+      "sourceX": 55.5,
+      "sourceY": 363.0,
+      "road": "UpperCityCrossing",
+      "referenceStripeCount": 9,
+      "verification": "visual + stripe pattern",
+      "id": 34
     },
     {
-      "x": 150,
+      "x": 148.0,
       "y": 362,
       "orientation": "NS",
-      "width": 26
+      "width": 26,
+      "sourceX": 148.0,
+      "sourceY": 363.5,
+      "road": "UpperCityCrossing",
+      "referenceStripeCount": 7,
+      "verification": "visual + stripe pattern",
+      "id": 35
     },
     {
-      "x": 183,
+      "x": 175.0,
       "y": 362,
       "orientation": "NS",
-      "width": 26
+      "width": 26,
+      "sourceX": 175.0,
+      "sourceY": 361.0,
+      "road": "UpperCityCrossing",
+      "referenceStripeCount": 8,
+      "verification": "visual + stripe pattern",
+      "id": 36
     },
     {
-      "x": 284,
+      "x": 285.5,
       "y": 362,
       "orientation": "NS",
-      "width": 26
+      "width": 26,
+      "sourceX": 285.5,
+      "sourceY": 361.0,
+      "road": "UpperCityCrossing",
+      "referenceStripeCount": 8,
+      "verification": "visual + stripe pattern",
+      "id": 37
     },
     {
-      "x": 315,
+      "x": 314.5,
       "y": 362,
       "orientation": "NS",
-      "width": 26
+      "width": 26,
+      "sourceX": 314.5,
+      "sourceY": 361.0,
+      "road": "UpperCityCrossing",
+      "referenceStripeCount": 8,
+      "verification": "visual + stripe pattern",
+      "id": 38
     },
     {
-      "x": 397,
+      "x": 396.5,
       "y": 362,
       "orientation": "NS",
-      "width": 26
+      "width": 26,
+      "sourceX": 396.5,
+      "sourceY": 361.5,
+      "road": "UpperCityCrossing",
+      "referenceStripeCount": 8,
+      "verification": "visual + stripe pattern",
+      "id": 39
     },
     {
-      "x": 428,
+      "x": 430.0,
       "y": 362,
       "orientation": "NS",
-      "width": 26
+      "width": 26,
+      "sourceX": 430.0,
+      "sourceY": 363.5,
+      "road": "UpperCityCrossing",
+      "referenceStripeCount": 9,
+      "verification": "visual + stripe pattern",
+      "id": 40
     },
     {
-      "x": 566,
+      "x": 511.0,
       "y": 362,
       "orientation": "NS",
-      "width": 26
+      "width": 26,
+      "sourceX": 511.0,
+      "sourceY": 363.5,
+      "road": "UpperCityCrossing",
+      "referenceStripeCount": 7,
+      "verification": "visual + stripe pattern",
+      "id": 41
     },
     {
-      "x": 621,
+      "x": 565.0,
       "y": 362,
       "orientation": "NS",
-      "width": 26
+      "width": 26,
+      "sourceX": 565.0,
+      "sourceY": 366.5,
+      "road": "UpperCityCrossing",
+      "referenceStripeCount": 9,
+      "verification": "visual + stripe pattern",
+      "id": 42
     },
     {
-      "x": 55,
-      "y": 575,
+      "x": 620.0,
+      "y": 362,
       "orientation": "NS",
-      "width": 26
+      "width": 26,
+      "sourceX": 620.0,
+      "sourceY": 362.5,
+      "road": "UpperCityCrossing",
+      "referenceStripeCount": 9,
+      "verification": "visual + stripe pattern",
+      "id": 43
     },
     {
-      "x": 284,
-      "y": 575,
-      "orientation": "NS",
-      "width": 26
+      "x": 300,
+      "y": 380.5,
+      "orientation": "EW",
+      "width": 26,
+      "sourceX": 302.0,
+      "sourceY": 380.5,
+      "road": "WestRiverSpine",
+      "referenceStripeCount": 6,
+      "verification": "visual + stripe pattern",
+      "id": 44
     },
     {
-      "x": 315,
-      "y": 575,
-      "orientation": "NS",
-      "width": 26
+      "x": 412,
+      "y": 381.5,
+      "orientation": "EW",
+      "width": 26,
+      "sourceX": 414.0,
+      "sourceY": 381.5,
+      "road": "UpperEastRiverSpine",
+      "referenceStripeCount": 8,
+      "verification": "visual + stripe pattern",
+      "id": 45
     },
     {
-      "x": 397,
-      "y": 575,
-      "orientation": "NS",
-      "width": 26
+      "x": 638,
+      "y": 382.0,
+      "orientation": "EW",
+      "width": 26,
+      "sourceX": 638.5,
+      "sourceY": 382.0,
+      "road": "HospitalCivicSpine",
+      "referenceStripeCount": 9,
+      "verification": "visual + stripe pattern",
+      "id": 46
     },
     {
-      "x": 428,
-      "y": 575,
+      "x": 657.5,
+      "y": 409,
       "orientation": "NS",
-      "width": 26
+      "width": 18,
+      "sourceX": 657.5,
+      "sourceY": 411.5,
+      "road": "HospitalNorthAccess",
+      "referenceStripeCount": 7,
+      "verification": "visual + stripe pattern",
+      "id": 47
     },
     {
-      "x": 621,
-      "y": 575,
+      "x": 886.5,
+      "y": 409,
       "orientation": "NS",
-      "width": 26
+      "width": 18,
+      "sourceX": 886.5,
+      "sourceY": 412.0,
+      "road": "HospitalNorthEastAccess",
+      "referenceStripeCount": 6,
+      "verification": "visual + stripe pattern",
+      "id": 48
     },
     {
-      "x": 655,
-      "y": 575,
+      "x": 657.5,
+      "y": 486,
       "orientation": "NS",
-      "width": 26
+      "width": 18,
+      "sourceX": 657.5,
+      "sourceY": 483.0,
+      "road": "HospitalWestParkingAccess",
+      "referenceStripeCount": 7,
+      "verification": "visual + stripe pattern",
+      "id": 49
+    },
+    {
+      "x": 888.5,
+      "y": 486,
+      "orientation": "NS",
+      "width": 18,
+      "sourceX": 888.5,
+      "sourceY": 481.0,
+      "road": "HospitalEastParkingAccess",
+      "referenceStripeCount": 6,
+      "verification": "visual + stripe pattern",
+      "id": 50
+    },
+    {
+      "x": 300,
+      "y": 552.5,
+      "orientation": "EW",
+      "width": 26,
+      "sourceX": 300.5,
+      "sourceY": 552.5,
+      "road": "WestRiverSpine",
+      "referenceStripeCount": 5,
+      "verification": "visual + stripe pattern",
+      "id": 51
+    },
+    {
+      "x": 638,
+      "y": 553.5,
+      "orientation": "EW",
+      "width": 26,
+      "sourceX": 639.0,
+      "sourceY": 553.5,
+      "road": "HospitalCivicSpine",
+      "referenceStripeCount": 9,
+      "verification": "visual + stripe pattern",
+      "id": 52
+    },
+    {
+      "x": 38.0,
+      "y": 555.0,
+      "orientation": "EW",
+      "width": 27,
+      "sourceX": 37.0,
+      "sourceY": 555.0,
+      "road": "OuterCircuit",
+      "referenceStripeCount": 7,
+      "verification": "visual + stripe pattern",
+      "id": 53
+    },
+    {
+      "x": 412,
+      "y": 555.5,
+      "orientation": "EW",
+      "width": 26,
+      "sourceX": 413.0,
+      "sourceY": 555.5,
+      "road": "UpperEastRiverSpine",
+      "referenceStripeCount": 6,
+      "verification": "visual + stripe pattern",
+      "id": 54
     },
     {
       "x": 795,
+      "y": 557.5,
+      "orientation": "EW",
+      "width": 22,
+      "sourceX": 795.0,
+      "sourceY": 557.5,
+      "road": "HospitalSouthAccess",
+      "referenceStripeCount": 7,
+      "verification": "visual + stripe pattern",
+      "id": 55
+    },
+    {
+      "x": 811.5,
+      "y": 572.0,
+      "orientation": "NS",
+      "width": 27,
+      "sourceX": 811.5,
+      "sourceY": 576.0,
+      "road": "OuterCircuit",
+      "referenceStripeCount": 7,
+      "verification": "visual + stripe pattern",
+      "id": 56
+    },
+    {
+      "x": 55.0,
       "y": 575,
       "orientation": "NS",
-      "width": 26
+      "width": 26,
+      "sourceX": 55.0,
+      "sourceY": 577.5,
+      "road": "UpperMedianRoad",
+      "referenceStripeCount": 8,
+      "verification": "visual + stripe pattern",
+      "id": 57
     },
     {
-      "x": 55,
+      "x": 285.0,
+      "y": 575,
+      "orientation": "NS",
+      "width": 26,
+      "sourceX": 285.0,
+      "sourceY": 577.5,
+      "road": "UpperMedianRoad",
+      "referenceStripeCount": 8,
+      "verification": "visual + stripe pattern",
+      "id": 58
+    },
+    {
+      "x": 316.5,
+      "y": 575,
+      "orientation": "NS",
+      "width": 26,
+      "sourceX": 316.5,
+      "sourceY": 578.0,
+      "road": "UpperMedianRoad",
+      "referenceStripeCount": 8,
+      "verification": "visual + stripe pattern",
+      "id": 59
+    },
+    {
+      "x": 395.5,
+      "y": 575,
+      "orientation": "NS",
+      "width": 26,
+      "sourceX": 395.5,
+      "sourceY": 578.0,
+      "road": "UpperMedianRoad",
+      "referenceStripeCount": 8,
+      "verification": "visual + stripe pattern",
+      "id": 60
+    },
+    {
+      "x": 482.0,
+      "y": 575,
+      "orientation": "NS",
+      "width": 26,
+      "sourceX": 482.0,
+      "sourceY": 577.5,
+      "road": "UpperMedianRoad",
+      "referenceStripeCount": 8,
+      "verification": "visual + stripe pattern",
+      "id": 61
+    },
+    {
+      "x": 619.5,
+      "y": 575,
+      "orientation": "NS",
+      "width": 26,
+      "sourceX": 619.5,
+      "sourceY": 577.5,
+      "road": "UpperMedianRoad",
+      "referenceStripeCount": 8,
+      "verification": "visual + stripe pattern",
+      "id": 62
+    },
+    {
+      "x": 657.5,
+      "y": 575,
+      "orientation": "NS",
+      "width": 26,
+      "sourceX": 657.5,
+      "sourceY": 575.0,
+      "road": "UpperMedianRoad",
+      "referenceStripeCount": 9,
+      "verification": "visual + stripe pattern",
+      "id": 63
+    },
+    {
+      "x": 776.0,
+      "y": 575,
+      "orientation": "NS",
+      "width": 26,
+      "sourceX": 776.0,
+      "sourceY": 577.5,
+      "road": "UpperMedianRoad",
+      "referenceStripeCount": 8,
+      "verification": "visual + stripe pattern",
+      "id": 64
+    },
+    {
+      "x": 638,
+      "y": 595.0,
+      "orientation": "EW",
+      "width": 26,
+      "sourceX": 640.0,
+      "sourceY": 595.0,
+      "road": "HospitalCivicSpine",
+      "referenceStripeCount": 8,
+      "verification": "visual + stripe pattern",
+      "id": 65
+    },
+    {
+      "x": 795,
+      "y": 596.0,
+      "orientation": "EW",
+      "width": 27,
+      "sourceX": 795.5,
+      "sourceY": 596.0,
+      "road": "OuterCircuit",
+      "referenceStripeCount": 7,
+      "verification": "visual + stripe pattern",
+      "id": 66
+    },
+    {
+      "x": 500,
+      "y": 598.5,
+      "orientation": "EW",
+      "width": 26,
+      "sourceX": 499.5,
+      "sourceY": 598.5,
+      "road": "LowerEastRiverSpine",
+      "referenceStripeCount": 8,
+      "verification": "visual + stripe pattern",
+      "id": 67
+    },
+    {
+      "x": 300,
+      "y": 599.5,
+      "orientation": "EW",
+      "width": 26,
+      "sourceX": 299.5,
+      "sourceY": 599.5,
+      "road": "WestRiverSpine",
+      "referenceStripeCount": 6,
+      "verification": "visual + stripe pattern",
+      "id": 68
+    },
+    {
+      "x": 55.0,
       "y": 632,
       "orientation": "NS",
-      "width": 26
+      "width": 26,
+      "sourceX": 55.0,
+      "sourceY": 634.0,
+      "road": "IndustrialNorthRoad",
+      "referenceStripeCount": 8,
+      "verification": "visual + stripe pattern",
+      "id": 69
     },
     {
-      "x": 151,
+      "x": 150.0,
       "y": 632,
       "orientation": "NS",
-      "width": 26
+      "width": 26,
+      "sourceX": 150.0,
+      "sourceY": 635.5,
+      "road": "IndustrialNorthRoad",
+      "referenceStripeCount": 7,
+      "verification": "visual + stripe pattern",
+      "id": 70
     },
     {
-      "x": 183,
+      "x": 286.5,
       "y": 632,
       "orientation": "NS",
-      "width": 26
+      "width": 26,
+      "sourceX": 286.5,
+      "sourceY": 635.5,
+      "road": "IndustrialNorthRoad",
+      "referenceStripeCount": 7,
+      "verification": "visual + stripe pattern",
+      "id": 71
     },
     {
-      "x": 284,
+      "x": 518.0,
       "y": 632,
       "orientation": "NS",
-      "width": 26
+      "width": 26,
+      "sourceX": 518.0,
+      "sourceY": 633.0,
+      "road": "CivicNorthRoad",
+      "referenceStripeCount": 9,
+      "verification": "visual + stripe pattern",
+      "id": 72
     },
     {
-      "x": 517,
+      "x": 620.0,
       "y": 632,
       "orientation": "NS",
-      "width": 26
+      "width": 26,
+      "sourceX": 620.0,
+      "sourceY": 635.5,
+      "road": "CivicNorthRoad",
+      "referenceStripeCount": 8,
+      "verification": "visual + stripe pattern",
+      "id": 73
     },
     {
-      "x": 621,
+      "x": 657.0,
       "y": 632,
       "orientation": "NS",
-      "width": 26
+      "width": 26,
+      "sourceX": 657.0,
+      "sourceY": 633.0,
+      "road": "CivicNorthRoad",
+      "referenceStripeCount": 9,
+      "verification": "visual + stripe pattern",
+      "id": 74
     },
     {
-      "x": 655,
+      "x": 776.0,
       "y": 632,
       "orientation": "NS",
-      "width": 26
+      "width": 26,
+      "sourceX": 776.0,
+      "sourceY": 632.5,
+      "road": "CivicNorthRoad",
+      "referenceStripeCount": 9,
+      "verification": "visual + stripe pattern",
+      "id": 75
     },
     {
-      "x": 779,
+      "x": 811.5,
       "y": 632,
       "orientation": "NS",
-      "width": 26
+      "width": 27,
+      "sourceX": 811.5,
+      "sourceY": 634.0,
+      "road": "OuterCircuit",
+      "referenceStripeCount": 9,
+      "verification": "visual + stripe pattern",
+      "id": 76
     },
     {
-      "x": 812,
-      "y": 632,
-      "orientation": "NS",
-      "width": 26
+      "x": 166,
+      "y": 652.0,
+      "orientation": "EW",
+      "width": 26,
+      "sourceX": 170.0,
+      "sourceY": 652.0,
+      "road": "IndustrialDivider",
+      "referenceStripeCount": 8,
+      "verification": "visual + stripe pattern",
+      "id": 77
     },
     {
-      "x": 55,
+      "x": 300,
+      "y": 654.5,
+      "orientation": "EW",
+      "width": 26,
+      "sourceX": 300.5,
+      "sourceY": 654.5,
+      "road": "WestRiverSpine",
+      "referenceStripeCount": 7,
+      "verification": "visual + stripe pattern",
+      "id": 78
+    },
+    {
+      "x": 38.0,
+      "y": 655.5,
+      "orientation": "EW",
+      "width": 27,
+      "sourceX": 38.0,
+      "sourceY": 655.5,
+      "road": "OuterCircuit",
+      "referenceStripeCount": 6,
+      "verification": "visual + stripe pattern",
+      "id": 79
+    },
+    {
+      "x": 795,
+      "y": 655.5,
+      "orientation": "EW",
+      "width": 26,
+      "sourceX": 795.0,
+      "sourceY": 655.5,
+      "road": "LowerCivicDivider",
+      "referenceStripeCount": 8,
+      "verification": "visual + stripe pattern",
+      "id": 80
+    },
+    {
+      "x": 638,
+      "y": 656.0,
+      "orientation": "EW",
+      "width": 26,
+      "sourceX": 638.5,
+      "sourceY": 656.0,
+      "road": "HospitalCivicSpine",
+      "referenceStripeCount": 9,
+      "verification": "visual + stripe pattern",
+      "id": 81
+    },
+    {
+      "x": 500,
+      "y": 660.5,
+      "orientation": "EW",
+      "width": 26,
+      "sourceX": 498.0,
+      "sourceY": 660.5,
+      "road": "LowerEastRiverSpine",
+      "referenceStripeCount": 7,
+      "verification": "visual + stripe pattern",
+      "id": 82
+    },
+    {
+      "x": 166,
+      "y": 747.0,
+      "orientation": "EW",
+      "width": 26,
+      "sourceX": 164.5,
+      "sourceY": 747.0,
+      "road": "IndustrialDivider",
+      "referenceStripeCount": 6,
+      "verification": "visual + stripe pattern",
+      "id": 83
+    },
+    {
+      "x": 300,
+      "y": 753.5,
+      "orientation": "EW",
+      "width": 26,
+      "sourceX": 302.5,
+      "sourceY": 753.5,
+      "road": "WestRiverSpine",
+      "referenceStripeCount": 6,
+      "verification": "visual + stripe pattern",
+      "id": 84
+    },
+    {
+      "x": 38.0,
+      "y": 755.0,
+      "orientation": "EW",
+      "width": 27,
+      "sourceX": 39.0,
+      "sourceY": 755.0,
+      "road": "OuterCircuit",
+      "referenceStripeCount": 7,
+      "verification": "visual + stripe pattern",
+      "id": 85
+    },
+    {
+      "x": 500,
+      "y": 755.0,
+      "orientation": "EW",
+      "width": 26,
+      "sourceX": 498.5,
+      "sourceY": 755.0,
+      "road": "LowerEastRiverSpine",
+      "referenceStripeCount": 8,
+      "verification": "visual + stripe pattern",
+      "id": 86
+    },
+    {
+      "x": 638,
+      "y": 760.5,
+      "orientation": "EW",
+      "width": 26,
+      "sourceX": 641.0,
+      "sourceY": 760.5,
+      "road": "HospitalCivicSpine",
+      "referenceStripeCount": 8,
+      "verification": "visual + stripe pattern",
+      "id": 87
+    },
+    {
+      "x": 795,
+      "y": 762.5,
+      "orientation": "EW",
+      "width": 26,
+      "sourceX": 795.0,
+      "sourceY": 762.5,
+      "road": "LowerCivicDivider",
+      "referenceStripeCount": 8,
+      "verification": "visual + stripe pattern",
+      "id": 88
+    },
+    {
+      "x": 54.5,
       "y": 775,
       "orientation": "NS",
-      "width": 26
+      "width": 26,
+      "sourceX": 54.5,
+      "sourceY": 774.0,
+      "road": "CentralCityCrossing",
+      "referenceStripeCount": 7,
+      "verification": "visual + stripe pattern",
+      "id": 89
     },
     {
-      "x": 150,
+      "x": 148.5,
       "y": 775,
       "orientation": "NS",
-      "width": 26
+      "width": 26,
+      "sourceX": 148.5,
+      "sourceY": 774.0,
+      "road": "CentralCityCrossing",
+      "referenceStripeCount": 7,
+      "verification": "visual + stripe pattern",
+      "id": 90
     },
     {
-      "x": 183,
+      "x": 180.5,
       "y": 775,
       "orientation": "NS",
-      "width": 26
+      "width": 26,
+      "sourceX": 180.5,
+      "sourceY": 772.0,
+      "road": "CentralCityCrossing",
+      "referenceStripeCount": 8,
+      "verification": "visual + stripe pattern",
+      "id": 91
     },
     {
-      "x": 284,
+      "x": 284.0,
       "y": 775,
       "orientation": "NS",
-      "width": 26
+      "width": 26,
+      "sourceX": 284.0,
+      "sourceY": 772.5,
+      "road": "CentralCityCrossing",
+      "referenceStripeCount": 8,
+      "verification": "visual + stripe pattern",
+      "id": 92
     },
     {
-      "x": 315,
+      "x": 316.5,
       "y": 775,
       "orientation": "NS",
-      "width": 26
+      "width": 26,
+      "sourceX": 316.5,
+      "sourceY": 773.0,
+      "road": "CentralCityCrossing",
+      "referenceStripeCount": 8,
+      "verification": "visual + stripe pattern",
+      "id": 93
     },
     {
-      "x": 396,
+      "x": 395.5,
       "y": 775,
       "orientation": "NS",
-      "width": 26
+      "width": 26,
+      "sourceX": 395.5,
+      "sourceY": 773.5,
+      "road": "CentralCityCrossing",
+      "referenceStripeCount": 7,
+      "verification": "visual + stripe pattern",
+      "id": 94
     },
     {
-      "x": 483,
+      "x": 482.5,
       "y": 775,
       "orientation": "NS",
-      "width": 26
+      "width": 26,
+      "sourceX": 482.5,
+      "sourceY": 774.0,
+      "road": "CentralCityCrossing",
+      "referenceStripeCount": 7,
+      "verification": "visual + stripe pattern",
+      "id": 95
     },
     {
-      "x": 516,
+      "x": 518.0,
       "y": 775,
       "orientation": "NS",
-      "width": 26
+      "width": 26,
+      "sourceX": 518.0,
+      "sourceY": 778.5,
+      "road": "CentralCityCrossing",
+      "referenceStripeCount": 7,
+      "verification": "visual + stripe pattern",
+      "id": 96
     },
     {
-      "x": 621,
+      "x": 620.5,
       "y": 775,
       "orientation": "NS",
-      "width": 26
+      "width": 26,
+      "sourceX": 620.5,
+      "sourceY": 779.0,
+      "road": "CentralCityCrossing",
+      "referenceStripeCount": 8,
+      "verification": "visual + stripe pattern",
+      "id": 97
     },
     {
-      "x": 655,
+      "x": 657.0,
       "y": 775,
       "orientation": "NS",
-      "width": 26
+      "width": 26,
+      "sourceX": 657.0,
+      "sourceY": 778.5,
+      "road": "CentralCityCrossing",
+      "referenceStripeCount": 9,
+      "verification": "visual + stripe pattern",
+      "id": 98
     },
     {
-      "x": 779,
+      "x": 777.0,
       "y": 775,
       "orientation": "NS",
-      "width": 26
+      "width": 26,
+      "sourceX": 777.0,
+      "sourceY": 780.5,
+      "road": "CentralCityCrossing",
+      "referenceStripeCount": 7,
+      "verification": "visual + stripe pattern",
+      "id": 99
     },
     {
-      "x": 812,
+      "x": 811.5,
       "y": 775,
       "orientation": "NS",
-      "width": 26
+      "width": 26,
+      "sourceX": 811.5,
+      "sourceY": 778.5,
+      "road": "CentralCityCrossing",
+      "referenceStripeCount": 8,
+      "verification": "visual + stripe pattern",
+      "id": 100
     },
     {
-      "x": 894,
+      "x": 890.5,
       "y": 775,
       "orientation": "NS",
-      "width": 26
+      "width": 26,
+      "sourceX": 890.5,
+      "sourceY": 781.5,
+      "road": "CentralCityCrossing",
+      "referenceStripeCount": 7,
+      "verification": "visual + stripe pattern",
+      "id": 101
     },
     {
-      "x": 183,
+      "x": 910.0,
+      "y": 792.0,
+      "orientation": "EW",
+      "width": 27,
+      "sourceX": 909.0,
+      "sourceY": 792.0,
+      "road": "OuterCircuit",
+      "referenceStripeCount": 7,
+      "verification": "visual + stripe pattern",
+      "id": 102
+    },
+    {
+      "x": 38.0,
+      "y": 793.5,
+      "orientation": "EW",
+      "width": 27,
+      "sourceX": 37.0,
+      "sourceY": 793.5,
+      "road": "OuterCircuit",
+      "referenceStripeCount": 8,
+      "verification": "visual + stripe pattern",
+      "id": 103
+    },
+    {
+      "x": 300,
+      "y": 794.5,
+      "orientation": "EW",
+      "width": 26,
+      "sourceX": 301.5,
+      "sourceY": 794.5,
+      "road": "WestRiverSpine",
+      "referenceStripeCount": 6,
+      "verification": "visual + stripe pattern",
+      "id": 104
+    },
+    {
+      "x": 166,
+      "y": 795.5,
+      "orientation": "EW",
+      "width": 26,
+      "sourceX": 166.5,
+      "sourceY": 795.5,
+      "road": "IndustrialDivider",
+      "referenceStripeCount": 7,
+      "verification": "visual + stripe pattern",
+      "id": 105
+    },
+    {
+      "x": 500,
+      "y": 798.5,
+      "orientation": "EW",
+      "width": 26,
+      "sourceX": 500.0,
+      "sourceY": 798.5,
+      "road": "LowerEastRiverSpine",
+      "referenceStripeCount": 9,
+      "verification": "visual + stripe pattern",
+      "id": 106
+    },
+    {
+      "x": 638,
+      "y": 799.0,
+      "orientation": "EW",
+      "width": 26,
+      "sourceX": 637.0,
+      "sourceY": 799.0,
+      "road": "HospitalCivicSpine",
+      "referenceStripeCount": 8,
+      "verification": "visual + stripe pattern",
+      "id": 107
+    },
+    {
+      "x": 795,
+      "y": 799.5,
+      "orientation": "EW",
+      "width": 26,
+      "sourceX": 795.5,
+      "sourceY": 799.5,
+      "road": "LowerCivicDivider",
+      "referenceStripeCount": 8,
+      "verification": "visual + stripe pattern",
+      "id": 108
+    },
+    {
+      "x": 166,
+      "y": 890.0,
+      "orientation": "EW",
+      "width": 26,
+      "sourceX": 166.5,
+      "sourceY": 890.0,
+      "road": "IndustrialDivider",
+      "referenceStripeCount": 7,
+      "verification": "visual + stripe pattern",
+      "id": 109
+    },
+    {
+      "x": 300,
+      "y": 891.5,
+      "orientation": "EW",
+      "width": 26,
+      "sourceX": 301.5,
+      "sourceY": 891.5,
+      "road": "WestRiverSpine",
+      "referenceStripeCount": 6,
+      "verification": "visual + stripe pattern",
+      "id": 110
+    },
+    {
+      "x": 795,
+      "y": 907.5,
+      "orientation": "EW",
+      "width": 26,
+      "sourceX": 796.0,
+      "sourceY": 907.5,
+      "road": "LowerCivicDivider",
+      "referenceStripeCount": 7,
+      "verification": "visual + stripe pattern",
+      "id": 111
+    },
+    {
+      "x": 910.0,
+      "y": 911.5,
+      "orientation": "EW",
+      "width": 27,
+      "sourceX": 908.0,
+      "sourceY": 911.5,
+      "road": "OuterCircuit",
+      "referenceStripeCount": 8,
+      "verification": "visual + stripe pattern",
+      "id": 112
+    },
+    {
+      "x": 180.5,
       "y": 917,
       "orientation": "NS",
-      "width": 26
+      "width": 26,
+      "sourceX": 180.5,
+      "sourceY": 912.0,
+      "road": "IndustrialServiceCrossing",
+      "referenceStripeCount": 7,
+      "verification": "visual + stripe pattern",
+      "id": 113
     },
     {
-      "x": 284,
+      "x": 285.5,
       "y": 917,
       "orientation": "NS",
-      "width": 26
+      "width": 26,
+      "sourceX": 285.5,
+      "sourceY": 913,
+      "road": "IndustrialServiceCrossing",
+      "referenceStripeCount": 7,
+      "verification": "visual: faded/offset reference road",
+      "id": 114
     },
     {
-      "x": 516,
+      "x": 518.0,
       "y": 925,
       "orientation": "NS",
-      "width": 26
+      "width": 26,
+      "sourceX": 518.0,
+      "sourceY": 928.0,
+      "road": "CivicMiddleCrossing",
+      "referenceStripeCount": 9,
+      "verification": "visual + stripe pattern",
+      "id": 115
     },
     {
-      "x": 621,
+      "x": 620.0,
       "y": 925,
       "orientation": "NS",
-      "width": 26
+      "width": 26,
+      "sourceX": 620.0,
+      "sourceY": 928.0,
+      "road": "CivicMiddleCrossing",
+      "referenceStripeCount": 9,
+      "verification": "visual + stripe pattern",
+      "id": 116
     },
     {
-      "x": 655,
+      "x": 658.5,
       "y": 925,
       "orientation": "NS",
-      "width": 26
+      "width": 26,
+      "sourceX": 658.5,
+      "sourceY": 926.0,
+      "road": "CivicMiddleCrossing",
+      "referenceStripeCount": 10,
+      "verification": "visual + stripe pattern",
+      "id": 117
     },
     {
-      "x": 779,
+      "x": 777.0,
       "y": 925,
       "orientation": "NS",
-      "width": 26
+      "width": 26,
+      "sourceX": 777.0,
+      "sourceY": 928.5,
+      "road": "CivicMiddleCrossing",
+      "referenceStripeCount": 9,
+      "verification": "visual + stripe pattern",
+      "id": 118
     },
     {
-      "x": 812,
+      "x": 811.5,
       "y": 925,
       "orientation": "NS",
-      "width": 26
+      "width": 26,
+      "sourceX": 811.5,
+      "sourceY": 927.0,
+      "road": "CivicMiddleCrossing",
+      "referenceStripeCount": 10,
+      "verification": "visual + stripe pattern",
+      "id": 119
     },
     {
-      "x": 894,
+      "x": 891.5,
       "y": 925,
       "orientation": "NS",
-      "width": 26
+      "width": 26,
+      "sourceX": 891.5,
+      "sourceY": 929.0,
+      "road": "CivicMiddleCrossing",
+      "referenceStripeCount": 8,
+      "verification": "visual + stripe pattern",
+      "id": 120
     },
     {
-      "x": 516,
+      "x": 166,
+      "y": 933.0,
+      "orientation": "EW",
+      "width": 26,
+      "sourceX": 163.5,
+      "sourceY": 933.0,
+      "road": "IndustrialDivider",
+      "referenceStripeCount": 7,
+      "verification": "visual + stripe pattern",
+      "id": 121
+    },
+    {
+      "x": 300,
+      "y": 934.5,
+      "orientation": "EW",
+      "width": 26,
+      "sourceX": 304.0,
+      "sourceY": 934.5,
+      "road": "WestRiverSpine",
+      "referenceStripeCount": 7,
+      "verification": "visual + stripe pattern",
+      "id": 122
+    },
+    {
+      "x": 500,
+      "y": 937.5,
+      "orientation": "EW",
+      "width": 26,
+      "sourceX": 503.5,
+      "sourceY": 937.5,
+      "road": "LowerEastRiverSpine",
+      "referenceStripeCount": 8,
+      "verification": "visual + stripe pattern",
+      "id": 123
+    },
+    {
+      "x": 795,
+      "y": 944.0,
+      "orientation": "EW",
+      "width": 26,
+      "sourceX": 798.0,
+      "sourceY": 944.0,
+      "road": "LowerCivicDivider",
+      "referenceStripeCount": 5,
+      "verification": "visual + stripe pattern",
+      "id": 124
+    },
+    {
+      "x": 910.0,
+      "y": 946.0,
+      "orientation": "EW",
+      "width": 27,
+      "sourceX": 908.5,
+      "sourceY": 946.0,
+      "road": "OuterCircuit",
+      "referenceStripeCount": 8,
+      "verification": "visual + stripe pattern",
+      "id": 125
+    },
+    {
+      "x": 638,
+      "y": 948.5,
+      "orientation": "EW",
+      "width": 26,
+      "sourceX": 640.5,
+      "sourceY": 948.5,
+      "road": "HospitalCivicSpine",
+      "referenceStripeCount": 8,
+      "verification": "visual + stripe pattern",
+      "id": 126
+    },
+    {
+      "x": 38.0,
+      "y": 1034.5,
+      "orientation": "EW",
+      "width": 27,
+      "sourceX": 38.0,
+      "sourceY": 1034.5,
+      "road": "OuterCircuit",
+      "referenceStripeCount": 7,
+      "verification": "visual + stripe pattern",
+      "id": 127
+    },
+    {
+      "x": 166,
+      "y": 1038.0,
+      "orientation": "EW",
+      "width": 26,
+      "sourceX": 165.5,
+      "sourceY": 1038.0,
+      "road": "IndustrialDivider",
+      "referenceStripeCount": 7,
+      "verification": "visual + stripe pattern",
+      "id": 128
+    },
+    {
+      "x": 638,
+      "y": 1045.5,
+      "orientation": "EW",
+      "width": 26,
+      "sourceX": 641.0,
+      "sourceY": 1045.5,
+      "road": "HospitalCivicSpine",
+      "referenceStripeCount": 8,
+      "verification": "visual + stripe pattern",
+      "id": 129
+    },
+    {
+      "x": 300,
+      "y": 1047.5,
+      "orientation": "EW",
+      "width": 26,
+      "sourceX": 301.5,
+      "sourceY": 1047.5,
+      "road": "WestRiverSpine",
+      "referenceStripeCount": 6,
+      "verification": "visual + stripe pattern",
+      "id": 130
+    },
+    {
+      "x": 500,
+      "y": 1058.0,
+      "orientation": "EW",
+      "width": 26,
+      "sourceX": 502.0,
+      "sourceY": 1058.0,
+      "road": "LowerEastRiverSpine",
+      "referenceStripeCount": 7,
+      "verification": "visual + stripe pattern",
+      "id": 131
+    },
+    {
+      "x": 520.0,
       "y": 1065,
       "orientation": "NS",
-      "width": 26
+      "width": 26,
+      "sourceX": 520.0,
+      "sourceY": 1062.5,
+      "road": "CivicSouthCrossing",
+      "referenceStripeCount": 8,
+      "verification": "visual + stripe pattern",
+      "id": 132
     },
     {
-      "x": 621,
+      "x": 620.0,
       "y": 1065,
       "orientation": "NS",
-      "width": 26
+      "width": 26,
+      "sourceX": 620.0,
+      "sourceY": 1064.5,
+      "road": "CivicSouthCrossing",
+      "referenceStripeCount": 9,
+      "verification": "visual + stripe pattern",
+      "id": 133
     },
     {
-      "x": 655,
+      "x": 658.5,
       "y": 1065,
       "orientation": "NS",
-      "width": 26
+      "width": 26,
+      "sourceX": 658.5,
+      "sourceY": 1062.5,
+      "road": "CivicSouthCrossing",
+      "referenceStripeCount": 8,
+      "verification": "visual + stripe pattern",
+      "id": 134
     },
     {
-      "x": 894,
+      "x": 891.0,
       "y": 1065,
       "orientation": "NS",
-      "width": 26
+      "width": 26,
+      "sourceX": 891.0,
+      "sourceY": 1063.5,
+      "road": "CivicSouthCrossing",
+      "referenceStripeCount": 8,
+      "verification": "visual + stripe pattern",
+      "id": 135
+    },
+    {
+      "x": 38.0,
+      "y": 1078.0,
+      "orientation": "EW",
+      "width": 27,
+      "sourceX": 40.5,
+      "sourceY": 1078.0,
+      "road": "OuterCircuit",
+      "referenceStripeCount": 8,
+      "verification": "visual + stripe pattern",
+      "id": 136
     },
     {
       "x": 55,
       "y": 1085,
       "orientation": "NS",
-      "width": 26
+      "width": 26,
+      "sourceX": 55,
+      "sourceY": 1056,
+      "road": "PortApproach",
+      "referenceStripeCount": 8,
+      "verification": "visual: faded/offset reference road",
+      "id": 137
     },
     {
-      "x": 284,
+      "x": 183.0,
       "y": 1085,
       "orientation": "NS",
-      "width": 26
+      "width": 26,
+      "sourceX": 183.0,
+      "sourceY": 1085.5,
+      "road": "PortApproach",
+      "referenceStripeCount": 5,
+      "verification": "visual + stripe pattern",
+      "id": 138
     },
     {
-      "x": 578,
-      "y": 1120,
-      "orientation": "NS",
-      "width": 26
-    },
-    {
-      "x": 894,
-      "y": 1120,
-      "orientation": "NS",
-      "width": 26
-    },
-    {
-      "x": 578,
-      "y": 1368,
-      "orientation": "NS",
-      "width": 26
-    },
-    {
-      "x": 894,
-      "y": 1368,
-      "orientation": "NS",
-      "width": 26
-    },
-    {
-      "x": 275,
-      "y": 1454,
-      "orientation": "NS",
-      "width": 26
-    },
-    {
-      "x": 321,
-      "y": 1454,
-      "orientation": "NS",
-      "width": 26
-    },
-    {
-      "x": 480,
-      "y": 1454,
-      "orientation": "NS",
-      "width": 26
-    },
-    {
-      "x": 522,
-      "y": 1454,
-      "orientation": "NS",
-      "width": 26
-    },
-    {
-      "x": 166,
-      "y": 75,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 412,
-      "y": 95,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 638,
-      "y": 94,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 38,
-      "y": 192,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 38,
-      "y": 348,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 38,
-      "y": 556,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 38,
-      "y": 657,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 38,
-      "y": 752,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 38,
-      "y": 791,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 38,
-      "y": 1035,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 38,
-      "y": 1078,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 38,
-      "y": 1228,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 38,
-      "y": 1360,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 166,
-      "y": 181,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 166,
-      "y": 213,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 166,
-      "y": 350,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 166,
-      "y": 653,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 166,
-      "y": 758,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 166,
-      "y": 791,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 166,
-      "y": 896,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 166,
-      "y": 935,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 166,
+      "x": 272.0,
       "y": 1085,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 300,
-      "y": 181,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 300,
-      "y": 213,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 300,
-      "y": 346,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 300,
-      "y": 378,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 300,
-      "y": 552,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 300,
-      "y": 597,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 300,
-      "y": 652,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 300,
-      "y": 752,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 300,
-      "y": 796,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 300,
-      "y": 896,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 300,
-      "y": 935,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 300,
-      "y": 1067,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 300,
-      "y": 1102,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 300,
-      "y": 1431,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 412,
-      "y": 181,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 412,
-      "y": 213,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 412,
-      "y": 345,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 412,
-      "y": 379,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 412,
-      "y": 552,
-      "orientation": "EW",
-      "width": 26
+      "orientation": "NS",
+      "width": 26,
+      "sourceX": 272.0,
+      "sourceY": 1086.5,
+      "road": "PortApproach",
+      "referenceStripeCount": 5,
+      "verification": "visual + stripe pattern",
+      "id": 139
     },
     {
       "x": 500,
-      "y": 607,
+      "y": 1108.5,
       "orientation": "EW",
-      "width": 26
+      "width": 26,
+      "sourceX": 501.5,
+      "sourceY": 1108.5,
+      "road": "LowerEastRiverSpine",
+      "referenceStripeCount": 8,
+      "verification": "visual + stripe pattern",
+      "id": 140
     },
     {
-      "x": 500,
-      "y": 653,
+      "x": 910.0,
+      "y": 1101,
       "orientation": "EW",
-      "width": 26
+      "width": 27,
+      "sourceX": 905.5,
+      "sourceY": 1117.0,
+      "road": "OuterCircuit",
+      "referenceStripeCount": 7,
+      "verification": "manual correction: north approach clear of T-junction",
+      "id": 141
     },
     {
-      "x": 500,
-      "y": 752,
-      "orientation": "EW",
-      "width": 26
+      "x": 599.5,
+      "y": 1120,
+      "orientation": "NS",
+      "width": 22,
+      "sourceX": 599.5,
+      "sourceY": 1120.0,
+      "road": "FireStationServiceLoop",
+      "referenceStripeCount": 6,
+      "verification": "visual + stripe pattern",
+      "id": 142
     },
     {
-      "x": 500,
-      "y": 795,
-      "orientation": "EW",
-      "width": 26
+      "x": 865.5,
+      "y": 1120,
+      "orientation": "NS",
+      "width": 22,
+      "sourceX": 865.5,
+      "sourceY": 1117.5,
+      "road": "FireStationServiceLoop",
+      "referenceStripeCount": 6,
+      "verification": "visual + stripe pattern",
+      "id": 143
     },
     {
-      "x": 500,
-      "y": 909,
+      "x": 910.0,
+      "y": 1135.0,
       "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 500,
-      "y": 942,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 500,
-      "y": 1049,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 500,
-      "y": 1082,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 500,
-      "y": 1431,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 638,
-      "y": 202,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 638,
-      "y": 234,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 638,
-      "y": 346,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 638,
-      "y": 379,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 638,
-      "y": 558,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 638,
-      "y": 591,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 638,
-      "y": 615,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 638,
-      "y": 652,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 638,
-      "y": 751,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 638,
-      "y": 795,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 638,
-      "y": 909,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 638,
-      "y": 944,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 638,
-      "y": 1049,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 795,
-      "y": 555,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 795,
-      "y": 599,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 795,
-      "y": 615,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 795,
-      "y": 653,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 795,
-      "y": 751,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 795,
-      "y": 796,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 795,
-      "y": 909,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 795,
-      "y": 944,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 902,
-      "y": 157,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 902,
-      "y": 275,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 902,
-      "y": 412,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 910,
-      "y": 753,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 910,
-      "y": 797,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 910,
-      "y": 911,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 910,
-      "y": 945,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 910,
-      "y": 1050,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 910,
-      "y": 1134,
-      "orientation": "EW",
-      "width": 26
-    },
-    {
-      "x": 910,
-      "y": 1348,
-      "orientation": "EW",
-      "width": 26
+      "width": 27,
+      "sourceX": 910.0,
+      "sourceY": 1135.0,
+      "road": "OuterCircuit",
+      "referenceStripeCount": 7,
+      "verification": "visual + stripe pattern",
+      "id": 144
     },
     {
       "x": 578,
-      "y": 1142,
+      "y": 1151.5,
       "orientation": "EW",
-      "width": 22
+      "width": 22,
+      "sourceX": 580.0,
+      "sourceY": 1151.5,
+      "road": "FireStationServiceLoop",
+      "referenceStripeCount": 7,
+      "verification": "visual + stripe pattern",
+      "id": 145
+    },
+    {
+      "x": 38.0,
+      "y": 1247.0,
+      "orientation": "EW",
+      "width": 27,
+      "sourceX": 38.5,
+      "sourceY": 1247.0,
+      "road": "OuterCircuit",
+      "referenceStripeCount": 8,
+      "verification": "visual + stripe pattern",
+      "id": 146
+    },
+    {
+      "x": 300,
+      "y": 1267.5,
+      "orientation": "EW",
+      "width": 26,
+      "sourceX": 301.5,
+      "sourceY": 1267.5,
+      "road": "WestRiverSpine",
+      "referenceStripeCount": 6,
+      "verification": "visual + stripe pattern",
+      "id": 147
     },
     {
       "x": 578,
-      "y": 1349,
+      "y": 1351.5,
       "orientation": "EW",
-      "width": 22
+      "width": 22,
+      "sourceX": 579.5,
+      "sourceY": 1351.5,
+      "road": "FireStationServiceLoop",
+      "referenceStripeCount": 7,
+      "verification": "visual + stripe pattern",
+      "id": 148
+    },
+    {
+      "x": 38.0,
+      "y": 1356.5,
+      "orientation": "EW",
+      "width": 27,
+      "sourceX": 37.5,
+      "sourceY": 1356.5,
+      "road": "OuterCircuit",
+      "referenceStripeCount": 7,
+      "verification": "visual + stripe pattern",
+      "id": 149
+    },
+    {
+      "x": 910.0,
+      "y": 1357.5,
+      "orientation": "EW",
+      "width": 27,
+      "sourceX": 908.0,
+      "sourceY": 1357.5,
+      "road": "OuterCircuit",
+      "referenceStripeCount": 6,
+      "verification": "visual + stripe pattern",
+      "id": 150
+    },
+    {
+      "x": 595.0,
+      "y": 1368,
+      "orientation": "NS",
+      "width": 22,
+      "sourceX": 595.0,
+      "sourceY": 1368.0,
+      "road": "FireStationServiceLoop",
+      "referenceStripeCount": 8,
+      "verification": "visual + stripe pattern",
+      "id": 151
+    },
+    {
+      "x": 889.5,
+      "y": 1368,
+      "orientation": "NS",
+      "width": 22,
+      "sourceX": 889.5,
+      "sourceY": 1369.0,
+      "road": "FireStationServiceLoop",
+      "referenceStripeCount": 8,
+      "verification": "visual + stripe pattern",
+      "id": 152
     },
     {
       "x": 578,
-      "y": 1386,
+      "y": 1389.0,
       "orientation": "EW",
-      "width": 22
+      "width": 22,
+      "sourceX": 577.0,
+      "sourceY": 1389.0,
+      "road": "FireStationSouthConnection",
+      "referenceStripeCount": 6,
+      "verification": "visual + stripe pattern",
+      "id": 153
+    },
+    {
+      "x": 300,
+      "y": 1428.5,
+      "orientation": "EW",
+      "width": 26,
+      "sourceX": 304.0,
+      "sourceY": 1428.5,
+      "road": "WestRiverSpine",
+      "referenceStripeCount": 7,
+      "verification": "visual + stripe pattern",
+      "id": 154
+    },
+    {
+      "x": 500,
+      "y": 1428.5,
+      "orientation": "EW",
+      "width": 26,
+      "sourceX": 502.5,
+      "sourceY": 1428.5,
+      "road": "LowerEastRiverSpine",
+      "referenceStripeCount": 7,
+      "verification": "visual + stripe pattern",
+      "id": 155
+    },
+    {
+      "x": 578,
+      "y": 1434.0,
+      "orientation": "EW",
+      "width": 22,
+      "sourceX": 578.5,
+      "sourceY": 1434.0,
+      "road": "FireStationSouthConnection",
+      "referenceStripeCount": 7,
+      "verification": "visual + stripe pattern",
+      "id": 156
+    },
+    {
+      "x": 274.0,
+      "y": 1454.0,
+      "orientation": "NS",
+      "width": 27,
+      "sourceX": 274.0,
+      "sourceY": 1454.0,
+      "road": "OuterCircuit",
+      "referenceStripeCount": 11,
+      "verification": "visual + stripe pattern",
+      "id": 157
+    },
+    {
+      "x": 320.0,
+      "y": 1454.0,
+      "orientation": "NS",
+      "width": 27,
+      "sourceX": 320.0,
+      "sourceY": 1456.0,
+      "road": "OuterCircuit",
+      "referenceStripeCount": 10,
+      "verification": "visual + stripe pattern",
+      "id": 158
+    },
+    {
+      "x": 479.0,
+      "y": 1454.0,
+      "orientation": "NS",
+      "width": 27,
+      "sourceX": 479.0,
+      "sourceY": 1453.5,
+      "road": "OuterCircuit",
+      "referenceStripeCount": 10,
+      "verification": "visual + stripe pattern",
+      "id": 159
+    },
+    {
+      "x": 522.0,
+      "y": 1454.0,
+      "orientation": "NS",
+      "width": 27,
+      "sourceX": 522.0,
+      "sourceY": 1455.0,
+      "road": "OuterCircuit",
+      "referenceStripeCount": 9,
+      "verification": "visual + stripe pattern",
+      "id": 160
     }
   ],
   "riverCenterline": [

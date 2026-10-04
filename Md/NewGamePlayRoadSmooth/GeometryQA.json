@@ -1,0 +1,101 @@
+{
+  "sourceCommit": "d0756caa2b31efbe12b904de40411c09df5bd6d7",
+  "method": "Analytic centerline buffers, Euclidean fillets, polygon triangulation and subpixel alpha edge coverage",
+  "roadConnectedComponents": 1,
+  "centerlineMissingLength": 0.0,
+  "centerlinesAndDesignWidthsPreserved": true,
+  "oldCurbAreaSourcePixels": 28348.0,
+  "newCurbAreaSourcePixels": 56695.99981503554,
+  "curbAreaRatio": 1.9999999934752202,
+  "curbNormalWidthSourcePixels": 2.0606323108758033,
+  "curbNormalWidthUnityUnits": 0.2575790388594754,
+  "sidewalkOuterWidthSourcePixels": 4.060632310875803,
+  "curbRoadOverlapArea": 0.0,
+  "sidewalkRoadOverlapArea": 0.0,
+  "markingsOutsideRoadArea": 0.0,
+  "changedMeshes": {
+    "Asphalt": {
+      "vertices": 7162,
+      "triangles": 7200,
+      "solidAreaSourcePixels": 371696.6325928629,
+      "sha256": "3022560eb8682bdb309f7ed0468be10359e1e7a05e6d694567eb648aed9776fd"
+    },
+    "HospitalCirculation": {
+      "vertices": 1030,
+      "triangles": 1030,
+      "solidAreaSourcePixels": 15006.15016954374,
+      "sha256": "0ed2730498dcaaaa0e29b6f15326f68f8e5e953543a2eff02439aa13c856b1bf"
+    },
+    "SidewalkPaving": {
+      "vertices": 10800,
+      "triangles": 10800,
+      "solidAreaSourcePixels": 110616.89815318427,
+      "sha256": "1886c6959cd2c17824d04fa5684fb8093592becef3731ec6b68995d63e160ec6"
+    },
+    "Curb": {
+      "vertices": 21162,
+      "triangles": 21156,
+      "solidAreaSourcePixels": 56695.99981503554,
+      "sha256": "b9b5b200a2e754c752f2d5bcbcef244ff53320a310c20b7b1a901092eb290437",
+      "solidTriangleRange": [
+        4569,
+        17270
+      ]
+    },
+    "EdgeLines": {
+      "vertices": 14760,
+      "triangles": 14760,
+      "solidAreaSourcePixels": 28137.277321213267,
+      "sha256": "816019802da00baad7064ab66fe7ab2c582379f94b52674fa7be19fc885dd423"
+    },
+    "CenterDashes": {
+      "vertices": 11725,
+      "triangles": 10577,
+      "solidAreaSourcePixels": 4257.942095675952,
+      "sha256": "9e8dbdf61177283bdb0e3bd38ebaa8e159740c7c4088f09259f77b3a4a5309e2"
+    },
+    "Crosswalks": {
+      "vertices": 5157,
+      "triangles": 2797,
+      "solidAreaSourcePixels": 21300.10162911883,
+      "sha256": "ef2a23038a585adfa3e81ef32ba65a5dfca5fe447e77948f8dc002b7587958e0"
+    },
+    "SlabJoints": {
+      "vertices": 15048,
+      "triangles": 9630,
+      "solidAreaSourcePixels": 2663.882933575301,
+      "sha256": "80168d57eb8e3ecc5733df20e4c4f57737a841a3636ee987ea9ac4f835fa5974"
+    },
+    "HospitalIsland": {
+      "vertices": 192,
+      "triangles": 190,
+      "solidAreaSourcePixels": 1385.3032676613539,
+      "sha256": "1db5a0da0bd6a3cd394959226b0cf869a9caba5c91d43f6e4e88ed0d1765df90"
+    },
+    "MediansAndIsland": {
+      "vertices": 361,
+      "triangles": 355,
+      "solidAreaSourcePixels": 8646.943293544293,
+      "sha256": "78d64e563cd05ba225ad14be73a24c94d6890628ea90ba2d915231b6d5dfd378"
+    }
+  },
+  "changedSceneBlocks": [
+    457963639
+  ],
+  "sceneSha256": "a78bc19cdd68dd60d384e761572318c16c63e99f290804bef428438e7832453b",
+  "unmodifiedGeometryHashes": {
+    "BridgeDeck.asset": "53d18ca6efb058a3365bf366ff0de88b3c673384153d07aebe45fcc84ef5a866",
+    "BridgeJointsAndRails.asset": "b11bbc9845c85ce135834add469052b96bd1e10013c1f4553bd6646a29d119d1",
+    "CoastDeck.asset": "59a375d6a15720c5c32d2bc19748cfd1398199c9e06dcdad72a53e31e551a853",
+    "DrivewayPaving.asset": "1396331b930dd9deac8a7a9862bc8e21e6c9a83177c6a891c9ffac1063dae9e2",
+    "FootbridgeDeck.asset": "819f81ef485f663a6e4d8e9aa997103b870b3b86be9a5844224344e9f1695f9e",
+    "LandDatum.asset": "15f52526ca2b96a7b612eccc71d392c1549074ba956e4e48a9a6c8e1ee84e116",
+    "WaterDatum.asset": "d59a5e9ad9f28dff09c1d930587259ef7984cd7198e5528382d968c7c425bb9d"
+  },
+  "versions": {
+    "shapely": "2.1.2",
+    "earcut": "2.1.0"
+  },
+  "newRuntimeComponents": 0,
+  "newImages": 0
+}
