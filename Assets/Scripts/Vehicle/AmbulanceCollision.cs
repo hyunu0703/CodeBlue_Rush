@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>일반 차량 접촉의 미션 판정과 양쪽 차량의 넉백 및 경직을 연결한다</summary>
@@ -46,7 +46,7 @@ public sealed class AmbulanceCollision : MonoBehaviour
         LastCollisionSpeed = velocity.magnitude;
         int mission = report ? report.MissionId : 0;
         bool eligible = report && report.IsPatientOnBoard && !report.HasFatalCollision && ecg && ecg.isActiveAndEnabled && ecg.HasPatient && ecg.Value > 0f && transfer && transfer.isActiveAndEnabled && transfer.MissionId == mission && transfer.Status == HospitalTransfer.TransferStatus.Transporting;
-        bool fatal = LastCollisionSpeed >= 4f;
+        bool fatal = LastCollisionSpeed >= 5f;
         Vector2 direction = CollisionDirection(other, velocity - other.attachedRigidbody.linearVelocity);
         float duration = Mathf.Max(0.1f, stunDuration);
         float moveDuration = Mathf.Clamp(knockbackDuration, 0.02f, duration);

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using UnityEngine;
 
-/// <summary>현재 도시의 방향 차선 그래프에서 경로를 계산하고 읽기 전용 결과를 제공한다</summary>
+/// <summary>실제 도로 연결을 양방향으로 탐색하여 거리 기준 최단 경로를 제공한다</summary>
 [DisallowMultipleComponent]
 public sealed class NavigationRoute : MonoBehaviour
 {
@@ -19,8 +19,7 @@ public sealed class NavigationRoute : MonoBehaviour
     private readonly List<TrafficLane> lanes = new List<TrafficLane>();
     private readonly List<Vector3> points = new List<Vector3>();
     private readonly HashSet<TrafficLane> watched = new HashSet<TrafficLane>();
-    private readonly Dictionary<TrafficLane, TrafficLane> parents = new Dictionary<TrafficLane, TrafficLane>();
-    private readonly Queue<TrafficLane> queue = new Queue<TrafficLane>();
+    private readonly List<(TrafficLane lane, float from, float to)> sections = new List<(TrafficLane, float, float)>();
     private ReadOnlyCollection<TrafficLane> laneView;
     private ReadOnlyCollection<Vector3> pointView;
     private TrafficLane destinationLane;
@@ -29,6 +28,7 @@ public sealed class NavigationRoute : MonoBehaviour
     private Coroutine pending;
 
     public CityMap Map => map;
+    public Transform Player => player;
     public bool HasDestination { get; private set; }
     public TrafficLane DestinationLane => laneDestination ? destinationLane : null;
     public float DestinationDistance => laneDestination ? destinationDistance : 0f;
@@ -133,7 +133,7 @@ public sealed class NavigationRoute : MonoBehaviour
         Publish(RouteStatus.NoDestination);
     }
 
-    // 목적지 설정 또는 외부의 명시적 요청에서만 BFS를 실행한다
+    // 목적지 설정 또는 이동 갱신 시 거리 가중치로 최단 경로를 계산한다
     public bool Recalculate()
     {
         CancelPending();
@@ -161,6 +161,8 @@ public sealed class NavigationRoute : MonoBehaviour
         Origin = player.position;
         StartDistance = from;
         EndDistance = to;
+        start.TrySample(from, out Vector3 snappedOrigin, out _);
+        AddPoint(snappedOrigin);
         BuildPoints();
         foreach (TrafficLane lane in lanes)
         {
@@ -170,70 +172,118 @@ public sealed class NavigationRoute : MonoBehaviour
         return Publish(RouteStatus.Ready);
     }
 
-    // 실제 GetNext 간선만 사용하여 최소 차선 전환 횟수의 경로를 찾는다
+    // AI의 방향 차선은 유지하고 내비게이션에서만 역방향 탐색을 허용한다.
     private bool Search(TrafficLane start, float from, TrafficLane end, float to)
     {
-        parents.Clear();
-        queue.Clear();
-        parents.Add(start, null);
-        queue.Enqueue(start);
-        if (start == end && to >= from)
+        var index = new Dictionary<TrafficLane, int>();
+        var available = new List<TrafficLane>();
+        for (int i = 0; i < map.LaneCount; i++)
         {
-            lanes.Add(start);
-            return true;
+            TrafficLane lane = map.GetLane(i);
+            if (map.ContainsLane(lane) && lane.Length > 0f) { index.Add(lane, available.Count); available.Add(lane); }
         }
-        while (queue.Count > 0)
+        int source = available.Count * 2, target = source + 1, count = target + 1;
+        var graph = new List<(int node, float cost, TrafficLane lane, float from, float to)>[count];
+        for (int i = 0; i < count; i++) graph[i] = new List<(int, float, TrafficLane, float, float)>();
+        for (int i = 0; i < available.Count; i++)
         {
-            TrafficLane current = queue.Dequeue();
-            for (int i = 0; i < current.NextCount; i++)
+            TrafficLane lane = available[i];
+            graph[i * 2].Add((i * 2 + 1, lane.Length, lane, 0f, lane.Length));
+            graph[i * 2 + 1].Add((i * 2, lane.Length, lane, lane.Length, 0f));
+            for (int n = 0; n < lane.NextCount; n++)
             {
-                TrafficLane next = current.GetNext(i);
-                if (!CanTraverse(current, next))
-                    continue;
-                // 동일 차선 뒤쪽 목적지는 정방향 순환으로 재진입해야 한다
-                if (next == end)
-                {
-                    lanes.Add(end);
-                    for (TrafficLane step = current; step; step = parents[step])
-                        lanes.Add(step);
-                    lanes.Reverse();
-                    return true;
-                }
-                if (parents.ContainsKey(next))
-                    continue;
-                parents.Add(next, current);
-                queue.Enqueue(next);
+                TrafficLane next = lane.GetNext(n);
+                if (!next || !index.TryGetValue(next, out int j) || !CanTraverse(lane, next)) continue;
+                float gap = Vector3.Distance(lane.EndPoint, next.StartPoint);
+                graph[i * 2 + 1].Add((j * 2, gap, null, 0f, 0f));
+                graph[j * 2].Add((i * 2 + 1, gap, null, 0f, 0f));
             }
         }
-        return false;
+        start.TrySample(from, out Vector3 origin, out _);
+        end.TrySample(to, out Vector3 destination, out _);
+        RoadChunk startRoad = start.GetComponentInParent<RoadChunk>();
+        RoadChunk endRoad = end.GetComponentInParent<RoadChunk>();
+        for (int i = 0; i < available.Count; i++)
+        {
+            TrafficLane lane = available[i];
+            RoadChunk road = lane.GetComponentInParent<RoadChunk>();
+            bool starts = (lane == start || (startRoad && road == startRoad)) && lane.TryProject(origin, out _, out float startOffset) && startOffset <= 4f;
+            bool ends = (lane == end || (endRoad && road == endRoad)) && lane.TryProject(destination, out _, out float endOffset) && endOffset <= 4f;
+            float entry = 0, exit = 0, entryGap = 0, exitGap = 0;
+            if (starts)
+            {
+                lane.TryProject(origin, out entry, out float offset); entryGap = Mathf.Sqrt(offset);
+                graph[source].Add((i * 2, entry + entryGap, lane, entry, 0f));
+                graph[source].Add((i * 2 + 1, lane.Length - entry + entryGap, lane, entry, lane.Length));
+            }
+            if (ends)
+            {
+                lane.TryProject(destination, out exit, out float offset); exitGap = Mathf.Sqrt(offset);
+                graph[i * 2].Add((target, exit + exitGap, lane, 0f, exit));
+                graph[i * 2 + 1].Add((target, lane.Length - exit + exitGap, lane, lane.Length, exit));
+            }
+            if (starts && ends) graph[source].Add((target, Mathf.Abs(exit - entry) + entryGap + exitGap, lane, entry, exit));
+        }
+        var costs = new float[count];
+        var previous = new int[count];
+        var steps = new (TrafficLane lane, float from, float to)[count];
+        for (int i = 0; i < count; i++) { costs[i] = float.PositiveInfinity; previous[i] = -1; }
+        var pendingNodes = new SortedSet<(float cost, int node)>();
+        costs[source] = 0f; pendingNodes.Add((0f, source));
+        while (pendingNodes.Count > 0)
+        {
+            var current = pendingNodes.Min; pendingNodes.Remove(current);
+            if (current.cost > costs[current.node]) continue;
+            if (current.node == target) break;
+            foreach (var edge in graph[current.node])
+            {
+                float cost = current.cost + edge.cost;
+                if (cost >= costs[edge.node]) continue;
+                costs[edge.node] = cost; previous[edge.node] = current.node;
+                steps[edge.node] = (edge.lane, edge.from, edge.to);
+                pendingNodes.Add((cost, edge.node));
+            }
+        }
+        if (previous[target] < 0) return false;
+        for (int node = target; node != source; node = previous[node])
+            if (steps[node].lane) sections.Add(steps[node]);
+        sections.Reverse();
+        for (int i = sections.Count - 1; i > 0; i--)
+        {
+            var before = sections[i - 1];
+            var after = sections[i];
+            if (before.lane != after.lane || Mathf.Abs(before.to - after.from) > 0.0001f) continue;
+            sections[i - 1] = (before.lane, before.from, after.to);
+            sections.RemoveAt(i);
+        }
+        foreach (var section in sections) lanes.Add(section.lane);
+        return true;
     }
 
-    // 끊어진 연결과 비활성 및 외부 차선을 제외한다
     private bool CanTraverse(TrafficLane from, TrafficLane to)
     {
         return map.ContainsLane(from) && map.ContainsLane(to) && to.Length > 0f && Vector3.Distance(from.EndPoint, to.StartPoint) <= RoadConnection.PositionTolerance && Vector3.Dot(from.EndDirection, to.StartDirection) >= 0.98f;
     }
 
-    // 실제 차선 점을 시작 및 목적지 거리로 잘라 UI용 월드 좌표로 제공한다
+    // 각 구간의 진행 방향에 따라 실제 차선 점을 정순 또는 역순으로 표시한다.
     private void BuildPoints()
     {
-        for (int i = 0; i < lanes.Count; i++)
+        foreach (var section in sections)
         {
-            TrafficLane lane = lanes[i];
-            float from = i == 0 ? StartDistance : 0f;
-            float to = i == lanes.Count - 1 ? EndDistance : lane.Length;
-            lane.TrySample(from, out Vector3 first, out _);
-            AddPoint(first);
+            TrafficLane lane = section.lane;
+            lane.TrySample(section.from, out Vector3 first, out _); AddPoint(first);
+            var interior = new List<Vector3>();
             float distance = 0f;
             for (int p = 1; p < lane.PointCount; p++)
             {
                 distance += Vector3.Distance(lane.GetWorldPoint(p - 1), lane.GetWorldPoint(p));
-                if (distance > from && distance < to)
-                    AddPoint(lane.GetWorldPoint(p));
+                if (distance > Mathf.Min(section.from, section.to) && distance < Mathf.Max(section.from, section.to)) interior.Add(lane.GetWorldPoint(p));
             }
-            lane.TrySample(to, out Vector3 last, out _);
-            AddPoint(last);
+            if (section.to < section.from) interior.Reverse();
+            foreach (Vector3 point in interior) AddPoint(point);
+            lane.TrySample(section.to, out Vector3 last, out _); AddPoint(last);
         }
+        AddPoint(Destination);
     }
 
     // 연결 경계에서 중복된 좌표를 제거한다
@@ -256,9 +306,12 @@ public sealed class NavigationRoute : MonoBehaviour
             if (i == lanes.Count - 1)
                 continue;
             bool connected = false;
+            TrafficLane next = lanes[i + 1];
             for (int n = 0; n < lane.NextCount; n++)
-                connected |= lane.GetNext(n) == lanes[i + 1];
-            if (!connected || !CanTraverse(lane, lanes[i + 1]))
+                connected |= lane.GetNext(n) == next && CanTraverse(lane, next);
+            for (int n = 0; n < next.NextCount; n++)
+                connected |= next.GetNext(n) == lane && CanTraverse(next, lane);
+            if (!connected)
                 return Recalculate();
         }
         return true;
@@ -307,8 +360,7 @@ public sealed class NavigationRoute : MonoBehaviour
         watched.Clear();
         lanes.Clear();
         points.Clear();
-        parents.Clear();
-        queue.Clear();
+        sections.Clear();
         Origin = Vector3.zero;
         StartDistance = 0f;
         EndDistance = 0f;
