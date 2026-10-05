@@ -6,6 +6,7 @@ public sealed class CitizenAI : MonoBehaviour
 {
     [SerializeField, Min(0.1f)] private float speed = 1.5f;
     [SerializeField, Min(1f)] private float jaywalkWait = 6f;
+    [SerializeField] private SpriteRenderer skin;
     private CitizenSpawner owner;
     private SidewalkPath path;
     private SidewalkPath across;
@@ -20,6 +21,13 @@ public sealed class CitizenAI : MonoBehaviour
     internal int Slot { get; set; } = -1;
     internal SidewalkPath Path => path;
     internal bool IsCrossing => stage >= 3;
+
+    // 풀에서 다시 생성될 때도 같은 Renderer의 외형만 교체한다
+    internal void SetSprite(Sprite sprite)
+    {
+        if (skin && sprite)
+            skin.sprite = sprite;
+    }
 
     // 풀에서 꺼낸 시민의 이전 경로와 횡단 상태를 초기화한다
     internal void Place(CitizenSpawner source, SidewalkPath route, Vector3 position, int segment, int direction, bool jaywalk)

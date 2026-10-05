@@ -10,6 +10,7 @@ public sealed class CitizenSpawner : MonoBehaviour
     [SerializeField] private Transform player;
     [SerializeField] private Camera view;
     [SerializeField] private CitizenAI prefab;
+    [SerializeField] private Sprite[] sprites = System.Array.Empty<Sprite>();
     [SerializeField, Range(0, 64)] private int maxCitizens = 24;
     [SerializeField, Min(1f)] private float spawnNear = 16f;
     [SerializeField, Min(1f)] private float spawnFar = 38f;
@@ -23,6 +24,9 @@ public sealed class CitizenSpawner : MonoBehaviour
     private CityMap layout;
     private Coroutine routine;
     private uint random;
+    private int[] spriteOrder;
+    private int spriteIndex;
+    private int lastSprite = -1;
     internal CityMap Map => map;
     public int ActiveCount => active.Count;
     public int PooledCount => pool.Count;
@@ -103,6 +107,39 @@ public sealed class CitizenSpawner : MonoBehaviour
         return chance > 0f && (chance >= 1f || Next(100000) < chance * 100000f);
     }
 
+    // 모든 외형을 한 번씩 섞어 사용하고 묶음 경계의 연속 중복도 피한다
+    private Sprite NextSprite()
+    {
+        if (sprites == null || sprites.Length == 0)
+            return null;
+        if (spriteOrder == null || spriteOrder.Length != sprites.Length)
+        {
+            spriteOrder = new int[sprites.Length];
+            spriteIndex = sprites.Length;
+        }
+        if (spriteIndex >= spriteOrder.Length)
+        {
+            for (int i = 0; i < spriteOrder.Length; i++)
+                spriteOrder[i] = i;
+            for (int i = spriteOrder.Length - 1; i > 0; i--)
+            {
+                int other = Next(i + 1);
+                int value = spriteOrder[i];
+                spriteOrder[i] = spriteOrder[other];
+                spriteOrder[other] = value;
+            }
+            if (spriteOrder.Length > 1 && spriteOrder[0] == lastSprite)
+            {
+                int other = 1 + Next(spriteOrder.Length - 1);
+                spriteOrder[0] = spriteOrder[other];
+                spriteOrder[other] = lastSprite;
+            }
+            spriteIndex = 0;
+        }
+        lastSprite = spriteOrder[spriteIndex++];
+        return sprites[lastSprite];
+    }
+
     internal bool SirenNearby(Vector3 point)
     {
         return siren && siren.isActiveAndEnabled && siren.IsOn && (siren.transform.position - point).sqrMagnitude < 225f;
@@ -178,6 +215,7 @@ public sealed class CitizenSpawner : MonoBehaviour
             citizen = Instantiate(prefab, transform);
             citizen.gameObject.SetActive(false);
         }
+        citizen.SetSprite(NextSprite());
         citizen.gameObject.SetActive(true);
         int direction = Next(2) == 0 ? 1 : -1;
         citizen.Place(this, path, point, segment, direction, Roll(0.12f));
