@@ -19,6 +19,7 @@ public sealed class VehicleAI : MonoBehaviour
     [SerializeField, Min(5f)] private float cutInDistance = 18f;
     [SerializeField] private bool allowLaneChanges = true;
     [SerializeField, Range(0f, 1f)] private float signalViolationChance = 0.05f;
+    [SerializeField] private SpriteRenderer skin;
     private VehicleStopZone stopZone;
     private TrafficSignalController crossing;
     private bool violateSignal;
@@ -34,6 +35,8 @@ public sealed class VehicleAI : MonoBehaviour
     private TrafficSpawner owner;
     private Rigidbody2D body;
     private CircleCollider2D shape;
+    private float frontExtent = 0.75f;
+    private float halfWidth = 0.425f;
     private int choice;
     private float stunUntil;
     private float knockbackUntil;
@@ -47,12 +50,29 @@ public sealed class VehicleAI : MonoBehaviour
     public float Speed { get; private set; }
     public TrafficLane NextLane => owner ? Following(owner.Map, Lane, choice) : null;
     internal Collider2D Shape => shape;
+    internal TrafficSpawner Spawner => owner;
+    internal VehicleStopZone WaitingZone => !enteredIntersection && !IsStunned && Speed < 0.1f ? stopZone : null;
+
+    // 기존 충돌 크기에 맞춰 외형을 정규화하고 풀 재사용 시에도 교체한다
+    internal void SetSprite(Sprite sprite)
+    {
+        if (!skin || !sprite)
+            return;
+        skin.sprite = sprite;
+        Vector3 size = sprite.bounds.size;
+        float scale = Mathf.Min(0.85f / Mathf.Max(size.x, 0.01f), 1.5f / Mathf.Max(size.y, 0.01f));
+        skin.transform.localScale = new Vector3(scale, scale, 1f);
+        skin.transform.localPosition = -sprite.bounds.center * scale;
+        frontExtent = size.y * scale * 0.5f * Mathf.Abs(transform.lossyScale.y);
+        halfWidth = size.x * scale * 0.5f * Mathf.Abs(transform.lossyScale.x);
+    }
 
     // 차량의 물리 참조를 한 번 캐싱한다
     private void Awake()
     {
         body = GetComponent<Rigidbody2D>();
         shape = GetComponent<CircleCollider2D>();
+        frontExtent = Mathf.Max(frontExtent, shape.radius * Mathf.Abs(transform.lossyScale.y));
     }
 
     // 외부 비활성화도 생성 책임에 알려 참조를 즉시 정리한다
@@ -216,12 +236,8 @@ public sealed class VehicleAI : MonoBehaviour
     // 직접 연결된 짧은 경로만 따라 정지선까지 남은 거리를 제한한다
     private float SignalClearance()
     {
-        if (enteredIntersection)
-        {
-            if (crossing && TrafficSignalController.ForLane(Lane) == crossing)
-                return float.PositiveInfinity;
-            ClearSignal();
-        }
+        if (enteredIntersection && crossing && TrafficSignalController.ForLane(Lane) == crossing)
+            return float.PositiveInfinity;
         TrafficLane ahead = Lane;
         float offset = -Distance;
         for (int hop = 0; ahead && hop < 8 && offset < 20f; hop++)
@@ -230,6 +246,9 @@ public sealed class VehicleAI : MonoBehaviour
             VehicleStopZone zone = signal ? signal.Entry(ahead) : null;
             if (zone)
             {
+                // 진입 차선 이전에 정지선을 통과한 예약도 교차로 이탈까지 유지한다
+                if (enteredIntersection && stopZone == zone)
+                    return float.PositiveInfinity;
                 if (stopZone != zone)
                 {
                     ClearSignal();
@@ -237,10 +256,24 @@ public sealed class VehicleAI : MonoBehaviour
                     crossing = signal;
                     violateSignal = owner.Roll(signalViolationChance);
                 }
-                float remaining = Mathf.Max(0f, offset + zone.StopDistance);
+                float remaining = Mathf.Max(0f, offset + zone.StopDistance - frontExtent - 0.08f);
+                // 곡선 진입에서는 실제 차체 앞 모서리와 정지선 평면의 거리도 제한한다
+                if (remaining < 2f)
+                {
+                    float angle = body.rotation * Mathf.Deg2Rad;
+                    Vector2 forward = new Vector2(-Mathf.Sin(angle), Mathf.Cos(angle));
+                    Vector2 right = new Vector2(forward.y, -forward.x);
+                    Vector2 direction = zone.Lane.StartDirection;
+                    if (Vector2.Dot(forward, direction) > 0.5f)
+                    {
+                        float extent = frontExtent * Mathf.Abs(Vector2.Dot(forward, direction)) + halfWidth * Mathf.Abs(Vector2.Dot(right, direction));
+                        float plane = zone.StopDistance - Vector2.Dot(body.position - (Vector2)zone.Lane.StartPoint, direction) - extent - 0.12f;
+                        remaining = Mathf.Min(remaining, Mathf.Max(0f, plane));
+                    }
+                }
                 signalDistance = remaining;
                 TrafficLane route = Following(owner.Map, ahead, choice);
-                bool commit = remaining <= Speed * Time.fixedDeltaTime + 0.05f && Lane == ahead;
+                bool commit = remaining <= Speed * Time.fixedDeltaTime + 0.05f;
                 bool free = signal.TryEnter(this, zone, route, violateSignal, commit);
                 if (free && commit)
                     enteredIntersection = true;

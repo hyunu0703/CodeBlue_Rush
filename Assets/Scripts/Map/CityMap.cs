@@ -63,8 +63,7 @@ public sealed class CityMap : MonoBehaviour
                 error = "고정 맵의 차선이 누락되었거나 중복되었습니다.";
                 return false;
             }
-            if (!useRoadGrid)
-                CacheLane(lane);
+            CacheLane(lane);
         }
         foreach (SidewalkPath path in fixedSidewalks)
             if (path)
@@ -175,6 +174,26 @@ public sealed class CityMap : MonoBehaviour
     private Vector2Int Cell(Vector3 position)
     {
         return new Vector2Int(Mathf.FloorToInt(position.x / cellSize), Mathf.FloorToInt(position.y / cellSize));
+    }
+
+    // 기존 공간 캐시에서 주변 차선만 중복 없이 수집한다
+    public void CollectLanes(Vector3 position, float radius, HashSet<TrafficLane> result)
+    {
+        result.Clear();
+        if (!IsReady || !float.IsFinite(radius) || radius <= 0f)
+            return;
+        Vector3 local = transform.InverseTransformPoint(position);
+        Vector3 right = transform.InverseTransformVector(Vector3.right * radius);
+        Vector3 up = transform.InverseTransformVector(Vector3.up * radius);
+        Vector3 extent = new Vector3(Mathf.Abs(right.x) + Mathf.Abs(up.x), Mathf.Abs(right.y) + Mathf.Abs(up.y), 0f);
+        Vector2Int min = Cell(local - extent);
+        Vector2Int max = Cell(local + extent);
+        for (int y = min.y; y <= max.y; y++)
+            for (int x = min.x; x <= max.x; x++)
+                if (laneCells.TryGetValue(new Vector2Int(x, y), out List<TrafficLane> lanes))
+                    foreach (TrafficLane lane in lanes)
+                        if (ContainsLane(lane))
+                            result.Add(lane);
     }
 
     // 저장된 주변 셀만 검사하며 Scene 검색이나 매번 목록 생성을 하지 않는다.

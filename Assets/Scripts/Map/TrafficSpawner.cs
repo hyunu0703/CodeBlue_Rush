@@ -10,6 +10,8 @@ public sealed class TrafficSpawner : MonoBehaviour
     [SerializeField] private Transform player;
     [SerializeField] private Camera view;
     [SerializeField] private VehicleAI prefab;
+    [SerializeField] private Sprite[] sprites = System.Array.Empty<Sprite>();
+    [SerializeField] private int[] spriteWeights = { 35, 25, 15, 12, 8, 5 };
     [SerializeField, Range(0, 100)] private int maxVehicles = 16;
     [SerializeField, Min(5f)] private float spawnNear = 18f;
     [SerializeField, Min(10f)] private float spawnFar = 40f;
@@ -22,8 +24,16 @@ public sealed class TrafficSpawner : MonoBehaviour
     private readonly Dictionary<Collider2D, VehicleAI> vehicles = new Dictionary<Collider2D, VehicleAI>();
     private readonly Collider2D[] hits = new Collider2D[32];
     private readonly Collider2D[] leaderHits = new Collider2D[32];
+    private readonly HashSet<TrafficLane> nearby = new HashSet<TrafficLane>();
+    private readonly HashSet<TrafficLane> preferredLanes = new HashSet<TrafficLane>();
+    private readonly List<TrafficLane> forwardLanes = new List<TrafficLane>();
+    private readonly List<TrafficLane> reverseLanes = new List<TrafficLane>();
+    private readonly List<TrafficLane> otherLanes = new List<TrafficLane>();
     private int leaderCount;
     private Rigidbody2D ambulanceBody;
+    private Collider2D ambulanceShape;
+    private TrafficLane ambulanceLane;
+    private float ambulanceAlong;
     private SirenController siren;
     private CitizenSpawner citizens;
     private ContactFilter2D filter;
@@ -31,6 +41,8 @@ public sealed class TrafficSpawner : MonoBehaviour
     private CityMap layout;
     private Coroutine routine;
     private uint random;
+    private int lastSprite = -1;
+    private int spriteRun;
     public CityMap Map => map;
     public int ActiveCount => active.Count;
     public int PooledCount => pool.Count;
@@ -75,6 +87,7 @@ public sealed class TrafficSpawner : MonoBehaviour
     {
         Unbind();
         ambulanceBody = player ? player.GetComponent<Rigidbody2D>() : null;
+        ambulanceShape = player ? player.GetComponent<Collider2D>() : null;
         siren = player ? player.GetComponent<SirenController>() : null;
         if (spawnCitizens && Application.isPlaying && map && player)
         {
@@ -134,6 +147,59 @@ public sealed class TrafficSpawner : MonoBehaviour
         return (int)((random >> 8) % (uint)count);
     }
 
+    // 가중치에 따라 생성 시 한 번 선택하며 같은 종류의 세 번 연속 생성을 피한다
+    private Sprite NextSprite()
+    {
+        if (sprites == null || sprites.Length == 0)
+            return null;
+        int total = 0;
+        for (int i = 0; i < sprites.Length; i++)
+            if (sprites[i] && (i != lastSprite || spriteRun < 2))
+                total += i < spriteWeights.Length ? Mathf.Max(0, spriteWeights[i]) : 1;
+        if (total == 0)
+            return lastSprite >= 0 && lastSprite < sprites.Length ? sprites[lastSprite] : null;
+        int choice = Next(total);
+        for (int i = 0; i < sprites.Length; i++)
+        {
+            if (!sprites[i] || (i == lastSprite && spriteRun >= 2))
+                continue;
+            choice -= i < spriteWeights.Length ? Mathf.Max(0, spriteWeights[i]) : 1;
+            if (choice >= 0)
+                continue;
+            spriteRun = i == lastSprite ? spriteRun + 1 : 1;
+            lastSprite = i;
+            return sprites[i];
+        }
+        return null;
+    }
+
+    // 생성 지점의 실제 차체 겹침과 같은 방향 차량의 앞뒤 간격을 함께 확인한다
+    private bool SpawnSpaceFree(Vector3 point, Vector3 direction)
+    {
+        int count = Physics2D.OverlapCircle(point, 4.5f, filter, hits);
+        if (count == hits.Length)
+            return false;
+        for (int i = 0; i < count; i++)
+        {
+            Collider2D hit = hits[i];
+            if (!hit)
+                continue;
+            Rigidbody2D body = hit.attachedRigidbody;
+            if (ambulanceBody && body == ambulanceBody)
+                return false;
+            if (!vehicles.TryGetValue(hit, out VehicleAI other) || !other || !other.isActiveAndEnabled)
+                continue;
+            Vector3 gap = other.transform.position - point;
+            if (gap.sqrMagnitude < 1f)
+                return false;
+            float ahead = Vector3.Dot(gap, direction);
+            float lateral = Mathf.Abs(gap.x * direction.y - gap.y * direction.x);
+            if (lateral < 0.9f && Mathf.Abs(ahead) < (ahead >= 0f ? 4f : 3f))
+                return false;
+        }
+        return true;
+    }
+
     // 차량 전체 탐색 없이 근처 콜라이더만 확인한다
     public bool IsSpaceFree(Vector3 position, VehicleAI ignore = null)
     {
@@ -150,6 +216,25 @@ public sealed class TrafficSpawner : MonoBehaviour
     internal void ScanLeaders(Vector3 origin, float range)
     {
         leaderCount = Physics2D.OverlapCircle(origin, range + 1.5f, filter, leaderHits);
+        ambulanceLane = null;
+        if (ambulanceShape && ambulanceShape.enabled && ambulanceBody && ambulanceBody.gameObject.activeInHierarchy && map)
+            map.TryLocate(ambulanceBody.position, 0.7f, out ambulanceLane, out ambulanceAlong);
+    }
+
+    // 기존 콜라이더 캐시에서 정지선 밖 대기 차량만 상수 시간에 구분한다
+    internal bool IsWaitingOutsideSignal(Collider2D shape, Bounds bounds)
+    {
+        if (!vehicles.TryGetValue(shape, out VehicleAI vehicle) || !vehicle)
+            return false;
+        VehicleStopZone zone = vehicle.WaitingZone;
+        if (!zone || !zone.Lane)
+            return false;
+        Vector3 direction = zone.Lane.StartDirection;
+        Vector3 gap = bounds.center - zone.Lane.StartPoint;
+        if (Mathf.Abs(gap.x * direction.y - gap.y * direction.x) > 0.7f)
+            return false;
+        float extent = Mathf.Abs(direction.x) * bounds.extents.x + Mathf.Abs(direction.y) * bounds.extents.y;
+        return Vector3.Dot(gap, direction) + extent <= zone.StopDistance;
     }
 
     // 기존 원형 Probe와 같은 거리 조건을 캐싱한 콜라이더에서 판별한다
@@ -168,6 +253,9 @@ public sealed class TrafficSpawner : MonoBehaviour
         for (int i = 0; i < count; i++)
         {
             Collider2D hit = candidates[i];
+            // 같은 실제 경로의 구급차도 사이렌 여부와 무관하게 기존 앞차 간격을 적용한다
+            if (hit && hit == ambulanceShape && ambulanceLane == sampledLane && (sampledLane != self.Lane || ambulanceAlong > self.Distance) && ((Vector2)position - hit.ClosestPoint(position)).sqrMagnitude <= 2.25f)
+                return true;
             if (!hit || !vehicles.TryGetValue(hit, out VehicleAI other) || !other || other == self || !other.isActiveAndEnabled || (other.Lane != sampledLane && other.TargetLane != sampledLane) || ((Vector2)position - hit.ClosestPoint(position)).sqrMagnitude > 2.25f)
                 continue;
             if (other.Lane != self.Lane || other.Distance > self.Distance)
@@ -256,6 +344,12 @@ public sealed class TrafficSpawner : MonoBehaviour
         float distance = Vector2.Distance(player.position, point);
         if (distance < spawnNear || distance > spawnFar)
             return false;
+        return OutsideView(point);
+    }
+
+    // 화면 여유 영역 밖인지 생성과 먼 교통 정리에 같은 기준을 사용한다
+    private bool OutsideView(Vector3 point)
+    {
         Vector3 viewport = view.WorldToViewportPoint(point);
         return viewport.z > 0f && (viewport.x < -0.2f || viewport.x > 1.2f || viewport.y < -0.2f || viewport.y > 1.2f);
     }
@@ -267,7 +361,7 @@ public sealed class TrafficSpawner : MonoBehaviour
         int routeChoice = Next(int.MaxValue);
         if (!TrafficSignalController.CanSpawn(lane, distance))
             return false;
-        if (!isActiveAndEnabled || !map || !prefab || active.Count >= maxVehicles || !map.ContainsLane(lane) || !float.IsFinite(distance) || distance < 0f || distance > lane.Length || !VehicleAI.Following(map, lane, routeChoice) || !lane.TrySample(distance, out Vector3 point, out _) || !CanSpawnAt(point) || !IsSpaceFree(point))
+        if (!isActiveAndEnabled || !map || !prefab || active.Count >= maxVehicles || !map.ContainsLane(lane) || !float.IsFinite(distance) || distance < 2f || distance > lane.Length - 2f || !VehicleAI.Following(map, lane, routeChoice) || !lane.TrySample(distance, out Vector3 point, out Vector3 direction) || !CanSpawnAt(point) || !SpawnSpaceFree(point, direction))
             return false;
         while (pool.Count > 0 && !vehicle)
             vehicle = pool.Pop();
@@ -276,6 +370,7 @@ public sealed class TrafficSpawner : MonoBehaviour
             vehicle = Instantiate(prefab, transform);
             vehicle.gameObject.SetActive(false);
         }
+        vehicle.SetSprite(NextSprite());
         vehicle.gameObject.SetActive(true);
         vehicle.Place(this, lane, distance, routeChoice);
         vehicle.Slot = active.Count;
@@ -310,6 +405,36 @@ public sealed class TrafficSpawner : MonoBehaviour
         }
     }
 
+    // 차선의 실제 방향으로 주변 생성 후보를 분류한다
+    private Vector3 CollectSpawnLanes()
+    {
+        Vector3 heading = player.up;
+        if (map.TryLocate(player.position, 2f, out TrafficLane current, out float along))
+            current.TrySample(along, out _, out heading);
+        forwardLanes.Clear();
+        reverseLanes.Clear();
+        otherLanes.Clear();
+        preferredLanes.Clear();
+        map.CollectLanes(player.position, spawnFar, nearby);
+        foreach (TrafficLane lane in nearby)
+        {
+            if (lane.Length < 4f || !lane.TryProject(player.position, out float distance, out float offset) || offset > spawnFar * spawnFar || !lane.TrySample(distance, out Vector3 point, out Vector3 direction) || !TrafficSignalController.CanSpawn(lane, lane.Length * 0.5f))
+                continue;
+            float dot = Vector3.Dot(heading, direction);
+            Vector3 gap = point - player.position;
+            float lateral = Mathf.Abs(gap.x * heading.y - gap.y * heading.x);
+            if (lateral < 3f && dot > 0.7f)
+                forwardLanes.Add(lane);
+            else if (lateral < 3f && dot < -0.7f)
+                reverseLanes.Add(lane);
+            else
+                otherLanes.Add(lane);
+        }
+        preferredLanes.UnionWith(forwardLanes);
+        preferredLanes.UnionWith(reverseLanes);
+        return heading;
+    }
+
     // 간헐적인 정리와 고정 횟수의 주변 격자 샘플링으로 차량 수를 유지한다
     private IEnumerator Maintain()
     {
@@ -319,31 +444,43 @@ public sealed class TrafficSpawner : MonoBehaviour
             if (!map || !map.IsReady || !player || !prefab)
                 continue;
             float radius = Mathf.Max(despawnDistance, spawnFar + 5f);
+            Vector3 heading = CollectSpawnLanes();
+            int forward = 0;
+            int reverse = 0;
+            int other = 0;
             for (int i = active.Count - 1; i >= 0; i--)
             {
                 VehicleAI vehicle = active[i];
-                if (!vehicle || !vehicle.isActiveAndEnabled || !map.ContainsLane(vehicle.Lane) || (vehicle.transform.position - player.position).sqrMagnitude > radius * radius || active.Count > maxVehicles)
+                if (!vehicle || !vehicle.isActiveAndEnabled || !map.ContainsLane(vehicle.Lane) || (vehicle.transform.position - player.position).sqrMagnitude > radius * radius || active.Count > maxVehicles || (preferredLanes.Count > 0 && active.Count >= Mathf.Max(1, maxVehicles - 3) && !preferredLanes.Contains(vehicle.Lane) && view && view.isActiveAndEnabled && OutsideView(vehicle.transform.position)))
                     Release(vehicle);
+                else if (vehicle.Lane.TrySample(vehicle.Distance, out Vector3 point, out Vector3 direction))
+                {
+                    if (!preferredLanes.Contains(vehicle.Lane)) other++;
+                    Vector3 gap = point - player.position;
+                    if (gap.sqrMagnitude <= spawnFar * spawnFar && Mathf.Abs(gap.x * heading.y - gap.y * heading.x) < 3f)
+                    {
+                        float dot = Vector3.Dot(heading, direction);
+                        if (dot > 0.7f) forward++;
+                        else if (dot < -0.7f) reverse++;
+                    }
+                }
             }
-            Vector3 local = map.transform.InverseTransformPoint(player.position);
-            int cx = Mathf.RoundToInt(local.x / map.CellSize);
-            int cy = Mathf.RoundToInt(local.y / map.CellSize);
-            int cells = Mathf.CeilToInt(spawnFar / map.CellSize);
             int added = 0;
             for (int attempt = 0; attempt < attempts && active.Count < maxVehicles && added < 3; attempt++)
             {
-                TrafficLane lane;
-                if (map.UsesRoadGrid)
+                List<TrafficLane> candidates = forward < reverse || (forward == reverse && Next(2) == 0) ? forwardLanes : reverseLanes;
+                if ((attempt % 6 == 5 && other < maxVehicles / 4) || candidates.Count == 0)
+                    candidates = otherLanes.Count > 0 ? otherLanes : (forwardLanes.Count > 0 ? forwardLanes : reverseLanes);
+                if (candidates.Count == 0)
+                    break;
+                TrafficLane lane = candidates[Next(candidates.Count)];
+                if (TrySpawn(lane, lane.Length * (0.05f + Next(900) / 1000f), out VehicleAI vehicle))
                 {
-                    RoadChunk road = map.GetRoad(cx + Next(cells * 2 + 1) - cells, cy + Next(cells * 2 + 1) - cells);
-                    if (!road || road.LaneCount == 0)
-                        continue;
-                    lane = road.GetLane(Next(road.LaneCount));
-                }
-                else
-                    lane = map.LaneCount > 0 ? map.GetLane(Next(map.LaneCount)) : null;
-                if (lane && TrySpawn(lane, lane.Length * (0.15f + Next(700) / 1000f), out _))
                     added++;
+                    if (candidates == forwardLanes) forward++;
+                    else if (candidates == reverseLanes) reverse++;
+                    else other++;
+                }
             }
         }
     }

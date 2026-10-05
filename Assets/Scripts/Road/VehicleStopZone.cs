@@ -6,7 +6,8 @@ public sealed class VehicleStopZone : MonoBehaviour
 {
     [SerializeField] private TrafficSignalController signal;
     [SerializeField] private TrafficLane lane;
-    [SerializeField, Min(0f)] private float stopDistance = 4f;
+    [SerializeField] private float stopDistance = 4f;
+    [SerializeField] private Transform stopLine;
     [UnityEngine.Serialization.FormerlySerializedAs("light")]
     [SerializeField] private SpriteRenderer signalLamp;
     [SerializeField] private Transform crosswalkStart;
@@ -15,7 +16,7 @@ public sealed class VehicleStopZone : MonoBehaviour
     [SerializeField] private Transform pedestrianWaitPointB;
     public TrafficSignalController Signal => signal;
     public TrafficLane Lane => lane;
-    public float StopDistance => Mathf.Max(0f, stopDistance - 1.1f);
+    public float StopDistance => stopLine && lane ? Vector3.Dot(stopLine.position - lane.StartPoint, lane.StartDirection) : stopDistance;
     public bool IsGreen => isActiveAndEnabled && signal && signal.IsGreen(this);
     public Transform CrosswalkStart => crosswalkStart;
     public Transform CrosswalkEnd => crosswalkEnd;

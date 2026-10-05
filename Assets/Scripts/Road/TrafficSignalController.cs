@@ -201,10 +201,12 @@ public sealed class TrafficSignalController : MonoBehaviour
             Collider2D other = hits[i];
             if (other == vehicle.Shape || !other.attachedRigidbody)
                 continue;
-            bool inside = Vector2.Distance(other.attachedRigidbody.position, transform.position) < 5.5f;
-            Vector3 gap = other.bounds.center - vehicle.transform.position;
+            Bounds bounds = other.bounds;
+            bool waiting = vehicle.Spawner && vehicle.Spawner.IsWaitingOutsideSignal(other, bounds);
+            bool inside = Vector2.Distance(other.attachedRigidbody.position, transform.position) < 5.5f && !waiting;
+            Vector3 gap = bounds.center - vehicle.transform.position;
             bool ahead = Vector3.Dot(gap, zone.Lane.StartDirection) > 0f;
-            if ((!occupants.ContainsKey(other) && inside) || (ahead && gap.sqrMagnitude < 6.25f))
+            if (!waiting && ((!occupants.ContainsKey(other) && inside) || (ahead && gap.sqrMagnitude < 6.25f)))
                 return false;
         }
         if (commit && !occupants.ContainsKey(vehicle.Shape))

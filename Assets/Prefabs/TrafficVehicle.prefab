@@ -125,6 +125,7 @@ MonoBehaviour:
   cutInDistance: 18
   allowLaneChanges: 1
   signalViolationChance: 0
+  skin: {fileID: 3720562403438822887}
 --- !u!1 &3167608248802999757
 GameObject:
   m_ObjectHideFlags: 0
