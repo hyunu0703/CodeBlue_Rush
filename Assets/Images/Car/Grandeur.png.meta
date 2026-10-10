@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: daac91c54efcb6d49a0883d5c77c80e5
+guid: 1c1788b9ef9ffb3439dbe6a8fda70db4
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -1075306399497057574
-    second: Ambulance_300x500_0
+      213: 1999813901246675288
+    second: HyundaiGrandeur_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Ambulance_300x500_0
+      name: HyundaiGrandeur_0
       rect:
         serializedVersion: 2
-        x: 6
-        y: 19
-        width: 284
-        height: 472
+        x: 25
+        y: 18
+        width: 269
+        height: 463
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: ada0641e68eb311f0800000000000000
-      internalID: -1075306399497057574
+      spriteID: 85932b0d524c0cb10800000000000000
+      internalID: 1999813901246675288
       vertices: []
       indices: 
       edges: []
@@ -138,7 +138,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Ambulance_300x500_0: -1075306399497057574
+      HyundaiGrandeur_0: 1999813901246675288
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
