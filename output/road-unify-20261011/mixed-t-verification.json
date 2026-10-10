@@ -1,0 +1,91 @@
+{
+  "files": [
+    {
+      "file": "Road_T_V6Lane_H4Lane.png",
+      "vertical_lanes": 6,
+      "horizontal_lanes": 4,
+      "size": [
+        1254,
+        1254
+      ],
+      "bytes": 464741,
+      "edge_rgba_matches_existing_straights": true,
+      "vertical_road_width_px": 507.59999999999997,
+      "horizontal_road_width_px": 338.4,
+      "lane_px": 84.6,
+      "sidewalk_px": 64.0,
+      "tactile_px": [
+        14,
+        56
+      ],
+      "crosswalk_bars_vertical": 25,
+      "crosswalk_bars_horizontal": 17
+    },
+    {
+      "file": "Road_T_V4Lane_H2Lane.png",
+      "vertical_lanes": 4,
+      "horizontal_lanes": 2,
+      "size": [
+        1254,
+        1254
+      ],
+      "bytes": 363809,
+      "edge_rgba_matches_existing_straights": true,
+      "vertical_road_width_px": 338.4,
+      "horizontal_road_width_px": 169.2,
+      "lane_px": 84.6,
+      "sidewalk_px": 64.0,
+      "tactile_px": [
+        14,
+        56
+      ],
+      "crosswalk_bars_vertical": 17,
+      "crosswalk_bars_horizontal": 8
+    },
+    {
+      "file": "Road_T_V2Lane_H4Lane.png",
+      "vertical_lanes": 2,
+      "horizontal_lanes": 4,
+      "size": [
+        1254,
+        1254
+      ],
+      "bytes": 364157,
+      "edge_rgba_matches_existing_straights": true,
+      "vertical_road_width_px": 169.2,
+      "horizontal_road_width_px": 338.4,
+      "lane_px": 84.6,
+      "sidewalk_px": 64.0,
+      "tactile_px": [
+        14,
+        56
+      ],
+      "crosswalk_bars_vertical": 8,
+      "crosswalk_bars_horizontal": 17
+    },
+    {
+      "file": "Road_T_V4Lane_H6Lane.png",
+      "vertical_lanes": 4,
+      "horizontal_lanes": 6,
+      "size": [
+        1254,
+        1254
+      ],
+      "bytes": 474495,
+      "edge_rgba_matches_existing_straights": true,
+      "vertical_road_width_px": 338.4,
+      "horizontal_road_width_px": 507.59999999999997,
+      "lane_px": 84.6,
+      "sidewalk_px": 64.0,
+      "tactile_px": [
+        14,
+        56
+      ],
+      "crosswalk_bars_vertical": 17,
+      "crosswalk_bars_horizontal": 25
+    }
+  ],
+  "existing_assets_unchanged": true,
+  "unity_import": "not run; new meta and Sprite setup require Unity import",
+  "independent_pixel_validation": "PASS: requested lane counts and 3 exact connecting edge profiles for all 4 assets"
+}
