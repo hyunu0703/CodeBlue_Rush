@@ -1,0 +1,572 @@
+fileFormatVersion: 2
+guid: b08f9c699a9ea4c4f8193171efb2f921
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 4859327553582831220
+    second: Road_T_2Lane_0
+  - first:
+      213: 232321917484484016
+    second: Road_T_2Lane_1
+  - first:
+      213: 5981745079053850544
+    second: Road_T_2Lane_2
+  - first:
+      213: 3214666568025402720
+    second: Road_T_2Lane_3
+  - first:
+      213: 4032924923560868454
+    second: Road_T_2Lane_4
+  - first:
+      213: 5070695366881517556
+    second: Road_T_2Lane_5
+  - first:
+      213: -1320789755509405850
+    second: Road_T_2Lane_6
+  - first:
+      213: 2657405298317753459
+    second: Road_T_2Lane_7
+  - first:
+      213: 3867939607415273956
+    second: Road_T_2Lane_8
+  - first:
+      213: 1573367888777805907
+    second: Road_T_2Lane_9
+  - first:
+      213: 1335443479498516518
+    second: Road_T_2Lane_10
+  - first:
+      213: 2337898022904325914
+    second: Road_T_2Lane_11
+  - first:
+      213: -1837704111302711585
+    second: Road_T_2Lane_12
+  - first:
+      213: -3671666470817772345
+    second: Road_T_2Lane_13
+  - first:
+      213: 2917859776541268532
+    second: Road_T_2Lane_14
+  - first:
+      213: 8004111345735759661
+    second: Road_T_2Lane_15
+  - first:
+      213: 4025899402096391616
+    second: Road_T_2Lane_16
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Road_T_2Lane_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 946
+        width: 411
+        height: 240
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 47692960aaccf6340800000000000000
+      internalID: 4859327553582831220
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Road_T_2Lane_1
+      rect:
+        serializedVersion: 2
+        x: 440
+        y: 1002
+        width: 61
+        height: 77
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0b543359d8f593300800000000000000
+      internalID: 232321917484484016
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Road_T_2Lane_2
+      rect:
+        serializedVersion: 2
+        x: 547
+        y: 921
+        width: 614
+        height: 285
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0b712fde47d630350800000000000000
+      internalID: 5981745079053850544
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Road_T_2Lane_3
+      rect:
+        serializedVersion: 2
+        x: 778
+        y: 1034
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 06d6a7a263acc9c20800000000000000
+      internalID: 3214666568025402720
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Road_T_2Lane_4
+      rect:
+        serializedVersion: 2
+        x: 482
+        y: 1020
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 66a3aa2c9d3d7f730800000000000000
+      internalID: 4032924923560868454
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Road_T_2Lane_5
+      rect:
+        serializedVersion: 2
+        x: 503
+        y: 1017
+        width: 13
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4ff113b029abe5640800000000000000
+      internalID: 5070695366881517556
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Road_T_2Lane_6
+      rect:
+        serializedVersion: 2
+        x: 524
+        y: 984
+        width: 28
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 66703e717bc9bade0800000000000000
+      internalID: -1320789755509405850
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Road_T_2Lane_7
+      rect:
+        serializedVersion: 2
+        x: 689
+        y: 1014
+        width: 13
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 37c787e0a0001e420800000000000000
+      internalID: 2657405298317753459
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Road_T_2Lane_8
+      rect:
+        serializedVersion: 2
+        x: 772
+        y: 1006
+        width: 7
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4e9b6a8649eada530800000000000000
+      internalID: 3867939607415273956
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Road_T_2Lane_9
+      rect:
+        serializedVersion: 2
+        x: 778
+        y: 998
+        width: 13
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3508b9f32c9b5d510800000000000000
+      internalID: 1573367888777805907
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Road_T_2Lane_10
+      rect:
+        serializedVersion: 2
+        x: 802
+        y: 1014
+        width: 10
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 628ee15e4c2788210800000000000000
+      internalID: 1335443479498516518
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Road_T_2Lane_11
+      rect:
+        serializedVersion: 2
+        x: 810
+        y: 1014
+        width: 9
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a17ec487dd1e17020800000000000000
+      internalID: 2337898022904325914
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Road_T_2Lane_12
+      rect:
+        serializedVersion: 2
+        x: 924
+        y: 1014
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fd6e68be8d92f76e0800000000000000
+      internalID: -1837704111302711585
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Road_T_2Lane_13
+      rect:
+        serializedVersion: 2
+        x: 422
+        y: 953
+        width: 31
+        height: 62
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7ccc1315cce9b0dc0800000000000000
+      internalID: -3671666470817772345
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Road_T_2Lane_14
+      rect:
+        serializedVersion: 2
+        x: 488
+        y: 923
+        width: 26
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 43a942dd1025e7820800000000000000
+      internalID: 2917859776541268532
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Road_T_2Lane_15
+      rect:
+        serializedVersion: 2
+        x: 785
+        y: 990
+        width: 8
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d27f0418cd0541f60800000000000000
+      internalID: 8004111345735759661
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Road_T_2Lane_16
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 1254
+        height: 890
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0c5b9631d2eded730800000000000000
+      internalID: 4025899402096391616
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Road_T_2Lane_0: 4859327553582831220
+      Road_T_2Lane_1: 232321917484484016
+      Road_T_2Lane_10: 1335443479498516518
+      Road_T_2Lane_11: 2337898022904325914
+      Road_T_2Lane_12: -1837704111302711585
+      Road_T_2Lane_13: -3671666470817772345
+      Road_T_2Lane_14: 2917859776541268532
+      Road_T_2Lane_15: 8004111345735759661
+      Road_T_2Lane_16: 4025899402096391616
+      Road_T_2Lane_2: 5981745079053850544
+      Road_T_2Lane_3: 3214666568025402720
+      Road_T_2Lane_4: 4032924923560868454
+      Road_T_2Lane_5: 5070695366881517556
+      Road_T_2Lane_6: -1320789755509405850
+      Road_T_2Lane_7: 2657405298317753459
+      Road_T_2Lane_8: 3867939607415273956
+      Road_T_2Lane_9: 1573367888777805907
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
