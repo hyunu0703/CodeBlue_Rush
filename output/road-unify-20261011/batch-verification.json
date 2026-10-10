@@ -1,0 +1,129 @@
+{
+  "files": [
+    {
+      "file": "Road_Cross_2Lane.png",
+      "lanes": 2,
+      "lane_px": 84.6,
+      "sidewalk_px": 64.0,
+      "crosswalk_bars": 8,
+      "original_bytes": 1189913,
+      "main_sprite": "Road_Cross_2Lane_0",
+      "main_sprite_contains_all_artwork": true,
+      "bytes": 435850,
+      "ratio": 0.3662872831879305
+    },
+    {
+      "file": "Road_Straight_2Lane.png",
+      "lanes": 2,
+      "lane_px": 84.6,
+      "sidewalk_px": 64.0,
+      "crosswalk_bars": 0,
+      "original_bytes": 752378,
+      "main_sprite": "Road_Straight_2Lane_0",
+      "main_sprite_contains_all_artwork": true,
+      "bytes": 354319,
+      "ratio": 0.470932164417354
+    },
+    {
+      "file": "Road_T_2Lane.png",
+      "lanes": 2,
+      "lane_px": 84.6,
+      "sidewalk_px": 64.0,
+      "crosswalk_bars": 8,
+      "original_bytes": 952300,
+      "main_sprite": "Road_T_2Lane_16",
+      "main_sprite_contains_all_artwork": true,
+      "bytes": 292966,
+      "ratio": 0.30764044943820223
+    },
+    {
+      "file": "Road_Cross_4Lane.png",
+      "lanes": 4,
+      "lane_px": 84.6,
+      "sidewalk_px": 64.0,
+      "crosswalk_bars": 17,
+      "original_bytes": 1084872,
+      "main_sprite": "Road_Cross_4Lane_0",
+      "main_sprite_contains_all_artwork": true,
+      "bytes": 599216,
+      "ratio": 0.552337971668547
+    },
+    {
+      "file": "Road_Straight_4Lane.png",
+      "lanes": 4,
+      "lane_px": 84.6,
+      "sidewalk_px": 64.0,
+      "crosswalk_bars": 0,
+      "original_bytes": 1004028,
+      "main_sprite": "Road_Straight_4Lane_0",
+      "main_sprite_contains_all_artwork": true,
+      "bytes": 538481,
+      "ratio": 0.5363207002195158
+    },
+    {
+      "file": "Road_T_4Lane.png",
+      "lanes": 4,
+      "lane_px": 84.6,
+      "sidewalk_px": 64.0,
+      "crosswalk_bars": 17,
+      "original_bytes": 932038,
+      "main_sprite": "Road_T_4Lane_0",
+      "main_sprite_contains_all_artwork": true,
+      "bytes": 419661,
+      "ratio": 0.4502616846094258
+    },
+    {
+      "file": "Road_Cross_6Lane.png",
+      "lanes": 6,
+      "lane_px": 84.6,
+      "sidewalk_px": 64.0,
+      "crosswalk_bars": 25,
+      "original_bytes": 1132306,
+      "main_sprite": "Road_Cross_6Lane_0",
+      "main_sprite_contains_all_artwork": true,
+      "bytes": 688701,
+      "ratio": 0.6082286943635378
+    },
+    {
+      "file": "Road_Straight_6Lane.png",
+      "lanes": 6,
+      "lane_px": 84.6,
+      "sidewalk_px": 64.0,
+      "crosswalk_bars": 0,
+      "original_bytes": 1837938,
+      "main_sprite": "Road_Straight_6Lane_1",
+      "main_sprite_contains_all_artwork": true,
+      "bytes": 660721,
+      "ratio": 0.3594903636575336
+    },
+    {
+      "file": "Road_T_6Lane.png",
+      "lanes": 6,
+      "lane_px": 84.6,
+      "sidewalk_px": 64.0,
+      "crosswalk_bars": 25,
+      "original_bytes": 1020318,
+      "main_sprite": "Road_T_6Lane_0",
+      "main_sprite_contains_all_artwork": true,
+      "bytes": 509542,
+      "ratio": 0.4993952865675211
+    }
+  ],
+  "lane_world_units": 0.846,
+  "dash_length": 30.0,
+  "dash_gap": 27.0,
+  "tactile_length": 56,
+  "tactile_width": 14,
+  "canvas": [
+    1254,
+    1254
+  ],
+  "edge_profiles_identical": true,
+  "scene_vehicle_and_meta_unchanged": true,
+  "unity_validation": "not run; UNITY_PATH is TODO",
+  "notes": [
+    "Primary sprites retain their existing nonuniform rects/pivots; align road centerlines when placing.",
+    "Unused auxiliary slices remain in unchanged meta and may now be transparent."
+  ],
+  "independent_pixel_checks": "PASS: dimensions, edge RGBA equality, dash lengths/gaps including joins, crosswalk stripe counts"
+}

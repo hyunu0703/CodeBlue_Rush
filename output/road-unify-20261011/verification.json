@@ -1,0 +1,49 @@
+{
+  "source": "C:\\Unity\\CodeBlue_Rush\\Assets\\Images\\Road\\Road_Cross_4Lane.png",
+  "preview": "C:\\Unity\\CodeBlue_Rush\\output\\road-unify-20261011\\Road_Cross_4Lane.png",
+  "size": [
+    1254,
+    1254
+  ],
+  "vehicle_visible_width_px": 282,
+  "vehicle_ppu": 100,
+  "vehicle_scale": 0.2,
+  "vehicle_world_width": 0.564,
+  "lane_world_width": 0.846,
+  "road_ppu": 100,
+  "road_scale": 1,
+  "lane_pixels": 84.6,
+  "road_edges": [
+    457.8,
+    796.2
+  ],
+  "sidewalk_width": 64.0,
+  "crosswalk": {
+    "bar_width": 10,
+    "gap": 9,
+    "bar_length": 56,
+    "count": 17,
+    "span": 314
+  },
+  "tactile": {
+    "length": 56,
+    "width": 14,
+    "module": 14,
+    "count": 8
+  },
+  "centerline_width": 6,
+  "lane_marking": {
+    "width": 5,
+    "dash": 30,
+    "gap": 30
+  },
+  "stop_line": {
+    "width": 10,
+    "setback": 18
+  },
+  "source_bytes": 1084872,
+  "preview_bytes": 595790,
+  "size_ratio": 0.5491799954280321,
+  "original_assets_unchanged": true,
+  "geometry_note": "5x coverage rasterization for fractional pixel edges; 90-degree copies of markings"
+}
