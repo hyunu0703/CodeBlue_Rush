@@ -95,6 +95,83 @@ public static class MissionSeedRules
         return true;
     }
 
+    /// <summary>기존 픽업 경로의 마지막 출구에 후송 계획을 연결한다. 차선과 두 경로의 겹침을 생성 전에 확인한다.</summary>
+    public static bool TryBuildTransportRoute(int pickupSeed, int transportSeed, out MissionRoadPiece[] route, out string error)
+    {
+        route = Array.Empty<MissionRoadPiece>();
+        if (!TryBuildRoute(pickupSeed, out var pickup, out error)
+            || !TryBuildRoute(transportSeed, out var transport, out error))
+        {
+            return false;
+        }
+        // 픽업 마지막 구역은 직선이다. 북쪽 기준 후송 계획을 마지막 출구 방향으로 회전한다.
+        var last = pickup[pickup.Length - 1];
+        var turns = (int)last.Outgoing;
+        if (transport[0].EntryLanes != last.ExitLanes)
+        {
+            error = "후송 시드의 시작 차선이 픽업 도로 출구와 맞지 않습니다.";
+            return false;
+        }
+        // 첫 후송 칸은 픽업 마지막 칸의 출구 쪽 이웃이다. 이후 좌표도 동일한 90도 회전을 적용한다.
+        var originX = last.GridX + (last.Outgoing == RoadDirection.East ? 1 : last.Outgoing == RoadDirection.West ? -1 : 0);
+        var originY = last.GridY + (last.Outgoing == RoadDirection.North ? 1 : last.Outgoing == RoadDirection.South ? -1 : 0);
+        var occupied = new HashSet<long>();
+        foreach (var piece in pickup)
+        {
+            occupied.Add(((long)piece.GridX << 32) | (uint)piece.GridY);
+        }
+        var connected = new MissionRoadPiece[transport.Length];
+        for (var index = 0; index < transport.Length; index++)
+        {
+            // XY의 시계방향 90도 회전은 (x,y) -> (y,-x)이다. 부동소수점 오차 없이 겹침을 검사한다.
+            var piece = transport[index];
+            var x = piece.GridX;
+            var y = piece.GridY;
+            for (var turn = 0; turn < turns; turn++)
+            {
+                var previousX = x;
+                x = y;
+                y = -previousX;
+            }
+            x += originX;
+            y += originY;
+            if (!occupied.Add(((long)x << 32) | (uint)y))
+            {
+                error = "후송 경로가 기존 픽업 도로나 자기 경로와 겹칩니다.";
+                return false;
+            }
+            connected[index] = new MissionRoadPiece(piece.Index,
+                (RoadDirection)(((int)piece.Incoming + turns) % 4),
+                (RoadDirection)(((int)piece.Outgoing + turns) % 4), piece.EntryLanes, piece.ExitLanes, x, y);
+        }
+        route = connected;
+        error = null;
+        return true;
+    }
+
+    /// <summary>픽업 시드에서 재현 가능한 후송 후보를 선택한다. 사전 유효성 검사로 호출해도 게임/난수 상태는 변하지 않는다.</summary>
+    public static bool TrySelectTransportSeed(int pickupSeed, out int transportSeed, out string error)
+    {
+        transportSeed = 0;
+        if (!TryBuildRoute(pickupSeed, out _, out error))
+        {
+            return false;
+        }
+        // 고정된 지역 난수 소스는 수락 전 검증과 컷신 뒤 시드 확정에서 동일한 후보 순서를 제공한다.
+        var random = new Random(pickupSeed ^ 0x5F3759DF);
+        for (var attempt = 0; attempt < 1024; attempt++)
+        {
+            var candidate = CreateSeed(random);
+            if (TryBuildTransportRoute(pickupSeed, candidate, out _, out error))
+            {
+                transportSeed = candidate;
+                return true;
+            }
+        }
+        error = "픽업 맵에서 차선과 겹침 조건을 만족하는 후송 도로를 연결할 수 없습니다. 다른 픽업 시드를 사용해주세요.";
+        return false;
+    }
+
     /// <summary>0~3은 직진, 4~6은 좌회전, 7~9는 우회전이다. 방향 enum은 시계방향 순서다.</summary>
     private static RoadDirection Turn(RoadDirection direction, int digit)
     {

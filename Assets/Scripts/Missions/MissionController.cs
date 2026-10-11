@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>미션 상태의 단일 소유자다. 대기, 제안, 브리핑, 맵 준비, 진행을 관리하며 수락 뒤에만 시드를 만든다.</summary>
+/// <summary>미션 상태의 단일 소유자다. 수락, 픽업 이동, 구출 컷신, 후송을 순서대로 관리한다.</summary>
 [DisallowMultipleComponent]
 public sealed class MissionController : MonoBehaviour
 {
@@ -24,6 +24,12 @@ public sealed class MissionController : MonoBehaviour
     [SerializeField] private MissionMapGenerator mapGenerator;
     [SerializeField] private Rigidbody2D ambulance;
     [SerializeField] private AmbulanceDriveInput driveInput;
+    // 병원 도착 반경은 차량 중심 기준 월드 유닛이다. 환자 픽업은 노란 사각형의 완전 진입으로 검사한다.
+    [SerializeField, Min(0.1f)] private float arrivalRadius = 0.85f;
+    // 미지정 참조는 기존 GamePlay 씬에 한정하여 런타임 표시를 생성/연결한다.
+    [SerializeField] private RectTransform navigationPanel;
+    [SerializeField] private Camera navigationCamera;
+    [SerializeField] private PatientRescueCutscene rescueCutscene;
 
     // 활성 기간의 대기 코루틴과 실제로 리스너를 연결한 버튼 발행자를 보관한다.
     private Coroutine offerRoutine;
@@ -38,11 +44,28 @@ public sealed class MissionController : MonoBehaviour
     private Rect lastSafeArea;
     private int lastScreenWidth;
     private int lastScreenHeight;
+    // 픽업 표현, 감지 위치, 활성 기간 코루틴과 차량 잠금은 이 미션 인스턴스가 소유한다.
+    private MissionNavigationGraphic navigation;
+    private SpriteRenderer ambulanceRenderer;
+    private BoxCollider2D ambulanceCollider;
+    private Coroutine rescueRoutine;
+    private Vector2 previousPosition;
+    private RigidbodyConstraints2D originalConstraints;
+    private bool isVehicleLocked;
+    private bool isPresentationReady;
+    // 픽업 도보 위치와 차선 방향은 재활성화 때 같은 대기 장소를 복원하기 위해 보관한다.
+    private Vector2 pickupSidewalkPosition;
+    private float pickupRotation;
 
     /// <summary>수락 및 맵 준비가 끝난 미션이 진행 중인지 반환한다.</summary>
-    public bool IsMissionActive => stage == MissionStage.Active;
+    public bool IsMissionActive => stage == MissionStage.Active || stage == MissionStage.Rescuing
+        || stage == MissionStage.Transporting;
     /// <summary>현재 수락한 미션의 8자리 시드다. 대기/제안 단계에는 0이다.</summary>
     public int CurrentSeed { get; private set; }
+    /// <summary>픽업 컷신 완료 뒤에 생성한 후송 시드다. 후송 시작 전에는 0이다.</summary>
+    public int TransportSeed { get; private set; }
+    /// <summary>구출 이미지가 모두 사라진 뒤에만 true가 된다. 다음 미션 대기 진입 시 초기화한다.</summary>
+    public bool IsPatientPickedUp { get; private set; }
     /// <summary>맵 배치와 시작 위치 준비 이후 메인 스레드에서 한 번 발행한다.</summary>
     public event Action<int> OnMissionAccepted;
 
@@ -91,7 +114,66 @@ public sealed class MissionController : MonoBehaviour
         }
         else
         {
+            if (isPresentationReady && IsMissionActive)
+            {
+                if (!EnsurePresentation())
+                {
+                    return;
+                }
+                if (stage == MissionStage.Active)
+                {
+                    rescueCutscene.ShowPickup(pickupSidewalkPosition, pickupRotation, ambulanceRenderer);
+                }
+                previousPosition = ambulance.position;
+            }
             RefreshView();
+        }
+    }
+
+    /// <summary>씬의 Awake가 끝난 뒤 표시 참조를 연결한다. 이미 저장된 NavigationPanel이 있으면 재사용한다.</summary>
+    private void Start()
+    {
+        EnsurePresentation();
+    }
+
+    /// <summary>이전 물리 위치부터 현재 위치까지 검사해 빠른 이동으로 도착 영역을 건너뛰어도 한 번만 처리한다.</summary>
+    private void FixedUpdate()
+    {
+        if ((stage != MissionStage.Active && stage != MissionStage.Transporting) || Time.timeScale <= 0f)
+        {
+            return;
+        }
+        if (!ValidateReferences() || !EnsurePresentation())
+        {
+            return;
+        }
+        // 픽업은 차량 전체가 주차 사각형 안에 들어와야 시작한다. 병원에는 기존 이동 선분 감지를 유지한다.
+        var currentPosition = ambulance.position;
+        var movement = currentPosition - previousPosition;
+        var fraction = movement.sqrMagnitude > 0f
+            ? Mathf.Clamp01(Vector2.Dot(mapGenerator.DestinationPosition - previousPosition, movement) / movement.sqrMagnitude) : 0f;
+        var closest = previousPosition + movement * fraction;
+        previousPosition = currentPosition;
+        var hasArrived = stage == MissionStage.Active
+            ? rescueCutscene.IsVehicleInsidePickup(ambulance, ambulanceRenderer, ambulanceCollider)
+            : (closest - mapGenerator.DestinationPosition).sqrMagnitude <= arrivalRadius * arrivalRadius;
+        if (!hasArrived)
+        {
+            return;
+        }
+        if (stage == MissionStage.Active)
+        {
+            stage = MissionStage.Rescuing;
+            RefreshView();
+            LockVehicle();
+            rescueRoutine = StartCoroutine(RunRescue());
+        }
+        else
+        {
+            ambulance.linearVelocity = Vector2.zero;
+            ambulance.angularVelocity = 0f;
+            CompleteMission();
+            missionStatus.text = "병원 후송 완료 · 다음 출동 요청 대기 중";
         }
     }
 
@@ -105,6 +187,16 @@ public sealed class MissionController : MonoBehaviour
     private void OnDisable()
     {
         StopWaiting();
+        StopRescue();
+        if (stage == MissionStage.Rescuing)
+        {
+            // 중단된 컷신은 픽업 완료로 판정하지 않는다. 재활성화 시 같은 장소에서 다시 시작한다.
+            stage = MissionStage.Active;
+        }
+        if (navigation != null)
+        {
+            navigation.SetGuidanceVisible(false);
+        }
         Unsubscribe();
         if (missionButton != null)
         {
@@ -134,7 +226,7 @@ public sealed class MissionController : MonoBehaviour
     /// <summary>열린 제안을 수락하면 시드를 만들고 맵을 준비한다. 성공한 경우에만 진행 판정과 시드를 공개한다.</summary>
     public void AcceptMission()
     {
-        if (!isActiveAndEnabled || stage != MissionStage.Briefing || !ValidateReferences())
+        if (!isActiveAndEnabled || stage != MissionStage.Briefing || !ValidateReferences() || !EnsurePresentation())
         {
             return;
         }
@@ -142,12 +234,12 @@ public sealed class MissionController : MonoBehaviour
         RefreshView();
         try
         {
-            // 세 번 회전하며 자기 경로를 덮는 시드는 제외한다. 고정 상한으로 무한 재시도를 막는다.
+            // 자기 겹침과 후송 출구 막힘을 사전 검사한다. 여기서는 후송 시드를 게임 상태에 저장하지 않는다.
             var seed = 0;
             for (var attempt = 0; attempt < 256; attempt++)
             {
                 var candidate = MissionSeedRules.CreateSeed(random);
-                if (MissionSeedRules.TryBuildRoute(candidate, out _, out _))
+                if (MissionSeedRules.TrySelectTransportSeed(candidate, out _, out _))
                 {
                     seed = candidate;
                     break;
@@ -164,6 +256,14 @@ public sealed class MissionController : MonoBehaviour
                 FailConfiguration(error);
                 return;
             }
+            // 차량 이미지 전체가 들어가는 크기로 픽업 지점과 도보 대기 위치를 함께 준비한다.
+            var parkingSize = rescueCutscene.GetParkingSize(ambulanceRenderer, ambulanceCollider);
+            if (!mapGenerator.TryConfigurePickup(parkingSize, out pickupSidewalkPosition, out pickupRotation, out error))
+            {
+                FailConfiguration(error);
+                return;
+            }
+            rescueCutscene.ConfigurePickupZone(mapGenerator.DestinationPosition, pickupRotation, parkingSize, ambulanceRenderer);
 
             // 입력은 아직 차단된 상태다. 속도를 비운 후 Rigidbody 위치로 순간이동하고 보간 잔상을 방지한다.
             var interpolation = ambulance.interpolation;
@@ -174,6 +274,12 @@ public sealed class MissionController : MonoBehaviour
             ambulance.rotation = mapGenerator.StartRotation;
             ambulance.interpolation = interpolation;
             CurrentSeed = seed;
+            TransportSeed = 0;
+            IsPatientPickedUp = false;
+            previousPosition = ambulance.position;
+            // 픽업 장소는 노란 테두리 자체로 표시한다. 기존 글자가 사각형과 차량을 가리지 않게 비운다.
+            mapGenerator.SetDestinationLabel(string.Empty);
+            rescueCutscene.ShowPickup(pickupSidewalkPosition, pickupRotation, ambulanceRenderer);
             stage = MissionStage.Active;
             RefreshView();
             OnMissionAccepted?.Invoke(seed);
@@ -212,7 +318,10 @@ public sealed class MissionController : MonoBehaviour
     private void BeginWaiting()
     {
         StopWaiting();
+        StopRescue();
         CurrentSeed = 0;
+        TransportSeed = 0;
+        IsPatientPickedUp = false;
         stage = MissionStage.Waiting;
         RefreshView();
         offerRoutine = StartCoroutine(WaitForOffer());
@@ -229,10 +338,10 @@ public sealed class MissionController : MonoBehaviour
         }
         offerNumber++;
         stage = MissionStage.Available;
-        // 픽업/컷신/병원 단계는 후속 구현이다. 현재 브리핑은 이번 단계의 도착지 이동 임무를 안내한다.
+        // 픽업과 후송의 두 목적지를 순서대로 안내한다. 구출과 탑승은 도착 후 자동으로 진행한다.
         briefingText.text = $"출동 요청 #{offerNumber:000}\n\n"
             + "긴급 출동 요청이 도착했습니다.\n\n"
-            + "수락하면 새 도로 구역과 이동 경로가 생성됩니다. 구급차를 운전해 마지막 도로의 도착 표시까지 이동하세요.\n\n"
+            + "수락하면 픽업 장소와 내비게이션 경로가 생성됩니다. 환자를 구출한 뒤 이어지는 도로를 따라 병원으로 후송하세요.\n\n"
             + "수락: 출동 시작\n거절: 5초 뒤 새 요청 대기";
         RefreshView();
     }
@@ -245,8 +354,214 @@ public sealed class MissionController : MonoBehaviour
         notification.SetActive(stage == MissionStage.Available);
         briefingPanel.SetActive(stage == MissionStage.Briefing || stage == MissionStage.Preparing);
         acceptButton.interactable = rejectButton.interactable = stage == MissionStage.Briefing;
-        driveInput.SetMissionDrivingAllowed(IsMissionActive);
-        missionStatus.text = IsMissionActive ? $"출동 중 · 시드 {CurrentSeed:D8}" : "출동 요청 대기 중";
+        driveInput.SetMissionDrivingAllowed(stage == MissionStage.Active || stage == MissionStage.Transporting);
+        if (navigation != null)
+        {
+            navigation.SetGuidanceVisible(IsMissionActive);
+        }
+        missionStatus.text = stage == MissionStage.Rescuing ? "환자 구출 및 탑승 중"
+            : stage == MissionStage.Transporting ? $"환자 픽업 완료 · 병원 후송 · 시드 {TransportSeed:D8}"
+            : stage == MissionStage.Active ? $"환자 픽업 장소로 이동 · 시드 {CurrentSeed:D8}" : "출동 요청 대기 중";
+    }
+
+    /// <summary>구출 iterator의 실패를 UI/코루틴 경계에서 한 번 관찰한다. 후송 준비가 끝나야 조작을 복구한다.</summary>
+    private IEnumerator RunRescue()
+    {
+        // iterator를 직접 진행해 예상치 못한 예외도 상태 잠금/비활성화 경로로 정리한다.
+        var sequence = rescueCutscene.Play(ambulance, ambulanceCollider);
+        while (true)
+        {
+            // 다음 대기 명령의 존재 여부와 Unity 코루틴에 전달할 managed 대기 객체다.
+            bool hasNext;
+            object instruction;
+            try
+            {
+                hasNext = sequence.MoveNext();
+                instruction = hasNext ? sequence.Current : null;
+            }
+            catch (Exception exception)
+            {
+                Debug.LogException(exception, this);
+                enabled = false;
+                yield break;
+            }
+            if (!hasNext)
+            {
+                break;
+            }
+            yield return instruction;
+        }
+        rescueRoutine = null;
+        try
+        {
+            if (!isActiveAndEnabled || stage != MissionStage.Rescuing || rescueCutscene == null || !rescueCutscene.IsCompleted)
+            {
+                FailConfiguration("구출 컷신이 중단되었습니다. 구출 컴포넌트와 차량 참조를 확인해주세요.");
+                yield break;
+            }
+            IsPatientPickedUp = true;
+            // 컷신 완료 뒤에만 새 시드를 확정하고 맵을 연장한다. 사전 검증과 같은 순서를 재현한다.
+            if (!MissionSeedRules.TrySelectTransportSeed(CurrentSeed, out var seed, out var error)
+                || !mapGenerator.TryAppendTransport(seed, out error))
+            {
+                FailConfiguration(error);
+                yield break;
+            }
+            TransportSeed = seed;
+            mapGenerator.SetDestinationLabel("병원");
+            previousPosition = ambulance.position;
+            UnlockVehicle();
+            stage = MissionStage.Transporting;
+            RefreshView();
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception, this);
+            enabled = false;
+        }
+    }
+
+    /// <summary>미션 입력을 비우고 기존 물리 제약을 보관한다. 차량을 순간이동하지 않고 그 자리에서 멈춘다.</summary>
+    private void LockVehicle()
+    {
+        if (isVehicleLocked || ambulance == null)
+        {
+            return;
+        }
+        originalConstraints = ambulance.constraints;
+        isVehicleLocked = true;
+        ambulance.linearVelocity = Vector2.zero;
+        ambulance.angularVelocity = 0f;
+        ambulance.constraints = RigidbodyConstraints2D.FreezeAll;
+    }
+
+    /// <summary>컷신이 소유한 물리 제약만 복구한다. 원래 Inspector 설정은 유지한다.</summary>
+    private void UnlockVehicle()
+    {
+        if (isVehicleLocked && ambulance != null)
+        {
+            ambulance.constraints = originalConstraints;
+        }
+        isVehicleLocked = false;
+    }
+
+    /// <summary>활성 기간이 끝나면 컷신 코루틴, 임시 표시, 차량 잠금을 함께 정리한다.</summary>
+    private void StopRescue()
+    {
+        if (rescueRoutine != null)
+        {
+            StopCoroutine(rescueRoutine);
+            rescueRoutine = null;
+        }
+        if (rescueCutscene != null)
+        {
+            rescueCutscene.Cancel();
+        }
+        UnlockVehicle();
+    }
+
+    /// <summary>기존 씬 참조를 보존하며 필요한 표시 전용 오브젝트만 런타임으로 추가한다.</summary>
+    private bool EnsurePresentation()
+    {
+        if (isPresentationReady)
+        {
+            if (navigation != null && navigationCamera != null && rescueCutscene != null
+                && ambulanceRenderer != null && ambulanceCollider != null && rescueCutscene.isActiveAndEnabled)
+            {
+                return true;
+            }
+            FailConfiguration("내비게이션 또는 구출 표시 참조가 사라졌습니다. 씬 구성을 확인해주세요.");
+            return false;
+        }
+        if (!ValidateReferences())
+        {
+            return false;
+        }
+        ambulanceRenderer = ambulance.GetComponent<SpriteRenderer>();
+        ambulanceCollider = ambulance.GetComponent<BoxCollider2D>();
+        if (navigationCamera == null)
+        {
+            foreach (var root in gameObject.scene.GetRootGameObjects())
+            {
+                if (root.name == "Main Camera")
+                {
+                    navigationCamera = root.GetComponent<Camera>();
+                    break;
+                }
+            }
+        }
+        if (navigationCamera == null || !navigationCamera.orthographic || ambulanceRenderer == null || ambulanceCollider == null)
+        {
+            FailConfiguration("Orthographic Main Camera, Ambulance SpriteRenderer와 BoxCollider2D를 연결해주세요.");
+            return false;
+        }
+        if (rescueCutscene == null)
+        {
+            rescueCutscene = GetComponent<PatientRescueCutscene>();
+            if (rescueCutscene == null)
+            {
+                rescueCutscene = gameObject.AddComponent<PatientRescueCutscene>();
+            }
+        }
+        if (navigationPanel == null)
+        {
+            // 같은 씬 Canvas 아래 이름이 일치하는 기존 패널만 재사용한다. 매 프레임 검색하지 않는다.
+            var canvas = safeAreaRoot.GetComponentInParent<Canvas>();
+            if (canvas == null)
+            {
+                FailConfiguration("미션 Safe Area Root는 Canvas 아래에 있어야 합니다.");
+                return false;
+            }
+            foreach (var candidate in canvas.GetComponentsInChildren<RectTransform>(true))
+            {
+                if (candidate.name == "NavigationPanel")
+                {
+                    navigationPanel = candidate;
+                    break;
+                }
+            }
+        }
+        if (navigationPanel == null)
+        {
+            var panel = new GameObject("NavigationPanel", typeof(RectTransform), typeof(Image));
+            panel.layer = safeAreaRoot.gameObject.layer;
+            navigationPanel = (RectTransform)panel.transform;
+            navigationPanel.SetParent(safeAreaRoot, false);
+            navigationPanel.anchorMin = navigationPanel.anchorMax = navigationPanel.pivot = Vector2.one;
+            navigationPanel.anchoredPosition = new Vector2(-12f, -58f);
+            navigationPanel.sizeDelta = new Vector2(160f, 160f);
+            var background = panel.GetComponent<Image>();
+            background.color = new Color(0.04f, 0.08f, 0.14f, 0.94f);
+            background.raycastTarget = false;
+        }
+        if (navigationPanel.GetComponent<RectMask2D>() == null)
+        {
+            navigationPanel.gameObject.AddComponent<RectMask2D>();
+        }
+        navigation = navigationPanel.GetComponentInChildren<MissionNavigationGraphic>(true);
+        if (navigation == null)
+        {
+            // 표시 컴포넌트의 활성화 콜백 전에 필수 UI 렌더러를 준비한다.
+            var display = new GameObject("MissionNavigation", typeof(RectTransform), typeof(CanvasRenderer));
+            display.layer = navigationPanel.gameObject.layer;
+            var displayRect = (RectTransform)display.transform;
+            displayRect.SetParent(navigationPanel, false);
+            displayRect.anchorMin = Vector2.zero;
+            displayRect.anchorMax = Vector2.one;
+            displayRect.offsetMin = displayRect.offsetMax = Vector2.zero;
+            navigation = display.AddComponent<MissionNavigationGraphic>();
+        }
+        navigationPanel.gameObject.SetActive(true);
+        navigation.gameObject.SetActive(true);
+        if (!rescueCutscene.isActiveAndEnabled)
+        {
+            FailConfiguration("PatientRescueCutscene은 활성화된 미션 오브젝트에 연결해주세요.");
+            return false;
+        }
+        navigation.Configure(mapGenerator, ambulance.transform, navigationCamera);
+        navigation.SetGuidanceVisible(IsMissionActive);
+        isPresentationReady = true;
+        return true;
     }
 
     /// <summary>활성 기간의 진행 중 대기를 중지한다. 재활성화된 대기 상태는 5초를 새로 센다.</summary>
@@ -332,6 +647,8 @@ public sealed class MissionController : MonoBehaviour
         Available,
         Briefing,
         Preparing,
-        Active
+        Active,
+        Rescuing,
+        Transporting
     }
 }
