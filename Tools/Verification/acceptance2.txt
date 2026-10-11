@@ -1,0 +1,30 @@
+Unity 6000.3.23f1 | 2026-10-11 | custom Play Mode component regression
+Process exit code: 0
+
+PASS: GamePlay setup
+PASS: Regression runs with mobile-platform flag false
+PASS: Touch accelerates even when platform flag is false
+PASS: Other finger cannot release pedal
+PASS: Two fingers: brake overrides held accelerator
+PASS: Release and exit clear pedals
+PASS: Browser primary pointer works without Touchscreen metadata
+PASS: Secondary mouse button is ignored
+PASS: PC W accelerates with touch enabled
+PASS: PC D steers with touch enabled
+PASS: PC A steers with touch enabled
+PASS: Held touch wheel has priority over keyboard
+PASS: Other finger cannot release wheel
+PASS: Keyboard steering resumes after touch release
+PASS: PC Space brake overrides W
+PASS: Touch gear change reaches vehicle
+PASS: Touch shift applied at physics boundary
+PASS: PC E changes gear at physics boundary
+PASS: Focus loss clears touch and vehicle input
+PASS: Touch blocked while unfocused
+PASS: Focus return requires held-key release
+PASS: Fresh touch works after focus return
+PASS: Pause clears input
+PASS: Resume does not replay held touch
+PASS: Disable clears touch
+PASS: Re-enable accepts fresh touch
+MOBILE_INPUT_VERIFICATION: 26 passed, 0 failed

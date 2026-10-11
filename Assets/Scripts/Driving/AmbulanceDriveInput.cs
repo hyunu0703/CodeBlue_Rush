@@ -62,7 +62,8 @@ public sealed class AmbulanceDriveInput : MonoBehaviour
 
         UpdateSafeArea();
         bool canDrive = hasFocus && !isApplicationPaused && Time.timeScale > 0f && vehicle != null && vehicle.IsReady;
-        SetTouchEnabled(canDrive && IsMobileBuild);
+        // Browser/platform identification must not gate real touchscreen input.
+        SetTouchEnabled(canDrive);
         if (!canDrive)
         {
             ClearInput();
@@ -73,35 +74,26 @@ public sealed class AmbulanceDriveInput : MonoBehaviour
             return;
         }
 
-        float throttleInput = 0f;
-        float brakeInput = 0f;
+        float throttleInput = accelerator != null ? accelerator.Value : 0f;
+        float brakeInput = brake != null ? brake.Value : 0f;
         float steeringInput = 0f;
-        bool shiftRequested = false;
-        if (IsMobileBuild)
+        bool shiftRequested = gear != null && gear.ConsumePress();
+        // Keep keyboard support on hybrid devices and mobile browsers with a keyboard.
+        Keyboard keyboard = Keyboard.current;
+        if (keyboard != null)
         {
-            throttleInput = accelerator != null ? accelerator.Value : 0f;
-            brakeInput = brake != null ? brake.Value : 0f;
-            shiftRequested = gear != null && gear.ConsumePress();
-        }
-        else
-        {
-            // Read the current device each frame so replacement/disconnection cannot leave a stale keyboard cache.
-            Keyboard keyboard = Keyboard.current;
-            if (keyboard != null)
+            bool anyHeld = keyboard.wKey.isPressed || keyboard.aKey.isPressed || keyboard.dKey.isPressed
+                || keyboard.spaceKey.isPressed || keyboard.eKey.isPressed;
+            if (requireKeyboardRelease)
             {
-                bool anyHeld = keyboard.wKey.isPressed || keyboard.aKey.isPressed || keyboard.dKey.isPressed
-                    || keyboard.spaceKey.isPressed || keyboard.eKey.isPressed;
-                if (requireKeyboardRelease)
-                {
-                    requireKeyboardRelease = anyHeld;
-                }
-                else
-                {
-                    throttleInput = keyboard.wKey.isPressed ? 1f : 0f;
-                    brakeInput = keyboard.spaceKey.isPressed ? 1f : 0f;
-                    steeringInput = (keyboard.dKey.isPressed ? 1f : 0f) - (keyboard.aKey.isPressed ? 1f : 0f);
-                    shiftRequested = keyboard.eKey.wasPressedThisFrame;
-                }
+                requireKeyboardRelease = anyHeld;
+            }
+            else
+            {
+                throttleInput = Mathf.Max(throttleInput, keyboard.wKey.isPressed ? 1f : 0f);
+                brakeInput = Mathf.Max(brakeInput, keyboard.spaceKey.isPressed ? 1f : 0f);
+                steeringInput = (keyboard.dKey.isPressed ? 1f : 0f) - (keyboard.aKey.isPressed ? 1f : 0f);
+                shiftRequested |= keyboard.eKey.wasPressedThisFrame;
             }
         }
 
@@ -167,7 +159,7 @@ public sealed class AmbulanceDriveInput : MonoBehaviour
         ClearInput();
         // The initial entry may accept held keys; re-enabling still requires release for safety.
         requireKeyboardRelease = !isFirstInitialization;
-        SetTouchEnabled(IsMobileBuild);
+        SetTouchEnabled(hasFocus && !isApplicationPaused && Time.timeScale > 0f && vehicle.IsReady);
         gear.Display(vehicle.IsReverse, vehicle.IsStopped);
         UpdateSafeArea();
     }

@@ -73,14 +73,15 @@ public sealed class GearShiftControl : MonoBehaviour, IPointerClickHandler
         displayedReverse = isReverse;
         displayedCanShift = canShift;
         string gearText = isReverse ? "D / <color=#FFD66B>R</color>" : "<color=#FFD66B>D</color> / R";
-        label.text = canUseTouch ? gearText : gearText + "\n<size=16>[E]</size>";
+        label.text = AmbulanceDriveInput.IsMobileBuild ? gearText : gearText + "\n<size=16>[E]</size>";
         background.color = canShift ? new Color(0.08f, 0.12f, 0.18f, 0.95f) : new Color(0.18f, 0.2f, 0.23f, 0.85f);
         label.color = canShift ? Color.white : new Color(0.65f, 0.65f, 0.65f);
     }
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (isActiveAndEnabled && canUseTouch && canShift && Time.timeScale > 0f && SteeringWheelControl.IsTouch(eventData))
+        if (isActiveAndEnabled && canUseTouch && canShift && Time.timeScale > 0f
+            && eventData.button == PointerEventData.InputButton.Left)
         {
             isPressPending = true;
         }

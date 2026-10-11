@@ -54,7 +54,7 @@ public sealed class SteeringWheelControl : MonoBehaviour, IPointerDownHandler, I
             return;
         }
 
-        if (!canUseTouch && keyboardSteering != 0f)
+        if (!isHeld && keyboardSteering != 0f)
         {
             angle = Mathf.Clamp(angle + keyboardSteering * keyboardTurnSpeed * dt, -maximumAngle, maximumAngle);
         }
@@ -83,7 +83,8 @@ public sealed class SteeringWheelControl : MonoBehaviour, IPointerDownHandler, I
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        if (!isActiveAndEnabled || !canUseTouch || Time.timeScale <= 0f || isHeld || !IsTouch(eventData))
+        if (!isActiveAndEnabled || !canUseTouch || Time.timeScale <= 0f || isHeld
+            || eventData.button != PointerEventData.InputButton.Left)
         {
             return;
         }

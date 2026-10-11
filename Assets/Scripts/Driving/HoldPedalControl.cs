@@ -31,7 +31,8 @@ public sealed class HoldPedalControl : MonoBehaviour, IPointerDownHandler, IPoin
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        if (!isActiveAndEnabled || !canUseTouch || Time.timeScale <= 0f || isHeld || !SteeringWheelControl.IsTouch(eventData))
+        if (!isActiveAndEnabled || !canUseTouch || Time.timeScale <= 0f || isHeld
+            || eventData.button != PointerEventData.InputButton.Left)
         {
             return;
         }
