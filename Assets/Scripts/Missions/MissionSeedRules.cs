@@ -67,35 +67,18 @@ public static class MissionSeedRules
         var lanes = firstDigit <= 2 ? 2 : firstDigit <= 5 ? 4 : 6;
         AddStraights(pieces, GetDigit(seed, 2), direction, lanes);
 
-        // 3번째 자리는 Cross 이후 방향, 5번째 자리는 일반 T 이후 방향을 정한다.
-        var nextDirection = Turn(direction, GetDigit(seed, 3));
-        AddPiece(pieces, Cross(lanes), direction, nextDirection, lanes, lanes);
-        direction = nextDirection;
-        AddStraights(pieces, GetDigit(seed, 4), direction, lanes);
-
-        nextDirection = Turn(direction, GetDigit(seed, 5));
-        AddPiece(pieces, Tee(lanes), direction, nextDirection, lanes, lanes);
-        direction = nextDirection;
-        AddStraights(pieces, GetDigit(seed, 6), direction, lanes);
-
-        // 7번째 자리로 마지막 교차로와 방향을 함께 정하고, 출구 차선을 다음 직선에 적용한다.
-        var finalDigit = GetDigit(seed, 7);
-        var junction = Cross(lanes);
-        var exitLanes = lanes;
-        if (finalDigit >= 4 && finalDigit <= 6)
+        // 3·5·7번째 자리는 같은 선택 규칙을 적용한다. 혼합 T의 출구 차선은 다음 구간과 교차로에 이어진다.
+        for (var place = 3; place <= 7; place += 2)
         {
-            junction = lanes == 4 ? RoadIndex.TV4LaneH2Lane : Tee(lanes);
-            exitLanes = lanes == 4 ? 2 : lanes;
+            // 현재 자리의 선택 숫자, 교차로 종류, 출구 차선 수 및 다음 이동 방향이다.
+            var digit = GetDigit(seed, place);
+            var junction = SelectJunction(lanes, digit, out var exitLanes);
+            var nextDirection = Turn(direction, digit);
+            AddPiece(pieces, junction, direction, nextDirection, lanes, exitLanes);
+            direction = nextDirection;
+            lanes = exitLanes;
+            AddStraights(pieces, GetDigit(seed, place + 1), direction, lanes);
         }
-        else if (finalDigit >= 7)
-        {
-            junction = lanes == 2 ? RoadIndex.TV2LaneH4Lane
-                : lanes == 4 ? RoadIndex.TV4LaneH6Lane : RoadIndex.TV6LaneH4Lane;
-            exitLanes = lanes == 4 ? 6 : 4;
-        }
-        nextDirection = Turn(direction, finalDigit);
-        AddPiece(pieces, junction, direction, nextDirection, lanes, exitLanes);
-        AddStraights(pieces, GetDigit(seed, 8), nextDirection, exitLanes);
 
         // 동일한 정사각 구역을 같은 칸에 두 번 배치하는 경로는 생성 후보에서 제외한다.
         var occupied = new HashSet<long>();
@@ -134,6 +117,25 @@ public static class MissionSeedRules
     private static RoadIndex Tee(int lanes)
     {
         return lanes == 2 ? RoadIndex.T2Lane : lanes == 4 ? RoadIndex.T4Lane : RoadIndex.T6Lane;
+    }
+
+    /// <summary>현재 차선과 0~9의 선택 숫자로 교차로와 출구 차선을 결정한다. 3·5·7번째 자리에서 공통으로 사용한다.</summary>
+    private static RoadIndex SelectJunction(int lanes, int digit, out int exitLanes)
+    {
+        exitLanes = lanes;
+        if (digit <= 3)
+        {
+            return Cross(lanes);
+        }
+        if (digit <= 6)
+        {
+            exitLanes = lanes == 4 ? 2 : lanes;
+            return lanes == 4 ? RoadIndex.TV4LaneH2Lane : Tee(lanes);
+        }
+
+        exitLanes = lanes == 4 ? 6 : 4;
+        return lanes == 2 ? RoadIndex.TV2LaneH4Lane
+            : lanes == 4 ? RoadIndex.TV4LaneH6Lane : RoadIndex.TV6LaneH4Lane;
     }
 
     /// <summary>주어진 개수의 동일 차선 직선을 진행 방향으로 이어 붙인다.</summary>
