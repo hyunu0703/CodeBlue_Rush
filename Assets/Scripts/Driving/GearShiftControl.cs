@@ -72,9 +72,13 @@ public sealed class GearShiftControl : MonoBehaviour, IPointerClickHandler
         hasDisplayState = true;
         displayedReverse = isReverse;
         displayedCanShift = canShift;
-        string gearText = isReverse ? "D / <color=#FFD66B>R</color>" : "<color=#FFD66B>D</color> / R";
+        // 전진은 D, 후진은 R만 동일한 노란색으로 표시한다. 정차 여부와 무관하게 현재 기어 색을 유지한다.
+        var gearText = isReverse ? "D / <color=#FFD66B>R</color>" : "<color=#FFD66B>D</color> / R";
+        label.richText = true;
+        label.overrideColorTags = false;
+        label.text = gearText;
         background.color = canShift ? new Color(0.08f, 0.12f, 0.18f, 0.95f) : new Color(0.18f, 0.2f, 0.23f, 0.85f);
-        label.color = canShift ? Color.white : new Color(0.65f, 0.65f, 0.65f);
+        label.color = Color.white;
     }
 
     public void OnPointerClick(PointerEventData eventData)

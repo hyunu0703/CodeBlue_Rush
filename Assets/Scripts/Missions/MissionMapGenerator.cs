@@ -35,6 +35,82 @@ public sealed class MissionMapGenerator : MonoBehaviour
         this.roadPreview = roadPreview;
     }
 
+    /// <summary>월드 위치가 활성 교차로 구역 안에 있는지 반환한다. 이미지 전체 크기를 사용하며 회전과 스케일을 반영한다.</summary>
+    public bool IsInsideIntersection(Vector3 worldPosition)
+    {
+        if (!isActiveAndEnabled)
+        {
+            return false;
+        }
+        foreach (var road in activeRoads)
+        {
+            if (road == null || !road.gameObject.activeInHierarchy || !IsIntersection(road.Index))
+            {
+                continue;
+            }
+
+            if (ContainsPoint(road, worldPosition))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /// <summary>현재 위치의 활성 직선 도로가 향하는 월드 축을 반환한다. 축의 양방향 중 시점 선택은 카메라가 담당한다.</summary>
+    public bool TryGetStraightRoadAxis(Vector3 worldPosition, out Vector3 axis)
+    {
+        axis = Vector3.zero;
+        if (!isActiveAndEnabled)
+        {
+            return false;
+        }
+        foreach (var road in activeRoads)
+        {
+            if (road == null || !road.gameObject.activeInHierarchy
+                || (road.Index != RoadIndex.Straight2Lane && road.Index != RoadIndex.Straight4Lane
+                    && road.Index != RoadIndex.Straight6Lane))
+            {
+                continue;
+            }
+            if (ContainsPoint(road, worldPosition))
+            {
+                axis = road.transform.up;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /// <summary>프리팹 전체 크기를 로컬 좌표로 검사하여 회전된 구역의 AABB 바깥 모서리를 제외한다.</summary>
+    private static bool ContainsPoint(RoadPrefab road, Vector3 worldPosition)
+    {
+        var localPosition = road.transform.InverseTransformPoint(worldPosition);
+        var halfSize = road.ImageSize * 0.5f;
+        return Mathf.Abs(localPosition.x) <= halfSize.x && Mathf.Abs(localPosition.y) <= halfSize.y;
+    }
+
+    /// <summary>Cross, 일반 T, 혼합 차선 T만 카메라 회전 구역으로 분류한다. 직선과 알 수 없는 식별자는 제외한다.</summary>
+    private static bool IsIntersection(RoadIndex index)
+    {
+        switch (index)
+        {
+            case RoadIndex.Cross2Lane:
+            case RoadIndex.Cross4Lane:
+            case RoadIndex.Cross6Lane:
+            case RoadIndex.T2Lane:
+            case RoadIndex.T4Lane:
+            case RoadIndex.T6Lane:
+            case RoadIndex.TV2LaneH4Lane:
+            case RoadIndex.TV4LaneH2Lane:
+            case RoadIndex.TV4LaneH6Lane:
+            case RoadIndex.TV6LaneH4Lane:
+                return true;
+            default:
+                return false;
+        }
+    }
+
     /// <summary>실행에 필요한 참조와 정사각 구역 규격을 확인한다. 누락된 참조는 복구 방법을 반환한다.</summary>
     public bool ValidateConfiguration(out string error)
     {
