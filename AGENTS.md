@@ -1,149 +1,149 @@
-# AGENTS.md — Unity C# Rules
+# AGENTS.md — Unity C# 규칙
 
-Scope: C# scripts (runtime, Editor, tests) and project, package, or asset changes needed to complete a task in this Unity project. Apply these rules to new or changed code; MUST NOT reformat or refactor unrelated code.
+범위: 이 Unity 프로젝트에서 작업을 완료하는 데 필요한 C# 스크립트(런타임, 에디터, 테스트)와 프로젝트·패키지·에셋 변경. 이 규칙은 새로 작성하거나 변경하는 코드에 적용한다. 관련 없는 코드를 재포맷하거나 리팩터링해서는 안 된다(MUST NOT).
 
-Rule levels:
-- MUST / NEVER = correctness or work-safety requirement. Exceptions must be stated in the rule. User confirmation cannot make an unsupported API valid or authorize loss of unrelated user work.
-- Prefer = default; report a material deviation with a one-line reason.
-- [STYLE] = team convention. Follow for new code; preserve existing conventions and APIs unless their migration is requested.
-- An unmarked directive is Prefer. Facts and examples describe behavior; they do not weaken a marked requirement.
+규칙 수준:
+- MUST / NEVER = 정확성 또는 작업 안전성 요구사항. 예외는 규칙 안에 명시되어 있어야 한다. 사용자 확인을 받았다고 지원되지 않는 API가 유효해지거나, 관련 없는 사용자 작업의 손실이 허용되지는 않는다.
+- Prefer = 기본값. 실질적으로 벗어나는 경우 한 줄로 이유를 보고한다.
+- [STYLE] = 팀 컨벤션. 새 코드에서는 따르고, 마이그레이션 요청이 없는 한 기존 컨벤션과 API는 유지한다.
+- 표시가 없는 지시는 Prefer이다. 사실과 예시는 동작을 설명할 뿐이며, 표시된 요구사항을 약화시키지 않는다.
 
-User requests and authorization:
-- Follow explicit user requests over Prefer and [STYLE] rules without asking again.
-- Where a rule explicitly permits a requested change, the user's clear request is authorization for that change. Ask only about unresolved scope, behavior, migration, or material risk; do not require a second confirmation merely because an asset or package is involved.
-- For a MUST/NEVER rule without an applicable exception, investigate alternatives first. Explain the constraint and ask for the missing decision if necessary; do not imply confirmation can remove an engine limitation.
-- NEVER commit, push, create branches, or stash unless requested. NEVER discard unrelated user work.
-- This file is maintained by humans. Edit AGENTS.md only when the user explicitly requests it. Otherwise report incorrect rules and detected TODO values under AGENTS.md suggestions.
+사용자 요청과 권한:
+- 명시적인 사용자 요청은 Prefer 및 [STYLE] 규칙보다 우선하며, 다시 묻지 않고 따른다.
+- 규칙이 요청된 변경을 명시적으로 허용하는 경우, 사용자의 명확한 요청이 곧 그 변경에 대한 권한이다. 해결되지 않은 범위, 동작, 마이그레이션, 중대한 위험에 대해서만 질문한다. 에셋이나 패키지가 관련되었다는 이유만으로 두 번째 확인을 요구하지 않는다.
+- 적용 가능한 예외가 없는 MUST/NEVER 규칙의 경우, 먼저 대안을 조사한다. 제약을 설명하고 필요하면 빠진 결정 사항을 질문한다. 확인을 받으면 엔진의 한계가 사라지는 것처럼 암시하지 않는다.
+- 요청이 없는 한 commit, push, 브랜치 생성, stash를 절대 하지 않는다(NEVER). 관련 없는 사용자 작업을 절대 폐기하지 않는다(NEVER).
+- 이 파일은 사람이 관리한다. 사용자가 명시적으로 요청할 때만 AGENTS.md를 편집한다. 그 외에는 잘못된 규칙과 발견된 TODO 값을 "AGENTS.md 제안" 항목에 보고한다.
 
 ---
 
-## 1. Environment Facts and Project Policy
+## 1. 환경 정보와 프로젝트 정책
 
-### Environment facts (human-maintained; verify facts relevant to the task)
-- Unity version: `6000.3.23f1`
+### 환경 정보 (사람이 관리함. 작업과 관련된 정보는 확인할 것)
+- Unity 버전: `6000.3.23f1`
 - activeInputHandler: `1` — Input System.
-- Target platforms / scripting backend: PC (Standalone) / **unknown — confirmation required**. The repository does not explicitly specify Mono or IL2CPP for Standalone; do not infer either backend from an absent mapping.
-- Packages actually used:
-  - TMP: used; included in `com.unity.ugui` version `2.0.0`.
-  - Input System: used; version `1.20.0`.
-  - UniTask: not used; no package registration or code references were found in the reported repository check.
-  - Addressables: not used; no package registration or code references were found in the reported repository check.
+- 대상 플랫폼 / 스크립팅 백엔드: PC (Standalone) / **알 수 없음 — 확인 필요**. 저장소에 Standalone의 Mono 또는 IL2CPP가 명시되어 있지 않다. 매핑이 없다는 사실로부터 어느 백엔드인지 추론하지 않는다.
+- 실제 사용 중인 패키지:
+  - TMP: 사용 중. `com.unity.ugui` 버전 `2.0.0`에 포함.
+  - Input System: 사용 중. 버전 `1.20.0`.
+  - UniTask: 사용하지 않음. 보고된 저장소 점검에서 패키지 등록이나 코드 참조가 발견되지 않았다.
+  - Addressables: 사용하지 않음. 보고된 저장소 점검에서 패키지 등록이나 코드 참조가 발견되지 않았다.
 
-These facts reflect the repository-check results supplied by the user. Recheck relevant settings and package usage in the actual Unity project when a task depends on them; do not present this document update as an independent repository verification.
+이 정보는 사용자가 제공한 저장소 점검 결과를 반영한다. 작업이 관련 설정이나 패키지 사용에 의존할 때는 실제 Unity 프로젝트에서 다시 확인한다. 이 문서의 업데이트를 독립적인 저장소 검증인 것처럼 제시하지 않는다.
 
-Use minimal relevant reads. If a value is missing or contradicted, report the detected value or mark it unknown; MUST NOT guess an environment fact.
-- Version: `ProjectSettings/ProjectVersion.txt`. `6000.x` identifies Unity 6; use documentation for the exact release, not a blanket assumption about all 6000.x versions.
-- Packages: `Packages/manifest.json` and `Packages/packages-lock.json`; inspect the resolved package's assembly/API information when needed. Installed does not mean referenced, supported on the target, or already used.
-- Input: search `activeInputHandler` in `ProjectSettings/ProjectSettings.asset`.
-- Backend: read the complete relevant `scriptingBackend` mapping, not a fixed number of lines. Report backend per known target; do not infer the target list from this mapping alone.
-- Targets: use the human policy and existing build/CI configuration; inspect saved build configuration or Editor build settings when available. Distinguish intended shipping targets from the currently selected Editor target. If still unknown, ask only when the task depends on it.
-- Enter Play Mode settings: inspect domain/scene reload settings when changing static state, initialization, events, pooling, or ExecuteAlways/ExecuteInEditMode code.
-- Use an available search tool (prefer `rg`; otherwise `grep` or PowerShell `Select-String`). Search instructions are patterns, not a requirement to install a shell tool.
+필요한 최소한만 읽는다. 값이 없거나 모순되면 발견된 값을 보고하거나 "알 수 없음"으로 표시한다. 환경 정보를 추측해서는 안 된다(MUST NOT).
+- 버전: `ProjectSettings/ProjectVersion.txt`. `6000.x`는 Unity 6을 뜻한다. 정확한 릴리스는 문서로 확인하고, 모든 6000.x 버전에 대해 일괄적으로 가정하지 않는다.
+- 패키지: `Packages/manifest.json`과 `Packages/packages-lock.json`. 필요하면 해석된 패키지의 어셈블리/API 정보를 확인한다. 설치되어 있다고 해서 참조되거나, 대상 플랫폼에서 지원되거나, 이미 사용 중이라는 뜻은 아니다.
+- 입력: `ProjectSettings/ProjectSettings.asset`에서 `activeInputHandler`를 검색한다.
+- 백엔드: 고정된 줄 수가 아니라 관련 `scriptingBackend` 매핑 전체를 읽는다. 알려진 대상별로 백엔드를 보고하고, 이 매핑만으로 대상 목록을 추론하지 않는다.
+- 대상: 사람이 정한 정책과 기존 빌드/CI 구성을 사용하고, 가능하면 저장된 빌드 구성이나 에디터 빌드 설정을 확인한다. 의도된 출시 대상과 현재 에디터에서 선택된 대상을 구분한다. 그래도 알 수 없으면 작업이 그것에 의존할 때만 질문한다.
+- Enter Play Mode 설정: static 상태, 초기화, 이벤트, 풀링, ExecuteAlways/ExecuteInEditMode 코드를 변경할 때 domain/scene reload 설정을 확인한다.
+- 사용 가능한 검색 도구를 쓴다(`rg` 우선, 없으면 `grep` 또는 PowerShell `Select-String`). 검색 지시는 패턴일 뿐, 셸 도구를 설치하라는 요구가 아니다.
 
-Per task:
-- Resolve the owning assembly from the nearest applicable `.asmdef` or `.asmref`, including the current folder. Inspect references, precompiled-plugin references, auto-reference behavior, platform constraints, define constraints, and version defines as relevant. Package presence alone does not grant access from every assembly.
-- Read 2–3 relevant existing scripts. If conventions conflict, prefer the file being modified, then the feature folder, then the owning assembly. Ask only if the difference materially affects behavior or structure.
-- MUST use APIs supported by the detected Editor and installed package versions. Examples: `Rigidbody.linearVelocity` in 6000.0; `Awaitable` from 2023.1; `destroyCancellationToken` from 2022.2. Unity 2022.3 uses `Rigidbody.velocity`, `drag`, and `angularDrag`.
+작업마다:
+- 현재 폴더를 포함해 가장 가까운 `.asmdef` 또는 `.asmref`로 소속 어셈블리를 확인한다. 필요에 따라 참조, 사전 컴파일된 플러그인 참조, 자동 참조 동작, 플랫폼 제약, define 제약, version define을 확인한다. 패키지가 있다고 해서 모든 어셈블리에서 접근할 수 있는 것은 아니다.
+- 관련 있는 기존 스크립트 2~3개를 읽는다. 컨벤션이 충돌하면 수정 중인 파일, 그다음 기능 폴더, 그다음 소속 어셈블리 순으로 우선한다. 차이가 동작이나 구조에 실질적 영향을 줄 때만 질문한다.
+- 감지된 에디터 버전과 설치된 패키지 버전에서 지원되는 API를 사용해야 한다(MUST). 예: 6000.0의 `Rigidbody.linearVelocity`, 2023.1부터의 `Awaitable`, 2022.2부터의 `destroyCancellationToken`. Unity 2022.3은 `Rigidbody.velocity`, `drag`, `angularDrag`를 사용한다.
 
-Package policy:
-- Input: 0 → legacy Input; 1 → Input System (legacy input reads can throw); 2 → match the relevant existing input implementation, or ask if none exists. If the setting is unreadable, do not select a backend silently. Verify package availability and assembly access separately.
-- TMP: Unity 6 uGUI 2.x includes TMP; verify the package is available in this project. Unity 2022.3 normally uses the separate TMP package. Prefer TMP for new uGUI text. Add `Unity.TextMeshPro` assembly access only if needed and report it. Check required TMP settings, default font, and supporting resources; an arbitrary TMP asset is not proof that Essential Resources are complete. If unavailable, list the import/setup under Manual Editor steps.
-- Prefer existing async/resource APIs. UniTask or Addressables installation or first use is allowed when explicitly requested. Otherwise do not introduce them merely because they are installed.
-- For a requested package installation, check compatibility, choose an explicit source and pinned version/revision, preserve unrelated manifest entries, and report manifest/lock/assembly changes. Ask if source/version choice has a material unresolved tradeoff. Let Unity resolve the lock file; do not fabricate it. Installation alone does not authorize unrelated code migration.
+패키지 정책:
+- 입력: 0 → 레거시 Input, 1 → Input System(레거시 입력 읽기는 예외를 던질 수 있음), 2 → 관련 기존 입력 구현을 따르고, 없으면 질문한다. 설정을 읽을 수 없으면 백엔드를 조용히 선택하지 않는다. 패키지 사용 가능 여부와 어셈블리 접근은 별도로 확인한다.
+- TMP: Unity 6의 uGUI 2.x에는 TMP가 포함되어 있다. 이 프로젝트에서 패키지를 사용할 수 있는지 확인한다. Unity 2022.3은 보통 별도의 TMP 패키지를 사용한다. 새 uGUI 텍스트에는 TMP를 우선한다. `Unity.TextMeshPro` 어셈블리 접근은 필요할 때만 추가하고 보고한다. 필요한 TMP 설정, 기본 폰트, 지원 리소스를 확인한다. 임의의 TMP 에셋이 있다고 해서 Essential Resources가 완전하다는 증거는 아니다. 사용할 수 없으면 import/설정 작업을 "수동 에디터 작업"에 적는다.
+- 기존 비동기/리소스 API를 우선한다. UniTask나 Addressables의 설치 또는 첫 사용은 명시적으로 요청된 경우에만 허용된다. 그 외에는 설치되어 있다는 이유만으로 도입하지 않는다.
+- 패키지 설치를 요청받으면 호환성을 확인하고, 명시적인 소스와 고정된 버전/리비전을 선택하고, 관련 없는 manifest 항목을 보존하며, manifest/lock/어셈블리 변경을 보고한다. 소스/버전 선택에 중대한 미해결 트레이드오프가 있으면 질문한다. lock 파일은 Unity가 해석하게 두고 직접 만들어내지 않는다. 설치 자체가 관련 없는 코드 마이그레이션을 허가하지는 않는다.
 
-### Project policy
-- Scripts root: `Assets/_Project/Scripts/`. Put new runtime scripts here unless the task or existing structure requires otherwise. Modify existing scripts in place, including outside this root. Match existing Editor/test folders; otherwise use `Assets/_Project/Scripts/Editor/` and `Assets/_Project/Tests/EditMode/` or `PlayMode/`.
-- Comment language: `TODO`. If TODO, match the file, then folder; if none, English.
-- Async style: `TODO (Coroutine / Task / Awaitable / UniTask)`. If TODO, match the relevant feature; if none, coroutines. A specified but unavailable style does not authorize installation or unsupported APIs: use a compatible alternative if behavior is equivalent, otherwise ask.
-- `UNITY_PATH` (Unity executable): `TODO`. If TODO or nonexistent, skip Unity compile/tests/import/build without searching for Unity, unless the user requests discovery. Static review and an available approximate .NET build remain applicable.
-- Unity batch timeout: `TODO` minutes. If TODO, 30 minutes per Unity subprocess, including tests and builds. Stop only the process started for this task; never kill the user's Editor.
-
----
-
-## 2. Change Safety
-
-- MUST preserve existing staged, unstaged, and untracked user work. Record a task-start baseline before edits (Git status/diffs or file snapshots as available). Do not delete or overwrite existing scripts, generated code, or third-party sources unless that change is requested. If concurrent edits overlap, preserve them and resolve the overlap before proceeding.
-- NEVER directly edit `Library/` or `Temp/`. NEVER hand-create or hand-edit `.meta` files. Unity generates metadata on import. Every new asset and newly imported folder needs its generated metadata retained with it; for new scripts, report missing `.meta` generation as a required manual step if Unity was not run.
-- Do not modify `ProjectSettings/`, `Packages/`, or serialized assets (`.unity`, `.prefab`, `.asset`, `.mat`, `.anim`, `.controller`, etc.) unless the user requests that change or it is a necessary, clearly scoped part of the requested implementation. Reading is allowed. This restriction also applies to writes through generated code, tests, import hooks, and Editor tools.
-- For authorized serialized-asset changes, prefer an existing safe Editor workflow/API, limit the operation to named assets, preserve references and unrelated values, and inspect the resulting diff. Do not run automatic broad migrations. If no safe editing/verification route is available, explain the limitation and provide precise manual steps; do not substitute a code default change for a prefab change.
-- `.asmdef` / `.asmref`: change only to provide required access or an authorized Editor/test assembly. Report every change. Do not restructure runtime assemblies solely to enable tests without agreement on that migration.
-- Do not rename/move existing scripts, rename Unity component/data types, or change an existing namespace unless requested. Preserve metadata GUIDs and assess type identity, file/class matching, assembly membership, serialized references, and managed-reference migration. Prefer Editor moves; a filename move alone is not proof that all references survive.
-- [STYLE] For new concrete MonoBehaviour/ScriptableObject types intended to be attached or represented by script assets, use one per file with a matching filename. Preserve existing valid layouts unless restructuring is requested.
-
-Serialization changes (MUST):
-- Rename serialized fields with `[FormerlySerializedAs("oldName")]` and `using UnityEngine.Serialization;`. Preserve useful older rename attributes. Update C# references and custom-editor property paths; inspect affected prefab/scene overrides when available.
-- Before retyping/removing a field, removing serialization attributes, changing enum numeric values, or changing nested/SerializeReference types, assess existing assets and saved-data compatibility. If the migration or data loss is unresolved, ask before making the breaking change. These operations may affect values; loss is not identical for every type conversion.
-- Changing a code initializer does not update existing serialized prefab/scene values. Report the distinction and modify the requested asset through the authorized workflow instead.
-
-Public API changes (MUST):
-- Before changing/removing a public method, property, event, or field, search relevant C# callers, inheritance/interface contracts, UnityEvent names (`m_MethodName`), AnimationEvent names (`functionName`, including imported animation metadata), reflection, string-based calls, and `nameof` uses.
-- Search custom-editor serialized paths (e.g., `FindProperty("oldName")`) when changing serialized members. Dynamic strings, binary assets, generated/external callers, and unloaded content may not be exhaustively searchable; report those scopes as unverified, not absent.
-- Update C# callers. Do not leave known asset callers broken merely because they are listed in a report. Migrate authorized assets, preserve a compatible entry point where its semantics are known, or stop before the breaking change and ask for the unresolved migration. Do not invent a DamageType or other new argument with material behavior merely to keep callers compiling.
-- Preserve existing public-field APIs unless their migration is requested; private-field style is not a reason to break them.
-- NEVER add unrelated packages, features, abstractions, or formatting changes. A compatibility adapter necessary to preserve known callers is within the migration scope; report it.
+### 프로젝트 정책
+- 스크립트 루트: `Assets/_Project/Scripts/`. 작업이나 기존 구조가 달리 요구하지 않는 한 새 런타임 스크립트는 여기에 둔다. 기존 스크립트는 이 루트 밖에 있어도 제자리에서 수정한다. 기존 Editor/테스트 폴더를 따르고, 없으면 `Assets/_Project/Scripts/Editor/`와 `Assets/_Project/Tests/EditMode/` 또는 `PlayMode/`를 사용한다.
+- 주석 언어: `TODO`. TODO이면 파일, 그다음 폴더를 따르고, 둘 다 없으면 영어.
+- 비동기 스타일: `TODO (Coroutine / Task / Awaitable / UniTask)`. TODO이면 관련 기능을 따르고, 없으면 코루틴. 지정된 스타일을 사용할 수 없다고 해서 설치나 지원되지 않는 API 사용이 허가되지는 않는다. 동작이 동등하면 호환되는 대안을 쓰고, 그렇지 않으면 질문한다.
+- `UNITY_PATH`(Unity 실행 파일): `TODO`. TODO이거나 존재하지 않으면, 사용자가 탐색을 요청하지 않는 한 Unity를 찾지 말고 Unity 컴파일/테스트/import/빌드를 건너뛴다. 정적 검토와 사용 가능한 근사 .NET 빌드는 여전히 적용된다.
+- Unity 배치 타임아웃: `TODO`분. TODO이면 테스트와 빌드를 포함해 Unity 하위 프로세스당 30분. 이 작업을 위해 시작한 프로세스만 중지하고, 사용자의 에디터는 절대 종료하지 않는다.
 
 ---
 
-## 3. Naming and Layout [STYLE]
+## 2. 변경 안전성
 
-- PascalCase: types, methods, properties, constants, enum values; interfaces use `I` prefix.
-- camelCase: private fields, locals, parameters. Match existing field prefixes in the relevant file/folder; do not rename merely to change style.
-- Prefer `is` / `has` / `can` for boolean variables/properties where natural; predicate methods follow PascalCase (e.g., `IsGrounded`). Preserve override/interface names.
-- Events: `OnHealthChanged`; handlers: `HandleHealthChanged`. Match an existing alternative event/raiser convention.
-- Avoid names that hide inherited members or conflict with types used in the same scope (e.g., `transform`, `Random`, `Object`). Such names are not universally illegal; preserve required contracts and use qualification/aliases when appropriate.
-- Use `this.field = field` for name collisions. Prefer Allman braces, braces on every branch/loop, and no new `#region` blocks.
-- Group fields, properties/events, Unity callbacks, public methods, and helpers consistently with the file. Suffixes such as Manager, Controller, Config, and View describe roles; not every type needs one.
-- Prefer cohesive methods and clear parameters. Do not add wrappers or split straightforward logic solely to meet arbitrary line/parameter limits.
-- Remove unnecessary empty Unity message methods in code being changed; per-frame callbacks can incur dispatch overhead. Do not alter unrelated code solely for this cleanup.
+- 기존의 staged, unstaged, untracked 사용자 작업을 보존해야 한다(MUST). 편집 전에 작업 시작 기준선(Git 상태/diff 또는 사용 가능한 파일 스냅숏)을 기록한다. 요청되지 않은 한 기존 스크립트, 생성된 코드, 서드파티 소스를 삭제하거나 덮어쓰지 않는다. 동시 편집이 겹치면 이를 보존한 채 겹침을 해결한 뒤 진행한다.
+- `Library/`나 `Temp/`를 절대 직접 편집하지 않는다(NEVER). `.meta` 파일을 절대 손으로 만들거나 편집하지 않는다(NEVER). Unity는 import 시 메타데이터를 생성한다. 새 에셋과 새로 import된 폴더는 생성된 메타데이터를 함께 유지해야 한다. 새 스크립트의 경우, Unity를 실행하지 않았다면 `.meta` 미생성을 필수 수동 작업으로 보고한다.
+- 사용자가 요청했거나, 요청된 구현에 필요하고 범위가 명확한 부분이 아니라면 `ProjectSettings/`, `Packages/`, 직렬화 에셋(`.unity`, `.prefab`, `.asset`, `.mat`, `.anim`, `.controller` 등)을 수정하지 않는다. 읽기는 허용된다. 이 제한은 생성된 코드, 테스트, import 훅, 에디터 도구를 통한 쓰기에도 적용된다.
+- 허가된 직렬화 에셋 변경에는 기존의 안전한 에디터 워크플로/API를 우선하고, 작업을 지정된 에셋으로 제한하며, 참조와 관련 없는 값을 보존하고, 결과 diff를 확인한다. 자동 일괄 마이그레이션을 실행하지 않는다. 안전한 편집/검증 경로가 없으면 한계를 설명하고 정확한 수동 작업을 제시한다. 프리팹 변경을 코드 기본값 변경으로 대체하지 않는다.
+- `.asmdef` / `.asmref`: 필요한 접근을 제공하거나 허가된 Editor/테스트 어셈블리를 위해서만 변경한다. 모든 변경을 보고한다. 해당 마이그레이션에 대한 합의 없이 테스트만을 위해 런타임 어셈블리를 재구성하지 않는다.
+- 요청이 없는 한 기존 스크립트의 이름 변경/이동, Unity 컴포넌트/데이터 타입 이름 변경, 기존 namespace 변경을 하지 않는다. 메타데이터 GUID를 보존하고, 타입 식별성, 파일/클래스 일치, 어셈블리 소속, 직렬화 참조, managed-reference 마이그레이션을 평가한다. 에디터를 통한 이동을 우선한다. 파일 이동만으로 모든 참조가 유지된다는 증거가 되지 않는다.
+- [STYLE] 부착되거나 스크립트 에셋으로 표현될 새 구체 MonoBehaviour/ScriptableObject 타입은 파일당 하나씩, 파일명과 일치하게 작성한다. 재구성이 요청되지 않는 한 기존의 유효한 구조는 유지한다.
+
+직렬화 변경 (MUST):
+- 직렬화 필드 이름을 바꿀 때는 `[FormerlySerializedAs("oldName")]`과 `using UnityEngine.Serialization;`을 사용한다. 유용한 이전 rename 특성은 보존한다. C# 참조와 커스텀 에디터 프로퍼티 경로를 업데이트하고, 가능하면 영향받는 프리팹/씬 오버라이드를 확인한다.
+- 필드 타입 변경/제거, 직렬화 특성 제거, enum 숫자 값 변경, 중첩/SerializeReference 타입 변경 전에는 기존 에셋과 저장 데이터 호환성을 평가한다. 마이그레이션이나 데이터 손실 문제가 해결되지 않았다면 파괴적 변경 전에 질문한다. 이런 작업은 값에 영향을 줄 수 있으며, 손실 양상은 타입 변환마다 다르다.
+- 코드의 초기값을 바꿔도 이미 직렬화된 프리팹/씬 값은 업데이트되지 않는다. 이 차이를 보고하고, 요청된 에셋은 허가된 워크플로로 수정한다.
+
+공개 API 변경 (MUST):
+- public 메서드, 프로퍼티, 이벤트, 필드를 변경/제거하기 전에 관련 C# 호출부, 상속/인터페이스 계약, UnityEvent 이름(`m_MethodName`), AnimationEvent 이름(`functionName`, import된 애니메이션 메타데이터 포함), 리플렉션, 문자열 기반 호출, `nameof` 사용을 검색한다.
+- 직렬화 멤버를 변경할 때 커스텀 에디터의 직렬화 경로(예: `FindProperty("oldName")`)를 검색한다. 동적 문자열, 바이너리 에셋, 생성된/외부 호출부, 로드되지 않은 콘텐츠는 완전히 검색할 수 없을 수 있다. 이런 범위는 "없음"이 아니라 "검증 안 됨"으로 보고한다.
+- C# 호출부를 업데이트한다. 알려진 에셋 호출부를 보고서에 적었다는 이유로 깨진 채 두지 않는다. 허가된 에셋을 마이그레이션하거나, 의미가 알려진 경우 호환 진입점을 유지하거나, 파괴적 변경 전에 멈추고 미해결 마이그레이션에 대해 질문한다. 호출부를 컴파일시키려고 DamageType처럼 동작에 실질적 영향을 주는 새 인자를 만들어내지 않는다.
+- 마이그레이션 요청이 없는 한 기존 public 필드 API를 유지한다. private 필드 스타일이 그것을 깨뜨릴 이유가 되지 않는다.
+- 관련 없는 패키지, 기능, 추상화, 포맷 변경을 절대 추가하지 않는다(NEVER). 알려진 호출부를 보존하는 데 필요한 호환 어댑터는 마이그레이션 범위에 포함되며, 보고한다.
 
 ---
 
-## 4. Fields, Serialization, Methods
+## 3. 명명과 구성 [STYLE]
 
-- [STYLE] Prefer `[SerializeField] private` fields in new MonoBehaviour/ScriptableObject code. Add read-only properties only for needed external access. Plain serializable data containers may use public fields.
-- Unity's normal field serialization does not directly support Dictionary, static, readonly, or const fields, or properties themselves. Backing fields can be serialized; auto-property backing fields also have hot-reload behavior. Use `[field: SerializeField]` only when consistent with the project.
-- `[SerializeReference]` supports eligible managed polymorphic/interface data, not UnityEngine.Object component references. For component interfaces, serialize a compatible Unity object reference and validate/cast it, or use the project's dependency injection pattern. Use custom serialization only when needed; assess migration and thread restrictions in serialization callbacks.
-- [STYLE] Use explicit access modifiers; use `var` when the right-hand type is clear. Prefer early returns. Use Try-patterns for expected recoverable failure, not to hide programmer errors or exceptions.
-- Give meaningful tuning values a named constant or serialized field. Mathematical identities, indices, and standard formula coefficients need no artificial constant solely for style.
-- Tags: named constants plus `CompareTag`; verify the tag exists. Animator/shader IDs: `static readonly int` via the corresponding hash API. Layers: explicit LayerMask/filter policy.
+- PascalCase: 타입, 메서드, 프로퍼티, 상수, enum 값. 인터페이스는 `I` 접두사를 사용한다.
+- camelCase: private 필드, 지역 변수, 매개변수. 관련 파일/폴더의 기존 필드 접두사를 따르고, 스타일만을 위해 이름을 바꾸지 않는다.
+- 자연스러운 경우 bool 변수/프로퍼티에 `is` / `has` / `can`을 우선한다. 판정 메서드는 PascalCase를 따른다(예: `IsGrounded`). override/인터페이스 이름은 유지한다.
+- 이벤트: `OnHealthChanged`, 핸들러: `HandleHealthChanged`. 기존에 다른 이벤트/발행자 컨벤션이 있으면 그것을 따른다.
+- 상속 멤버를 가리거나 같은 범위에서 사용하는 타입과 충돌하는 이름(예: `transform`, `Random`, `Object`)을 피한다. 이런 이름이 보편적으로 금지된 것은 아니다. 필요한 계약은 유지하고 적절히 한정자/별칭을 사용한다.
+- 이름 충돌 시 `this.field = field`를 사용한다. Allman 중괄호, 모든 분기/반복문에 중괄호, 새 `#region` 블록 사용 안 함을 우선한다.
+- 필드, 프로퍼티/이벤트, Unity 콜백, public 메서드, 헬퍼를 파일과 일관되게 묶는다. Manager, Controller, Config, View 같은 접미사는 역할을 설명할 뿐이며, 모든 타입에 필요한 것은 아니다.
+- 응집된 메서드와 명확한 매개변수를 우선한다. 임의의 줄 수/매개변수 수 제한을 맞추려고 래퍼를 추가하거나 단순한 로직을 쪼개지 않는다.
+- 변경 중인 코드에서 불필요한 빈 Unity 메시지 메서드는 제거한다. 매 프레임 콜백은 호출 오버헤드가 생길 수 있다. 이 정리만을 위해 관련 없는 코드를 바꾸지 않는다.
 
 ---
 
-## 5. Unity Correctness
+## 4. 필드, 직렬화, 메서드
 
-### Null checks (MUST)
-- UnityEngine.Object equality includes native-object liveness: a destroyed wrapper can compare equal to null while still being a non-null managed reference.
-- Use `== null`, `!= null`, or Unity's boolean conversion for Unity-object liveness. Do not use `?.`, `??`, `??=`, or C# null patterns as liveness checks.
-- Unity objects stored as interfaces, object, or generic references need both managed-null and Unity-liveness checks before accessing Unity state. Example for an interface/object reference:
+- [STYLE] 새 MonoBehaviour/ScriptableObject 코드에서는 `[SerializeField] private` 필드를 우선한다. 외부 접근이 필요할 때만 읽기 전용 프로퍼티를 추가한다. 단순 직렬화 데이터 컨테이너는 public 필드를 써도 된다.
+- Unity의 일반 필드 직렬화는 Dictionary, static, readonly, const 필드나 프로퍼티 자체를 직접 지원하지 않는다. 백킹 필드는 직렬화할 수 있으며, 자동 프로퍼티의 백킹 필드에는 핫 리로드 관련 동작도 있다. `[field: SerializeField]`는 프로젝트와 일관될 때만 사용한다.
+- `[SerializeReference]`는 적격한 managed 다형성/인터페이스 데이터를 지원하며, UnityEngine.Object 컴포넌트 참조는 지원하지 않는다. 컴포넌트 인터페이스에는 호환되는 Unity 오브젝트 참조를 직렬화한 뒤 검증/캐스팅하거나, 프로젝트의 의존성 주입 패턴을 사용한다. 커스텀 직렬화는 필요할 때만 사용하고, 직렬화 콜백의 마이그레이션 및 스레드 제약을 평가한다.
+- [STYLE] 명시적 접근 제한자를 쓰고, 우변 타입이 명확하면 `var`를 쓴다. early return을 우선한다. Try 패턴은 예상된 복구 가능한 실패에 사용하며, 프로그래머 오류나 예외를 숨기는 용도로 쓰지 않는다.
+- 의미 있는 튜닝 값에는 이름 있는 상수나 직렬화 필드를 부여한다. 수학적 항등값, 인덱스, 표준 공식 계수는 스타일만을 위해 인위적인 상수로 만들 필요가 없다.
+- 태그: 이름 있는 상수 + `CompareTag`, 태그 존재 여부 확인. Animator/셰이더 ID: 해당 해시 API로 만든 `static readonly int`. 레이어: 명시적인 LayerMask/필터 정책.
+
+---
+
+## 5. Unity 정확성
+
+### Null 체크 (MUST)
+- UnityEngine.Object의 동등 비교에는 네이티브 오브젝트 생존 여부가 포함된다. 파괴된 래퍼는 managed 참조가 null이 아니어도 null과 같다고 비교될 수 있다.
+- Unity 오브젝트의 생존 확인에는 `== null`, `!= null`, 또는 Unity의 bool 변환을 사용한다. `?.`, `??`, `??=`, C# null 패턴을 생존 확인으로 사용하지 않는다.
+- 인터페이스, object, 제네릭 참조로 저장된 Unity 오브젝트는 Unity 상태에 접근하기 전에 managed-null 확인과 Unity 생존 확인을 모두 해야 한다. 인터페이스/object 참조 예시:
   ```csharp
   if (target is null || (target is UnityEngine.Object unityObject && unityObject == null))
   {
       return;
   }
   ```
-- `ReferenceEquals`/C# null checks may deliberately test managed-reference existence for managed-only cleanup, such as removing a field-like C# event handler from a destroyed publisher wrapper. Do not access native properties or a custom event accessor that touches Unity state through that exception.
-- C# null operators are fine for plain managed objects, delegates, and events. State in an interface's documentation if implementations must be Unity components.
+- `ReferenceEquals`/C# null 체크는 managed 전용 정리를 위해 managed 참조의 존재를 의도적으로 확인할 때 사용할 수 있다. 예를 들어 파괴된 발행자 래퍼에서 field-like C# 이벤트 핸들러를 제거하는 경우다. 이 예외를 이용해 네이티브 프로퍼티나, Unity 상태를 건드리는 커스텀 이벤트 접근자에 접근하지 않는다.
+- C# null 연산자는 순수 managed 오브젝트, 델리게이트, 이벤트에는 사용해도 된다. 구현체가 반드시 Unity 컴포넌트여야 한다면 인터페이스 문서에 명시한다.
 
-### Missing references and initialization
-- Validate required references at the earliest point they are expected to exist. For an invalid component, log an actionable error once with context, disable it, and return. Disabling does not block public calls or external callbacks: guard those paths too.
-- If a factory injects dependencies after creation, initialize explicitly before enabling/using the component. Revalidate if references can change or the component can be re-enabled; Awake does not rerun on re-enable.
-- Same-object dependency: prefer RequireComponent plus GetComponent/TryGetComponent in Awake. Validate existing objects too; an attribute is not proof that every existing instance is correctly configured.
-- Optional references: validate at use and define fallback behavior.
+### 누락된 참조와 초기화
+- 필수 참조는 존재가 예상되는 가장 이른 시점에 검증한다. 유효하지 않은 컴포넌트는 컨텍스트와 함께 조치 가능한 오류를 한 번 기록하고, 비활성화한 뒤 반환한다. 비활성화해도 public 호출이나 외부 콜백은 막히지 않으므로 그 경로도 방어한다.
+- 팩토리가 생성 후 의존성을 주입한다면, 컴포넌트를 활성화/사용하기 전에 명시적으로 초기화한다. 참조가 바뀌거나 컴포넌트가 재활성화될 수 있으면 다시 검증한다. Awake는 재활성화 시 다시 실행되지 않는다.
+- 같은 오브젝트 내 의존성: RequireComponent와 Awake에서의 GetComponent/TryGetComponent를 우선한다. 기존 오브젝트도 검증한다. 특성이 붙어 있다고 해서 모든 기존 인스턴스가 올바르게 구성되었다는 증거는 아니다.
+- 선택적 참조: 사용 시점에 검증하고 대체 동작을 정의한다.
 
-### Lifecycle
-- Awake precedes OnEnable on the same object. Ordering across different objects is not guaranteed.
-- Scene-loaded active objects complete their Awake/OnEnable calls before Start calls; runtime-created or later-activated objects are not covered by that scene-wide guarantee. Another object's Start initialization is not guaranteed to precede yours.
-- Start runs once when the instance becomes eligible, not on each re-enable. Inactive GameObjects defer Awake; disabling only a component is different from deactivating its GameObject. OnDestroy is documented for objects that were previously active; do not make indispensable cleanup depend on an object that never activates.
-- OnDisable may occur on deactivation, destruction, or script reload. Do not assume every OnDestroy has a fresh paired OnDisable or that every shutdown environment delivers all callbacks.
-- Prefer Awake for own components/state, Start for dependencies known to be ready, and explicit readiness/injection for services initialized later. Avoid reading other objects' initialization-dependent state in Awake/OnEnable without a readiness contract.
-- LateUpdate is suitable for camera follow after normal Update; ordering among peers or custom PlayerLoop phases still needs an explicit contract.
-- Pooled/reusable objects reset state on pool get/release or appropriate enable/disable callbacks, not only Awake/Start. Ensure exactly one owner performs each reset and cleanup.
+### 생명주기
+- 같은 오브젝트에서 Awake는 OnEnable보다 먼저 실행된다. 서로 다른 오브젝트 간 순서는 보장되지 않는다.
+- 씬과 함께 로드된 활성 오브젝트는 Start 호출 전에 Awake/OnEnable 호출을 모두 마친다. 런타임에 생성되거나 나중에 활성화된 오브젝트는 이 씬 전체 보장에 포함되지 않는다. 다른 오브젝트의 Start 초기화가 내 것보다 먼저 실행된다는 보장은 없다.
+- Start는 인스턴스가 실행 가능해질 때 한 번 실행되며, 재활성화될 때마다 실행되지 않는다. 비활성 GameObject는 Awake를 미룬다. 컴포넌트만 비활성화하는 것은 GameObject를 비활성화하는 것과 다르다. OnDestroy는 이전에 활성화된 적이 있는 오브젝트에 대해 문서화되어 있으므로, 한 번도 활성화되지 않는 오브젝트에 필수 정리를 의존하지 않는다.
+- OnDisable은 비활성화, 파괴, 스크립트 리로드 때 발생할 수 있다. 모든 OnDestroy에 짝이 되는 OnDisable이 새로 발생한다거나, 모든 종료 환경이 모든 콜백을 전달한다고 가정하지 않는다.
+- 자기 컴포넌트/상태는 Awake, 준비가 확인된 의존성은 Start, 나중에 초기화되는 서비스는 명시적인 준비/주입을 우선한다. 준비 계약 없이 Awake/OnEnable에서 다른 오브젝트의 초기화에 의존하는 상태를 읽지 않는다.
+- LateUpdate는 일반 Update 이후의 카메라 추적에 적합하다. 동급 컴포넌트 간 순서나 커스텀 PlayerLoop 단계에는 여전히 명시적 계약이 필요하다.
+- 풀링/재사용 오브젝트는 Awake/Start뿐 아니라 풀에서 꺼낼 때/반환할 때, 또는 적절한 enable/disable 콜백에서 상태를 초기화한다. 각 초기화와 정리는 정확히 하나의 소유자가 수행하도록 한다.
 
-### Event subscriptions (MUST)
-- Every subscription needs matching cleanup on the same publisher/delegate identity. Default active-time lifetime: OnEnable/OnDisable. Instance lifetime: explicit initialization/OnDestroy only when activation and cleanup are guaranteed; otherwise use owner-controlled disposal.
-- Store the publisher actually subscribed to. Make binding idempotent. For state notifications, subscribe and then synchronize current state so late-created UI does not wait for the next change.
-- A singleton reference is not proof of readiness. The publisher must complete the state initialization needed by listeners before reporting ready. Define readiness, replacement, and removal when the publisher can appear later, change, or disappear.
-- For a stable publisher initialized in Awake, the following pattern is sufficient for binding and initial state. It assumes `Score` is ready when Instance becomes visible, `OnScoreChanged` is a field-like `event Action<int>`, and callbacks run on the main thread. Adapt names to the project; this is not a complete ScoreView class.
+### 이벤트 구독 (MUST)
+- 모든 구독에는 같은 발행자/델리게이트 식별성에 대한 짝이 맞는 해제가 필요하다. 기본 활성 기간 수명: OnEnable/OnDisable. 인스턴스 수명: 활성화와 정리가 보장될 때만 명시적 초기화/OnDestroy를 쓰고, 그렇지 않으면 소유자가 제어하는 해제를 사용한다.
+- 실제로 구독한 발행자를 저장한다. 바인딩을 멱등적으로 만든다. 상태 알림의 경우, 구독한 뒤 현재 상태를 동기화해 늦게 생성된 UI가 다음 변경까지 기다리지 않게 한다.
+- 싱글톤 참조가 있다고 준비가 완료되었다는 증거는 아니다. 발행자는 준비 완료를 알리기 전에 리스너가 필요로 하는 상태 초기화를 마쳐야 한다. 발행자가 나중에 나타나거나, 바뀌거나, 사라질 수 있다면 준비, 교체, 제거 방식을 정의한다.
+- Awake에서 초기화되는 안정적인 발행자에 대해서는 아래 패턴으로 바인딩과 초기 상태 동기화가 충분하다. Instance가 보이는 시점에 `Score`가 준비되어 있고, `OnScoreChanged`가 field-like `event Action<int>`이며, 콜백이 메인 스레드에서 실행된다고 가정한다. 이름은 프로젝트에 맞게 조정한다. 완전한 ScoreView 클래스가 아니다.
   ```csharp
   private ScoreManager subscribedManager;
 
@@ -164,7 +164,7 @@ Public API changes (MUST):
 
   private void Unsubscribe()
   {
-      // Managed-only field-like event cleanup; no native publisher access.
+      // managed 전용 field-like 이벤트 정리. 네이티브 발행자에 접근하지 않음.
       if (!ReferenceEquals(subscribedManager, null))
       {
           subscribedManager.OnScoreChanged -= HandleScoreChanged;
@@ -196,82 +196,82 @@ Public API changes (MUST):
       HandleScoreChanged(subscribedManager.Score);
   }
   ```
-- OnEnable + Start alone does not detect later readiness or replacement. Use the project's ready/instance-changed registry notification (including removal), explicit factory injection, or another documented binding trigger. Active subscribers register for that notification before the initial binding attempt and unregister on disable; callbacks must not rebind disabled subscribers. Reset owned static notifications per §7. Do not create a global event system for a task that only needs factory injection.
-- DefaultExecutionOrder can order participating scripts; it does not create missing publishers or guarantee readiness of future objects.
+- OnEnable + Start만으로는 나중에 준비가 완료되거나 교체되는 것을 감지하지 못한다. 프로젝트의 준비/인스턴스 변경 레지스트리 알림(제거 포함), 명시적 팩토리 주입, 또는 다른 문서화된 바인딩 트리거를 사용한다. 활성 구독자는 초기 바인딩 시도 전에 해당 알림에 등록하고, 비활성화 시 해제한다. 콜백이 비활성화된 구독자를 다시 바인딩해서는 안 된다. 소유한 static 알림은 §7에 따라 초기화한다. 팩토리 주입만 필요한 작업에 전역 이벤트 시스템을 만들지 않는다.
+- DefaultExecutionOrder는 참여하는 스크립트의 순서를 정할 수 있지만, 없는 발행자를 만들거나 미래 오브젝트의 준비를 보장하지는 않는다.
 
-### Time and pause (MUST)
-- Integrate rates using the appropriate delta time (position += velocity * dt, countdowns, MoveTowards steps). Time.deltaTime inside FixedUpdate reports the fixed step.
-- Do not multiply direct velocity assignments or Force/Acceleration AddForce inputs by deltaTime. Impulse/VelocityChange inputs represent instantaneous changes; multiply a force by a simulation step only when deliberately converting it to impulse, with units made clear.
-- Standard mouse/pointer deltas are displacements; do not apply deltaTime again. Stick look commonly represents a rate and needs deltaTime; respect the actual input API/processor contract.
-- Work that continues at timeScale = 0 needs a callback that still runs and unscaled timing/realtime waits. unscaledDeltaTime alone does not make FixedUpdate, WaitForFixedUpdate, or WaitForSeconds progress normally during pause.
+### 시간과 일시정지 (MUST)
+- 비율은 적절한 delta time으로 적분한다(position += velocity * dt, 카운트다운, MoveTowards 스텝). FixedUpdate 안의 Time.deltaTime은 고정 스텝 값을 반환한다.
+- 직접적인 속도 대입이나 Force/Acceleration 모드의 AddForce 입력에 deltaTime을 곱하지 않는다. Impulse/VelocityChange 입력은 순간적인 변화를 나타낸다. 힘을 의도적으로 충격량으로 변환할 때만 시뮬레이션 스텝을 곱하고, 단위를 명확히 한다.
+- 일반적인 마우스/포인터 delta는 변위이므로 deltaTime을 다시 곱하지 않는다. 스틱 시점 조작은 보통 비율을 나타내므로 deltaTime이 필요하다. 실제 입력 API/프로세서 계약을 따른다.
+- timeScale = 0에서도 계속되어야 하는 작업에는 여전히 실행되는 콜백과 unscaled 타이밍/실시간 대기가 필요하다. unscaledDeltaTime만으로는 일시정지 중 FixedUpdate, WaitForFixedUpdate, WaitForSeconds가 정상적으로 진행되지 않는다.
 
-### Input
-- Enable/disable/dispose only actions or maps your component owns: created privately or obtained from an owned clone. InputActionReference does not confer ownership of shared actions. PlayerInput/central-manager actions are controlled by their owner; consumers only manage their own callbacks.
-- Capture one-shot physics input in Update or a callback and consume at the simulation boundary. A bool deliberately coalesces multiple presses; use a bounded queue/timestamp only when separate presses or buffering are required. Define expiration and clear pending input on disable/pool return; avoid carrying paused input into resume unless requested.
-- Handle non-physics input at the appropriate event boundary. Do not add global Input Manager mappings or .inputactions assets without the scoped authorization in §2.
+### 입력
+- 컴포넌트가 소유한 액션이나 맵만 enable/disable/dispose한다. 소유한 것이란 비공개로 생성했거나 소유한 복제본에서 얻은 것을 말한다. InputActionReference는 공유 액션의 소유권을 주지 않는다. PlayerInput/중앙 관리자의 액션은 그 소유자가 제어하며, 소비자는 자기 콜백만 관리한다.
+- 일회성 물리 입력은 Update나 콜백에서 포착하고 시뮬레이션 경계에서 소비한다. bool은 여러 번의 입력을 의도적으로 하나로 합친다. 개별 입력 구분이나 버퍼링이 필요할 때만 크기가 제한된 큐/타임스탬프를 사용한다. 만료를 정의하고, 비활성화/풀 반환 시 대기 중인 입력을 지운다. 요청이 없는 한 일시정지 중의 입력이 재개 후로 넘어가지 않게 한다.
+- 비물리 입력은 적절한 이벤트 경계에서 처리한다. §2의 범위가 지정된 권한 없이 전역 Input Manager 매핑이나 .inputactions 에셋을 추가하지 않는다.
 
-### Physics (MUST unless explicitly marked Prefer)
-- With automatic fixed-step simulation, apply continuous Rigidbody/Rigidbody2D control in FixedUpdate. With manual simulation, use the project's simulation boundary. One-off queries/setup may run elsewhere when consistent with the simulation state.
-- For 3D dynamic Rigidbody, prefer forces or deliberate velocity control; for kinematic motion, prefer MovePosition/MoveRotation. Check the exact 2D API/body-type contract separately. Do not write transform.position for ordinary simulated-body motion.
-- Teleports use an explicit Rigidbody position/rotation workflow suitable for that version, with collision/interpolation/synchronization consequences considered. Do not apply continuous movement rules blindly to instantaneous relocation.
-- Inspect body type and simulation mode first. If unknown and the choice changes behavior, ask (§12); do not silently assume dynamic.
-- 3D queries: explicit LayerMask and QueryTriggerInteraction. Trigger defaults depend on Physics settings.
-- 2D queries: use a supported ContactFilter2D (SetLayerMask enables filtering; set useTriggers explicitly) or a supported overload with a documented trigger policy.
-- Use the exact query/overload's ordering contract. 3D NonAlloc queries do not guarantee nearest-first results; some 2D casts explicitly return distance-sorted results (e.g., 6000.0 Physics2D.Raycast with ContactFilter2D and array/List). Do not generalize one API's contract to all queries.
-- A full fixed-size result buffer can be truncated. Use a justified design bound or grow and re-query; do not claim the retained hits are the nearest unless that exact API guarantees it. Lists may resize and allocate. Process only the returned count, not stale buffer elements.
-- Prefer collision.GetContact/GetContacts and contactCount over allocating collision.contacts.
+### 물리 (Prefer로 명시되지 않은 한 MUST)
+- 자동 고정 스텝 시뮬레이션에서는 Rigidbody/Rigidbody2D의 지속적인 제어를 FixedUpdate에서 적용한다. 수동 시뮬레이션에서는 프로젝트의 시뮬레이션 경계를 사용한다. 일회성 쿼리/설정은 시뮬레이션 상태와 일관된다면 다른 곳에서 실행해도 된다.
+- 3D dynamic Rigidbody는 힘이나 의도적인 속도 제어를, kinematic 이동은 MovePosition/MoveRotation을 우선한다. 2D의 정확한 API/body type 계약은 별도로 확인한다. 일반적인 시뮬레이션 바디 이동에 transform.position을 쓰지 않는다.
+- 순간이동은 해당 버전에 맞는 명시적인 Rigidbody 위치/회전 워크플로를 사용하고, 충돌/보간/동기화 영향을 고려한다. 지속 이동 규칙을 순간 이동에 무작정 적용하지 않는다.
+- body type과 시뮬레이션 모드를 먼저 확인한다. 알 수 없고 선택에 따라 동작이 달라지면 질문한다(§12). dynamic이라고 조용히 가정하지 않는다.
+- 3D 쿼리: 명시적인 LayerMask와 QueryTriggerInteraction. 트리거 기본값은 Physics 설정에 따라 다르다.
+- 2D 쿼리: 지원되는 ContactFilter2D(SetLayerMask로 필터링 활성화, useTriggers를 명시적으로 설정) 또는 트리거 정책이 문서화된 지원 오버로드를 사용한다.
+- 정확한 쿼리/오버로드의 순서 계약을 따른다. 3D NonAlloc 쿼리는 가까운 순서를 보장하지 않는다. 일부 2D 캐스트는 명시적으로 거리순 결과를 반환한다(예: 6000.0에서 ContactFilter2D와 배열/List를 쓰는 Physics2D.Raycast). 한 API의 계약을 모든 쿼리에 일반화하지 않는다.
+- 꽉 찬 고정 크기 결과 버퍼는 결과가 잘렸을 수 있다. 근거 있는 설계상 상한을 쓰거나, 버퍼를 키우고 다시 쿼리한다. 해당 API가 보장하지 않는 한 남은 결과가 가장 가까운 것이라고 주장하지 않는다. List는 크기가 바뀌며 할당이 발생할 수 있다. 버퍼에 남아 있는 이전 요소가 아니라 반환된 개수만큼만 처리한다.
+- 할당이 발생하는 collision.contacts보다 collision.GetContact/GetContacts와 contactCount를 우선한다.
 
-### Async and coroutine lifetime (MUST)
-- Choose and document the state/resource owner and operation lifetime. Disable/pool-return lifetime commonly uses a CTS created on enable and cancelled on disable. Destroy lifetime can use a destroy token where supported; capture it before destruction. Dispose owned CTS instances at a safe boundary after consumers needing registration have completed; cancellation and disposal are not interchangeable.
-- Capture the operation token once and pass it to supported APIs. Do not reread a replaceable CTS field after await. Check lifetime/liveness before applying results; for reusable objects capture a generation and increment it at the owner's invalidation boundary. Checks guard writes to owner/session state, not every pure calculation.
-- Define concurrent-start policy for operations writing the same state: reject, cancel previous, or apply latest. Older continuations must not clear or dispose a newer operation's state/CTS.
-- Cancellation does not stop token-ignoring work or release results. Observe completion and clean up late results/handles even when their state update is rejected (§8).
-- Expected cancellation must follow the operation/API's documented contract. token.IsCancellationRequested alone does not establish the source of an exception. Check exception tokens where meaningful; explicitly account for linked or token-less cancellation APIs. Propagate unexpected cancellation/failures to observing callers.
-- Propagate failures from awaited/observed operations. At top-level fire-and-forget boundaries, catch expected cancellation and log unexpected failures once with valid context. Do not swallow failures or log them repeatedly at every layer.
-- async void only for required event signatures, with top-level exception handling. Otherwise use Task, supported Awaitable, or installed UniTask according to §1; coroutines remain a valid fallback.
-- Awaitable instances are single-consumer and must not be awaited repeatedly/concurrently. Prefer local ownership; do not cache completed pooled instances. UniTask re-awaitability depends on its source/API; do not assume Task semantics.
-- Coroutines stop on GameObject deactivation/component destruction, not merely component disable. Stop them explicitly if disable ends their lifetime; do not depend solely on iterator cleanup for critical external resource release.
-- Main-thread-only Unity APIs must not run on background threads. Documented thread-safe APIs/Jobs are exceptions within their contracts. Switch to the main thread before scene-object access; define termination on Play Mode exit for background work.
+### 비동기와 코루틴 수명 (MUST)
+- 상태/리소스 소유자와 작업 수명을 정하고 문서화한다. 비활성화/풀 반환 수명에는 보통 enable 시 생성하고 disable 시 취소하는 CTS를 사용한다. 파괴 수명에는 지원되는 경우 destroy 토큰을 쓸 수 있으며, 파괴 전에 캡처한다. 소유한 CTS 인스턴스는 등록이 필요한 소비자가 끝난 뒤 안전한 시점에 Dispose한다. 취소와 해제는 서로 대체할 수 없다.
+- 작업 토큰은 한 번 캡처해서 지원되는 API에 전달한다. await 이후 교체될 수 있는 CTS 필드를 다시 읽지 않는다. 결과를 적용하기 전에 수명/생존 여부를 확인한다. 재사용 오브젝트는 세대 번호를 캡처하고, 소유자의 무효화 시점에 증가시킨다. 이 확인은 모든 순수 계산이 아니라 소유자/세션 상태에 대한 쓰기를 보호하기 위한 것이다.
+- 같은 상태에 쓰는 작업의 동시 시작 정책을 정한다: 거부, 이전 작업 취소, 최신 결과 적용. 오래된 continuation이 새 작업의 상태/CTS를 지우거나 해제해서는 안 된다.
+- 취소한다고 토큰을 무시하는 작업이 멈추거나 결과가 해제되지는 않는다. 상태 업데이트가 거부되더라도 완료를 관찰하고, 늦게 도착한 결과/핸들을 정리한다(§8).
+- 예상된 취소는 작업/API의 문서화된 계약을 따라야 한다. token.IsCancellationRequested만으로 예외의 출처를 확정할 수 없다. 의미 있는 경우 예외에 담긴 토큰을 확인하고, 연결된(linked) 취소나 토큰을 받지 않는 취소 API를 명시적으로 고려한다. 예상치 못한 취소/실패는 관찰하는 호출자에게 전파한다.
+- await하거나 관찰하는 작업의 실패는 전파한다. 최상위 fire-and-forget 경계에서는 예상된 취소를 잡고, 예상치 못한 실패를 유효한 컨텍스트와 함께 한 번 기록한다. 실패를 삼키거나 모든 계층에서 반복 기록하지 않는다.
+- async void는 필수 이벤트 시그니처에만 쓰고, 최상위 예외 처리를 둔다. 그 외에는 §1에 따라 Task, 지원되는 Awaitable, 또는 설치된 UniTask를 사용한다. 코루틴은 여전히 유효한 대안이다.
+- Awaitable 인스턴스는 단일 소비자용이며, 반복해서 또는 동시에 await해서는 안 된다. 지역 소유를 우선하고, 완료된 풀링 인스턴스를 캐시하지 않는다. UniTask의 재-await 가능 여부는 소스/API에 따라 다르므로 Task와 같은 의미를 가정하지 않는다.
+- 코루틴은 컴포넌트 비활성화만으로는 멈추지 않고, GameObject 비활성화나 컴포넌트 파괴 시 멈춘다. 비활성화로 수명이 끝나야 한다면 명시적으로 중지한다. 중요한 외부 리소스 해제를 iterator 정리에만 의존하지 않는다.
+- 메인 스레드 전용 Unity API를 백그라운드 스레드에서 실행해서는 안 된다. 문서화된 스레드 안전 API/Jobs는 그 계약 범위 안에서 예외다. 씬 오브젝트에 접근하기 전에 메인 스레드로 전환하고, Play Mode 종료 시 백그라운드 작업이 어떻게 종료되는지 정의한다.
 
-### API replacements (Prefer; only when supported)
-- FindObjectOfType → FindFirstObjectByType/FindAnyObjectByType; choose ordering/active-object semantics deliberately.
-- FindObjectsOfType → FindObjectsByType; use FindObjectsSortMode.None only when ordering is unnecessary.
-- String StartCoroutine, SendMessage, BroadcastMessage → typed calls, references, interfaces, or events. Preserve existing string callers during requested API migration (§2).
-- In 6000.0, prefer Rigidbody.linearVelocity/linearDamping/angularDamping over the older names. Use supported names in 2022.3; verify other releases.
-
----
-
-## 6. Performance
-
-- Hot paths are repeatedly executed frame/physics/input-move work and helpers actually reached at that frequency, including conditional helpers whose condition is commonly true. Discrete events are not automatically performance-critical; consider their measured/expected rate and workload.
-- Prefer caching stable component/look-up results, avoiding recurring allocations, updating collections/UI on change, and pooling frequently reused objects when lifecycle complexity is justified. Do not mandate Dictionary, pooling, or distance micro-optimizations for small non-hot workloads.
-- Every cached external object needs an invalidation/refresh policy for replacement, destruction, or scene changes. Camera.main performance depends on version and usage; cache recurring use when useful, with refresh rules.
-- For deliberate hot-path exceptions, describe a verified bound or label an estimate as such. Report material Prefer deviations; do not fabricate a profile or call-rate guarantee. Profile when the required tools are available and the task warrants it.
-- MUST NOT add recurring diagnostic logs in release hot paths. Guard them with UNITY_EDITOR/DEVELOPMENT_BUILD or an existing diagnostic policy. A one-time actionable error for invalid state is allowed; stop/throttle repeated errors. Never log sensitive data (§10).
-- TMP SetText numeric-format overloads can reduce formatting allocation; do not claim all text updates/Editor paths allocate nothing. Change text only when its displayed value changes.
-- Cache WaitForSeconds only for fixed repeated durations when appropriate. Do not optimize unrelated code or introduce runtime options merely to satisfy this section.
+### API 대체 (Prefer, 지원되는 경우에만)
+- FindObjectOfType → FindFirstObjectByType/FindAnyObjectByType. 순서/활성 오브젝트 관련 의미를 의도적으로 선택한다.
+- FindObjectsOfType → FindObjectsByType. 순서가 필요 없을 때만 FindObjectsSortMode.None을 쓴다.
+- 문자열 기반 StartCoroutine, SendMessage, BroadcastMessage → 타입 지정 호출, 참조, 인터페이스, 이벤트. 요청된 API 마이그레이션 중에는 기존 문자열 호출부를 보존한다(§2).
+- 6000.0에서는 이전 이름 대신 Rigidbody.linearVelocity/linearDamping/angularDamping을 우선한다. 2022.3에서는 지원되는 이름을 쓰고, 다른 릴리스는 확인한다.
 
 ---
 
-## 7. Architecture
+## 6. 성능
 
-- Prefer small cohesive components and existing project patterns. One specific dependency: reference/injection; multiple state listeners: C# event; Inspector-designed response: UnityEvent.
-- Prefer ScriptableObject assets for shared designer-authored configuration when consistent with the project. MUST NOT mutate persistent assets for transient runtime/save state. Owned runtime instances/clones may hold runtime state; shallow clones can still share referenced assets, so ownership matters.
-- [STYLE] View components display data and emit user-intent events. Prefer controllers/services for authoritative game-state writes. Local visual/interaction state is not game state; preserve existing architecture unless migration is requested.
-- Prefer an explicit state model for mutually exclusive modes with transitions; independent flags need not become a state machine.
+- 핫 패스란 반복 실행되는 프레임/물리/입력 이동 작업과, 실제로 그 빈도로 도달하는 헬퍼를 말한다. 조건이 흔히 참인 조건부 헬퍼도 포함한다. 개별 이벤트가 자동으로 성능에 중요한 것은 아니다. 측정되었거나 예상되는 빈도와 작업량을 고려한다.
+- 안정적인 컴포넌트/조회 결과 캐싱, 반복 할당 피하기, 변경 시에만 컬렉션/UI 업데이트, 생명주기 복잡도가 정당화될 때 자주 재사용되는 오브젝트 풀링을 우선한다. 작고 핫하지 않은 작업에 Dictionary, 풀링, 거리 계산 미세 최적화를 강제하지 않는다.
+- 캐시된 모든 외부 오브젝트에는 교체, 파괴, 씬 변경에 대한 무효화/갱신 정책이 필요하다. Camera.main의 성능은 버전과 사용 방식에 따라 다르다. 반복 사용 시 유용하다면 갱신 규칙과 함께 캐시한다.
+- 의도적인 핫 패스 예외에는 검증된 상한을 설명하거나, 추정치라면 추정치라고 표시한다. 중대한 Prefer 이탈은 보고한다. 프로파일 결과나 호출 빈도 보장을 지어내지 않는다. 필요한 도구가 있고 작업상 필요하면 프로파일링한다.
+- 릴리스 핫 패스에 반복적인 진단 로그를 추가해서는 안 된다(MUST NOT). UNITY_EDITOR/DEVELOPMENT_BUILD 또는 기존 진단 정책으로 감싼다. 잘못된 상태에 대한 일회성의 조치 가능한 오류는 허용되며, 반복되는 오류는 멈추거나 빈도를 제한한다. 민감한 데이터는 절대 기록하지 않는다(§10).
+- TMP SetText의 숫자 포맷 오버로드는 포맷 할당을 줄일 수 있다. 모든 텍스트 업데이트/에디터 경로에서 할당이 없다고 주장하지 않는다. 표시 값이 바뀔 때만 텍스트를 변경한다.
+- WaitForSeconds는 적절한 경우 고정된 반복 시간에 대해서만 캐시한다. 이 섹션을 충족하려고 관련 없는 코드를 최적화하거나 런타임 옵션을 도입하지 않는다.
 
-### Singletons (requirements for singletons added/changed)
-Use for services shared across a scene/application only when already established or requested. MUST define:
-- Scope: scene-local or app-lifetime; readiness: which state is valid when Instance is published.
-- Duplicates: follow the established policy; default rejects the duplicate in Awake, returns immediately, and avoids publishing/subscribing duplicate state. Define whether destroying the component or GameObject is appropriate.
-- Cleanup: clear Instance only when it refers to this publisher; notify dependents of removal/replacement where needed. Do not use a lazy-creation getter during cleanup.
-- Quit: never create/find replacement services during shutdown; use an established quitting flag/event lifecycle and reset owned flags per Play session.
-- Access from Awake/OnEnable requires a valid readiness contract or deferred binding (§5), not merely a particular callback name.
+---
 
-### Static state (MUST)
-- Domain Reload disabled preserves mutable static fields and event handlers between Play sessions. Reset owned per-session state and owned events; do not zero immutable constants or readonly hash/ID caches.
-- Clear mutable readonly collections if they are session state; dispose owned resources before discarding them. Remove handlers from external static events rather than assigning those events. Only a declaring type can assign its own event.
-- Example inside the declaring singleton type, assuming these members exist and registration is restored by the project's lifecycle:
+## 7. 아키텍처
+
+- 작고 응집된 컴포넌트와 기존 프로젝트 패턴을 우선한다. 특정 의존성 하나: 참조/주입. 여러 상태 리스너: C# 이벤트. 인스펙터에서 설계하는 반응: UnityEvent.
+- 프로젝트와 일관된다면, 디자이너가 작성하는 공유 설정에는 ScriptableObject 에셋을 우선한다. 일시적인 런타임/저장 상태를 위해 영구 에셋을 변경해서는 안 된다(MUST NOT). 소유한 런타임 인스턴스/복제본은 런타임 상태를 가질 수 있다. 얕은 복제본은 참조된 에셋을 여전히 공유할 수 있으므로 소유권이 중요하다.
+- [STYLE] View 컴포넌트는 데이터를 표시하고 사용자 의도 이벤트를 발생시킨다. 권위 있는 게임 상태 쓰기는 컨트롤러/서비스를 우선한다. 로컬 시각/상호작용 상태는 게임 상태가 아니다. 마이그레이션 요청이 없는 한 기존 아키텍처를 유지한다.
+- 전이가 있는 상호 배타적 모드에는 명시적 상태 모델을 우선한다. 독립적인 플래그를 상태 머신으로 만들 필요는 없다.
+
+### 싱글톤 (추가/변경하는 싱글톤의 요구사항)
+씬/애플리케이션 전체에서 공유되는 서비스에, 이미 정착된 방식이거나 요청된 경우에만 사용한다. 다음을 정의해야 한다(MUST):
+- 범위: 씬 로컬 또는 앱 수명. 준비: Instance가 공개되는 시점에 어떤 상태가 유효한지.
+- 중복: 정착된 정책을 따른다. 기본값은 Awake에서 중복을 거부하고, 즉시 반환하며, 중복 상태를 공개/구독하지 않는 것이다. 컴포넌트와 GameObject 중 무엇을 파괴하는 것이 적절한지 정의한다.
+- 정리: Instance가 이 발행자를 가리킬 때만 지운다. 필요하면 의존자에게 제거/교체를 알린다. 정리 중에 지연 생성 getter를 사용하지 않는다.
+- 종료: 종료 중에 대체 서비스를 생성하거나 찾지 않는다. 정착된 종료 플래그/이벤트 생명주기를 사용하고, 소유한 플래그는 Play 세션마다 초기화한다.
+- Awake/OnEnable에서 접근하려면 특정 콜백 이름이 아니라 유효한 준비 계약이나 지연 바인딩(§5)이 필요하다.
+
+### Static 상태 (MUST)
+- Domain Reload가 꺼져 있으면 변경 가능한 static 필드와 이벤트 핸들러가 Play 세션 사이에 유지된다. 소유한 세션별 상태와 소유한 이벤트를 초기화한다. 불변 상수나 readonly 해시/ID 캐시는 초기화하지 않는다.
+- 세션 상태인 변경 가능한 readonly 컬렉션은 비운다. 소유한 리소스는 버리기 전에 해제한다. 외부 static 이벤트는 대입하지 말고 핸들러를 제거한다. 이벤트를 대입할 수 있는 것은 그 이벤트를 선언한 타입뿐이다.
+- 선언한 싱글톤 타입 내부의 예시. 이 멤버들이 존재하고, 등록은 프로젝트의 생명주기에 의해 복원된다고 가정한다:
   ```csharp
   [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
   private static void ResetStatics()
@@ -280,119 +280,119 @@ Use for services shared across a scene/application only when already established
       OnGlobalEvent = null;
   }
   ```
-- This reset alone is not a complete initialization system. Define re-registration and instance-state reset under the configured Domain/Scene Reload combination; do not rely only on Awake/Start when those callbacks can be skipped or state can persist. Include ExecuteAlways/ExecuteInEditMode behavior where applicable.
-- Do not depend on unspecified ordering between reset methods in different types. Verify repeated Play sessions, relevant reload-setting combinations, and restoration of singleton references/listeners (§13).
+- 이 초기화만으로 완전한 초기화 시스템이 되지는 않는다. 설정된 Domain/Scene Reload 조합에서의 재등록과 인스턴스 상태 초기화를 정의한다. 이 콜백들이 건너뛰어지거나 상태가 유지될 수 있는 경우에 Awake/Start에만 의존하지 않는다. 해당되면 ExecuteAlways/ExecuteInEditMode 동작도 포함한다.
+- 서로 다른 타입의 초기화 메서드 간의 지정되지 않은 순서에 의존하지 않는다. 반복 Play 세션, 관련 리로드 설정 조합, 싱글톤 참조/리스너 복원을 검증한다(§13).
 
 ---
 
-## 8. Resource Lifetime (MUST)
+## 8. 리소스 수명 (MUST)
 
-- Define one owner for each runtime resource/handle, the cleanup boundary, and any explicit ownership transfer. Resources loaded from persistent project assets are not automatically owned/destroyable by the consumer.
-- Renderer material/materials access can create owned material instances. Retain and destroy instances you own. sharedMaterial is suitable for reading/assigning shared materials, not transient mutation of persistent shared assets. Use an owned instance or MaterialPropertyBlock according to shader/pipeline needs; MPBs can prevent SRP Batcher compatibility.
-- Destroy owned runtime Texture2D, RenderTexture, Mesh, Material, and ScriptableObject instances when no longer needed. Release owned RenderTexture GPU resources as appropriate; do not call Destroy on a temporary texture obtained through a pool API—return it through that API.
-- Addressables: follow the installed version's handle/release contract, including failed operations and trackHandle options. Pair asset loads with Release and instantiated instances with the appropriate ReleaseInstance/handle workflow. Do not substitute Destroy for the required ownership release.
-- Cancellation does not release a handle or transfer ownership. The initiating owner must observe late completion and release/transfer resources whose results can no longer be used. Prevent double release and use after release.
-- Prefer existing resource loading conventions. New Resources folders/Resources.Load calls require an explicit requested need rather than convenience alone.
-
----
-
-## 9. C# Limits
-
-- Unity 2022.3 and 6000.0 use C# 9 with documented limits. These include covariant return types, module initializers, suppression of localsinit emission, and extensible calling conventions for unmanaged function pointers. Unmanaged function pointers themselves are not universally unsupported. Verify the exact version for other releases; older Unity does not universally mean C# 8.
-- [STYLE] Avoid new record/init-based project models unless requested and supported by the project. IsExternalInit support may require a project shim in these versions; record types are not supported by Unity's normal serializer. This is separate from whether a managed nonserialized model can compile.
-- MUST NOT introduce language features unsupported by the actual Unity compiler; default C# 9 configurations do not support C# 10 global using, file-scoped namespaces, or record struct. A successful build with a different SDK/compiler is not proof of Unity support.
-- Prefer existing nullable-reference policy; do not enable annotations across unrelated code.
-- Prefer typed APIs over reflection. If reflection is required, protect the actually referenced members from stripping (Preserve/link.xml as appropriate) and verify the target. Preservation alone does not generate every IL2CPP generic AOT instantiation; use the project's supported AOT strategy for required generic code. Treat link.xml edits as scoped project changes and report them.
+- 각 런타임 리소스/핸들마다 하나의 소유자, 정리 경계, 명시적인 소유권 이전 방식을 정의한다. 영구 프로젝트 에셋에서 로드한 리소스는 소비자가 자동으로 소유하거나 파괴할 수 있는 것이 아니다.
+- Renderer의 material/materials 접근은 소유 머티리얼 인스턴스를 생성할 수 있다. 소유한 인스턴스는 보관했다가 파괴한다. sharedMaterial은 공유 머티리얼을 읽거나 할당할 때 적합하며, 영구 공유 에셋을 일시적으로 변경하는 데 쓰지 않는다. 셰이더/파이프라인 요구에 따라 소유 인스턴스나 MaterialPropertyBlock을 사용한다. MPB는 SRP Batcher 호환성을 막을 수 있다.
+- 소유한 런타임 Texture2D, RenderTexture, Mesh, Material, ScriptableObject 인스턴스는 더 이상 필요 없을 때 파괴한다. 소유한 RenderTexture의 GPU 리소스는 적절히 해제한다. 풀 API로 얻은 임시 텍스처에는 Destroy를 호출하지 말고 그 API를 통해 반환한다.
+- Addressables: 실패한 작업과 trackHandle 옵션을 포함해 설치된 버전의 핸들/해제 계약을 따른다. 에셋 로드는 Release와, 인스턴스화된 인스턴스는 적절한 ReleaseInstance/핸들 워크플로와 짝을 맞춘다. 필요한 소유권 해제를 Destroy로 대체하지 않는다.
+- 취소한다고 핸들이 해제되거나 소유권이 이전되지는 않는다. 작업을 시작한 소유자는 늦은 완료를 관찰하고, 더 이상 쓸 수 없는 결과의 리소스를 해제하거나 이전해야 한다. 이중 해제와 해제 후 사용을 방지한다.
+- 기존 리소스 로딩 컨벤션을 우선한다. 새 Resources 폴더/Resources.Load 호출은 편의가 아니라 명시적으로 요청된 필요가 있을 때만 추가한다.
 
 ---
 
-## 10. Comments, Debug, Editor Code, Security
+## 9. C# 제한
 
-### Comments and debug
-- Comment intent, units, ownership, or a non-obvious contract rather than restating code. Prefer summary comments on non-obvious public APIs/interfaces. Remove temporary logs and commented-out code in changed code; use `// TODO: ...` for actionable deferred work.
-- Use a valid Unity context for warnings/errors when available. Static methods and destroyed objects may not have a usable `this`; never access a destroyed object's native state just to format a log.
-
-### Editor code (MUST)
-- Exclude Editor-only code from players using UNITY_EDITOR and/or an Editor-only assembly. An Editor folder under a runtime asmdef is not automatically isolated; use a suitable Editor asmdef/asmref or correctly guard all Editor dependencies. Runtime assemblies must not reference Editor-only assemblies.
-- Tools/tests that write assets obey §2; generating a tool is not authorization to run broad changes. Prefer explicit user-invoked, narrowly scoped operations over automatic import/initialization writes.
-- Use Undo.RecordObject before ordinary object edits; structural operations need the appropriate Undo APIs. Use serialized-property workflows and prefab-instance modification recording as appropriate; mark assets/scenes dirty through the correct API. Undo alone is not a backup or prefab migration policy. Save only authorized changes and inspect the diff.
-- Use AssetDatabase.StartAssetEditing/StopAssetEditing only when needed for supported batch operations, with try/finally. Do not wait for imports while import processing is suspended.
-- OnValidate may run off the main thread: limit it to local data validation. Do not call non-thread-safe Unity APIs or modify scenes there. Use a controlled Editor action for structural changes; any deferred work needs main-thread execution, liveness/context checks, duplicate prevention, and correct Play/Edit Mode targeting.
-
-### Security (MUST)
-- Never hardcode/log credentials, payment data, tokens, or personal data. Keep server secrets off distributed clients; moving them into a client config or serialized asset does not protect them. Public service endpoints/client identifiers are not automatically secrets; follow the project's documented classification.
-- Use established secure configuration for server-side secrets and appropriate platform storage for required user credentials. If no mechanism exists, ask before inventing one.
-- Do not treat PlayerPrefs, plaintext, or client-side encryption as authoritative protection for currency/progress. Offline local progress can use the established save format, but must not become trusted server state without server validation.
-- Validate untrusted saves, network responses, and deep links against expected schema, size/range limits, allowed destinations/identifiers, and authorization before acting. Scope validation to the actual inputs; do not add unrelated security systems.
+- Unity 2022.3과 6000.0은 문서화된 제한이 있는 C# 9를 사용한다. 제한에는 공변 반환 타입, 모듈 이니셜라이저, localsinit 생략, 비관리 함수 포인터의 확장 가능한 호출 규약이 포함된다. 비관리 함수 포인터 자체가 보편적으로 지원되지 않는 것은 아니다. 다른 릴리스는 정확한 버전을 확인한다. 오래된 Unity라고 해서 보편적으로 C# 8인 것은 아니다.
+- [STYLE] 요청되고 프로젝트에서 지원하지 않는 한 새 record/init 기반 프로젝트 모델을 피한다. 이 버전들에서 IsExternalInit 지원에는 프로젝트 shim이 필요할 수 있으며, record 타입은 Unity의 일반 직렬화에서 지원되지 않는다. 이는 직렬화되지 않는 managed 모델이 컴파일되는지와는 별개의 문제다.
+- 실제 Unity 컴파일러가 지원하지 않는 언어 기능을 도입해서는 안 된다(MUST NOT). 기본 C# 9 구성은 C# 10의 global using, file-scoped namespace, record struct를 지원하지 않는다. 다른 SDK/컴파일러로 빌드에 성공했다고 해서 Unity가 지원한다는 증거가 되지 않는다.
+- 기존 nullable 참조 정책을 우선하고, 관련 없는 코드 전반에 annotation을 켜지 않는다.
+- 리플렉션보다 타입 지정 API를 우선한다. 리플렉션이 필요하면 실제로 참조되는 멤버를 stripping으로부터 보호하고(상황에 맞게 Preserve/link.xml), 대상 플랫폼에서 검증한다. 보존만으로 모든 IL2CPP 제네릭 AOT 인스턴스가 생성되지는 않으므로, 필요한 제네릭 코드에는 프로젝트가 지원하는 AOT 전략을 사용한다. link.xml 편집은 범위가 지정된 프로젝트 변경으로 취급하고 보고한다.
 
 ---
 
-## 11. Tests
+## 10. 주석, 디버그, 에디터 코드, 보안
 
-- Add/update tests when a relevant existing test assembly can access the changed code, or the user requests tests. Do not create assemblies or restructure runtime code solely because an unrelated test assembly exists.
-- Match the installed Test Framework's assembly format and existing folders. EditMode assemblies are Editor-only. Do not require UnityEditor.TestRunner in player-capable PlayMode assemblies; use the installed package's appropriate TestAssemblies/references configuration, including NUnit and the assembly under test.
-- Test asmdefs cannot directly reference predefined Assembly-CSharp. If access requires runtime assembly migration, agree on that scope first; otherwise report the limitation and use available/manual checks.
-- Prefer NUnit Test for synchronous logic, including synchronous PlayMode tests. Use UnityTest/IEnumerator when yielding frames or supported test instructions is required. Match package-version support for other test forms.
-- [STYLE] Name tests `Method_Condition_ExpectedResult`; verify behavior rather than duplicating implementation.
-- Clean up only test-owned objects/resources/assets on failure too. Use EditMode DestroyImmediate for owned objects when appropriate; PlayMode cleanup must respect delayed destruction. Do not delete user assets as teardown.
-- Control random seeds/time inputs and avoid execution-order dependencies. Use bounded waits rather than arbitrary real-time sleeps. For lifecycle/physics behavior, test the actual simulation/lifecycle boundary.
+### 주석과 디버그
+- 코드를 반복해서 설명하기보다 의도, 단위, 소유권, 명확하지 않은 계약에 대해 주석을 단다. 명확하지 않은 public API/인터페이스에는 요약 주석을 우선한다. 변경한 코드에서 임시 로그와 주석 처리된 코드를 제거하고, 조치 가능한 보류 작업에는 `// TODO: ...`를 사용한다.
+- 경고/오류에는 가능하면 유효한 Unity 컨텍스트를 사용한다. static 메서드와 파괴된 오브젝트에는 쓸 수 있는 `this`가 없을 수 있다. 로그 포맷을 만들기 위해 파괴된 오브젝트의 네이티브 상태에 접근하지 않는다.
+
+### 에디터 코드 (MUST)
+- 에디터 전용 코드는 UNITY_EDITOR 및/또는 에디터 전용 어셈블리를 사용해 플레이어 빌드에서 제외한다. 런타임 asmdef 아래의 Editor 폴더는 자동으로 격리되지 않는다. 적절한 Editor asmdef/asmref를 쓰거나 모든 에디터 의존성을 올바르게 감싼다. 런타임 어셈블리는 에디터 전용 어셈블리를 참조해서는 안 된다.
+- 에셋을 쓰는 도구/테스트는 §2를 따른다. 도구를 생성했다고 광범위한 변경을 실행할 권한이 생기지는 않는다. 자동 import/초기화 시의 쓰기보다, 사용자가 명시적으로 실행하는 범위가 좁은 작업을 우선한다.
+- 일반 오브젝트 편집 전에 Undo.RecordObject를 사용한다. 구조적 작업에는 적절한 Undo API가 필요하다. 상황에 맞게 serialized-property 워크플로와 프리팹 인스턴스 수정 기록을 사용하고, 올바른 API로 에셋/씬을 dirty로 표시한다. Undo만으로는 백업이나 프리팹 마이그레이션 정책이 되지 않는다. 허가된 변경만 저장하고 diff를 확인한다.
+- AssetDatabase.StartAssetEditing/StopAssetEditing은 지원되는 일괄 작업에 필요할 때만 try/finally와 함께 사용한다. import 처리가 중단된 동안 import를 기다리지 않는다.
+- OnValidate는 메인 스레드 밖에서 실행될 수 있으므로 로컬 데이터 검증으로 제한한다. 스레드 안전하지 않은 Unity API를 호출하거나 씬을 수정하지 않는다. 구조적 변경에는 통제된 에디터 동작을 사용한다. 지연 작업에는 메인 스레드 실행, 생존/컨텍스트 확인, 중복 방지, 올바른 Play/Edit 모드 대상 지정이 필요하다.
+
+### 보안 (MUST)
+- 자격 증명, 결제 데이터, 토큰, 개인 정보를 절대 하드코딩하거나 로그에 기록하지 않는다. 서버 비밀은 배포되는 클라이언트에 두지 않는다. 클라이언트 설정이나 직렬화 에셋으로 옮긴다고 보호되지 않는다. 공개 서비스 엔드포인트/클라이언트 식별자가 자동으로 비밀인 것은 아니므로, 프로젝트의 문서화된 분류를 따른다.
+- 서버 측 비밀에는 정착된 보안 구성을, 필요한 사용자 자격 증명에는 적절한 플랫폼 저장소를 사용한다. 그런 메커니즘이 없으면 새로 만들기 전에 질문한다.
+- PlayerPrefs, 평문, 클라이언트 측 암호화를 재화/진행도의 권위 있는 보호 수단으로 취급하지 않는다. 오프라인 로컬 진행도는 정착된 저장 포맷을 쓸 수 있지만, 서버 검증 없이 신뢰된 서버 상태가 되어서는 안 된다.
+- 신뢰할 수 없는 저장 데이터, 네트워크 응답, 딥링크는 실행 전에 예상 스키마, 크기/범위 제한, 허용된 대상/식별자, 권한에 대해 검증한다. 검증 범위는 실제 입력으로 한정하고, 관련 없는 보안 시스템을 추가하지 않는다.
 
 ---
 
-## 12. When to Ask
+## 11. 테스트
 
-- Investigate relevant code, settings, manifest, and read-only asset data first. Ask when an unresolved choice changes behavior, ownership, migration, or structure: input backend with Both and no existing usage, unknown dynamic/kinematic requirements, unknown new API argument semantics, save format, singleton scope, or destructive serialized-data migration.
-- An explicit asset/package/file change request authorizes the named change under §2. Do not ask the user to repeat that request. Ask only for missing details or a material risk not determined by the request.
-- Otherwise match the project, record material assumptions, and proceed. Continue independent investigation while a necessary question is pending; do not implement dependent behavior by treating silence as consent.
-- If tools/environment prevent execution, finish available work and report the exact limitation with concrete remaining steps. Do not claim the requested behavior is complete when a necessary asset migration or verification remains unresolved.
+- 관련 기존 테스트 어셈블리가 변경된 코드에 접근할 수 있거나 사용자가 테스트를 요청하면 테스트를 추가/업데이트한다. 관련 없는 테스트 어셈블리가 있다는 이유만으로 어셈블리를 만들거나 런타임 코드를 재구성하지 않는다.
+- 설치된 Test Framework의 어셈블리 형식과 기존 폴더를 따른다. EditMode 어셈블리는 에디터 전용이다. 플레이어용이 될 수 있는 PlayMode 어셈블리에서 UnityEditor.TestRunner를 요구하지 않는다. NUnit과 테스트 대상 어셈블리를 포함해, 설치된 패키지에 맞는 TestAssemblies/참조 구성을 사용한다.
+- 테스트 asmdef는 미리 정의된 Assembly-CSharp를 직접 참조할 수 없다. 접근을 위해 런타임 어셈블리 마이그레이션이 필요하면 먼저 그 범위에 합의한다. 그렇지 않으면 한계를 보고하고, 사용 가능한 확인이나 수동 확인을 사용한다.
+- 동기 PlayMode 테스트를 포함해 동기 로직에는 NUnit Test를 우선한다. 프레임을 넘기거나 지원되는 테스트 명령을 yield해야 할 때 UnityTest/IEnumerator를 쓴다. 다른 테스트 형식은 패키지 버전의 지원 여부를 따른다.
+- [STYLE] 테스트 이름은 `Method_Condition_ExpectedResult` 형식으로 짓는다. 구현을 복제하지 말고 동작을 검증한다.
+- 실패한 경우에도 테스트가 소유한 오브젝트/리소스/에셋만 정리한다. EditMode에서는 적절하면 소유 오브젝트에 DestroyImmediate를 사용한다. PlayMode 정리는 지연 파괴를 고려해야 한다. teardown에서 사용자 에셋을 삭제하지 않는다.
+- 랜덤 시드/시간 입력을 제어하고 실행 순서 의존을 피한다. 임의의 실시간 sleep 대신 제한된 대기를 사용한다. 생명주기/물리 동작은 실제 시뮬레이션/생명주기 경계에서 테스트한다.
 
 ---
 
-## 13. Verification and Report
+## 12. 질문해야 할 때
 
-### Protect existing work and preflight (MUST)
-1. Keep the task-start baseline from §2. Before every Unity run, record whole-repository status and relevant diffs/content (including existing dirty files and untracked files). Without Git, use available snapshots and report comparison limits. Status alone cannot identify who wrote a change.
-2. Verify the executable version matches ProjectVersion.txt, the working directory/projectPath is the project root, and the project is not already open in another Editor. Do not open with another version to obtain verification or close the user's Editor. Missing path, version mismatch, open-project lock, or unavailable license means that check is blocked/not run; explain it.
-3. Consider existing import/initialization hooks before running Unity. Do not run known broad migrations or external side effects merely to compile. Prefer a safe isolated copy when needed; do not create Git branches/stashes without a request.
-4. Use unique output paths per run and retain existing logs/results. Record start/completion and enforce the §1 timeout for compile, tests, and builds. On timeout, stop only the owned subprocess safely; inspect changes and classify the check as not verified.
-5. Compare changes after the run. NEVER automatically revert shared-checkout changes based on pre-run cleanliness or git status. Preserve the diffs; restore only explicitly authorized, attributable changes through a scoped workflow that cannot overwrite concurrent user work. Otherwise leave them and report them.
-6. Keep generated metadata for assets/folders created by this task. Report other reserialization, settings, package, or metadata changes. Do not silently revert or accept unrelated changes as part of the implementation.
+- 먼저 관련 코드, 설정, manifest, 읽기 전용 에셋 데이터를 조사한다. 해결되지 않은 선택이 동작, 소유권, 마이그레이션, 구조를 바꿀 때 질문한다. 예: 기존 사용 사례가 없는 상태의 Both 입력 백엔드, 알 수 없는 dynamic/kinematic 요구사항, 알 수 없는 새 API 인자의 의미, 저장 포맷, 싱글톤 범위, 파괴적인 직렬화 데이터 마이그레이션.
+- 명시적인 에셋/패키지/파일 변경 요청은 §2에 따라 지정된 변경을 허가한다. 사용자에게 그 요청을 반복하게 하지 않는다. 요청으로 결정되지 않은 누락된 세부사항이나 중대한 위험에 대해서만 질문한다.
+- 그 외에는 프로젝트를 따르고, 중대한 가정을 기록하고, 진행한다. 필요한 질문의 답을 기다리는 동안에도 독립적인 조사는 계속한다. 침묵을 동의로 간주해 그 답에 의존하는 동작을 구현하지 않는다.
+- 도구/환경 때문에 실행할 수 없으면 가능한 작업을 마치고, 정확한 한계와 구체적인 남은 단계를 보고한다. 필요한 에셋 마이그레이션이나 검증이 남아 있다면 요청된 동작이 완료되었다고 주장하지 않는다.
 
-### Checks (run applicable checks when available)
+---
 
-- Static review: inspect changed code, API/serialization callers, assembly/package access, and the final diff. State its limits; it is not a compile or runtime test.
-- Unity compile: use the matching executable with batchmode, nographics, quit, projectPath, and a fresh log. Pass requires normal exit code 0, a completed log from this run, and no compiler, fatal, license, or package-resolution errors. Review all relevant compile errors, not only the literal string `error CS`. A launch/import failure is not evidence that the changed code compiled.
-- Tests: run relevant EditMode tests when available; run relevant PlayMode tests for lifecycle, pooling, input, or physics changes. Use runTests without quit, fresh per-run XML/log paths, and the installed Test Framework CLI contract.
-- Test pass requires normal process completion according to that CLI contract, fresh completed XML with a successful final result (normally `result="Passed"`), `failed="0"`, and `passed > 0`. Report skipped/inconclusive counts and unexecuted intended coverage; zero total or skipped-only execution is not a pass. Timeout/crash/missing XML is not verified even if partial results exist.
-- If Unity cannot run, an available dotnet build of an existing current generated solution may provide approximate checking. It can use stale references or different defines/compiler support; do not treat it as Unity/player verification. Do not generate or repair the solution by unrelated project changes solely for this fallback.
-- For target-specific APIs, IL2CPP/AOT, stripping, or reflection, run the relevant target build when the environment and established build command are available. Otherwise list the target build/runtime checks still required. Editor compilation does not prove player correctness.
-- For pure logic, add/update meaningful tests under §11. For style-only changes, no new tests are required. Avoid broad unrelated testing unless a failure or unresolved concern justifies it.
+## 13. 검증과 보고
 
-PowerShell invocation examples (illustrative; use absolute validated project/output paths and a timeout-capable process runner). Set `$unityExecutable`, `$projectRoot`, `$compileLog`, `$testXml`, and `$testLog` from the facts/run paths above. These are not commands to execute blindly:
+### 기존 작업 보호와 사전 점검 (MUST)
+1. §2의 작업 시작 기준선을 유지한다. Unity를 실행할 때마다 저장소 전체 상태와 관련 diff/내용(기존 dirty 파일과 untracked 파일 포함)을 기록한다. Git이 없으면 사용 가능한 스냅숏을 쓰고 비교의 한계를 보고한다. 상태만으로는 누가 변경했는지 알 수 없다.
+2. 실행 파일 버전이 ProjectVersion.txt와 일치하는지, 작업 디렉터리/projectPath가 프로젝트 루트인지, 프로젝트가 다른 에디터에서 이미 열려 있지 않은지 확인한다. 검증을 위해 다른 버전으로 열거나 사용자의 에디터를 닫지 않는다. 경로 없음, 버전 불일치, 프로젝트 잠금, 라이선스 사용 불가는 해당 확인이 차단됨/미실행임을 뜻하며, 이를 설명한다.
+3. Unity 실행 전에 기존 import/초기화 훅을 고려한다. 컴파일만을 위해 알려진 광범위 마이그레이션이나 외부 부작용을 실행하지 않는다. 필요하면 안전한 격리 복사본을 우선한다. 요청 없이 Git 브랜치/stash를 만들지 않는다.
+4. 실행마다 고유한 출력 경로를 쓰고 기존 로그/결과를 보존한다. 시작/완료를 기록하고 컴파일, 테스트, 빌드에 §1의 타임아웃을 적용한다. 타임아웃 시 소유한 하위 프로세스만 안전하게 중지하고, 변경 사항을 확인한 뒤 해당 확인을 "검증 안 됨"으로 분류한다.
+5. 실행 후 변경 사항을 비교한다. 실행 전의 깨끗한 상태나 git status를 근거로 공유 체크아웃의 변경을 자동으로 되돌리지 않는다(NEVER). diff를 보존한다. 명시적으로 허가되고 출처가 확인된 변경만, 동시 사용자 작업을 덮어쓸 수 없는 범위 지정 워크플로로 복원한다. 그 외에는 그대로 두고 보고한다.
+6. 이 작업이 만든 에셋/폴더의 생성된 메타데이터는 유지한다. 그 외의 재직렬화, 설정, 패키지, 메타데이터 변경은 보고한다. 관련 없는 변경을 조용히 되돌리거나 구현의 일부로 받아들이지 않는다.
+
+### 확인 (가능한 경우 해당 확인을 실행)
+
+- 정적 검토: 변경된 코드, API/직렬화 호출부, 어셈블리/패키지 접근, 최종 diff를 확인한다. 한계를 명시한다. 이는 컴파일이나 런타임 테스트가 아니다.
+- Unity 컴파일: 일치하는 실행 파일로 batchmode, nographics, quit, projectPath, 새 로그 파일을 사용한다. 통과 조건은 정상 종료 코드 0, 이번 실행에서 완료된 로그, 컴파일러/치명적/라이선스/패키지 해석 오류 없음이다. 문자열 `error CS`만이 아니라 모든 관련 컴파일 오류를 검토한다. 실행/import 실패는 변경된 코드가 컴파일되었다는 증거가 아니다.
+- 테스트: 가능하면 관련 EditMode 테스트를 실행하고, 생명주기, 풀링, 입력, 물리 변경에는 관련 PlayMode 테스트를 실행한다. quit 없이 runTests를 사용하고, 실행마다 새 XML/로그 경로를 쓰며, 설치된 Test Framework CLI 계약을 따른다.
+- 테스트 통과 조건: CLI 계약에 따른 정상적인 프로세스 완료, 성공 최종 결과(보통 `result="Passed"`)가 담긴 새로 완료된 XML, `failed="0"`, `passed > 0`. 건너뜀/결론 없음 개수와 실행되지 않은 의도된 범위를 보고한다. 총 0개 또는 건너뜀만 있는 실행은 통과가 아니다. 타임아웃/크래시/XML 없음은 부분 결과가 있더라도 검증되지 않은 것이다.
+- Unity를 실행할 수 없으면, 기존의 최신 생성 솔루션에 대한 dotnet build로 근사 확인을 할 수 있다. 이 방법은 오래된 참조나 다른 define/컴파일러 지원을 사용할 수 있으므로 Unity/플레이어 검증으로 취급하지 않는다. 이 대안만을 위해 관련 없는 프로젝트 변경으로 솔루션을 생성하거나 고치지 않는다.
+- 대상 플랫폼별 API, IL2CPP/AOT, stripping, 리플렉션의 경우, 환경과 정착된 빌드 명령이 있으면 관련 대상 빌드를 실행한다. 그렇지 않으면 아직 필요한 대상 빌드/런타임 확인을 나열한다. 에디터 컴파일은 플레이어에서의 정확성을 증명하지 않는다.
+- 순수 로직은 §11에 따라 의미 있는 테스트를 추가/업데이트한다. 스타일만 바뀐 경우 새 테스트가 필요 없다. 실패나 미해결 우려로 정당화되지 않는 한 관련 없는 광범위한 테스트를 피한다.
+
+PowerShell 호출 예시(설명용. 검증된 절대 경로의 프로젝트/출력 경로와, 타임아웃을 적용할 수 있는 프로세스 실행기를 사용할 것). `$unityExecutable`, `$projectRoot`, `$compileLog`, `$testXml`, `$testLog`는 위의 환경 정보/실행 경로로 설정한다. 무작정 실행할 명령이 아니다:
 ```powershell
 & $unityExecutable -batchmode -nographics -quit -projectPath $projectRoot -logFile $compileLog
 & $unityExecutable -batchmode -nographics -projectPath $projectRoot -runTests -testPlatform EditMode -testResults $testXml -logFile $testLog
 ```
-For PlayMode use `-testPlatform PlayMode` with separate fresh outputs. Other shells require their own valid invocation syntax. These examples do not implement process timeout enforcement.
+PlayMode에는 별도의 새 출력 경로와 함께 `-testPlatform PlayMode`를 사용한다. 다른 셸은 각자의 유효한 호출 문법이 필요하다. 이 예시는 프로세스 타임아웃 적용을 구현하지 않는다.
 
-### Report
+### 보고
 
-MUST always include **Verification**: what actually ran, its result/counts, and material checks not run with reasons (e.g., `Unity compile/tests not run — UNITY_PATH is TODO`). NEVER report a planned/manual check as completed or claim a build that did not run.
+항상 **검증(Verification)** 항목을 포함해야 한다(MUST): 실제로 실행한 것, 그 결과/개수, 실행하지 않은 중요한 확인과 그 이유(예: `Unity 컴파일/테스트 미실행 — UNITY_PATH가 TODO`). 계획된 확인이나 수동 확인을 완료한 것으로 보고하거나, 실행하지 않은 빌드를 주장하지 않는다(NEVER).
 
-Include other sections only when relevant:
-- **Changes:** requested behavior delivered and any remaining implementation/migration work.
-- **Play-mode checks for the user:** concrete pending scenarios, clearly labeled as not run: disable/re-enable, destruction, pool reuse, missing references, initial UI state, publisher replacement, pause, scene changes, repeated Play sessions and configured reload combinations.
-- **Manual Editor steps:** exact components/assets/references, settings, metadata import, TMP resource setup, or target checks needed. With three new scripts and no Unity run, identify all three missing metadata files; do not claim generation occurred.
-- **API / serialization changes:** signatures, fields/defaults/types, enum values, assembly changes, callers inspected/updated, compatibility paths, migrated assets and unverified external/binary scopes. Known broken asset calls are unresolved work, not a completed migration.
-- **Files changed by Unity during verification:** task-owned metadata, other changes preserved for review, and any explicitly authorized restoration. If no Unity run occurred, do not imply Unity changed files.
-- **Rule deviations:** material Prefer deviations and applicable authorized exceptions; never imply an unsupported operation was made valid by approval.
-- **Assumptions:** material implementation choices, clearly separated from detected facts.
-- **AGENTS.md suggestions:** detected TODO facts and remaining policy corrections. Do not fill project-specific unknowns with guesses.
+다른 항목은 관련 있을 때만 포함한다:
+- **변경 사항(Changes):** 전달된 요청 동작과 남은 구현/마이그레이션 작업.
+- **사용자를 위한 플레이 모드 확인(Play-mode checks for the user):** 미실행임을 명확히 표시한 구체적인 대기 시나리오. 예: 비활성화/재활성화, 파괴, 풀 재사용, 누락된 참조, 초기 UI 상태, 발행자 교체, 일시정지, 씬 변경, 반복 Play 세션과 설정된 리로드 조합.
+- **수동 에디터 작업(Manual Editor steps):** 필요한 정확한 컴포넌트/에셋/참조, 설정, 메타데이터 import, TMP 리소스 설정, 대상 플랫폼 확인. 새 스크립트 3개를 만들고 Unity를 실행하지 않았다면 누락된 메타데이터 파일 3개를 모두 명시하고, 생성되었다고 주장하지 않는다.
+- **API / 직렬화 변경(API / serialization changes):** 시그니처, 필드/기본값/타입, enum 값, 어셈블리 변경, 확인/업데이트한 호출부, 호환 경로, 마이그레이션한 에셋, 검증되지 않은 외부/바이너리 범위. 알려진 깨진 에셋 호출은 완료된 마이그레이션이 아니라 미해결 작업이다.
+- **검증 중 Unity가 변경한 파일(Files changed by Unity during verification):** 작업이 소유한 메타데이터, 검토를 위해 보존한 기타 변경, 명시적으로 허가된 복원. Unity를 실행하지 않았다면 Unity가 파일을 변경한 것처럼 암시하지 않는다.
+- **규칙 이탈(Rule deviations):** 중대한 Prefer 이탈과 적용된 허가된 예외. 승인을 받았다고 지원되지 않는 작업이 유효해진 것처럼 암시하지 않는다.
+- **가정(Assumptions):** 중대한 구현 선택. 감지된 사실과 명확히 구분한다.
+- **AGENTS.md 제안(AGENTS.md suggestions):** 발견된 TODO 정보와 남은 정책 수정 사항. 프로젝트별 미지의 값을 추측으로 채우지 않는다.
 
-Example (illustrative, not an execution claim):
+예시 (설명용이며, 실행했다는 주장이 아님):
 ```text
-Changes: Renamed PlayerController.speed to moveSpeed; preserved serialized values through FormerlySerializedAs.
-Verification: Static review. Unity compile/tests not run — UNITY_PATH is TODO; no current generated solution was available.
-API / serialization changes: C# usages and custom-editor property paths updated; prefab override behavior not verified in the Editor.
-Manual Editor steps: Compile in the matching Editor and confirm existing prefab values/overrides are preserved.
+변경 사항: PlayerController.speed를 moveSpeed로 이름 변경. FormerlySerializedAs로 직렬화된 값을 보존함.
+검증: 정적 검토. Unity 컴파일/테스트 미실행 — UNITY_PATH가 TODO이며, 사용 가능한 최신 생성 솔루션이 없음.
+API / 직렬화 변경: C# 사용처와 커스텀 에디터 프로퍼티 경로를 업데이트함. 프리팹 오버라이드 동작은 에디터에서 검증되지 않음.
+수동 에디터 작업: 일치하는 버전의 에디터에서 컴파일하고, 기존 프리팹 값/오버라이드가 보존되는지 확인.
 ```

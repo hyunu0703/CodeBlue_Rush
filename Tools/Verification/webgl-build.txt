@@ -1,6 +1,0 @@
-Unity 6000.3.23f1
-Target: WebGL
-Process exit code: 0
-MOBILE_INPUT_WEBGL_BUILD: Passed
-Scenes: Assets/Scenes/Start.unity, Assets/Scenes/GamePlay.unity
-Output copied to repository docs; no commit or push performed.
