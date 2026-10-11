@@ -88,24 +88,18 @@ public sealed class PatientRescueCutscene : MonoBehaviour
         pickupOutline.gameObject.SetActive(true);
     }
 
-    /// <summary>현재 물리 위치에서 차량 이미지와 콜라이더 전체가 노란 사각형 안에 들어왔는지 검사한다.</summary>
+    /// <summary>현재 물리 위치에서 차량 중심이 노란 사각형 안에 들어왔는지 검사한다.</summary>
     public bool IsVehicleInsidePickup(Rigidbody2D vehicle, SpriteRenderer vehicleRenderer, BoxCollider2D vehicleCollider)
     {
         if (!isActiveAndEnabled || pickupOutline == null || !pickupOutline.gameObject.activeInHierarchy || vehicle == null
-            || !TryGetVehicleBounds(vehicleRenderer, vehicleCollider, out var minimum, out var maximum))
+            || vehicleRenderer == null || vehicleCollider == null)
         {
             return false;
         }
-        // 보간된 렌더 위치 대신 Rigidbody의 실제 위치/회전을 사용한다. 회전된 차량의 네 모서리를 포함하는 판정이다.
-        var scale = vehicle.transform.lossyScale;
-        var localCenter = (minimum + maximum) * 0.5f;
-        var center = vehicle.position + (Vector2)(Quaternion.Euler(0f, 0f, vehicle.rotation)
-            * Vector2.Scale(localCenter, new Vector2(scale.x, scale.y)));
-        var relativeCenter = pickupOutline.InverseTransformPoint(center);
-        var halfSize = Vector2.Scale((maximum - minimum) * 0.5f, new Vector2(Mathf.Abs(scale.x), Mathf.Abs(scale.y)));
-        var angle = (vehicle.rotation - pickupOutline.eulerAngles.z) * Mathf.Deg2Rad;
-        return PickupParkingGeometry.ContainsVehicle(parkingSize.x * 0.5f, parkingSize.y * 0.5f,
-            relativeCenter.x, relativeCenter.y, halfSize.x, halfSize.y, angle);
+        // 보간된 렌더 위치 대신 Rigidbody의 실제 중심을 사용한다. 차량 각도와 돌출 여부는 검사하지 않는다.
+        var relativeCenter = pickupOutline.InverseTransformPoint(vehicle.position);
+        return PickupParkingGeometry.ContainsPoint(parkingSize.x * 0.5f, parkingSize.y * 0.5f,
+            relativeCenter.x, relativeCenter.y);
     }
 
     /// <summary>같은 차량의 이미지와 콜라이더 로컬 사각형을 합친 경계를 구한다.</summary>
@@ -347,6 +341,14 @@ public sealed class PatientRescueCutscene : MonoBehaviour
 /// <summary>엔진 상태 없이 회전된 차량 사각형의 완전 진입을 계산한다. 값은 동일한 월드 단위를 사용한다.</summary>
 internal static class PickupParkingGeometry
 {
+    /// <summary>감지 사각형 좌표계에서 차량 중심의 진입 여부를 반환한다.</summary>
+    public static bool ContainsPoint(float areaHalfWidth, float areaHalfLength, float centerX, float centerY)
+    {
+        return areaHalfWidth > 0f && areaHalfLength > 0f
+            && System.Math.Abs(centerX) <= areaHalfWidth + 0.00001f
+            && System.Math.Abs(centerY) <= areaHalfLength + 0.00001f;
+    }
+
     /// <summary>감지 사각형 좌표계에서 차량의 모든 모서리가 내부인지 반환한다. 각도 단위는 라디안이다.</summary>
     public static bool ContainsVehicle(float areaHalfWidth, float areaHalfLength, float centerX, float centerY,
         float vehicleHalfWidth, float vehicleHalfLength, float angle)

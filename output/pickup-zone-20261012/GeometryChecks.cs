@@ -11,6 +11,15 @@ internal static class GeometryChecks
         const float areaLength = 0.552f;
         const float vehicleWidth = 0.284f;
         const float vehicleLength = 0.472f;
+        // 중심이 들어오면 차량 일부가 돌출되어도 감지하고, 중심이 밖에 있으면 감지하지 않는다.
+        Expect(PickupParkingGeometry.ContainsPoint(areaWidth, areaLength, 0f, 0f), "중심 진입");
+        Expect(PickupParkingGeometry.ContainsPoint(areaWidth, areaLength, 0.2f, 0f), "차량 일부 돌출 시 중심 진입");
+        Expect(PickupParkingGeometry.ContainsPoint(areaWidth, areaLength, areaWidth, areaLength), "중심이 모서리 접촉");
+        Expect(!PickupParkingGeometry.ContainsPoint(areaWidth, areaLength, areaWidth + 0.001f, 0f), "중심이 좌우 밖");
+        Expect(!PickupParkingGeometry.ContainsPoint(areaWidth, areaLength, 0f, -areaLength - 0.001f), "중심이 앞뒤 밖");
+        Expect(!PickupParkingGeometry.ContainsPoint(0f, areaLength, 0f, 0f), "중심 감지 영역 크기 오류");
+        Expect(!PickupParkingGeometry.ContainsPoint(areaWidth, areaLength, float.NaN, 0f), "중심 좌표 오류");
+        Expect(!PickupParkingGeometry.ContainsPoint(areaWidth, areaLength, 0f, float.PositiveInfinity), "중심 좌표 무한대");
         Expect(PickupParkingGeometry.ContainsVehicle(areaWidth, areaLength, 0f, 0f, vehicleWidth, vehicleLength, 0f), "중앙 진입");
         Expect(PickupParkingGeometry.ContainsVehicle(areaWidth, areaLength, 0.08f, 0f, vehicleWidth, vehicleLength, 0f), "오른쪽 가장자리 접촉");
         Expect(PickupParkingGeometry.ContainsVehicle(areaWidth, areaLength, 0f, -0.08f, vehicleWidth, vehicleLength, 0f), "아래 가장자리 접촉");
@@ -23,7 +32,7 @@ internal static class GeometryChecks
         Expect(!PickupParkingGeometry.ContainsVehicle(0f, areaLength, 0f, 0f, vehicleWidth, vehicleLength, 0f), "잘못된 감지 폭");
         Expect(!PickupParkingGeometry.ContainsVehicle(areaWidth, areaLength, 0f, 0f, 0f, vehicleLength, 0f), "잘못된 차량 폭");
         Expect(!PickupParkingGeometry.ContainsVehicle(areaWidth, areaLength, 0f, 0f, vehicleWidth, vehicleLength, float.NaN), "잘못된 각도");
-        Console.WriteLine("PASS: 12 parking containment checks");
+        Console.WriteLine("PASS: 8 center entry checks + 12 historical containment checks");
     }
 
     /// <summary>기대 조건을 만족하지 않으면 검사 이름을 포함하여 실패시킨다.</summary>

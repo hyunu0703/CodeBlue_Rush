@@ -24,7 +24,7 @@ public sealed class MissionController : MonoBehaviour
     [SerializeField] private MissionMapGenerator mapGenerator;
     [SerializeField] private Rigidbody2D ambulance;
     [SerializeField] private AmbulanceDriveInput driveInput;
-    // 병원 도착 반경은 차량 중심 기준 월드 유닛이다. 환자 픽업은 노란 사각형의 완전 진입으로 검사한다.
+    // 병원 도착 반경은 차량 중심 기준 월드 유닛이다. 환자 픽업은 차량 중심의 노란 사각형 진입으로 검사한다.
     [SerializeField, Min(0.1f)] private float arrivalRadius = 0.85f;
     // 미지정 참조는 기존 GamePlay 씬에 한정하여 런타임 표시를 생성/연결한다.
     [SerializeField] private RectTransform navigationPanel;
@@ -147,7 +147,7 @@ public sealed class MissionController : MonoBehaviour
         {
             return;
         }
-        // 픽업은 차량 전체가 주차 사각형 안에 들어와야 시작한다. 병원에는 기존 이동 선분 감지를 유지한다.
+        // 픽업은 차량 중심이 주차 사각형 안에 들어오면 시작한다. 병원에는 기존 이동 선분 감지를 유지한다.
         var currentPosition = ambulance.position;
         var movement = currentPosition - previousPosition;
         var fraction = movement.sqrMagnitude > 0f
@@ -360,8 +360,8 @@ public sealed class MissionController : MonoBehaviour
             navigation.SetGuidanceVisible(IsMissionActive);
         }
         missionStatus.text = stage == MissionStage.Rescuing ? "환자 구출 및 탑승 중"
-            : stage == MissionStage.Transporting ? $"환자 픽업 완료 · 병원 후송 · 시드 {TransportSeed:D8}"
-            : stage == MissionStage.Active ? $"환자 픽업 장소로 이동 · 시드 {CurrentSeed:D8}" : "출동 요청 대기 중";
+            : stage == MissionStage.Transporting ? "환자 픽업 완료 · 병원 후송"
+            : stage == MissionStage.Active ? "환자 픽업 장소로 이동" : "출동 요청 대기 중";
     }
 
     /// <summary>구출 iterator의 실패를 UI/코루틴 경계에서 한 번 관찰한다. 후송 준비가 끝나야 조작을 복구한다.</summary>
