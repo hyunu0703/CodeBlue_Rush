@@ -25,6 +25,9 @@ public sealed class AmbulanceDriveInput : MonoBehaviour
         {
 #if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
             return true;
+#elif UNITY_WEBGL && !UNITY_EDITOR
+            // Web builds use the same binary on desktop and mobile; detect the browser at runtime.
+            return Application.isMobilePlatform;
 #else
             return false;
 #endif
