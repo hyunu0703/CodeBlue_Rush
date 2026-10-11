@@ -18,6 +18,8 @@ public sealed class AmbulanceDriveInput : MonoBehaviour
     private bool hasFocus = true;
     private bool isApplicationPaused;
     private bool requireKeyboardRelease;
+    // 미션 관리자가 전달하는 조작 허용 상태다. 미션 기능이 없는 기존 씬에서는 기본적으로 허용한다.
+    private bool isMissionDrivingAllowed = true;
 
     public static bool IsMobileBuild
     {
@@ -61,7 +63,9 @@ public sealed class AmbulanceDriveInput : MonoBehaviour
         }
 
         UpdateSafeArea();
-        bool canDrive = hasFocus && !isApplicationPaused && Time.timeScale > 0f && vehicle != null && vehicle.IsReady;
+        // 미션 준비 중에는 입력을 비우되 화면 안전 영역 갱신은 계속 수행한다.
+        bool canDrive = isMissionDrivingAllowed && hasFocus && !isApplicationPaused
+            && Time.timeScale > 0f && vehicle != null && vehicle.IsReady;
         // Browser/platform identification must not gate real touchscreen input.
         SetTouchEnabled(canDrive);
         if (!canDrive)
@@ -145,6 +149,19 @@ public sealed class AmbulanceDriveInput : MonoBehaviour
         this.safeAreaRoot = safeAreaRoot;
     }
 
+    /// <summary>미션 상태에 맞게 조작을 허용한다. 상태가 바뀔 때 대기 중인 터치와 키 입력을 초기화한다.</summary>
+    public void SetMissionDrivingAllowed(bool isAllowed)
+    {
+        if (isMissionDrivingAllowed == isAllowed)
+        {
+            return;
+        }
+        isMissionDrivingAllowed = isAllowed;
+        ClearInput();
+        SetTouchEnabled(isAllowed && isActiveAndEnabled && isInitialized && hasFocus
+            && !isApplicationPaused && Time.timeScale > 0f && vehicle != null && vehicle.IsReady);
+    }
+
     private void Initialize()
     {
         if (vehicle == null || wheel == null || accelerator == null || brake == null || gear == null || safeAreaRoot == null)
@@ -159,8 +176,9 @@ public sealed class AmbulanceDriveInput : MonoBehaviour
         ClearInput();
         // The initial entry may accept held keys; re-enabling still requires release for safety.
         requireKeyboardRelease = !isFirstInitialization;
-        SetTouchEnabled(hasFocus && !isApplicationPaused && Time.timeScale > 0f && vehicle.IsReady);
-        gear.Display(vehicle.IsReverse, vehicle.IsStopped);
+        // 첫 Start와 재활성화에서도 미션 조작 제한을 유지한다.
+        SetTouchEnabled(isMissionDrivingAllowed && hasFocus && !isApplicationPaused && Time.timeScale > 0f && vehicle.IsReady);
+        gear.Display(vehicle.IsReverse, isMissionDrivingAllowed && vehicle.IsStopped);
         UpdateSafeArea();
     }
 
