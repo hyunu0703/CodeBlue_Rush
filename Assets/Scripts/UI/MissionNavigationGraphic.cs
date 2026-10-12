@@ -66,7 +66,7 @@ public sealed class MissionNavigationGraphic : MaskableGraphic
         inverseViewRotation = Quaternion.Inverse(viewCamera.transform.rotation);
         pixelsPerUnit = bounds.width / Mathf.Max(1f, visibleWorldWidth);
 
-        // 현재 맵은 픽업 39개와 후송 39개가 상한이다. 프레임마다 오브젝트 검색이나 컬렉션 복사는 하지 않는다.
+        // 추가 분기를 포함해 픽업 51개와 후송 51개가 상한이다. 프레임마다 오브젝트 검색이나 컬렉션 복사는 하지 않는다.
         foreach (var road in map.ActiveRoads)
         {
             if (road == null || !road.gameObject.activeInHierarchy)

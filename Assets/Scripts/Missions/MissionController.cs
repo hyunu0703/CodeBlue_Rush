@@ -239,7 +239,7 @@ public sealed class MissionController : MonoBehaviour
             for (var attempt = 0; attempt < 256; attempt++)
             {
                 var candidate = MissionSeedRules.CreateSeed(random);
-                if (MissionSeedRules.TrySelectTransportSeed(candidate, out _, out _))
+                if (mapGenerator != null && mapGenerator.TrySelectTransportSeed(candidate, out _, out _))
                 {
                     seed = candidate;
                     break;
@@ -401,7 +401,7 @@ public sealed class MissionController : MonoBehaviour
             }
             IsPatientPickedUp = true;
             // 컷신 완료 뒤에만 새 시드를 확정하고 맵을 연장한다. 사전 검증과 같은 순서를 재현한다.
-            if (!MissionSeedRules.TrySelectTransportSeed(CurrentSeed, out var seed, out var error)
+            if (!mapGenerator.TrySelectTransportSeed(CurrentSeed, out var seed, out var error)
                 || !mapGenerator.TryAppendTransport(seed, out error))
             {
                 FailConfiguration(error);

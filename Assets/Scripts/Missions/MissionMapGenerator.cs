@@ -8,6 +8,7 @@ public sealed class MissionMapGenerator : MonoBehaviour
     // 현재 도로 원본의 1254px 규격에서 확인한 차선 폭 84.6px와 도보 폭 64px 비율이다.
     private const float LaneWidthRatio = 84.6f / 1254f;
     private const float SidewalkWidthRatio = 64f / 1254f;
+    private const int BranchRoadCount = 2;
     // 에디터 설정 메뉴로 연결하는 원본 카탈로그, 맵 부모, 마지막 구역의 도착 표시다.
     [SerializeField] private RoadPrefabCatalog catalog;
     [SerializeField] private Transform mapRoot;
@@ -15,11 +16,11 @@ public sealed class MissionMapGenerator : MonoBehaviour
     // 첫 수락 이후 숨길 기존 GamePlay 도로 미리보기다. 원본 씬 오브젝트를 삭제하지 않는다.
     [SerializeField] private GameObject roadPreview;
 
-    // 현재 맵과 종류별 비활성 풀은 이 컴포넌트 인스턴스만 소유한다.
-    private readonly List<RoadPrefab> activeRoads = new List<RoadPrefab>(39);
+    // 진행 경로 39개와 미선택 출구의 직선 최대 12개를 단계별로 소유하고 같은 풀에서 재사용한다.
+    private readonly List<RoadPrefab> activeRoads = new List<RoadPrefab>(51);
     private readonly Dictionary<RoadIndex, Stack<RoadPrefab>> pool = new Dictionary<RoadIndex, Stack<RoadPrefab>>();
     private Transform poolRoot;
-    // 픽업과 후송을 합쳐 최대 78개 구역이다. 현재 안내 경로는 해당 단계의 월드 좌표만 보관한다.
+    // 안내 대상은 추가 분기를 제외한 진행 경로다. 현재 단계의 월드 좌표만 보관한다.
     private readonly List<Vector2> navigationRoute = new List<Vector2>(42);
     // 두 단계까지만 연결한다. 동일한 픽업/후송 시드 쌍은 풀 상태와 무관하게 같은 배치를 만든다.
     private int pickupSeed;
@@ -232,6 +233,46 @@ public sealed class MissionMapGenerator : MonoBehaviour
         return TryGenerateStage(seed, true, out error);
     }
 
+    /// <summary>교차로의 미선택 출구 도로까지 겹치지 않는 픽업/후송 시드 쌍을 사전 검증한다.</summary>
+    public bool TrySelectTransportSeed(int seed, out int transportSeed, out string error)
+    {
+        transportSeed = 0;
+        if (!ValidateConfiguration(out error)
+            || !MissionSeedRules.TryBuildRoute(seed, out var pickup, out error)
+            || !TryPlanRoads(pickup, Vector2.zero, new List<RoadPlacement>(), out var pickupRoads,
+                out var pickupBranches, out error))
+        {
+            return false;
+        }
+        var occupied = new List<RoadPlacement>(pickupRoads);
+        occupied.AddRange(pickupBranches);
+        var last = pickupRoads[pickupRoads.Count - 1];
+        var random = new System.Random(seed ^ 0x5F3759DF);
+        for (var attempt = 0; attempt < 1024; attempt++)
+        {
+            var candidate = MissionSeedRules.CreateSeed(random);
+            if (!MissionSeedRules.TryBuildTransportRoute(seed, candidate, out var transport, out error))
+            {
+                continue;
+            }
+            if (!catalog.TryGetPrefab(transport[0].Index, out var first)
+                || !TryFindRotation(first, transport[0], out var rotation))
+            {
+                error = "후송 첫 도로의 연결 정보를 확인해주세요.";
+                return false;
+            }
+            last.Prefab.TryGetConnectionPosition(pickup[pickup.Length - 1].Outgoing, last.Rotation, out var exit);
+            first.TryGetConnectionPosition(Opposite(transport[0].Incoming), rotation, out var entry);
+            if (TryPlanRoads(transport, last.Position + exit - entry, occupied, out _, out _, out error))
+            {
+                transportSeed = candidate;
+                return true;
+            }
+        }
+        error = "교차로의 추가 도로까지 겹치지 않는 후송 경로를 찾지 못했습니다. 다른 픽업 시드를 사용해주세요.";
+        return false;
+    }
+
     /// <summary>전체 연결 검증 뒤에만 풀과 목적지를 변경한다. 후송은 기존 도로와 구급차 위치를 유지한다.</summary>
     private bool TryGenerateStage(int seed, bool append, out string error)
     {
@@ -259,34 +300,32 @@ public sealed class MissionMapGenerator : MonoBehaviour
             return false;
         }
 
-        // 인스턴스 생성 전에 원본 메타데이터만으로 모든 회전과 연결 위치를 검증한다.
-        var prefabs = new RoadPrefab[route.Length];
-        var rotations = new int[route.Length];
-        var positions = new Vector2[route.Length];
-        for (var index = 0; index < route.Length; index++)
+        // 기존 도로와 추가 분기도 생성 전 겹침 검사에 포함한다.
+        var occupied = new List<RoadPlacement>();
+        var origin = Vector2.zero;
+        if (append)
         {
-            var piece = route[index];
-            if (!catalog.TryGetPrefab(piece.Index, out prefabs[index])
-                || !TryFindRotation(prefabs[index], piece, out rotations[index]))
+            foreach (var road in activeRoads)
             {
-                error = $"{piece.Index}의 진입 {piece.EntryLanes}차선 / 출구 {piece.ExitLanes}차선 연결 정보가 맞지 않습니다.";
+                if (road != null)
+                {
+                    occupied.Add(new RoadPlacement(road, 0, road.transform.localPosition));
+                }
+            }
+            if (!catalog.TryGetPrefab(route[0].Index, out var first)
+                || !TryFindRotation(first, route[0], out var rotation))
+            {
+                error = "후송 첫 도로의 연결 정보를 확인해주세요.";
                 return false;
             }
-            if (index > 0)
-            {
-                // 이전 출구와 다음 입구의 중심을 맞춰 이미지 전체 구역을 빈틈 없이 연결한다.
-                prefabs[index - 1].TryGetConnectionPosition(route[index - 1].Outgoing, rotations[index - 1], out var exit);
-                prefabs[index].TryGetConnectionPosition(Opposite(piece.Incoming), rotations[index], out var entry);
-                positions[index] = positions[index - 1] + exit - entry;
-            }
-            else if (append)
-            {
-                // 기존 마지막 구역 출구와 후송 첫 구역 입구를 같은 위치에 맞춘다.
-                var previous = activeRoads[activeRoads.Count - 1];
-                previous.TryGetConnectionPosition(finalDirection, finalRotation, out var exit);
-                prefabs[index].TryGetConnectionPosition(Opposite(finalDirection), rotations[index], out var entry);
-                positions[index] = (Vector2)previous.transform.localPosition + exit - entry;
-            }
+            var previous = activeRoads[activeRoads.Count - 1];
+            previous.TryGetConnectionPosition(finalDirection, finalRotation, out var exit);
+            first.TryGetConnectionPosition(Opposite(finalDirection), rotation, out var entry);
+            origin = (Vector2)previous.transform.localPosition + exit - entry;
+        }
+        if (!TryPlanRoads(route, origin, occupied, out var roads, out var branches, out error))
+        {
+            return false;
         }
 
         EnsurePoolRoot();
@@ -296,7 +335,7 @@ public sealed class MissionMapGenerator : MonoBehaviour
         if (!append)
         {
             ReturnActiveRoads();
-            StartPosition = mapRoot.TransformPoint(new Vector3(0f, -prefabs[0].ImageSize.y * 0.25f, 0f));
+            StartPosition = mapRoot.TransformPoint(new Vector3(0f, -roads[0].Prefab.ImageSize.y * 0.25f, 0f));
             navigationRoute.Add(StartPosition);
         }
         else
@@ -306,15 +345,14 @@ public sealed class MissionMapGenerator : MonoBehaviour
             previous.TryGetConnectionPosition(finalDirection, finalRotation, out var exit);
             navigationRoute.Add(mapRoot.TransformPoint((Vector2)previous.transform.localPosition + exit));
         }
-        for (var index = 0; index < route.Length; index++)
+        // 분기를 먼저 보관하여 목록의 마지막 도로는 계속 미션 경로의 끝을 가리킨다.
+        foreach (var branch in branches)
         {
-            var instance = Acquire(prefabs[index]);
-            instance.transform.SetParent(mapRoot, false);
-            instance.transform.localPosition = positions[index];
-            instance.transform.localRotation = Quaternion.Euler(0f, 0f, -90f * rotations[index]);
-            instance.transform.localScale = Vector3.one;
-            activeRoads.Add(instance);
-            instance.gameObject.SetActive(true);
+            PlaceRoad(branch);
+        }
+        foreach (var road in roads)
+        {
+            var instance = PlaceRoad(road);
             navigationRoute.Add(instance.transform.position);
         }
 
@@ -327,9 +365,9 @@ public sealed class MissionMapGenerator : MonoBehaviour
         hasTransport = append;
         var last = route.Length - 1;
         finalDirection = route[last].Outgoing;
-        finalRotation = rotations[last];
-        prefabs[last].TryGetConnectionPosition(finalDirection, finalRotation, out var finalExit);
-        destination.position = mapRoot.TransformPoint(positions[last] + finalExit * 0.5f);
+        finalRotation = roads[last].Rotation;
+        roads[last].Prefab.TryGetConnectionPosition(finalDirection, finalRotation, out var finalExit);
+        destination.position = mapRoot.TransformPoint(roads[last].Position + finalExit * 0.5f);
         navigationRoute.Add(DestinationPosition);
         destination.gameObject.SetActive(true);
         if (roadPreview != null)
@@ -337,6 +375,127 @@ public sealed class MissionMapGenerator : MonoBehaviour
             roadPreview.SetActive(false);
         }
         return true;
+    }
+
+    /// <summary>미션 경로를 그대로 배치하고 나머지 열린 교차로 출구에 직선 두 개씩 연결한다.</summary>
+    private bool TryPlanRoads(MissionRoadPiece[] route, Vector2 origin, List<RoadPlacement> existing,
+        out List<RoadPlacement> roads, out List<RoadPlacement> branches, out string error)
+    {
+        roads = new List<RoadPlacement>(route.Length);
+        branches = new List<RoadPlacement>(12);
+        var occupied = new List<RoadPlacement>(existing);
+        error = null;
+        for (var index = 0; index < route.Length; index++)
+        {
+            var piece = route[index];
+            if (!catalog.TryGetPrefab(piece.Index, out var prefab)
+                || !TryFindRotation(prefab, piece, out var rotation))
+            {
+                error = $"{piece.Index}의 진입 {piece.EntryLanes}차선 / 출구 {piece.ExitLanes}차선 연결 정보가 맞지 않습니다.";
+                return false;
+            }
+            var position = origin;
+            if (index > 0)
+            {
+                var previous = roads[index - 1];
+                previous.Prefab.TryGetConnectionPosition(route[index - 1].Outgoing, previous.Rotation, out var exit);
+                prefab.TryGetConnectionPosition(Opposite(piece.Incoming), rotation, out var entry);
+                position = previous.Position + exit - entry;
+            }
+            var placement = new RoadPlacement(prefab, rotation, position);
+            if (!TryReserveRoad(placement, occupied))
+            {
+                error = "미션 경로가 기존 도로 또는 교차로의 추가 도로와 겹칩니다.";
+                return false;
+            }
+            roads.Add(placement);
+        }
+        for (var index = 0; index < route.Length; index++)
+        {
+            var piece = route[index];
+            if (!IsIntersection(piece.Index))
+            {
+                continue;
+            }
+            var junction = roads[index];
+            for (var directionIndex = 0; directionIndex < 4; directionIndex++)
+            {
+                var direction = (RoadDirection)directionIndex;
+                if (direction == Opposite(piece.Incoming) || direction == piece.Outgoing
+                    || junction.Prefab.GetLaneCount(direction, junction.Rotation) == 0)
+                {
+                    continue;
+                }
+                if (!junction.Prefab.TryGetStraightRoad(direction, junction.Rotation, out var straightIndex, out var rotation)
+                    || !catalog.TryGetPrefab(straightIndex, out var prefab)
+                    || prefab.GetLaneCount(Opposite(direction), rotation) != junction.Prefab.GetLaneCount(direction, junction.Rotation)
+                    || prefab.GetLaneCount(direction, rotation) != junction.Prefab.GetLaneCount(direction, junction.Rotation))
+                {
+                    error = $"{piece.Index}의 {direction} 출구에 맞는 직선 도로 연결 정보를 확인해주세요.";
+                    return false;
+                }
+                junction.Prefab.TryGetConnectionPosition(direction, junction.Rotation, out var exit);
+                prefab.TryGetConnectionPosition(Opposite(direction), rotation, out var entry);
+                var position = junction.Position + exit - entry;
+                prefab.TryGetConnectionPosition(direction, rotation, out var straightExit);
+                for (var count = 0; count < BranchRoadCount; count++)
+                {
+                    var placement = new RoadPlacement(prefab, rotation, position);
+                    if (!TryReserveRoad(placement, occupied))
+                    {
+                        error = "교차로의 추가 도로가 미션 경로 또는 다른 추가 도로와 겹칩니다.";
+                        return false;
+                    }
+                    branches.Add(placement);
+                    position += straightExit - entry;
+                }
+            }
+        }
+        return true;
+    }
+
+    /// <summary>검증된 동일 크기 정사각 구역의 면적 겹침을 확인하고 배치를 예약한다.</summary>
+    private static bool TryReserveRoad(RoadPlacement placement, List<RoadPlacement> occupied)
+    {
+        foreach (var other in occupied)
+        {
+            var offset = placement.Position - other.Position;
+            var size = (placement.Prefab.ImageSize + other.Prefab.ImageSize) * 0.5f;
+            if (Mathf.Abs(offset.x) < size.x - 0.001f && Mathf.Abs(offset.y) < size.y - 0.001f)
+            {
+                return false;
+            }
+        }
+        occupied.Add(placement);
+        return true;
+    }
+
+    /// <summary>미션 경로와 추가 도로 모두 같은 풀과 활성 목록으로 소유한다.</summary>
+    private RoadPrefab PlaceRoad(RoadPlacement placement)
+    {
+        var instance = Acquire(placement.Prefab);
+        instance.transform.SetParent(mapRoot, false);
+        instance.transform.localPosition = placement.Position;
+        instance.transform.localRotation = Quaternion.Euler(0f, 0f, -90f * placement.Rotation);
+        instance.transform.localScale = Vector3.one;
+        activeRoads.Add(instance);
+        instance.gameObject.SetActive(true);
+        return instance;
+    }
+
+    /// <summary>인스턴스를 생성하기 전에 검증하는 원본 프리팹과 맵 로컬 배치 정보다.</summary>
+    private readonly struct RoadPlacement
+    {
+        public readonly RoadPrefab Prefab;
+        public readonly int Rotation;
+        public readonly Vector2 Position;
+
+        public RoadPlacement(RoadPrefab prefab, int rotation, Vector2 position)
+        {
+            Prefab = prefab;
+            Rotation = rotation;
+            Position = position;
+        }
     }
 
     /// <summary>차선 수와 입구/출구 방향이 일치하는 첫 회전을 선택한다. 원본 카탈로그 순서와 풀 상태에 의존하지 않는다.</summary>
