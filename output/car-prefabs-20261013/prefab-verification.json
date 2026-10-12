@@ -1,0 +1,169 @@
+{
+    "Vehicles": [
+        {
+            "Name": "Ambulance",
+            "LengthMm": 5255,
+            "WidthMm": 1995,
+            "RootScale": {
+                "x": 0.20000000298023225,
+                "y": 0.20000000298023225,
+                "z": 0.20000000298023225
+            },
+            "WorldSize": {
+                "x": 0.5680000185966492,
+                "y": 0.9440000057220459
+            },
+            "PrefabPath": "Assets/Prefabs/Car/Ambulance.prefab"
+        },
+        {
+            "Name": "Avante",
+            "LengthMm": 4710,
+            "WidthMm": 1825,
+            "RootScale": {
+                "x": 0.20000000298023225,
+                "y": 0.20000000298023225,
+                "z": 0.20000000298023225
+            },
+            "WorldSize": {
+                "x": 0.5195989608764648,
+                "y": 0.8460969924926758
+            },
+            "PrefabPath": "Assets/Prefabs/Car/Avante.prefab"
+        },
+        {
+            "Name": "Bus",
+            "LengthMm": 10995,
+            "WidthMm": 2490,
+            "RootScale": {
+                "x": 0.20000000298023225,
+                "y": 0.20000000298023225,
+                "z": 0.20000000298023225
+            },
+            "WorldSize": {
+                "x": 0.7089322805404663,
+                "y": 1.975124478340149
+            },
+            "PrefabPath": "Assets/Prefabs/Car/Bus.prefab"
+        },
+        {
+            "Name": "Carnival",
+            "LengthMm": 5155,
+            "WidthMm": 1995,
+            "RootScale": {
+                "x": 0.20000000298023225,
+                "y": 0.20000000298023225,
+                "z": 0.20000000298023225
+            },
+            "WorldSize": {
+                "x": 0.5680000185966492,
+                "y": 0.9260360598564148
+            },
+            "PrefabPath": "Assets/Prefabs/Car/Carnival.prefab"
+        },
+        {
+            "Name": "Grandeur",
+            "LengthMm": 5035,
+            "WidthMm": 1880,
+            "RootScale": {
+                "x": 0.20000000298023225,
+                "y": 0.20000000298023225,
+                "z": 0.20000000298023225
+            },
+            "WorldSize": {
+                "x": 0.5352581143379211,
+                "y": 0.9044795632362366
+            },
+            "PrefabPath": "Assets/Prefabs/Car/Grandeur.prefab"
+        },
+        {
+            "Name": "PCX",
+            "LengthMm": 1935,
+            "WidthMm": 740,
+            "RootScale": {
+                "x": 0.20000000298023225,
+                "y": 0.20000000298023225,
+                "z": 0.20000000298023225
+            },
+            "WorldSize": {
+                "x": 0.21068671345710755,
+                "y": 0.34760037064552309
+            },
+            "PrefabPath": "Assets/Prefabs/Car/PCX.prefab"
+        },
+        {
+            "Name": "PorterII",
+            "LengthMm": 5100,
+            "WidthMm": 1740,
+            "RootScale": {
+                "x": 0.20000000298023225,
+                "y": 0.20000000298023225,
+                "z": 0.20000000298023225
+            },
+            "WorldSize": {
+                "x": 0.49539849162101748,
+                "y": 0.9161560535430908
+            },
+            "PrefabPath": "Assets/Prefabs/Car/PorterII.prefab"
+        },
+        {
+            "Name": "Ray",
+            "LengthMm": 3595,
+            "WidthMm": 1595,
+            "RootScale": {
+                "x": 0.20000000298023225,
+                "y": 0.20000000298023225,
+                "z": 0.20000000298023225
+            },
+            "WorldSize": {
+                "x": 0.45411527156829836,
+                "y": 0.6458001732826233
+            },
+            "PrefabPath": "Assets/Prefabs/Car/Ray.prefab"
+        },
+        {
+            "Name": "SonataTaxi",
+            "LengthMm": 4945,
+            "WidthMm": 1860,
+            "RootScale": {
+                "x": 0.20000000298023225,
+                "y": 0.20000000298023225,
+                "z": 0.20000000298023225
+            },
+            "WorldSize": {
+                "x": 0.5295639038085938,
+                "y": 0.8883121013641357
+            },
+            "PrefabPath": "Assets/Prefabs/Car/SonataTaxi.prefab"
+        },
+        {
+            "Name": "Sorento",
+            "LengthMm": 4815,
+            "WidthMm": 1900,
+            "RootScale": {
+                "x": 0.20000000298023225,
+                "y": 0.20000000298023225,
+                "z": 0.20000000298023225
+            },
+            "WorldSize": {
+                "x": 0.5409523248672485,
+                "y": 0.8649590611457825
+            },
+            "PrefabPath": "Assets/Prefabs/Car/Sorento.prefab"
+        },
+        {
+            "Name": "Sportage",
+            "LengthMm": 4685,
+            "WidthMm": 1865,
+            "RootScale": {
+                "x": 0.20000000298023225,
+                "y": 0.20000000298023225,
+                "z": 0.20000000298023225
+            },
+            "WorldSize": {
+                "x": 0.5309874415397644,
+                "y": 0.8416060209274292
+            },
+            "PrefabPath": "Assets/Prefabs/Car/Sportage.prefab"
+        }
+    ]
+}

@@ -1,0 +1,140 @@
+{
+  "passed": true,
+  "assertions": 224,
+  "prefabs": 11,
+  "sprites": 11,
+  "vehicles": [
+    {
+      "name": "Ambulance",
+      "rootScale": [
+        0.2,
+        0.2,
+        0.2
+      ],
+      "worldWidth": 0.5680000007999999,
+      "worldLength": 0.9439999820000001,
+      "prefabGuid": "7d0c9909776d0e74caff069a907160dd",
+      "spriteGuid": "219094750d5c7134b89e72b1384539d7"
+    },
+    {
+      "name": "Avante",
+      "rootScale": [
+        0.2,
+        0.2,
+        0.2
+      ],
+      "worldWidth": 0.519598962,
+      "worldLength": 0.8460970023000001,
+      "prefabGuid": "615a3ff26884c594ca6a85a01c2891ba",
+      "spriteGuid": "7d23b9f1c61dfd74aa4a861dd2ffffbc"
+    },
+    {
+      "name": "Bus",
+      "rootScale": [
+        0.2,
+        0.2,
+        0.2
+      ],
+      "worldWidth": 0.7089323304,
+      "worldLength": 1.975124528,
+      "prefabGuid": "7c0b03479a8b3ca428e5e69b02fd7732",
+      "spriteGuid": "35579133867a0fe4d85cd5e4f1d58f66"
+    },
+    {
+      "name": "Carnival",
+      "rootScale": [
+        0.2,
+        0.2,
+        0.2
+      ],
+      "worldWidth": 0.5680000176,
+      "worldLength": 0.92603606304,
+      "prefabGuid": "de4624a0083bca24e9d0ca4ccec24dfb",
+      "spriteGuid": "685f82163be99d2409e9601b5c5e50e6"
+    },
+    {
+      "name": "Grandeur",
+      "rootScale": [
+        0.2,
+        0.2,
+        0.2
+      ],
+      "worldWidth": 0.5352581040000001,
+      "worldLength": 0.9044794737200001,
+      "prefabGuid": "eacf0602509330948a77c6043f70399a",
+      "spriteGuid": "b1afc37979546fe47abcc4cfe1c8629e"
+    },
+    {
+      "name": "PCX",
+      "rootScale": [
+        0.2,
+        0.2,
+        0.2
+      ],
+      "worldWidth": 0.21068671040000003,
+      "worldLength": 0.34760037288,
+      "prefabGuid": "39bf259236e839840b2f2da76e13866c",
+      "spriteGuid": "9a10f252a94cc264aa785108f51edb0d"
+    },
+    {
+      "name": "PorterII",
+      "rootScale": [
+        0.2,
+        0.2,
+        0.2
+      ],
+      "worldWidth": 0.4953984672,
+      "worldLength": 0.9161559945200001,
+      "prefabGuid": "ade7c31f62c08624896cb20740eb6318",
+      "spriteGuid": "dfb7fd4b4d040164d825ce703b2394ed"
+    },
+    {
+      "name": "Ray",
+      "rootScale": [
+        0.2,
+        0.2,
+        0.2
+      ],
+      "worldWidth": 0.4541152800000001,
+      "worldLength": 0.64580018864,
+      "prefabGuid": "2244cbcf2d02a0444a758bee030e6ee8",
+      "spriteGuid": "9f22ed21c5d81b6468390e5e09f354af"
+    },
+    {
+      "name": "SonataTaxi",
+      "rootScale": [
+        0.2,
+        0.2,
+        0.2
+      ],
+      "worldWidth": 0.529563879,
+      "worldLength": 0.8883120144000001,
+      "prefabGuid": "3ae6c95a19af8b24ebb5846959f41db8",
+      "spriteGuid": "0aa72582ea578b24ea5435ea84465580"
+    },
+    {
+      "name": "Sorento",
+      "rootScale": [
+        0.2,
+        0.2,
+        0.2
+      ],
+      "worldWidth": 0.5409523350000001,
+      "worldLength": 0.8649590135999999,
+      "prefabGuid": "9bd209e4c52e76e44b248076bae27306",
+      "spriteGuid": "150b35664f4291a438da98268fd63c0b"
+    },
+    {
+      "name": "Sportage",
+      "rootScale": [
+        0.2,
+        0.2,
+        0.2
+      ],
+      "worldWidth": 0.5309874432,
+      "worldLength": 0.8416060640000002,
+      "prefabGuid": "dda1ca69ac45989488f25b2addabbcac",
+      "spriteGuid": "a39659d75a1251342b1db7df39f1f6ac"
+    }
+  ]
+}
