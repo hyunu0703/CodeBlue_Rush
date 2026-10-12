@@ -29,6 +29,35 @@ public sealed class MissionMapGenerator : MonoBehaviour
     private RoadDirection finalDirection;
     private int finalRotation;
 
+    // 맵 단위 차로 그래프의 소유자다. 후송 추가 시 새 스냅숏을 공개하고 이전 스냅숏을 무효화한다.
+    private RoadLaneNetwork laneNetwork;
+    /// <summary>활성 생성기의 최신 차로 그래프다. 생성 전/비활성 상태는 null이며 좌표와 거리는 Map Root 로컬 기준이다.</summary>
+    public RoadLaneNetwork LaneNetwork => isActiveAndEnabled ? laneNetwork : null;
+    /// <summary>성공한 맵 생성/후송 추가마다 증가한다. AI는 버전 변경 시 그래프를 다시 획득해야 한다.</summary>
+    public int LaneNetworkVersion { get; private set; }
+
+    /// <summary>현재 그래프의 맵 로컬 거리에서 월드 위치와 단위 주행 방향을 출력한다. 차량 이동은 하지 않는다.</summary>
+    public bool TrySampleLane(int pathId, float distance, out Vector3 position, out Vector3 forward)
+    {
+        position = Vector3.zero;
+        forward = Vector3.zero;
+        if (!isActiveAndEnabled || mapRoot == null || laneNetwork == null || !laneNetwork.IsValid
+            || pathId < 0 || pathId >= laneNetwork.Paths.Count
+            || !laneNetwork.Paths[pathId].TrySample(distance, out var localPosition, out var localForward))
+        {
+            return false;
+        }
+        position = mapRoot.TransformPoint(localPosition);
+        forward = mapRoot.TransformVector(localForward).normalized;
+        return forward.sqrMagnitude > 0f;
+    }
+
+    /// <summary>생성기 파괴 시 외부에 남아 있는 그래프 스냅숏도 무효화한다.</summary>
+    private void OnDestroy()
+    {
+        laneNetwork?.Invalidate();
+    }
+
     /// <summary>현재 배치된 도로 목록이다. 다음 미션에서 풀로 반환되므로 소비자는 영구 참조로 보관하지 않는다.</summary>
     public IReadOnlyList<RoadPrefab> ActiveRoads => activeRoads;
     /// <summary>현재 목적지까지 실제 연결 순서로 이어진 도로 중심 경로다.</summary>
@@ -107,6 +136,9 @@ public sealed class MissionMapGenerator : MonoBehaviour
         this.mapRoot = mapRoot;
         this.destination = destination;
         this.roadPreview = roadPreview;
+        // 설정 주입 뒤에는 기존 좌표계의 그래프를 다시 사용하지 않는다.
+        laneNetwork?.Invalidate();
+        laneNetwork = null;
     }
 
     /// <summary>월드 위치가 활성 교차로 구역 안에 있는지 반환한다. 이미지 전체 크기를 사용하며 회전과 스케일을 반영한다.</summary>
@@ -204,6 +236,11 @@ public sealed class MissionMapGenerator : MonoBehaviour
                 return false;
             }
             var renderer = prefab.GetComponent<SpriteRenderer>();
+            if (!prefab.TryGetLaneLayout(out _, out var laneError))
+            {
+                error = $"{prefab.name}: {laneError}";
+                return false;
+            }
             if (index == 1)
             {
                 size = prefab.ImageSize;
@@ -246,6 +283,11 @@ public sealed class MissionMapGenerator : MonoBehaviour
         }
         var occupied = new List<RoadPlacement>(pickupRoads);
         occupied.AddRange(pickupBranches);
+        // 출구가 이웃 도로의 닫힌 면에 닿는 시드도 제안 전에 제외한다.
+        if (!TryBuildLaneNetwork(occupied, out _, out error))
+        {
+            return false;
+        }
         var last = pickupRoads[pickupRoads.Count - 1];
         var random = new System.Random(seed ^ 0x5F3759DF);
         for (var attempt = 0; attempt < 1024; attempt++)
@@ -263,10 +305,18 @@ public sealed class MissionMapGenerator : MonoBehaviour
             }
             last.Prefab.TryGetConnectionPosition(pickup[pickup.Length - 1].Outgoing, last.Rotation, out var exit);
             first.TryGetConnectionPosition(Opposite(transport[0].Incoming), rotation, out var entry);
-            if (TryPlanRoads(transport, last.Position + exit - entry, occupied, out _, out _, out error))
+            if (TryPlanRoads(transport, last.Position + exit - entry, occupied, out var transportRoads,
+                out var transportBranches, out error))
             {
-                transportSeed = candidate;
-                return true;
+                // 두 시드의 주행 차로를 함께 검사한 후보만 선택한다. 실제 배치 때도 동일한 검사를 반복한다.
+                var connectedRoads = new List<RoadPlacement>(occupied);
+                connectedRoads.AddRange(transportBranches);
+                connectedRoads.AddRange(transportRoads);
+                if (TryBuildLaneNetwork(connectedRoads, out _, out error))
+                {
+                    transportSeed = candidate;
+                    return true;
+                }
             }
         }
         error = "교차로의 추가 도로까지 겹치지 않는 후송 경로를 찾지 못했습니다. 다른 픽업 시드를 사용해주세요.";
@@ -309,7 +359,9 @@ public sealed class MissionMapGenerator : MonoBehaviour
             {
                 if (road != null)
                 {
-                    occupied.Add(new RoadPlacement(road, 0, road.transform.localPosition));
+                    // 풀에서 꺼낸 기존 도로의 실제 회전을 보존하여 후송 그래프에서도 원래 차로 방향을 유지한다.
+                    var existingQuarterTurns = Mathf.RoundToInt(-road.transform.localEulerAngles.z / 90f);
+                    occupied.Add(new RoadPlacement(road, existingQuarterTurns, road.transform.localPosition));
                 }
             }
             if (!catalog.TryGetPrefab(route[0].Index, out var first)
@@ -324,6 +376,15 @@ public sealed class MissionMapGenerator : MonoBehaviour
             origin = (Vector2)previous.transform.localPosition + exit - entry;
         }
         if (!TryPlanRoads(route, origin, occupied, out var roads, out var branches, out error))
+        {
+            return false;
+        }
+
+        // 활성 목록과 정확히 같은 순서로 그래프를 미리 만든다. 실패하면 풀/기존 맵/차로 그래프를 보존한다.
+        var laneRoads = new List<RoadPlacement>(occupied);
+        laneRoads.AddRange(branches);
+        laneRoads.AddRange(roads);
+        if (!TryBuildLaneNetwork(laneRoads, out var nextLaneNetwork, out error))
         {
             return false;
         }
@@ -374,7 +435,33 @@ public sealed class MissionMapGenerator : MonoBehaviour
         {
             roadPreview.SetActive(false);
         }
+        // 후송 도로가 모두 준비된 다음에만 공개한다. 이전 경로 번호는 유지되지만 스냅숏은 새로 획득해야 한다.
+        laneNetwork?.Invalidate();
+        laneNetwork = nextLaneNetwork;
+        LaneNetworkVersion++;
         return true;
+    }
+
+    /// <summary>검증 후보의 원본 도로 규격으로 전체 차로 네트워크를 구성한다. 씬이나 프리팹은 수정하지 않는다.</summary>
+    private static bool TryBuildLaneNetwork(List<RoadPlacement> roads, out RoadLaneNetwork network, out string error)
+    {
+        network = null;
+        error = null;
+        // 후보 도로의 차로 레이아웃과 실제 90도 배치만 복사한다.
+        var placements = new List<RoadLanePlacement>(roads.Count);
+        foreach (var road in roads)
+        {
+            if (road.Prefab == null || !road.Prefab.TryGetLaneLayout(out var layout, out error))
+            {
+                if (error == null)
+                {
+                    error = "차로 네트워크를 구성할 원본 도로가 없습니다.";
+                }
+                return false;
+            }
+            placements.Add(new RoadLanePlacement(layout, road.Position, road.Rotation));
+        }
+        return RoadLaneNetwork.TryBuild(placements, out network, out error);
     }
 
     /// <summary>미션 경로를 그대로 배치하고 나머지 열린 교차로 출구에 직선 두 개씩 연결한다.</summary>
@@ -534,6 +621,9 @@ public sealed class MissionMapGenerator : MonoBehaviour
     /// <summary>현재 구역을 숨겨 종류별 풀에 반환한다. 원본 프리팹과 씬 미리보기는 반환하지 않는다.</summary>
     private void ReturnActiveRoads()
     {
+        // 재사용된 도로를 옛 그래프로 추적하지 못하도록 반환 전에 무효화한다.
+        laneNetwork?.Invalidate();
+        laneNetwork = null;
         foreach (var road in activeRoads)
         {
             if (road == null)
