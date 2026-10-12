@@ -849,10 +849,9 @@ MonoBehaviour:
   brakeResponse: 6
   wheelbase: 0.67968
   axleCenter: {x: 0, y: 0}
-  maximumRoadWheelAngle: 32
-  highSpeedSteeringFraction: 0.3
-  lateralGrip: 6
-  maximumLateralAcceleration: 1.6
+  maximumRoadWheelAngle: 45
+  lateralGrip: 12
+  maximumLateralAcceleration: 3.2
   yawDamping: 0.8
   stoppedSpeed: 0.025
   stoppedAngularSpeed: 3
@@ -1540,9 +1539,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SteeringWheelControl
   maximumAngle: 450
   keyboardTurnSpeed: 720
-  stationaryReturnSpeed: 180
-  movingReturnSpeed: 540
-  fullReturnSpeedAt: 2
+  returnSpeed: 1200
   centerDeadRadius: 16
 --- !u!1 &834825717
 GameObject:

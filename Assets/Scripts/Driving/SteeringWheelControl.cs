@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.UI;
+using UnityEngine.Serialization;
 
 [DisallowMultipleComponent]
 [RequireComponent(typeof(RectTransform))]
@@ -10,9 +11,8 @@ public sealed class SteeringWheelControl : MonoBehaviour, IPointerDownHandler, I
 {
     [SerializeField, Min(1f)] private float maximumAngle = 450f;
     [SerializeField, Min(0f)] private float keyboardTurnSpeed = 720f;
-    [SerializeField, Min(0f)] private float stationaryReturnSpeed = 180f;
-    [SerializeField, Min(0f)] private float movingReturnSpeed = 540f;
-    [SerializeField, Min(0.01f)] private float fullReturnSpeedAt = 2f;
+    [FormerlySerializedAs("stationaryReturnSpeed")]
+    [SerializeField, Min(0f)] private float returnSpeed = 1200f;
     [SerializeField, Min(0f)] private float centerDeadRadius = 16f;
 
     private RectTransform wheelRect;
@@ -47,6 +47,7 @@ public sealed class SteeringWheelControl : MonoBehaviour, IPointerDownHandler, I
         }
     }
 
+    // 기존 호출 계약을 유지하되 핸들 복귀 속도에는 차량 속도를 적용하지 않는다.
     public void Tick(float keyboardSteering, float vehicleSpeed, float dt)
     {
         if (!isActiveAndEnabled || wheelRect == null)
@@ -60,8 +61,6 @@ public sealed class SteeringWheelControl : MonoBehaviour, IPointerDownHandler, I
         }
         else if (!isHeld)
         {
-            float returnSpeed = Mathf.Lerp(stationaryReturnSpeed, movingReturnSpeed,
-                Mathf.Clamp01(vehicleSpeed / fullReturnSpeedAt));
             angle = Mathf.MoveTowards(angle, 0f, returnSpeed * dt);
         }
 

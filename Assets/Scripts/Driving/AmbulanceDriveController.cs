@@ -18,10 +18,9 @@ public sealed class AmbulanceDriveController : MonoBehaviour
     [Header("Steering and tire grip")]
     [SerializeField, Min(0.01f)] private float wheelbase = 0.68f;
     [SerializeField] private Vector2 axleCenter;
-    [SerializeField, Range(1f, 60f)] private float maximumRoadWheelAngle = 32f;
-    [SerializeField, Range(0.05f, 1f)] private float highSpeedSteeringFraction = 0.3f;
-    [SerializeField, Min(0f)] private float lateralGrip = 6f;
-    [SerializeField, Min(0f)] private float maximumLateralAcceleration = 1.6f;
+    [SerializeField, Range(1f, 60f)] private float maximumRoadWheelAngle = 45f;
+    [SerializeField, Min(0f)] private float lateralGrip = 12f;
+    [SerializeField, Min(0f)] private float maximumLateralAcceleration = 3.2f;
     [SerializeField, Min(0f)] private float yawDamping = 0.8f;
 
     [Header("Stopped detection")]
@@ -122,9 +121,7 @@ public sealed class AmbulanceDriveController : MonoBehaviour
             body.AddForce(-body.linearVelocity / speed * (deceleration * body.mass));
         }
 
-        float speedFraction = Mathf.Clamp01(speed / forwardTopSpeed);
-        float steeringFraction = Mathf.Lerp(1f, highSpeedSteeringFraction, speedFraction * speedFraction);
-        float roadWheelAngle = steering * maximumRoadWheelAngle * steeringFraction;
+        float roadWheelAngle = steering * maximumRoadWheelAngle;
         Vector2 frontDirection = Quaternion.Euler(0f, 0f, -roadWheelAngle) * forward;
         Vector2 center = body.position + (Vector2)(Quaternion.Euler(0f, 0f, body.rotation) * (Vector3)axleCenter);
         ApplyTireGrip(center + forward * (wheelbase * 0.5f), frontDirection, dt);
