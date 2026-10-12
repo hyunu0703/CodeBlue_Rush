@@ -36,6 +36,9 @@ public sealed class MissionMapGenerator : MonoBehaviour
     /// <summary>성공한 맵 생성/후송 추가마다 증가한다. AI는 버전 변경 시 그래프를 다시 획득해야 한다.</summary>
     public int LaneNetworkVersion { get; private set; }
 
+    /// <summary>차량 AI가 관측 위치/속도를 차로 그래프의 로컬 좌표로 변환할 때 사용하는 맵 부모다.</summary>
+    public Transform LaneMapRoot => mapRoot;
+
     /// <summary>현재 그래프의 맵 로컬 거리에서 월드 위치와 단위 주행 방향을 출력한다. 차량 이동은 하지 않는다.</summary>
     public bool TrySampleLane(int pathId, float distance, out Vector3 position, out Vector3 forward)
     {

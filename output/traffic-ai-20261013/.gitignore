@@ -1,0 +1,6 @@
+# 이 작업의 근사 빌드 산출물만 제외하고 실행 가능한 순수 로직 검사 소스는 유지한다.
+Temp/
+obj/
+*-bin/
+*-obj/
+!TrafficChecks.csproj

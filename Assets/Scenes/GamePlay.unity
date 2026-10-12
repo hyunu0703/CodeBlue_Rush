@@ -2403,6 +2403,7 @@ GameObject:
   - component: {fileID: 1629936291}
   - component: {fileID: 1629936290}
   - component: {fileID: 1629936289}
+  - component: {fileID: 1629936292}
   m_Layer: 0
   m_Name: MissionSystem
   m_TagString: Untagged
@@ -2471,6 +2472,35 @@ Transform:
   - {fileID: 536320611}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1629936292
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1629936288}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 603fb51671a8c664cb0c99d84c86642e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RoadTrafficController
+  mapGenerator: {fileID: 1629936290}
+  player: {fileID: 585983600}
+  vehiclePrefabs:
+  - {fileID: 8490552033662933, guid: 615a3ff26884c594ca6a85a01c2891ba, type: 3}
+  - {fileID: 5945451696120770233, guid: eacf0602509330948a77c6043f70399a, type: 3}
+  - {fileID: 4068185389456783728, guid: 3ae6c95a19af8b24ebb5846959f41db8, type: 3}
+  - {fileID: 674495314271924318, guid: 2244cbcf2d02a0444a758bee030e6ee8, type: 3}
+  - {fileID: 8278919489766512056, guid: 9bd209e4c52e76e44b248076bae27306, type: 3}
+  - {fileID: 5208049709812335112, guid: dda1ca69ac45989488f25b2addabbcac, type: 3}
+  - {fileID: 4972899132792735681, guid: de4624a0083bca24e9d0ca4ccec24dfb, type: 3}
+  - {fileID: 1033072001151962637, guid: ade7c31f62c08624896cb20740eb6318, type: 3}
+  - {fileID: 1910790756883838423, guid: 7c0b03479a8b3ca428e5e69b02fd7732, type: 3}
+  maximumVehicles: 32
+  spawnInterval: 1
+  obstacleLayers:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!1 &1779358359
 GameObject:
   m_ObjectHideFlags: 0

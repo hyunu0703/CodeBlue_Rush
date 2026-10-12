@@ -1,0 +1,6 @@
+# 사용자 파일 기준선은 로컬 출력으로만 유지한다.
+*.before.txt
+RoadTrafficController.before.txt
+RoadTrafficSimulation.before.txt
+GamePlayTrafficSetup.before.txt
+GamePlay.before.txt

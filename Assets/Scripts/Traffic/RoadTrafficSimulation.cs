@@ -1,0 +1,530 @@
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+
+/// <summary>차로 그래프 기반 교통 시뮬레이션이다. 한 스텝의 관측→판단→예약→이동을 순서대로 처리하며 Unity 물리는 호출하지 않는다.</summary>
+public sealed class RoadTrafficSimulation
+{
+    // 초 단위 반응/예측 시간이다. 공간 튜닝은 실제 맵의 차로 폭에서 환산한다.
+    public const float HeadwaySeconds = 1.4f;
+    public const float LaneChangeSeconds = 2f;
+    private const float PredictionSeconds = 0.8f;
+    private const float StopHoldSeconds = 0.3f;
+    private readonly RoadLaneNetwork network;
+    private readonly List<RoadTrafficVehicle> vehicles = new List<RoadTrafficVehicle>();
+    private readonly List<RoadTrafficObstacle> observations = new List<RoadTrafficObstacle>();
+    private readonly System.Random random;
+    private int nextId = 1;
+    public IReadOnlyList<RoadTrafficVehicle> Vehicles { get; }
+    public RoadTrafficSignals Signals { get; }
+
+    /// <summary>맵 스냅숏과 재현 가능한 시드로 새 세션을 만든다. 호출자가 맵 교체 시 이 인스턴스를 폐기한다.</summary>
+    public RoadTrafficSimulation(RoadLaneNetwork network, int seed)
+    {
+        this.network = network ?? throw new ArgumentNullException(nameof(network));
+        random = new System.Random(seed);
+        Signals = new RoadTrafficSignals(network);
+        Vehicles = vehicles.AsReadOnly();
+    }
+
+    /// <summary>차로 중앙에 정지 상태로 등록한다. 경계/정지선/기존 차량 간격이 부족하면 생성하지 않는다.</summary>
+    public bool TryAddVehicle(int pathId, float distance, float length, float width, float cruiseSpeed,
+        IReadOnlyList<RoadTrafficObstacle> external, out RoadTrafficVehicle vehicle)
+    {
+        vehicle = null;
+        if (!network.IsValid || pathId < 0 || pathId >= network.Paths.Count
+            || !RoadLaneMath.IsFinite(distance) || !RoadLaneMath.IsFinite(length) || length <= 0f
+            || !RoadLaneMath.IsFinite(width) || width <= 0f || !RoadLaneMath.IsFinite(cruiseSpeed) || cruiseSpeed <= 0f)
+        {
+            return false;
+        }
+        // 교차로 안에 직접 생성하지 않고 차폭과 앞뒤 범퍼의 배치 여유를 확인한다.
+        var path = network.Paths[pathId];
+        if (path.Kind == RoadLanePathKind.Intersection || width > path.Width * 0.85f
+            || cruiseSpeed > path.Width * 3f
+            || distance < length * 0.5f || distance > path.Length - length * 0.5f)
+        {
+            return false;
+        }
+        var candidate = new RoadTrafficVehicle
+        {
+            Id = nextId, PathId = pathId, Distance = distance, Length = length,
+            Width = width, CruiseSpeed = cruiseSpeed
+        };
+        UpdatePose(candidate);
+        BuildObservations(external);
+        if (!HasLaneSpace(candidate, pathId, distance, length + path.Width))
+        {
+            return false;
+        }
+        ChooseNext(candidate);
+        vehicles.Add(candidate);
+        nextId++;
+        vehicle = candidate;
+        return true;
+    }
+
+    /// <summary>소유 차량만 제거한다. 외부 차량이나 네트워크 상태는 변경하지 않는다.</summary>
+    public void RemoveVehicle(RoadTrafficVehicle vehicle)
+    {
+        if (vehicle != null)
+        {
+            vehicles.Remove(vehicle);
+        }
+    }
+
+    /// <summary>최대 0.1초의 시뮬레이션 경계를 진행한다. 0초 또는 무효화된 맵에서는 움직이지 않는다.</summary>
+    public void Tick(float seconds, IReadOnlyList<RoadTrafficObstacle> external)
+    {
+        if (!RoadLaneMath.IsFinite(seconds) || seconds < 0f || seconds > 0.1f)
+        {
+            throw new ArgumentOutOfRangeException(nameof(seconds));
+        }
+        if (!network.IsValid || seconds == 0f)
+        {
+            return;
+        }
+        Signals.Tick(seconds);
+        BuildObservations(external);
+        foreach (var vehicle in vehicles)
+        {
+            if (vehicle.IsFinished)
+            {
+                continue;
+            }
+            vehicle.LaneChangeCooldown = Math.Max(0f, vehicle.LaneChangeCooldown - seconds);
+            EvaluateSpeed(vehicle, seconds);
+        }
+        // 판단은 동일 관측값을 사용한다. 예약과 차로 변경 의도만 ID 순서대로 확정하여 동시 진입 충돌을 막는다.
+        foreach (var vehicle in vehicles)
+        {
+            if (vehicle.IsFinished)
+            {
+                continue;
+            }
+            TryOvertake(vehicle);
+            Advance(vehicle, seconds);
+        }
+    }
+
+    /// <summary>동일 진행 방향의 바로 옆 차로만 요청한다. 앞/뒤 차량과 다른 차량의 변경 의도를 확인한 뒤 양쪽 차로를 점유한다.</summary>
+    public bool TryChangeLane(RoadTrafficVehicle vehicle, bool toLeft)
+    {
+        if (!network.IsValid || vehicle == null || !vehicles.Contains(vehicle) || vehicle.IsFinished
+            || vehicle.IsChangingLane || vehicle.LaneChangeCooldown > 0f || vehicle.Speed <= 0.05f)
+        {
+            return false;
+        }
+        // 정지선 부근과 교차로 내부에서는 변경을 시작하지 않는다. 완료할 전방 길이도 확보한다.
+        var path = network.Paths[vehicle.PathId];
+        var targetId = toLeft ? path.LeftNeighborId : path.RightNeighborId;
+        if (targetId < 0 || !path.CanChangeLaneAt(vehicle.Distance)
+            || vehicle.Distance + vehicle.CruiseSpeed * LaneChangeSeconds + vehicle.Length > path.LaneChangeEndDistance)
+        {
+            return false;
+        }
+        var target = network.Paths[targetId];
+        if (vehicle.Width > target.Width * 0.85f
+            || !target.TryProject(vehicle.Position, out var along, out _)
+            || !HasLaneSpace(vehicle, targetId, along, target.Width * 0.6f))
+        {
+            return false;
+        }
+        foreach (var other in vehicles)
+        {
+            // 반대 방향 맞교환과 동시에 같은 차로로 합류하는 경우까지 변경 의도로 보호한다.
+            if (other != vehicle && other.IsChangingLane
+                && (other.TargetLaneId == targetId || other.PathId == targetId || other.TargetLaneId == vehicle.PathId)
+                && Math.Abs(other.Distance - vehicle.Distance) < vehicle.Length + other.Length
+                    + Math.Max(vehicle.Speed, other.Speed) * HeadwaySeconds)
+            {
+                return false;
+            }
+        }
+        vehicle.TargetLaneId = targetId;
+        vehicle.LaneChangeElapsed = 0f;
+        vehicle.LaneChangeCooldown = 6f;
+        return true;
+    }
+
+    /// <summary>한 스텝의 AI와 외부 차량 관측값을 보관한다. 외부 관측은 살아 있는 Rigidbody/Collider를 호출자가 검증한다.</summary>
+    private void BuildObservations(IReadOnlyList<RoadTrafficObstacle> external)
+    {
+        observations.Clear();
+        foreach (var vehicle in vehicles)
+        {
+            if (!vehicle.IsFinished)
+            {
+                observations.Add(new RoadTrafficObstacle(vehicle.Id, vehicle.Position,
+                    vehicle.Forward * vehicle.Speed, vehicle.Forward, vehicle.Length, vehicle.Width));
+                if (vehicle.IsChangingLane)
+                {
+                    // 변경 시작부터 완료까지 두 차로 모두 차체가 있는 것으로 관측해 뒤차의 양보를 미리 유도한다.
+                    network.Paths[vehicle.PathId].TrySample(vehicle.Distance, out var sourcePoint, out var sourceForward);
+                    network.Paths[vehicle.TargetLaneId].TrySample(vehicle.Distance, out var targetPoint, out var targetForward);
+                    observations.Add(new RoadTrafficObstacle(vehicle.Id, sourcePoint,
+                        sourceForward * vehicle.Speed, sourceForward, vehicle.Length, vehicle.Width));
+                    observations.Add(new RoadTrafficObstacle(vehicle.Id, targetPoint,
+                        targetForward * vehicle.Speed, targetForward, vehicle.Length, vehicle.Width));
+                }
+            }
+        }
+        if (external != null)
+        {
+            for (var index = 0; index < external.Count; index++)
+            {
+                var obstacle = external[index];
+                if (RoadLaneMath.IsFinite(obstacle.Position) && RoadLaneMath.IsFinite(obstacle.Velocity)
+                    && RoadLaneMath.IsFinite(obstacle.Forward) && RoadLaneMath.IsFinite(obstacle.Length)
+                    && RoadLaneMath.IsFinite(obstacle.Width) && obstacle.Length > 0f && obstacle.Width > 0f)
+                {
+                    observations.Add(obstacle);
+                }
+            }
+        }
+    }
+
+    /// <summary>곡선 너머 차량까지 경로에 투영하고 속도에 따른 차간 거리와 제동 거리를 만족하는 목표 속도를 구한다.</summary>
+    private void EvaluateSpeed(RoadTrafficVehicle vehicle, float seconds)
+    {
+        // 차로 폭을 게임 공간의 기준으로 쓰며 미터 단위로 가정하지 않는다.
+        var path = network.Paths[vehicle.PathId];
+        var braking = path.Width * 3f;
+        var minimumGap = path.Width * 0.6f;
+        vehicle.TargetSpeed = path.Kind == RoadLanePathKind.Intersection
+            ? Math.Min(vehicle.CruiseSpeed, path.Width * (path.Maneuver == RoadLaneManeuver.Straight ? 2f : 1.1f))
+            : vehicle.CruiseSpeed;
+        vehicle.ClearDistance = float.PositiveInfinity;
+        LimitForTraffic(vehicle, vehicle.PathId, vehicle.Distance, braking, minimumGap);
+        if (vehicle.IsChangingLane)
+        {
+            network.Paths[vehicle.TargetLaneId].TryProject(vehicle.Position, out var targetAlong, out _);
+            LimitForTraffic(vehicle, vehicle.TargetLaneId, targetAlong, braking, minimumGap);
+        }
+        if (path.HasStopLine && vehicle.NextPathId >= 0 && vehicle.ReservedMovement < 0)
+        {
+            // 정지선은 앞범퍼 기준이다. 적색 우회전은 선 앞 실제 정지 상태를 최소 시간 동안 확인한다.
+            var lineGap = Math.Max(0f, path.Length - vehicle.Distance - vehicle.Length * 0.5f);
+            if (lineGap < path.Width * 0.04f && vehicle.Speed < path.Width * 0.04f)
+            {
+                vehicle.StoppedSeconds += seconds;
+            }
+            else
+            {
+                vehicle.StoppedSeconds = 0f;
+            }
+            if (!CanEnter(vehicle))
+            {
+                LimitForStop(vehicle, lineGap, braking);
+            }
+            else
+            {
+                // 회전 시작 전에 미리 감속하여 짧은 폴리라인 곡선에서 급격한 방향 전환을 줄인다.
+                var movement = network.Paths[vehicle.NextPathId];
+                var turnSpeed = path.Width * (movement.Maneuver == RoadLaneManeuver.Straight ? 2f : 1.1f);
+                vehicle.TargetSpeed = Math.Min(vehicle.TargetSpeed,
+                    (float)Math.Sqrt(turnSpeed * turnSpeed + 2f * braking * lineGap));
+            }
+        }
+        if (vehicle.NextPathId < 0)
+        {
+            LimitForStop(vehicle, Math.Max(0f, path.Length - vehicle.Distance - vehicle.Length * 0.5f), braking);
+        }
+    }
+
+    /// <summary>관측한 차량을 현재 경로와 미리 선택한 다음 경로들에 투영한다. 전방의 차로 변경 차량은 예측 위치도 검사한다.</summary>
+    private void LimitForTraffic(RoadTrafficVehicle vehicle, int pathId, float distance, float braking, float gap)
+    {
+        // 회전 뒤 출구와 다음 타일까지 최대 세 경로를 본다. 이 범위를 넘는 고속 주행은 생성 시 제한한다.
+        var offset = -distance;
+        for (var hop = 0; hop < 3 && pathId >= 0; hop++)
+        {
+            var path = network.Paths[pathId];
+            foreach (var obstacle in observations)
+            {
+                if (obstacle.Id == vehicle.Id)
+                {
+                    continue;
+                }
+                for (var prediction = 0; prediction < 2; prediction++)
+                {
+                    var point = obstacle.Position + obstacle.Velocity * (prediction * PredictionSeconds);
+                    if (!TryCorridorProjection(path, point, vehicle.Width, obstacle, out var along, out var halfLength))
+                    {
+                        continue;
+                    }
+                    var centerAhead = offset + along;
+                    if (centerAhead < -vehicle.Length * 0.25f)
+                    {
+                        continue;
+                    }
+                    var clearance = Math.Max(0f, centerAhead - halfLength - vehicle.Length * 0.5f - gap);
+                    path.TrySample(along, out _, out var tangent);
+                    var leaderSpeed = Math.Max(0f, RoadLaneMath.Dot(obstacle.Velocity, tangent));
+                    vehicle.TargetSpeed = Math.Min(vehicle.TargetSpeed,
+                        Math.Min(leaderSpeed + clearance / HeadwaySeconds,
+                            (float)Math.Sqrt(leaderSpeed * leaderSpeed + 2f * braking * clearance)));
+                    vehicle.ClearDistance = Math.Min(vehicle.ClearDistance, clearance);
+                }
+            }
+            offset += path.Length;
+            pathId = hop == 0 && path.Id == vehicle.PathId ? vehicle.NextPathId
+                : path.Successors.Count == 1 ? path.Successors[0] : -1;
+        }
+    }
+
+    /// <summary>차체 방향에 따른 길이/폭을 경로 접선에 투영한다. 끝점에서 멀리 떨어진 차량은 경로 위로 취급하지 않는다.</summary>
+    private static bool TryCorridorProjection(RoadLanePath path, Vector2 position, float ownWidth,
+        RoadTrafficObstacle obstacle, out float along, out float halfLength)
+    {
+        halfLength = 0f;
+        if (!path.TryProject(position, out along, out _) || !path.TrySample(along, out var point, out var tangent))
+        {
+            return false;
+        }
+        // 차체 방향이 차로와 다르면 가로질러 들어오는 차의 길이도 차로 폭 점유로 계산한다.
+        var right = RoadLaneMath.Right(tangent);
+        var otherRight = RoadLaneMath.Right(obstacle.Forward);
+        var halfWidth = (Math.Abs(RoadLaneMath.Dot(obstacle.Forward, right)) * obstacle.Length
+            + Math.Abs(RoadLaneMath.Dot(otherRight, right)) * obstacle.Width) * 0.5f;
+        halfLength = (Math.Abs(RoadLaneMath.Dot(obstacle.Forward, tangent)) * obstacle.Length
+            + Math.Abs(RoadLaneMath.Dot(otherRight, tangent)) * obstacle.Width) * 0.5f;
+        var delta = position - point;
+        return Math.Abs(RoadLaneMath.Dot(delta, right)) <= halfWidth + ownWidth * 0.5f + path.Width * 0.12f
+            && Math.Abs(RoadLaneMath.Dot(delta, tangent)) <= halfLength + path.Width * 0.1f;
+    }
+
+    /// <summary>목표 차로의 앞뒤 간격과 후방 접근 속도를 검사한다. 차량 크기와 두 차량 중 빠른 쪽의 시간 간격을 반영한다.</summary>
+    private bool HasLaneSpace(RoadTrafficVehicle vehicle, int pathId, float distance, float minimumGap)
+    {
+        var path = network.Paths[pathId];
+        foreach (var obstacle in observations)
+        {
+            if (obstacle.Id == vehicle.Id)
+            {
+                continue;
+            }
+            for (var prediction = 0; prediction < 2; prediction++)
+            {
+                var point = obstacle.Position + obstacle.Velocity * (prediction * PredictionSeconds);
+                if (!TryCorridorProjection(path, point, vehicle.Width, obstacle, out var along, out var halfLength))
+                {
+                    continue;
+                }
+                path.TrySample(along, out _, out var tangent);
+                var ahead = along - distance;
+                var otherSpeed = Math.Max(0f, RoadLaneMath.Dot(obstacle.Velocity, tangent));
+                var required = halfLength + vehicle.Length * 0.5f + minimumGap
+                    + (ahead >= 0f ? vehicle.Speed : otherSpeed) * HeadwaySeconds;
+                if (Math.Abs(ahead) < required)
+                {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /// <summary>정지선까지의 제동 거리와 한 스텝 이동 상한을 추가한다.</summary>
+    private static void LimitForStop(RoadTrafficVehicle vehicle, float distance, float braking)
+    {
+        vehicle.TargetSpeed = Math.Min(vehicle.TargetSpeed, (float)Math.Sqrt(2f * braking * distance));
+        vehicle.ClearDistance = Math.Min(vehicle.ClearDistance, distance);
+    }
+
+    /// <summary>진행 허가, 보행자, 충돌 경로 예약, 교차로 출구의 여유를 모두 확인한다.</summary>
+    private bool CanEnter(RoadTrafficVehicle vehicle)
+    {
+        var movement = network.Paths[vehicle.NextPathId];
+        var permission = Signals.GetPermission(movement);
+        if (permission == RoadTrafficPermission.Stop
+            || (permission == RoadTrafficPermission.StopThenYield && vehicle.StoppedSeconds < StopHoldSeconds))
+        {
+            return false;
+        }
+        foreach (var other in vehicles)
+        {
+            if (other != vehicle && !other.IsFinished && other.ReservedMovement >= 0 && Conflicts(movement, other.ReservedMovement))
+            {
+                return false;
+            }
+        }
+        // 우회전은 신호를 받은 접근 차량에도 양보한다. 플레이어는 신호 준수를 가정하지 않고 모든 교차 경로에서 검사한다.
+        foreach (var pathId in movement.Conflicts)
+        {
+            var conflicting = network.Paths[pathId];
+            foreach (var obstacle in observations)
+            {
+                if (obstacle.Id == vehicle.Id)
+                {
+                    continue;
+                }
+                if (obstacle.Id < 0 && (TryCorridorProjection(conflicting, obstacle.Position, vehicle.Width,
+                    obstacle, out _, out _) || TryCorridorProjection(conflicting,
+                    obstacle.Position + obstacle.Velocity * 2f, vehicle.Width, obstacle, out _, out _)))
+                {
+                    return false;
+                }
+            }
+            if (permission == RoadTrafficPermission.Yield || permission == RoadTrafficPermission.StopThenYield)
+            {
+                foreach (var other in vehicles)
+                {
+                    if (other == vehicle || other.NextPathId != pathId || other.IsFinished
+                        || Signals.GetPermission(conflicting) != RoadTrafficPermission.Proceed)
+                    {
+                        continue;
+                    }
+                    var approach = network.Paths[other.PathId];
+                    var arrival = approach.Length - other.Distance - other.Length * 0.5f;
+                    if (arrival < Math.Max(approach.Width, other.Speed * 3f))
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+        if (movement.Successors.Count == 0)
+        {
+            return false;
+        }
+        // 교차로를 통과한 뒤 차체 전체가 들어갈 자리가 없으면 꼬리물기하지 않는다.
+        return HasLaneSpace(vehicle, movement.Successors[0], 0f, vehicle.Length + movement.Width * 0.6f);
+    }
+
+    /// <summary>동일 교차 경로 또는 그래프가 알려준 교차/합류 관계를 판정한다.</summary>
+    private static bool Conflicts(RoadLanePath movement, int otherId)
+    {
+        if (movement.Id == otherId)
+        {
+            return true;
+        }
+        foreach (var conflict in movement.Conflicts)
+        {
+            if (conflict == otherId)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /// <summary>신호 대기 중에는 추월하지 않으며 느린 앞차가 있을 때만 비어 있는 인접 차로를 선택한다.</summary>
+    private void TryOvertake(RoadTrafficVehicle vehicle)
+    {
+        var path = network.Paths[vehicle.PathId];
+        if (vehicle.IsChangingLane || vehicle.TargetSpeed > vehicle.CruiseSpeed * 0.5f
+            || vehicle.ClearDistance == float.PositiveInfinity
+            || (path.HasStopLine && (vehicle.NextPathId < 0 || !CanEnter(vehicle))))
+        {
+            return;
+        }
+        if (!TryChangeLane(vehicle, true))
+        {
+            TryChangeLane(vehicle, false);
+        }
+    }
+
+    /// <summary>가감속을 적분하고 앞범퍼 진입 시 교차 경로를 예약한다. 곡선 이동과 차로 변경 자세도 갱신한다.</summary>
+    private void Advance(RoadTrafficVehicle vehicle, float seconds)
+    {
+        var path = network.Paths[vehicle.PathId];
+        var rate = path.Width * (vehicle.TargetSpeed < vehicle.Speed ? 3f : 0.9f);
+        var newSpeed = MoveTowards(vehicle.Speed, vehicle.TargetSpeed, rate * seconds);
+        // 목표 이동량은 한 번만 float로 확정한다. 서로 다른 정밀도로 재계산한 값과 비교해 정상 가속을 정지로 오인하지 않는다.
+        var requestedTravel = (vehicle.Speed + newSpeed) * 0.5f * seconds;
+        var travel = Math.Min(requestedTravel, vehicle.ClearDistance);
+        if (path.HasStopLine && vehicle.ReservedMovement < 0 && vehicle.NextPathId >= 0
+            && vehicle.Distance + travel + vehicle.Length * 0.5f >= path.Length)
+        {
+            if (CanEnter(vehicle))
+            {
+                vehicle.ReservedMovement = vehicle.NextPathId;
+            }
+            else
+            {
+                travel = Math.Max(0f, path.Length - vehicle.Distance - vehicle.Length * 0.5f);
+                newSpeed = 0f;
+            }
+        }
+        vehicle.Speed = travel < requestedTravel ? 0f : newSpeed;
+        vehicle.Distance += travel;
+        if (vehicle.ExitClearanceRemaining >= 0f)
+        {
+            vehicle.ExitClearanceRemaining -= travel;
+            if (vehicle.ExitClearanceRemaining <= 0f)
+            {
+                vehicle.ReservedMovement = -1;
+                vehicle.ExitClearanceRemaining = -1f;
+            }
+        }
+        if (vehicle.IsChangingLane && vehicle.Speed > 0.02f)
+        {
+            vehicle.LaneChangeElapsed += seconds;
+            if (vehicle.LaneChangeElapsed >= LaneChangeSeconds)
+            {
+                vehicle.PathId = vehicle.TargetLaneId;
+                vehicle.TargetLaneId = -1;
+                ChooseNext(vehicle);
+                path = network.Paths[vehicle.PathId];
+            }
+        }
+        // 한 스텝은 최대 0.1초이며 생성 속도 상한으로 여러 타일을 건너뛰지 않는다. 짧은 연결은 반복 처리한다.
+        while (vehicle.Distance >= path.Length && vehicle.NextPathId >= 0 && !vehicle.IsChangingLane)
+        {
+            var leavingIntersection = path.Kind == RoadLanePathKind.Intersection;
+            vehicle.Distance -= path.Length;
+            vehicle.PathId = vehicle.NextPathId;
+            vehicle.StoppedSeconds = 0f;
+            path = network.Paths[vehicle.PathId];
+            if (leavingIntersection)
+            {
+                vehicle.ExitClearanceRemaining = vehicle.Length * 0.5f + path.Width * 0.2f - vehicle.Distance;
+                if (vehicle.ExitClearanceRemaining <= 0f)
+                {
+                    vehicle.ReservedMovement = -1;
+                    vehicle.ExitClearanceRemaining = -1f;
+                }
+            }
+            ChooseNext(vehicle);
+        }
+        if (vehicle.NextPathId < 0 && vehicle.Distance >= path.Length - vehicle.Length * 0.5f - path.Width * 0.01f)
+        {
+            vehicle.IsFinished = true;
+            vehicle.Speed = 0f;
+        }
+        UpdatePose(vehicle);
+    }
+
+    /// <summary>분기를 한 번 선택하고 대기 중에도 진행 방향을 유지한다. 연결이 끝나는 경계에서는 안전하게 정지 후 회수된다.</summary>
+    private void ChooseNext(RoadTrafficVehicle vehicle)
+    {
+        var successors = network.Paths[vehicle.PathId].Successors;
+        vehicle.NextPathId = successors.Count == 0 ? -1 : successors[random.Next(successors.Count)];
+    }
+
+    /// <summary>경로를 샘플링하고 변경 중인 두 차로를 부드럽게 보간한다. 변경 접선은 횡방향 속도까지 포함한다.</summary>
+    private void UpdatePose(RoadTrafficVehicle vehicle)
+    {
+        network.Paths[vehicle.PathId].TrySample(vehicle.Distance, out var position, out var forward);
+        if (vehicle.IsChangingLane)
+        {
+            var target = network.Paths[vehicle.TargetLaneId];
+            target.TrySample(vehicle.Distance, out var targetPosition, out _);
+            var progress = Math.Min(1f, vehicle.LaneChangeElapsed / LaneChangeSeconds);
+            var smooth = progress * progress * (3f - 2f * progress);
+            var lateral = (targetPosition - position) * (6f * progress * (1f - progress) / LaneChangeSeconds);
+            position += (targetPosition - position) * smooth;
+            var velocity = forward * Math.Max(vehicle.Speed, 0.01f) + lateral;
+            forward = velocity / RoadLaneMath.Distance(Vector2.zero, velocity);
+        }
+        vehicle.Position = position;
+        vehicle.Forward = forward;
+    }
+
+    /// <summary>Unity 네이티브 실행 없이 목표 속도로 한 스텝만큼 접근한다.</summary>
+    private static float MoveTowards(float current, float target, float amount)
+    {
+        return current < target ? Math.Min(target, current + amount) : Math.Max(target, current - amount);
+    }
+}
