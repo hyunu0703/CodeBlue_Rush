@@ -106,6 +106,15 @@ public sealed class AmbulanceDriveInput : MonoBehaviour
             wheel.Tick(steeringInput, vehicle.Speed, Time.deltaTime);
         }
 
+        // 차량으로 전달하는 최종 입력값을 표시해 터치와 키보드 피드백을 일치시킨다.
+        if (accelerator != null)
+        {
+            accelerator.Display(throttleInput);
+        }
+        if (brake != null)
+        {
+            brake.Display(brakeInput);
+        }
         vehicle.SetInput(wheel != null && wheel.isActiveAndEnabled ? wheel.Steering : 0f, throttleInput, brakeInput);
         if (shiftRequested)
         {

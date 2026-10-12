@@ -1017,6 +1017,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5cd6fdce77cb6a34db6ca4cd416a78e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HoldPedalControl
+  pressedSprite: {fileID: 3266740000556682417, guid: 338fea62b6423b549a041d32e4814046, type: 3}
 --- !u!1 &619394800
 GameObject:
   m_ObjectHideFlags: 0
@@ -2063,6 +2064,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5cd6fdce77cb6a34db6ca4cd416a78e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HoldPedalControl
+  pressedSprite: {fileID: -8028655600152946352, guid: ce5d9a40429716a43a668088efcab606, type: 3}
 --- !u!1 &1390504550
 GameObject:
   m_ObjectHideFlags: 0
