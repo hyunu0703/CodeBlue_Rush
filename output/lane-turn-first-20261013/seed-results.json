@@ -1,0 +1,707 @@
+{
+  "accepted": 100,
+  "rejected": 2,
+  "oldIdsChecked": 19078,
+  "records": [
+    {
+      "pickupSeed": 64465538,
+      "transportSeed": 38429656,
+      "paths": 491,
+      "boundaries": 58,
+      "crossingLanes": 3
+    },
+    {
+      "pickupSeed": 10349016,
+      "transportSeed": 67874238,
+      "paths": 508,
+      "boundaries": 58,
+      "crossingLanes": 3
+    },
+    {
+      "pickupSeed": 47855144,
+      "transportSeed": 31438933,
+      "paths": 436,
+      "boundaries": 62,
+      "crossingLanes": 2
+    },
+    {
+      "pickupSeed": 52266087,
+      "transportSeed": 66596998,
+      "paths": 557,
+      "boundaries": 68,
+      "crossingLanes": 3
+    },
+    {
+      "pickupSeed": 54808222,
+      "transportSeed": 73353731,
+      "paths": 228,
+      "boundaries": 62,
+      "crossingLanes": 1
+    },
+    {
+      "pickupSeed": 42996810,
+      "transportSeed": 68858379,
+      "paths": 538,
+      "boundaries": 70,
+      "crossingLanes": 3
+    },
+    {
+      "pickupSeed": 90135066,
+      "transportSeed": 26404256,
+      "paths": 597,
+      "boundaries": 63,
+      "crossingLanes": 3
+    },
+    {
+      "pickupSeed": 49838815,
+      "transportSeed": 35367685,
+      "paths": 361,
+      "boundaries": 61,
+      "crossingLanes": 2
+    },
+    {
+      "pickupSeed": 75204469,
+      "transportSeed": 36725996,
+      "paths": 469,
+      "boundaries": 64,
+      "crossingLanes": 3
+    },
+    {
+      "pickupSeed": 11711976,
+      "transportSeed": 90251975,
+      "paths": 452,
+      "boundaries": 58,
+      "crossingLanes": 2
+    },
+    {
+      "pickupSeed": 21799332,
+      "transportSeed": 67943553,
+      "paths": 290,
+      "boundaries": 65,
+      "crossingLanes": 2
+    },
+    {
+      "pickupSeed": 53923741,
+      "transportSeed": 17986114,
+      "paths": 401,
+      "boundaries": 61,
+      "crossingLanes": 2
+    },
+    {
+      "pickupSeed": 48667546,
+      "transportSeed": 63832583,
+      "paths": 369,
+      "boundaries": 66,
+      "crossingLanes": 2
+    },
+    {
+      "pickupSeed": 22996115,
+      "transportSeed": 63974187,
+      "paths": 527,
+      "boundaries": 70,
+      "crossingLanes": 3
+    },
+    {
+      "pickupSeed": 26986074,
+      "transportSeed": 77349499,
+      "paths": 512,
+      "boundaries": 71,
+      "crossingLanes": 3
+    },
+    {
+      "pickupSeed": 75346334,
+      "transportSeed": 49925090,
+      "paths": 282,
+      "boundaries": 69,
+      "crossingLanes": 1
+    },
+    {
+      "pickupSeed": 64417452,
+      "transportSeed": 39882521,
+      "paths": 242,
+      "boundaries": 56,
+      "crossingLanes": 1
+    },
+    {
+      "pickupSeed": 22559494,
+      "transportSeed": 93146721,
+      "paths": 250,
+      "boundaries": 64,
+      "crossingLanes": 1
+    },
+    {
+      "pickupSeed": 76795860,
+      "transportSeed": 21639736,
+      "paths": 434,
+      "boundaries": 66,
+      "crossingLanes": 3
+    },
+    {
+      "pickupSeed": 49324347,
+      "transportSeed": 23866245,
+      "paths": 403,
+      "boundaries": 60,
+      "crossingLanes": 2
+    },
+    {
+      "pickupSeed": 19545355,
+      "transportSeed": 58849463,
+      "paths": 284,
+      "boundaries": 63,
+      "crossingLanes": 2
+    },
+    {
+      "pickupSeed": 96758142,
+      "transportSeed": 24224092,
+      "paths": 222,
+      "boundaries": 68,
+      "crossingLanes": 1
+    },
+    {
+      "pickupSeed": 57938520,
+      "transportSeed": 18371373,
+      "paths": 299,
+      "boundaries": 57,
+      "crossingLanes": 2
+    },
+    {
+      "pickupSeed": 23108078,
+      "transportSeed": 96387497,
+      "paths": 528,
+      "boundaries": 69,
+      "crossingLanes": 3
+    },
+    {
+      "pickupSeed": 57812319,
+      "transportSeed": 89825555,
+      "paths": 403,
+      "boundaries": 65,
+      "crossingLanes": 2
+    },
+    {
+      "pickupSeed": 91755386,
+      "transportSeed": 90353729,
+      "paths": 476,
+      "boundaries": 69,
+      "crossingLanes": 3
+    },
+    {
+      "pickupSeed": 29157686,
+      "transportSeed": 19474684,
+      "paths": 361,
+      "boundaries": 52,
+      "crossingLanes": 2
+    },
+    {
+      "pickupSeed": 27544990,
+      "transportSeed": 83854055,
+      "paths": 284,
+      "boundaries": 66,
+      "crossingLanes": 2
+    },
+    {
+      "pickupSeed": 19365114,
+      "transportSeed": 71425794,
+      "paths": 432,
+      "boundaries": 58,
+      "crossingLanes": 2
+    },
+    {
+      "pickupSeed": 85367115,
+      "transportSeed": 13781320,
+      "paths": 276,
+      "boundaries": 53,
+      "crossingLanes": 1
+    },
+    {
+      "pickupSeed": 50114481,
+      "transportSeed": 58545431,
+      "paths": 212,
+      "boundaries": 57,
+      "crossingLanes": 1
+    },
+    {
+      "pickupSeed": 25786418,
+      "transportSeed": 24954081,
+      "paths": 270,
+      "boundaries": 58,
+      "crossingLanes": 1
+    },
+    {
+      "pickupSeed": 58496726,
+      "transportSeed": 99788185,
+      "paths": 439,
+      "boundaries": 68,
+      "crossingLanes": 2
+    },
+    {
+      "pickupSeed": 85395168,
+      "transportSeed": 28117262,
+      "paths": 329,
+      "boundaries": 61,
+      "crossingLanes": 1
+    },
+    {
+      "pickupSeed": 40416214,
+      "transportSeed": 64721094,
+      "paths": 398,
+      "boundaries": 65,
+      "crossingLanes": 2
+    },
+    {
+      "pickupSeed": 81476660,
+      "transportSeed": 17599194,
+      "paths": 385,
+      "boundaries": 69,
+      "crossingLanes": 2
+    },
+    {
+      "pickupSeed": 78954095,
+      "transportSeed": 93401224,
+      "paths": 398,
+      "boundaries": 70,
+      "crossingLanes": 2
+    },
+    {
+      "pickupSeed": 65596599,
+      "transportSeed": 29979831,
+      "paths": 411,
+      "boundaries": 66,
+      "crossingLanes": 1
+    },
+    {
+      "pickupSeed": 30947175,
+      "transportSeed": 68699741,
+      "paths": 373,
+      "boundaries": 72,
+      "crossingLanes": 1
+    },
+    {
+      "pickupSeed": 46374642,
+      "transportSeed": 19953851,
+      "paths": 210,
+      "boundaries": 50,
+      "crossingLanes": 1
+    },
+    {
+      "pickupSeed": 52211934,
+      "transportSeed": 49185117,
+      "paths": 435,
+      "boundaries": 45,
+      "crossingLanes": 3
+    },
+    {
+      "pickupSeed": 54482662,
+      "transportSeed": 80593520,
+      "paths": 254,
+      "boundaries": 54,
+      "crossingLanes": 1
+    },
+    {
+      "pickupSeed": 53431010,
+      "transportSeed": 74213262,
+      "paths": 214,
+      "boundaries": 56,
+      "crossingLanes": 1
+    },
+    {
+      "pickupSeed": 79522188,
+      "transportSeed": 28487224,
+      "paths": 470,
+      "boundaries": 60,
+      "crossingLanes": 2
+    },
+    {
+      "pickupSeed": 44556123,
+      "transportSeed": 11331041,
+      "paths": 234,
+      "boundaries": 51,
+      "crossingLanes": 1
+    },
+    {
+      "pickupSeed": 74939463,
+      "transportSeed": 36149240,
+      "paths": 230,
+      "boundaries": 69,
+      "crossingLanes": 1
+    },
+    {
+      "pickupSeed": 90616328,
+      "transportSeed": 32175946,
+      "paths": 547,
+      "boundaries": 61,
+      "crossingLanes": 3
+    },
+    {
+      "pickupSeed": 82294159,
+      "transportSeed": 74874163,
+      "paths": 498,
+      "boundaries": 67,
+      "crossingLanes": 2
+    },
+    {
+      "pickupSeed": 59826886,
+      "transportSeed": 89154467,
+      "paths": 462,
+      "boundaries": 65,
+      "crossingLanes": 3
+    },
+    {
+      "pickupSeed": 91597776,
+      "transportSeed": 16223448,
+      "paths": 501,
+      "boundaries": 59,
+      "crossingLanes": 3
+    },
+    {
+      "pickupSeed": 75312343,
+      "transportSeed": 85996362,
+      "paths": 312,
+      "boundaries": 68,
+      "crossingLanes": 1
+    },
+    {
+      "pickupSeed": 14815273,
+      "transportSeed": 37353821,
+      "paths": 300,
+      "boundaries": 53,
+      "crossingLanes": 1
+    },
+    {
+      "pickupSeed": 50485082,
+      "transportSeed": 86603995,
+      "paths": 449,
+      "boundaries": 71,
+      "crossingLanes": 2
+    },
+    {
+      "pickupSeed": 36286022,
+      "transportSeed": 38295752,
+      "paths": 251,
+      "boundaries": 47,
+      "crossingLanes": 1
+    },
+    {
+      "pickupSeed": 60812513,
+      "transportSeed": 21836532,
+      "paths": 220,
+      "boundaries": 61,
+      "crossingLanes": 1
+    },
+    {
+      "pickupSeed": 57712353,
+      "transportSeed": 38248248,
+      "paths": 456,
+      "boundaries": 59,
+      "crossingLanes": 3
+    },
+    {
+      "pickupSeed": 78124939,
+      "transportSeed": 23669677,
+      "paths": 491,
+      "boundaries": 60,
+      "crossingLanes": 3
+    },
+    {
+      "pickupSeed": 24802820,
+      "transportSeed": 96626311,
+      "paths": 256,
+      "boundaries": 59,
+      "crossingLanes": 1
+    },
+    {
+      "pickupSeed": 38421190,
+      "transportSeed": 21366555,
+      "paths": 226,
+      "boundaries": 56,
+      "crossingLanes": 2
+    },
+    {
+      "pickupSeed": 53894057,
+      "transportSeed": 88226745,
+      "paths": 486,
+      "boundaries": 65,
+      "crossingLanes": 2
+    },
+    {
+      "pickupSeed": 30325653,
+      "transportSeed": 84396521,
+      "paths": 220,
+      "boundaries": 56,
+      "crossingLanes": 1
+    },
+    {
+      "pickupSeed": 65809082,
+      "transportSeed": 60504932,
+      "paths": 322,
+      "boundaries": 74,
+      "crossingLanes": 1
+    },
+    {
+      "pickupSeed": 53752129,
+      "transportSeed": 88745199,
+      "paths": 571,
+      "boundaries": 68,
+      "crossingLanes": 3
+    },
+    {
+      "pickupSeed": 37408664,
+      "transportSeed": 69839613,
+      "paths": 266,
+      "boundaries": 66,
+      "crossingLanes": 2
+    },
+    {
+      "pickupSeed": 89915838,
+      "transportSeed": 86839726,
+      "paths": 432,
+      "boundaries": 73,
+      "crossingLanes": 3
+    },
+    {
+      "pickupSeed": 82834789,
+      "transportSeed": 48314324,
+      "paths": 449,
+      "boundaries": 66,
+      "crossingLanes": 2
+    },
+    {
+      "pickupSeed": 69178459,
+      "transportSeed": 79486087,
+      "paths": 507,
+      "boundaries": 64,
+      "crossingLanes": 3
+    },
+    {
+      "pickupSeed": 82366011,
+      "transportSeed": 49344050,
+      "paths": 218,
+      "boundaries": 57,
+      "crossingLanes": 1
+    },
+    {
+      "pickupSeed": 14108180,
+      "transportSeed": 82129590,
+      "paths": 234,
+      "boundaries": 70,
+      "crossingLanes": 1
+    },
+    {
+      "pickupSeed": 61807242,
+      "transportSeed": 49853321,
+      "paths": 246,
+      "boundaries": 67,
+      "crossingLanes": 1
+    },
+    {
+      "pickupSeed": 75995873,
+      "transportSeed": 55547782,
+      "paths": 319,
+      "boundaries": 70,
+      "crossingLanes": 1
+    },
+    {
+      "pickupSeed": 71381322,
+      "transportSeed": 92852974,
+      "paths": 437,
+      "boundaries": 62,
+      "crossingLanes": 2
+    },
+    {
+      "pickupSeed": 88576386,
+      "transportSeed": 61719188,
+      "paths": 673,
+      "boundaries": 82,
+      "crossingLanes": 3
+    },
+    {
+      "pickupSeed": 36384540,
+      "transportSeed": 93793912,
+      "paths": 336,
+      "boundaries": 53,
+      "crossingLanes": 1
+    },
+    {
+      "pickupSeed": 29739349,
+      "transportSeed": 30298254,
+      "paths": 531,
+      "boundaries": 65,
+      "crossingLanes": 2
+    },
+    {
+      "pickupSeed": 91478442,
+      "transportSeed": 82695415,
+      "paths": 328,
+      "boundaries": 66,
+      "crossingLanes": 2
+    },
+    {
+      "pickupSeed": 89642062,
+      "transportSeed": 45903734,
+      "paths": 385,
+      "boundaries": 62,
+      "crossingLanes": 2
+    },
+    {
+      "pickupSeed": 19246418,
+      "transportSeed": 99338534,
+      "paths": 313,
+      "boundaries": 52,
+      "crossingLanes": 2
+    },
+    {
+      "pickupSeed": 93295115,
+      "transportSeed": 13446159,
+      "paths": 517,
+      "boundaries": 58,
+      "crossingLanes": 3
+    },
+    {
+      "pickupSeed": 71193339,
+      "transportSeed": 19208145,
+      "paths": 411,
+      "boundaries": 54,
+      "crossingLanes": 2
+    },
+    {
+      "pickupSeed": 38513152,
+      "transportSeed": 27573393,
+      "paths": 323,
+      "boundaries": 58,
+      "crossingLanes": 2
+    },
+    {
+      "pickupSeed": 17433054,
+      "transportSeed": 12343519,
+      "paths": 386,
+      "boundaries": 44,
+      "crossingLanes": 3
+    },
+    {
+      "pickupSeed": 10727254,
+      "transportSeed": 85598073,
+      "paths": 489,
+      "boundaries": 73,
+      "crossingLanes": 2
+    },
+    {
+      "pickupSeed": 88633122,
+      "transportSeed": 46796383,
+      "paths": 385,
+      "boundaries": 67,
+      "crossingLanes": 2
+    },
+    {
+      "pickupSeed": 28608379,
+      "transportSeed": 77621263,
+      "paths": 529,
+      "boundaries": 68,
+      "crossingLanes": 2
+    },
+    {
+      "pickupSeed": 65104981,
+      "transportSeed": 24615072,
+      "paths": 252,
+      "boundaries": 62,
+      "crossingLanes": 1
+    },
+    {
+      "pickupSeed": 64475835,
+      "transportSeed": 99807662,
+      "paths": 305,
+      "boundaries": 67,
+      "crossingLanes": 1
+    },
+    {
+      "pickupSeed": 99629014,
+      "transportSeed": 97735859,
+      "paths": 501,
+      "boundaries": 74,
+      "crossingLanes": 3
+    },
+    {
+      "pickupSeed": 80806336,
+      "transportSeed": 54732076,
+      "paths": 657,
+      "boundaries": 73,
+      "crossingLanes": 3
+    },
+    {
+      "pickupSeed": 29764525,
+      "transportSeed": 28395514,
+      "paths": 218,
+      "boundaries": 43,
+      "crossingLanes": 2
+    },
+    {
+      "pickupSeed": 51371666,
+      "transportSeed": 40164545,
+      "paths": 290,
+      "boundaries": 49,
+      "crossingLanes": 2
+    },
+    {
+      "pickupSeed": 58969372,
+      "transportSeed": 47512933,
+      "paths": 347,
+      "boundaries": 65,
+      "crossingLanes": 2
+    },
+    {
+      "pickupSeed": 88286911,
+      "transportSeed": 27674343,
+      "paths": 358,
+      "boundaries": 52,
+      "crossingLanes": 2
+    },
+    {
+      "pickupSeed": 41997380,
+      "transportSeed": 14248575,
+      "paths": 284,
+      "boundaries": 67,
+      "crossingLanes": 2
+    },
+    {
+      "pickupSeed": 61243391,
+      "transportSeed": 50248570,
+      "paths": 216,
+      "boundaries": 65,
+      "crossingLanes": 1
+    },
+    {
+      "pickupSeed": 65296493,
+      "transportSeed": 59636992,
+      "paths": 338,
+      "boundaries": 68,
+      "crossingLanes": 1
+    },
+    {
+      "pickupSeed": 16536910,
+      "transportSeed": 71101361,
+      "paths": 254,
+      "boundaries": 53,
+      "crossingLanes": 1
+    },
+    {
+      "pickupSeed": 16257869,
+      "transportSeed": 52814392,
+      "paths": 271,
+      "boundaries": 65,
+      "crossingLanes": 1
+    },
+    {
+      "pickupSeed": 91367638,
+      "transportSeed": 61309616,
+      "paths": 573,
+      "boundaries": 64,
+      "crossingLanes": 3
+    },
+    {
+      "pickupSeed": 98378239,
+      "transportSeed": 45847036,
+      "paths": 551,
+      "boundaries": 66,
+      "crossingLanes": 3
+    }
+  ]
+}
