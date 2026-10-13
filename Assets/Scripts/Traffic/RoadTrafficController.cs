@@ -149,6 +149,7 @@ public sealed class RoadTrafficController : MonoBehaviour
         {
             var instance = instances[index];
             if (instance.Root == null || instance.Body == null || instance.Vehicle.IsFinished
+                || !mapGenerator.IsRoadActive(network.Paths[instance.Vehicle.PathId].RoadOrdinal)
                 || (instance.Vehicle.Position - searchCenter).sqrMagnitude > despawnRadius * despawnRadius)
             {
                 RemoveInstance(index);
@@ -309,7 +310,9 @@ public sealed class RoadTrafficController : MonoBehaviour
         var position = (Vector2)mapRoot.InverseTransformPoint(bounds.center);
         var velocity = body != null ? (Vector2)mapRoot.InverseTransformVector(body.linearVelocity) : Vector2.zero;
         var size = Mathf.Max(bounds.size.x, bounds.size.y) / mapScale;
-        obstacles.Add(new RoadTrafficObstacle(-obstacles.Count - 1, position, velocity, Vector2.up, size, size));
+        // 외부 차량도 실제 차체의 로컬 up을 사용한다. 가로 도로에서 후방 차량의 방향을 잘못 판단하지 않는다.
+        var forward = body != null ? (Vector2)mapRoot.InverseTransformVector(body.transform.up).normalized : Vector2.up;
+        obstacles.Add(new RoadTrafficObstacle(-obstacles.Count - 1, position, velocity, forward, size, size));
     }
 
     /// <summary>플레이어 주변으로 관측/생성/회수 영역을 이동한다. 직교 카메라가 있으면 화면 밖 보충 공간도 확보한다.</summary>
@@ -333,7 +336,8 @@ public sealed class RoadTrafficController : MonoBehaviour
         spawnPaths.Clear();
         foreach (var path in network.Paths)
         {
-            if (path.Kind != RoadLanePathKind.Intersection && path.Successors.Count > 0
+            if (mapGenerator.IsRoadActive(path.RoadOrdinal)
+                && path.Kind != RoadLanePathKind.Intersection && path.Successors.Count > 0
                 && path.TryProject(searchCenter, out var along, out _)
                 && path.TrySample(along, out var nearest, out _)
                 && (nearest - searchCenter).sqrMagnitude <= spawnRadius * spawnRadius)
@@ -410,7 +414,7 @@ public sealed class RoadTrafficController : MonoBehaviour
         {
             var pathId = spawnPaths[random.Next(spawnPaths.Count)];
             var path = network.Paths[pathId];
-            if (path.Length <= instance.Length)
+            if (!mapGenerator.IsRoadActive(path.RoadOrdinal) || path.Length <= instance.Length)
             {
                 continue;
             }

@@ -147,8 +147,9 @@ public sealed class MissionController : MonoBehaviour
         {
             return;
         }
-        // 픽업은 차량 중심이 주차 사각형 안에 들어오면 시작한다. 병원에는 기존 이동 선분 감지를 유지한다.
+        // 픽업은 차량 이미지와 콜라이더 전체가 주차 사각형 안에 들어오면 시작한다. 병원에는 기존 이동 선분 감지를 유지한다.
         var currentPosition = ambulance.position;
+        mapGenerator.UpdateRoadStreaming(ambulanceCollider.bounds, ambulance.linearVelocity);
         var movement = currentPosition - previousPosition;
         var fraction = movement.sqrMagnitude > 0f
             ? Mathf.Clamp01(Vector2.Dot(mapGenerator.DestinationPosition - previousPosition, movement) / movement.sqrMagnitude) : 0f;

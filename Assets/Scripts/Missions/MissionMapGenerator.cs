@@ -20,6 +20,14 @@ public sealed class MissionMapGenerator : MonoBehaviour
     private readonly List<RoadPrefab> activeRoads = new List<RoadPrefab>(51);
     private readonly Dictionary<RoadIndex, Stack<RoadPrefab>> pool = new Dictionary<RoadIndex, Stack<RoadPrefab>>();
     private Transform poolRoot;
+    // 반환된 슬롯도 원본 배치와 차로 번호를 유지한다. 활성 인스턴스만 null로 비운다.
+    private readonly List<RoadPlacement> roadPlacements = new List<RoadPlacement>();
+    private readonly List<int> returnCheckpoints = new List<int>();
+    private readonly HashSet<int> passedIntersections = new HashSet<int>();
+    private int enteredIntersection = -1;
+    private RoadDirection intersectionEntrySide;
+    private Vector2 previousStreamingPosition;
+    private bool hasStreamingPosition;
     // 안내 대상은 추가 분기를 제외한 진행 경로다. 현재 단계의 월드 좌표만 보관한다.
     private readonly List<Vector2> navigationRoute = new List<Vector2>(42);
     // 두 단계까지만 연결한다. 동일한 픽업/후송 시드 쌍은 풀 상태와 무관하게 같은 배치를 만든다.
@@ -61,8 +69,96 @@ public sealed class MissionMapGenerator : MonoBehaviour
         laneNetwork?.Invalidate();
     }
 
-    /// <summary>현재 배치된 도로 목록이다. 다음 미션에서 풀로 반환되므로 소비자는 영구 참조로 보관하지 않는다.</summary>
+    /// <summary>차로 번호와 같은 고정 슬롯 목록이다. 반환한 슬롯은 null이며 소비자는 영구 참조로 보관하지 않는다.</summary>
     public IReadOnlyList<RoadPrefab> ActiveRoads => activeRoads;
+
+    /// <summary>반환된 도로의 차로에는 차량을 생성하거나 유지하지 않는다. 슬롯 번호는 맵 수명 동안 고정이다.</summary>
+    public bool IsRoadActive(int ordinal)
+    {
+        return isActiveAndEnabled && ordinal >= 0 && ordinal < activeRoads.Count
+            && activeRoads[ordinal] != null && activeRoads[ordinal].gameObject.activeInHierarchy;
+    }
+
+    /// <summary>다음 교차로를 차체 전체가 벗어난 뒤 이전 구간을 반환하고, 접근하는 반환 구간은 먼저 복원한다.</summary>
+    public void UpdateRoadStreaming(Bounds vehicleBounds, Vector2 velocity)
+    {
+        if (!isActiveAndEnabled || mapRoot == null || laneNetwork == null || !laneNetwork.IsValid)
+        {
+            return;
+        }
+        var position = (Vector2)mapRoot.InverseTransformPoint(vehicleBounds.center);
+        var extentX = mapRoot.InverseTransformVector(new Vector3(vehicleBounds.extents.x, 0f, 0f));
+        var extentY = mapRoot.InverseTransformVector(new Vector3(0f, vehicleBounds.extents.y, 0f));
+        var extents = new Vector2(Mathf.Abs(extentX.x) + Mathf.Abs(extentY.x),
+            Mathf.Abs(extentX.y) + Mathf.Abs(extentY.y));
+        var intersection = -1;
+        for (var ordinal = 0; ordinal < roadPlacements.Count; ordinal++)
+        {
+            var placement = roadPlacements[ordinal];
+            var delta = position - placement.Position;
+            var half = placement.Prefab.ImageSize * 0.5f;
+            if (IsIntersection(placement.Prefab.Index)
+                && Mathf.Abs(delta.x) <= half.x && Mathf.Abs(delta.y) <= half.y)
+            {
+                intersection = ordinal;
+                break;
+            }
+        }
+        if (enteredIntersection >= 0 && enteredIntersection != intersection)
+        {
+            var placement = roadPlacements[enteredIntersection];
+            var delta = position - placement.Position;
+            var half = placement.Prefab.ImageSize * 0.5f + extents;
+            if (Mathf.Abs(delta.x) > half.x || Mathf.Abs(delta.y) > half.y)
+            {
+                // 진입한 가장자리로 그대로 후진한 경우에는 교차로를 통과한 것으로 취급하지 않는다.
+                if (GetBoundarySide(delta) != intersectionEntrySide)
+                {
+                    passedIntersections.Add(enteredIntersection);
+                }
+                enteredIntersection = -1;
+            }
+        }
+        if (enteredIntersection < 0 && intersection >= 0)
+        {
+            enteredIntersection = intersection;
+            var entryPosition = hasStreamingPosition ? previousStreamingPosition : position;
+            intersectionEntrySide = GetBoundarySide(entryPosition - roadPlacements[intersection].Position);
+        }
+        previousStreamingPosition = position;
+        hasStreamingPosition = true;
+        // 최소 차체 여유와 두 물리 스텝의 이동량으로 역주행 도로를 경계 도달 전에 복원한다.
+        var localVelocity = mapRoot.InverseTransformVector(velocity);
+        for (var ordinal = 0; ordinal < roadPlacements.Count; ordinal++)
+        {
+            var placement = roadPlacements[ordinal];
+            var delta = position - placement.Position;
+            var margin = extents * 2f + new Vector2(Mathf.Abs(localVelocity.x), Mathf.Abs(localVelocity.y))
+                * (Time.fixedDeltaTime * 2f);
+            var half = placement.Prefab.ImageSize * 0.5f + margin;
+            var isNear = Mathf.Abs(delta.x) <= half.x && Mathf.Abs(delta.y) <= half.y;
+            var shouldBeActive = isNear || !passedIntersections.Contains(returnCheckpoints[ordinal]);
+            if (shouldBeActive && activeRoads[ordinal] == null)
+            {
+                activeRoads[ordinal] = ActivateRoad(placement);
+            }
+            else if (!shouldBeActive && activeRoads[ordinal] != null)
+            {
+                ReturnRoad(activeRoads[ordinal]);
+                activeRoads[ordinal] = null;
+            }
+        }
+    }
+
+    /// <summary>교차로 중심에서 떨어진 방향으로 진입/이탈 가장자리를 구한다.</summary>
+    private static RoadDirection GetBoundarySide(Vector2 delta)
+    {
+        if (Mathf.Abs(delta.x) > Mathf.Abs(delta.y))
+        {
+            return delta.x >= 0f ? RoadDirection.East : RoadDirection.West;
+        }
+        return delta.y >= 0f ? RoadDirection.North : RoadDirection.South;
+    }
     /// <summary>현재 목적지까지 실제 연결 순서로 이어진 도로 중심 경로다.</summary>
     public IReadOnlyList<Vector2> NavigationRoute => navigationRoute;
 
@@ -358,15 +454,8 @@ public sealed class MissionMapGenerator : MonoBehaviour
         var origin = Vector2.zero;
         if (append)
         {
-            foreach (var road in activeRoads)
-            {
-                if (road != null)
-                {
-                    // 풀에서 꺼낸 기존 도로의 실제 회전을 보존하여 후송 그래프에서도 원래 차로 방향을 유지한다.
-                    var existingQuarterTurns = Mathf.RoundToInt(-road.transform.localEulerAngles.z / 90f);
-                    occupied.Add(new RoadPlacement(road, existingQuarterTurns, road.transform.localPosition));
-                }
-            }
+            // 반환한 구역도 원본 배치로 예약하여 후송 시드와 기존 차로 번호를 보존한다.
+            occupied.AddRange(roadPlacements);
             if (!catalog.TryGetPrefab(route[0].Index, out var first)
                 || !TryFindRotation(first, route[0], out var rotation))
             {
@@ -415,6 +504,8 @@ public sealed class MissionMapGenerator : MonoBehaviour
             navigationRoute.Add(mapRoot.TransformPoint((Vector2)previous.transform.localPosition + exit));
         }
         // 분기를 먼저 보관하여 목록의 마지막 도로는 계속 미션 경로의 끝을 가리킨다.
+        var stageStart = activeRoads.Count;
+        var routeStart = stageStart + branches.Count;
         foreach (var branch in branches)
         {
             PlaceRoad(branch);
@@ -423,6 +514,44 @@ public sealed class MissionMapGenerator : MonoBehaviour
         {
             var instance = PlaceRoad(road);
             navigationRoute.Add(instance.transform.position);
+        }
+        // 각 주행 구역은 자기 이후의 첫 교차로 통과 시 반환한다. 마지막 구간은 유지한다.
+        for (var index = 0; index < roads.Count; index++)
+        {
+            var checkpoint = -1;
+            for (var next = index + 1; next < roads.Count; next++)
+            {
+                if (IsIntersection(roads[next].Prefab.Index))
+                {
+                    checkpoint = routeStart + next;
+                    break;
+                }
+            }
+            returnCheckpoints[routeStart + index] = checkpoint;
+        }
+        // 분기는 생성 시 기록한 주행 교차로에 속하며 해당 교차로 이후 구간과 함께 반환한다.
+        for (var index = 0; index < branches.Count; index++)
+        {
+            returnCheckpoints[stageStart + index] = returnCheckpoints[routeStart + branches[index].BranchOwner];
+        }
+        if (append)
+        {
+            var firstCheckpoint = -1;
+            for (var index = 0; index < roads.Count; index++)
+            {
+                if (IsIntersection(roads[index].Prefab.Index))
+                {
+                    firstCheckpoint = routeStart + index;
+                    break;
+                }
+            }
+            for (var index = 0; index < stageStart; index++)
+            {
+                if (returnCheckpoints[index] < 0)
+                {
+                    returnCheckpoints[index] = firstCheckpoint;
+                }
+            }
         }
 
         // 시작과 도착은 구역 안쪽에 둔다. 끝 가장자리 바깥으로 이동할 필요가 없다.
@@ -535,7 +664,7 @@ public sealed class MissionMapGenerator : MonoBehaviour
                 prefab.TryGetConnectionPosition(direction, rotation, out var straightExit);
                 for (var count = 0; count < BranchRoadCount; count++)
                 {
-                    var placement = new RoadPlacement(prefab, rotation, position);
+                    var placement = new RoadPlacement(prefab, rotation, position, index);
                     if (!TryReserveRoad(placement, occupied))
                     {
                         error = "교차로의 추가 도로가 미션 경로 또는 다른 추가 도로와 겹칩니다.";
@@ -568,12 +697,21 @@ public sealed class MissionMapGenerator : MonoBehaviour
     /// <summary>미션 경로와 추가 도로 모두 같은 풀과 활성 목록으로 소유한다.</summary>
     private RoadPrefab PlaceRoad(RoadPlacement placement)
     {
+        var instance = ActivateRoad(placement);
+        activeRoads.Add(instance);
+        roadPlacements.Add(placement);
+        returnCheckpoints.Add(-1);
+        return instance;
+    }
+
+    /// <summary>저장된 원본 배치에 재사용 인스턴스를 복원한다.</summary>
+    private RoadPrefab ActivateRoad(RoadPlacement placement)
+    {
         var instance = Acquire(placement.Prefab);
         instance.transform.SetParent(mapRoot, false);
         instance.transform.localPosition = placement.Position;
         instance.transform.localRotation = Quaternion.Euler(0f, 0f, -90f * placement.Rotation);
         instance.transform.localScale = Vector3.one;
-        activeRoads.Add(instance);
         instance.gameObject.SetActive(true);
         return instance;
     }
@@ -584,12 +722,14 @@ public sealed class MissionMapGenerator : MonoBehaviour
         public readonly RoadPrefab Prefab;
         public readonly int Rotation;
         public readonly Vector2 Position;
+        public readonly int BranchOwner;
 
-        public RoadPlacement(RoadPrefab prefab, int rotation, Vector2 position)
+        public RoadPlacement(RoadPrefab prefab, int rotation, Vector2 position, int branchOwner = -1)
         {
             Prefab = prefab;
             Rotation = rotation;
             Position = position;
+            BranchOwner = branchOwner;
         }
     }
 
@@ -638,16 +778,27 @@ public sealed class MissionMapGenerator : MonoBehaviour
             {
                 continue;
             }
-            road.gameObject.SetActive(false);
-            road.transform.SetParent(poolRoot, false);
-            if (!pool.TryGetValue(road.Index, out var available))
-            {
-                available = new Stack<RoadPrefab>();
-                pool.Add(road.Index, available);
-            }
-            available.Push(road);
+            ReturnRoad(road);
         }
         activeRoads.Clear();
+        roadPlacements.Clear();
+        returnCheckpoints.Clear();
+        passedIntersections.Clear();
+        enteredIntersection = -1;
+        hasStreamingPosition = false;
+    }
+
+    /// <summary>한 구역의 인스턴스만 종류별 풀로 반환한다. 배치 기록과 차로 그래프는 유지한다.</summary>
+    private void ReturnRoad(RoadPrefab road)
+    {
+        road.gameObject.SetActive(false);
+        road.transform.SetParent(poolRoot, false);
+        if (!pool.TryGetValue(road.Index, out var available))
+        {
+            available = new Stack<RoadPrefab>();
+            pool.Add(road.Index, available);
+        }
+        available.Push(road);
     }
 
     /// <summary>살아 있는 반환 구역을 우선 사용하며 부족할 때만 전체 구역 프리팹을 복제한다.</summary>

@@ -273,6 +273,11 @@ public sealed class RoadTrafficSimulation
                 {
                     continue;
                 }
+                // 평상시에는 현재 차체 기준 전방만 예측한다. 뒤차의 방향이나 예측 위치로 앞뒤 관계를 바꾸지 않는다.
+                if (RoadLaneMath.Dot(obstacle.Position - vehicle.Position, vehicle.Forward) < 0f)
+                {
+                    continue;
+                }
                 for (var prediction = 0; prediction < 2; prediction++)
                 {
                     var point = obstacle.Position + obstacle.Velocity * (prediction * PredictionSeconds);
@@ -322,12 +327,14 @@ public sealed class RoadTrafficSimulation
     }
 
     /// <summary>목표 차로의 앞뒤 간격과 후방 접근 속도를 검사한다. 차량 크기와 두 차량 중 빠른 쪽의 시간 간격을 반영한다.</summary>
-    private bool HasLaneSpace(RoadTrafficVehicle vehicle, int pathId, float distance, float minimumGap)
+    private bool HasLaneSpace(RoadTrafficVehicle vehicle, int pathId, float distance, float minimumGap, bool includeRear = true)
     {
         var path = network.Paths[pathId];
         foreach (var obstacle in observations)
         {
-            if (obstacle.Id == vehicle.Id)
+            // 생성/차로 변경은 앞뒤 안전 간격을 확인하지만 주행 중 교차로 출구 검사는 전방만 확인한다.
+            if (obstacle.Id == vehicle.Id
+                || (!includeRear && RoadLaneMath.Dot(obstacle.Position - vehicle.Position, vehicle.Forward) < 0f))
             {
                 continue;
             }
@@ -382,7 +389,9 @@ public sealed class RoadTrafficSimulation
             var conflicting = network.Paths[pathId];
             foreach (var obstacle in observations)
             {
-                if (obstacle.Id == vehicle.Id)
+                // 뒤쪽 플레이어의 예상 위치 때문에 교차로 앞차를 정지시키지 않는다.
+                if (obstacle.Id == vehicle.Id
+                    || RoadLaneMath.Dot(obstacle.Position - vehicle.Position, vehicle.Forward) < 0f)
                 {
                     continue;
                 }
@@ -416,7 +425,7 @@ public sealed class RoadTrafficSimulation
             return false;
         }
         // 교차로를 통과한 뒤 차체 전체가 들어갈 자리가 없으면 꼬리물기하지 않는다.
-        return HasLaneSpace(vehicle, movement.Successors[0], 0f, vehicle.Length + movement.Width * 0.6f);
+        return HasLaneSpace(vehicle, movement.Successors[0], 0f, vehicle.Length + movement.Width * 0.6f, false);
     }
 
     /// <summary>동일 교차 경로 또는 그래프가 알려준 교차/합류 관계를 판정한다.</summary>

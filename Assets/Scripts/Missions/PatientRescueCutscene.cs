@@ -88,18 +88,28 @@ public sealed class PatientRescueCutscene : MonoBehaviour
         pickupOutline.gameObject.SetActive(true);
     }
 
-    /// <summary>현재 물리 위치에서 차량 중심이 노란 사각형 안에 들어왔는지 검사한다.</summary>
+    /// <summary>현재 물리 자세에서 차량 이미지와 콜라이더 전체가 노란 테두리 안쪽에 들어왔는지 검사한다.</summary>
     public bool IsVehicleInsidePickup(Rigidbody2D vehicle, SpriteRenderer vehicleRenderer, BoxCollider2D vehicleCollider)
     {
         if (!isActiveAndEnabled || pickupOutline == null || !pickupOutline.gameObject.activeInHierarchy || vehicle == null
-            || vehicleRenderer == null || vehicleCollider == null)
+            || vehicleRenderer == null || vehicleCollider == null || vehicleCollider.attachedRigidbody != vehicle
+            || !TryGetVehicleBounds(vehicleRenderer, vehicleCollider, out var minimum, out var maximum))
         {
             return false;
         }
-        // 보간된 렌더 위치 대신 Rigidbody의 실제 중심을 사용한다. 차량 각도와 돌출 여부는 검사하지 않는다.
-        var relativeCenter = pickupOutline.InverseTransformPoint(vehicle.position);
-        return PickupParkingGeometry.ContainsPoint(parkingSize.x * 0.5f, parkingSize.y * 0.5f,
-            relativeCenter.x, relativeCenter.y);
+        // 렌더링 보간에 따른 Transform 자세를 실제 Rigidbody 자세로 보정한다. 콜라이더 오프셋/차량 회전/스케일을 포함한다.
+        var poseCorrection = Quaternion.Euler(0f, 0f, vehicle.rotation) * Quaternion.Inverse(vehicle.transform.rotation);
+        var localCenter = (minimum + maximum) * 0.5f;
+        var halfSize = (maximum - minimum) * 0.5f;
+        var centerOffset = vehicleCollider.transform.TransformPoint(localCenter) - vehicle.transform.position;
+        var physicalCenter = (Vector3)vehicle.position + poseCorrection * centerOffset;
+        var relativeCenter = (Vector2)pickupOutline.InverseTransformPoint(physicalCenter);
+        // 차체의 반폭/반길이 축을 노란 영역 좌표로 변환한다. 부모의 비균일 스케일에서도 네 모서리의 완전 포함을 판정한다.
+        var halfWidthAxis = (Vector2)pickupOutline.InverseTransformVector(poseCorrection
+            * vehicleCollider.transform.TransformVector(new Vector3(halfSize.x, 0f, 0f)));
+        var halfLengthAxis = (Vector2)pickupOutline.InverseTransformVector(poseCorrection
+            * vehicleCollider.transform.TransformVector(new Vector3(0f, halfSize.y, 0f)));
+        return PickupParkingGeometry.ContainsFootprint(parkingSize * 0.5f, relativeCenter, halfWidthAxis, halfLengthAxis);
     }
 
     /// <summary>같은 차량의 이미지와 콜라이더 로컬 사각형을 합친 경계를 구한다.</summary>
@@ -341,6 +351,17 @@ public sealed class PatientRescueCutscene : MonoBehaviour
 /// <summary>엔진 상태 없이 회전된 차량 사각형의 완전 진입을 계산한다. 값은 동일한 월드 단위를 사용한다.</summary>
 internal static class PickupParkingGeometry
 {
+    /// <summary>영역 좌표로 변환한 차체 중심과 반폭/반길이 축으로 네 모서리의 완전 포함을 검사한다.</summary>
+    public static bool ContainsFootprint(Vector2 areaHalfSize, Vector2 center, Vector2 halfWidthAxis, Vector2 halfLengthAxis)
+    {
+        // 사각형 네 모서리의 최대 X/Y 돌출량이다. 모서리 배열이나 매 프레임 할당 없이 회전/스케일을 반영한다.
+        var extentX = System.Math.Abs(halfWidthAxis.x) + System.Math.Abs(halfLengthAxis.x);
+        var extentY = System.Math.Abs(halfWidthAxis.y) + System.Math.Abs(halfLengthAxis.y);
+        return areaHalfSize.x > 0f && areaHalfSize.y > 0f && extentX > 0f && extentY > 0f
+            && System.Math.Abs(center.x) + extentX <= areaHalfSize.x + 0.00001f
+            && System.Math.Abs(center.y) + extentY <= areaHalfSize.y + 0.00001f;
+    }
+
     /// <summary>감지 사각형 좌표계에서 차량 중심의 진입 여부를 반환한다.</summary>
     public static bool ContainsPoint(float areaHalfWidth, float areaHalfLength, float centerX, float centerY)
     {
