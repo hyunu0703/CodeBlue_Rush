@@ -123,7 +123,8 @@ public sealed class AmbulanceDriveInput : MonoBehaviour
 
         if (gear != null && gear.isActiveAndEnabled)
         {
-            gear.Display(vehicle.IsReverse, vehicle.IsStopped);
+            // 주행 중에도 기어 선택을 허용하며 실제 방향 전환은 차량의 물리 제동이 담당한다.
+            gear.Display(vehicle.IsReverse, true);
         }
     }
 
@@ -187,7 +188,9 @@ public sealed class AmbulanceDriveInput : MonoBehaviour
         requireKeyboardRelease = !isFirstInitialization;
         // 첫 Start와 재활성화에서도 미션 조작 제한을 유지한다.
         SetTouchEnabled(isMissionDrivingAllowed && hasFocus && !isApplicationPaused && Time.timeScale > 0f && vehicle.IsReady);
-        gear.Display(vehicle.IsReverse, isMissionDrivingAllowed && vehicle.IsStopped);
+        // 초기 표시에도 정차 조건 대신 현재 조작 가능 상태를 적용한다.
+        gear.Display(vehicle.IsReverse, isMissionDrivingAllowed && hasFocus && !isApplicationPaused
+            && Time.timeScale > 0f && vehicle.IsReady);
         UpdateSafeArea();
     }
 

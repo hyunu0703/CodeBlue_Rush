@@ -94,21 +94,24 @@ public sealed class AmbulanceDriveController : MonoBehaviour
         if (isGearChangePending)
         {
             isGearChangePending = false;
-            if (IsStopped)
-            {
-                body.linearVelocity = Vector2.zero;
-                body.angularVelocity = 0f;
-                isReverse = !isReverse;
-                appliedThrottle = 0f;
-            }
+            // 기어 선택만 바꾸고 현재 운동량은 유지해 주행 방향이 순간적으로 뒤집히지 않게 한다.
+            isReverse = !isReverse;
+            appliedThrottle = 0f;
         }
 
+        // 차량 앞쪽에 대한 선택 방향의 속도(월드 유닛/초)가 음수이면 반대 방향으로 이동 중이다.
+        Vector2 forward = Quaternion.Euler(0f, 0f, body.rotation) * Vector2.up;
+        float direction = isReverse ? -1f : 1f;
+        float driveSpeed = Vector2.Dot(body.linearVelocity, forward) * direction;
+        // 반대 기어에서 가속하면 페달 압력(0~1)을 제동에 사용하고, 정지 후 구동력으로 전환한다.
+        bool isDirectionBraking = driveSpeed < 0f && throttle > 0f;
+        float targetBrake = isDirectionBraking ? Mathf.Max(brake, throttle) : brake;
         float dt = Time.fixedDeltaTime;
         appliedThrottle = Mathf.MoveTowards(appliedThrottle, brake > 0f ? 0f : throttle, throttleResponse * dt);
         // 제동력 상승만 완화하고 페달을 놓으면 기존 속도로 풀어 조작 지연을 줄인다.
-        var brakeRampRate = appliedBrake < brake
+        var brakeRampRate = appliedBrake < targetBrake
             ? Mathf.Min(brakeResponse, 1f / MinimumBrakeApplicationSeconds) : brakeResponse;
-        appliedBrake = Mathf.MoveTowards(appliedBrake, brake, brakeRampRate * dt);
+        appliedBrake = Mathf.MoveTowards(appliedBrake, targetBrake, brakeRampRate * dt);
 
         if ((brake > 0f || throttle <= 0f) && IsStopped)
         {
@@ -118,16 +121,12 @@ public sealed class AmbulanceDriveController : MonoBehaviour
             return;
         }
 
-        // Positive steering is clockwise; the sprite's local up is the vehicle's front.
-        Vector2 forward = Quaternion.Euler(0f, 0f, body.rotation) * Vector2.up;
-        float direction = isReverse ? -1f : 1f;
         float topSpeed = isReverse ? reverseTopSpeed : forwardTopSpeed;
-        float driveSpeed = Vector2.Dot(body.linearVelocity, forward) * direction;
         float engineAcceleration = isReverse ? reverseAcceleration : acceleration;
         float engineFalloff = Mathf.Clamp01(1f - Mathf.Pow(Mathf.Max(0f, driveSpeed) / topSpeed, 4f));
 
-        // Brake priority applies immediately, even while pedal pressure is building up.
-        if (brake <= 0f && appliedBrake <= 0f)
+        // 제동 중에는 구동력을 겹치지 않으며, 방향 전환 제동도 같은 우선순위를 따른다.
+        if (!isDirectionBraking && brake <= 0f && appliedBrake <= 0f)
         {
             body.AddForce(forward * (direction * appliedThrottle * engineAcceleration * engineFalloff * body.mass));
         }
@@ -165,10 +164,10 @@ public sealed class AmbulanceDriveController : MonoBehaviour
         this.throttle = this.brake > 0f ? 0f : Mathf.Clamp01(throttle);
     }
 
-    /// <summary>A discrete request expires at the next physics step; it never queues a shift for later stopping.</summary>
+    /// <summary>다음 물리 스텝에서 속도와 무관하게 기어를 바꾼다. 이동 방향은 페달과 물리 제동으로 전환한다.</summary>
     public void RequestGearChange()
     {
-        if (IsReady && Time.timeScale > 0f && IsStopped)
+        if (IsReady && Time.timeScale > 0f)
         {
             isGearChangePending = true;
         }
