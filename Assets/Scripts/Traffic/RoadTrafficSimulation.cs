@@ -7,7 +7,10 @@ public sealed class RoadTrafficSimulation
 {
     // 초 단위 반응/예측 시간이다. 공간 튜닝은 실제 맵의 차로 폭에서 환산한다.
     public const float HeadwaySeconds = 1.4f;
-    public const float LaneChangeSeconds = 2f;
+    // 순항 속도 기준 최소 계획 시간이다. 저속/정차 중에는 실제 전진 거리에 따라 더 오래 걸릴 수 있다.
+    public const float LaneChangeSeconds = 3f;
+    // 횡방향 최대 기울기를 낮춰 저속에서도 차체가 갑자기 큰 각도로 회전하지 않게 하는 계획 거리다.
+    private const float MinimumLaneChangeWidths = 6f;
     private const float PredictionSeconds = 0.8f;
     private const float StopHoldSeconds = 0.3f;
     private readonly RoadLaneNetwork network;
@@ -118,8 +121,10 @@ public sealed class RoadTrafficSimulation
         // 정지선 부근과 교차로 내부에서는 변경을 시작하지 않는다. 완료할 전방 길이도 확보한다.
         var path = network.Paths[vehicle.PathId];
         var targetId = toLeft ? path.LeftNeighborId : path.RightNeighborId;
+        // 시간과 차로 폭 양쪽 기준을 만족하는 전진 거리를 확보한 경우에만 부드러운 변경 궤적을 시작한다.
+        var changeDistance = Math.Max(path.Width * MinimumLaneChangeWidths, vehicle.CruiseSpeed * LaneChangeSeconds);
         if (targetId < 0 || !path.CanChangeLaneAt(vehicle.Distance)
-            || vehicle.Distance + vehicle.CruiseSpeed * LaneChangeSeconds + vehicle.Length > path.LaneChangeEndDistance)
+            || vehicle.Distance + changeDistance + vehicle.Length > path.LaneChangeEndDistance)
         {
             return false;
         }
@@ -142,7 +147,8 @@ public sealed class RoadTrafficSimulation
             }
         }
         vehicle.TargetLaneId = targetId;
-        vehicle.LaneChangeElapsed = 0f;
+        vehicle.LaneChangeStartDistance = vehicle.Distance;
+        vehicle.LaneChangeDistance = changeDistance;
         vehicle.LaneChangeCooldown = 6f;
         return true;
     }
@@ -458,10 +464,10 @@ public sealed class RoadTrafficSimulation
                 vehicle.ExitClearanceRemaining = -1f;
             }
         }
-        if (vehicle.IsChangingLane && vehicle.Speed > 0.02f)
+        if (vehicle.IsChangingLane)
         {
-            vehicle.LaneChangeElapsed += seconds;
-            if (vehicle.LaneChangeElapsed >= LaneChangeSeconds)
+            // 계획 전진 거리 끝에서만 목표 차로로 넘긴다. 정차는 횡방향 진행과 조향을 함께 멈춘다.
+            if (vehicle.Distance >= vehicle.LaneChangeStartDistance + vehicle.LaneChangeDistance)
             {
                 vehicle.PathId = vehicle.TargetLaneId;
                 vehicle.TargetLaneId = -1;
@@ -503,7 +509,7 @@ public sealed class RoadTrafficSimulation
         vehicle.NextPathId = successors.Count == 0 ? -1 : successors[random.Next(successors.Count)];
     }
 
-    /// <summary>경로를 샘플링하고 변경 중인 두 차로를 부드럽게 보간한다. 변경 접선은 횡방향 속도까지 포함한다.</summary>
+    /// <summary>전진 거리 기반 5차 곡선으로 차로를 보간한다. 차체는 속도와 무관한 궤적 접선을 따라 회전한다.</summary>
     private void UpdatePose(RoadTrafficVehicle vehicle)
     {
         network.Paths[vehicle.PathId].TrySample(vehicle.Distance, out var position, out var forward);
@@ -511,12 +517,14 @@ public sealed class RoadTrafficSimulation
         {
             var target = network.Paths[vehicle.TargetLaneId];
             target.TrySample(vehicle.Distance, out var targetPosition, out _);
-            var progress = Math.Min(1f, vehicle.LaneChangeElapsed / LaneChangeSeconds);
-            var smooth = progress * progress * (3f - 2f * progress);
-            var lateral = (targetPosition - position) * (6f * progress * (1f - progress) / LaneChangeSeconds);
+            // 시작/끝에서 횡방향 기울기와 그 변화량이 모두 0이 되어 조향의 진입/복귀가 연속이다.
+            var progress = Math.Max(0f, Math.Min(1f,
+                (vehicle.Distance - vehicle.LaneChangeStartDistance) / vehicle.LaneChangeDistance));
+            var smooth = progress * progress * progress * (10f + progress * (-15f + 6f * progress));
+            var slope = 30f * progress * progress * (1f - progress) * (1f - progress) / vehicle.LaneChangeDistance;
+            var tangent = forward + (targetPosition - position) * slope;
             position += (targetPosition - position) * smooth;
-            var velocity = forward * Math.Max(vehicle.Speed, 0.01f) + lateral;
-            forward = velocity / RoadLaneMath.Distance(Vector2.zero, velocity);
+            forward = tangent / RoadLaneMath.Distance(Vector2.zero, tangent);
         }
         vehicle.Position = position;
         vehicle.Forward = forward;

@@ -22,7 +22,9 @@ public sealed class RoadTrafficVehicle
     // 교차로 출구 이후 누적 주행 거리다. 짧은 출발 경로를 넘어가도 뒷범퍼가 빠져나갈 때까지 예약을 보존한다.
     internal float ExitClearanceRemaining = -1f;
     internal float StoppedSeconds;
-    internal float LaneChangeElapsed;
+    // 변경 궤적의 시작 호 길이와 계획 전진 거리다. 시간 대신 실제 거리로 보간하여 정차 중 횡이동을 막는다.
+    internal float LaneChangeStartDistance;
+    internal float LaneChangeDistance;
     internal float LaneChangeCooldown;
     internal float TargetSpeed;
     internal float ClearDistance;

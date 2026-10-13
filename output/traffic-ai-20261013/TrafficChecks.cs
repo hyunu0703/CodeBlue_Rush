@@ -29,7 +29,9 @@ internal static class TrafficChecks
         Prefabs_AllRoadsAndRotations_TrafficCompletes();
         Session_PausedOrInvalid_DoesNotMove();
         Startup_SmallSteps_AcceleratesWithoutResettingSpeed();
-        Console.WriteLine($"PASS: {assertions} assertions; 13 traffic scenarios; 13 actual road prefabs x 4 rotations; fixed seeds and controlled steps.");
+        LaneChange_VaryingSpeed_PositionAndHeadingStayContinuous();
+        LaneChange_StoppedMidway_HoldsPoseAndResumesSmoothly();
+        Console.WriteLine($"PASS: {assertions} assertions; 15 traffic scenarios; 13 actual road prefabs x 4 rotations; fixed seeds and controlled steps.");
     }
 
     /// <summary>각 판정을 누적하고 실패 시 즉시 구체적인 동작 조건을 보고한다.</summary>
@@ -191,7 +193,7 @@ internal static class TrafficChecks
         car.Speed = 0.6f;
         var targetId = path.RightNeighborId;
         Require(simulation.TryChangeLane(car, false), "빈 옆차로 변경 허가");
-        for (var tick = 0; tick < 110; tick++)
+        for (var tick = 0; tick < 1000 && car.IsChangingLane; tick++)
         {
             simulation.Tick(0.02f, null);
         }
@@ -434,5 +436,86 @@ internal static class TrafficChecks
             var expectedSpeed = path.Width * 0.9f * seconds * 30;
             Require(Math.Abs(car.Speed - expectedSpeed) < 0.00001f, "출발 가속량 불일치");
         }
+    }
+
+    /// <summary>저속/고속 및 양쪽 차로 변경에서 프레임별 위치/차체 각도가 연속이고 목표 차로 중앙에 도달하는지 확인한다.</summary>
+    private static void LaneChange_VaryingSpeed_PositionAndHeadingStayContinuous()
+    {
+        foreach (var speed in new[] { 0.06f, 1.6f })
+        {
+            foreach (var toLeft in new[] { false, true })
+            {
+                var network = Build(false);
+                var path = network.Paths.First(p => p.RoadOrdinal == 1 && p.Entry == RoadDirection.South
+                    && p.EntryLaneNumber == (toLeft ? 2 : 1));
+                var simulation = new RoadTrafficSimulation(network, 51);
+                var car = Add(simulation, path, 2f);
+                car.Speed = speed;
+                var target = toLeft ? path.LeftNeighborId : path.RightNeighborId;
+                var initialForward = car.Forward;
+                Require(simulation.TryChangeLane(car, toLeft), "완만한 차로 변경 시작 실패");
+                for (var tick = 0; tick < 1200 && car.IsChangingLane; tick++)
+                {
+                    var previousPosition = car.Position;
+                    var previousForward = car.Forward;
+                    simulation.Tick(0.02f, null);
+                    Require(RoadLaneMath.Distance(car.Position, previousPosition) < 0.05f, "차로 변경 위치 순간 이동");
+                    Require(AngleBetween(previousForward, car.Forward) < 1f, "차로 변경 프레임별 급회전");
+                    Require(AngleBetween(initialForward, car.Forward) < 20f, "차로 변경 조향 각도 과다");
+                    if (tick == 0 || !car.IsChangingLane)
+                    {
+                        Require(AngleBetween(initialForward, car.Forward) < 0.1f, "차로 변경 시작/완료 회전 불연속");
+                    }
+                }
+                Require(!car.IsChangingLane && car.PathId == target, "완만한 변경 완료 실패");
+                network.Paths[target].TryProject(car.Position, out _, out var squaredOffset);
+                Require(squaredOffset < 0.000001f, "목표 차로 중앙 배치 실패");
+            }
+        }
+    }
+
+    /// <summary>변경 도중 양쪽 차로의 앞차 때문에 정차하면 횡이동/차체 회전을 유지하고 제거 후 연속적으로 재출발하는지 확인한다.</summary>
+    private static void LaneChange_StoppedMidway_HoldsPoseAndResumesSmoothly()
+    {
+        var network = Build(false);
+        var path = network.Paths.First(p => p.RoadOrdinal == 1 && p.Entry == RoadDirection.South && p.EntryLaneNumber == 1);
+        var simulation = new RoadTrafficSimulation(network, 63);
+        var car = Add(simulation, path, 2f);
+        car.Speed = 1f;
+        Require(simulation.TryChangeLane(car, false), "정차 검사 변경 시작 실패");
+        for (var tick = 0; tick < 50; tick++)
+        {
+            simulation.Tick(0.02f, null);
+        }
+        Require(car.IsChangingLane, "정차 검사 전에 변경 종료");
+        var beforePosition = car.Position;
+        var beforeForward = car.Forward;
+        // 앞차는 차로별로 같은 종방향 위치에 두어 양쪽 경로에서 제동 조건을 만든다.
+        var blockerDistance = car.Distance + car.Length + path.Width * 0.6f - 0.0001f;
+        var blockers = new[] { Obstacle(path, blockerDistance), Obstacle(network.Paths[car.TargetLaneId], blockerDistance) };
+        for (var tick = 0; tick < 100; tick++)
+        {
+            simulation.Tick(0.02f, blockers);
+            Require(car.Speed == 0f, "변경 중 정차 실패");
+            Require(RoadLaneMath.Distance(beforePosition, car.Position) < 0.00001f, "정차 중 횡이동");
+            Require(AngleBetween(beforeForward, car.Forward) < 0.001f, "정차 중 차체 방향 급변");
+        }
+        Require(car.IsChangingLane, "정차 중 강제 변경 완료");
+        for (var tick = 0; tick < 1000 && car.IsChangingLane; tick++)
+        {
+            var previousPosition = car.Position;
+            var previousForward = car.Forward;
+            simulation.Tick(0.02f, null);
+            Require(RoadLaneMath.Distance(previousPosition, car.Position) < 0.05f, "변경 재개 위치 순간 이동");
+            Require(AngleBetween(previousForward, car.Forward) < 1f, "변경 재개 급회전");
+        }
+        Require(!car.IsChangingLane, "변경 재개 완료 실패");
+    }
+
+    /// <summary>네이티브 Unity 호출 없이 두 차체 방향의 각도 차이를 도 단위로 구한다.</summary>
+    private static float AngleBetween(Vector2 a, Vector2 b)
+    {
+        var cross = a.x * b.y - a.y * b.x;
+        return (float)(Math.Abs(Math.Atan2(cross, RoadLaneMath.Dot(a, b))) * 180d / Math.PI);
     }
 }
