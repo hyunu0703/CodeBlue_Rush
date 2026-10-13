@@ -399,7 +399,12 @@ public sealed class MissionMapGenerator : MonoBehaviour
         if (!append)
         {
             ReturnActiveRoads();
-            StartPosition = mapRoot.TransformPoint(new Vector3(0f, -roads[0].Prefab.ImageSize.y * 0.25f, 0f));
+            // 북쪽 주행의 우측 3차로 중앙이다. 편도 1/2차로 도로는 존재하는 가장 바깥 차로를 사용한다.
+            var startRoad = roads[0];
+            var startLane = Mathf.Min(3, startRoad.Prefab.GetLaneCount(RoadDirection.South, startRoad.Rotation) / 2);
+            var startOffset = startRoad.Prefab.ImageSize.x * LaneWidthRatio * (startLane - 0.5f);
+            StartPosition = mapRoot.TransformPoint(startRoad.Position
+                + new Vector2(startOffset, -startRoad.Prefab.ImageSize.y * 0.25f));
             navigationRoute.Add(StartPosition);
         }
         else

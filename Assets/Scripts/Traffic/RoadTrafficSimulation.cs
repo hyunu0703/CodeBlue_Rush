@@ -34,8 +34,15 @@ public sealed class RoadTrafficSimulation
     public bool TryAddVehicle(int pathId, float distance, float length, float width, float cruiseSpeed,
         IReadOnlyList<RoadTrafficObstacle> external, out RoadTrafficVehicle vehicle)
     {
+        return TryActivateVehicle(new RoadTrafficVehicle(), pathId, distance, length, width, cruiseSpeed, external, out vehicle);
+    }
+
+    /// <summary>컨트롤러 풀의 상태를 초기화해 재등록한다. 실패한 후보는 등록하지 않으며 기존 public 생성 API를 보존한다.</summary>
+    internal bool TryActivateVehicle(RoadTrafficVehicle candidate, int pathId, float distance, float length, float width,
+        float cruiseSpeed, IReadOnlyList<RoadTrafficObstacle> external, out RoadTrafficVehicle vehicle)
+    {
         vehicle = null;
-        if (!network.IsValid || pathId < 0 || pathId >= network.Paths.Count
+        if (candidate == null || vehicles.Contains(candidate) || !network.IsValid || pathId < 0 || pathId >= network.Paths.Count
             || !RoadLaneMath.IsFinite(distance) || !RoadLaneMath.IsFinite(length) || length <= 0f
             || !RoadLaneMath.IsFinite(width) || width <= 0f || !RoadLaneMath.IsFinite(cruiseSpeed) || cruiseSpeed <= 0f)
         {
@@ -49,11 +56,25 @@ public sealed class RoadTrafficSimulation
         {
             return false;
         }
-        var candidate = new RoadTrafficVehicle
-        {
-            Id = nextId, PathId = pathId, Distance = distance, Length = length,
-            Width = width, CruiseSpeed = cruiseSpeed
-        };
+        // 풀 반환 전의 예약, 차로 변경, 정차 시간과 속도를 모두 제거한다.
+        candidate.Id = nextId;
+        candidate.PathId = pathId;
+        candidate.Distance = distance;
+        candidate.Length = length;
+        candidate.Width = width;
+        candidate.CruiseSpeed = cruiseSpeed;
+        candidate.Speed = 0f;
+        candidate.IsFinished = false;
+        candidate.TargetLaneId = -1;
+        candidate.NextPathId = -1;
+        candidate.ReservedMovement = -1;
+        candidate.ExitClearanceRemaining = -1f;
+        candidate.StoppedSeconds = 0f;
+        candidate.LaneChangeStartDistance = 0f;
+        candidate.LaneChangeDistance = 0f;
+        candidate.LaneChangeCooldown = 0f;
+        candidate.TargetSpeed = 0f;
+        candidate.ClearDistance = float.PositiveInfinity;
         UpdatePose(candidate);
         BuildObservations(external);
         if (!HasLaneSpace(candidate, pathId, distance, length + path.Width))
