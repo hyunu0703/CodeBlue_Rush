@@ -16,6 +16,8 @@ public sealed class AmbulanceDriveController : MonoBehaviour
     private const float MinimumBrakeApplicationSeconds = 0.5f;
     [SerializeField, Min(0f)] private float rollingResistance = 0.08f;
     [SerializeField, Min(0f)] private float airResistance = 0.012f;
+    // 엑셀을 놓았을 때 추가하는 엔진 브레이크 감속도다. 단위는 월드 유닛/초²다.
+    [SerializeField, Min(0f)] private float engineBrakeDeceleration = 0.6f;
     [SerializeField, Min(0.1f)] private float throttleResponse = 2f;
     [SerializeField, Min(0.1f)] private float brakeResponse = 6f;
 
@@ -67,9 +69,10 @@ public sealed class AmbulanceDriveController : MonoBehaviour
         var bodyCollider = GetComponent<BoxCollider2D>();
         if (body == null || body.bodyType != RigidbodyType2D.Dynamic || !body.simulated
             || bodyCollider == null || bodyCollider.isTrigger || !bodyCollider.enabled
-            || float.IsNaN(brakeStrengthMultiplier) || float.IsInfinity(brakeStrengthMultiplier) || brakeStrengthMultiplier < 1f)
+            || float.IsNaN(brakeStrengthMultiplier) || float.IsInfinity(brakeStrengthMultiplier) || brakeStrengthMultiplier < 1f
+            || float.IsNaN(engineBrakeDeceleration) || float.IsInfinity(engineBrakeDeceleration) || engineBrakeDeceleration < 0f)
         {
-            Debug.LogError("구급차에는 simulated Dynamic Rigidbody2D, 활성 비트리거 BoxCollider2D와 1 이상의 제동 강도 배율이 필요합니다.", this);
+            Debug.LogError("구급차에는 simulated Dynamic Rigidbody2D, 활성 비트리거 BoxCollider2D, 1 이상의 제동 강도 배율과 0 이상의 엔진 브레이크 감속도가 필요합니다.", this);
             enabled = false;
             return;
         }
@@ -82,6 +85,7 @@ public sealed class AmbulanceDriveController : MonoBehaviour
         ClearInput();
     }
 
+    /// <summary>고정 물리 스텝에서 페달 응답, 구동력, 제동과 접지력을 적용한다.</summary>
     private void FixedUpdate()
     {
         // 정지/미준비 상태에서도 카메라에 이전 스텝의 제동을 남기지 않는다.
@@ -126,7 +130,7 @@ public sealed class AmbulanceDriveController : MonoBehaviour
         float engineFalloff = Mathf.Clamp01(1f - Mathf.Pow(Mathf.Max(0f, driveSpeed) / topSpeed, 4f));
 
         // 제동 중에는 구동력을 겹치지 않으며, 방향 전환 제동도 같은 우선순위를 따른다.
-        if (!isDirectionBraking && brake <= 0f && appliedBrake <= 0f)
+        if (!isDirectionBraking && throttle > 0f && brake <= 0f && appliedBrake <= 0f)
         {
             body.AddForce(forward * (direction * appliedThrottle * engineAcceleration * engineFalloff * body.mass));
         }
@@ -134,9 +138,14 @@ public sealed class AmbulanceDriveController : MonoBehaviour
         float speed = body.linearVelocity.magnitude;
         // 제동은 페달 압력과 기존 감속도 배율로 계산하며 조향의 횡방향 접지력과 독립적으로 적용한다.
         var requestedBrake = appliedBrake * brakeDeceleration * brakeStrengthMultiplier;
+        // 페달 해제 시 잔여 구동력은 끊고 기존 엑셀 응답 시간에 맞춰 엔진 제동을 부드럽게 올린다.
+        // 브레이크 페달/방향 전환 제동에는 추가하지 않아 기존 제동 강도와 카메라 반동을 보존한다.
+        var engineBrake = throttle <= 0f && brake <= 0f && appliedBrake <= 0f
+            ? engineBrakeDeceleration * (1f - appliedThrottle) : 0f;
         if (speed > 0f)
         {
-            float resistance = rollingResistance + airResistance * speed * speed + requestedBrake;
+            // 전체 감속도는 자연 저항, 페달 제동과 엑셀 해제 시 엔진 제동의 합이다.
+            float resistance = rollingResistance + airResistance * speed * speed + requestedBrake + engineBrake;
             // 정지 스텝에서는 소모할 운동량까지만 반대 힘을 적용해 브레이크로 역주행하지 않게 한다.
             float deceleration = Mathf.Min(resistance, speed / dt);
             brakingDeceleration = Mathf.Min(requestedBrake, deceleration);

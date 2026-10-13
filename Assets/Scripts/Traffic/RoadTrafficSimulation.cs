@@ -11,6 +11,8 @@ public sealed class RoadTrafficSimulation
     public const float LaneChangeSeconds = 3f;
     // 횡방향 최대 기울기를 낮춰 저속에서도 차체가 갑자기 큰 각도로 회전하지 않게 하는 계획 거리다.
     private const float MinimumLaneChangeWidths = 6f;
+    // 좌우 회전의 목표 속도는 차량별 평소 순항 속도의 90%다.
+    private const float CurveSpeedRatio = 0.9f;
     private const float PredictionSeconds = 0.8f;
     private const float StopHoldSeconds = 0.3f;
     private readonly RoadLaneNetwork network;
@@ -218,9 +220,9 @@ public sealed class RoadTrafficSimulation
         var path = network.Paths[vehicle.PathId];
         var braking = path.Width * 3f;
         var minimumGap = path.Width * 0.6f;
-        vehicle.TargetSpeed = path.Kind == RoadLanePathKind.Intersection
-            ? Math.Min(vehicle.CruiseSpeed, path.Width * (path.Maneuver == RoadLaneManeuver.Straight ? 2f : 1.1f))
-            : vehicle.CruiseSpeed;
+        // 좌우 커브에서만 10% 감속한다. 직진 및 교통 상황에 필요한 감속은 별도로 유지한다.
+        vehicle.TargetSpeed = path.Kind == RoadLanePathKind.Intersection && path.Maneuver != RoadLaneManeuver.Straight
+            ? vehicle.CruiseSpeed * CurveSpeedRatio : vehicle.CruiseSpeed;
         vehicle.ClearDistance = float.PositiveInfinity;
         LimitForTraffic(vehicle, vehicle.PathId, vehicle.Distance, braking, minimumGap);
         if (vehicle.IsChangingLane)
@@ -244,14 +246,16 @@ public sealed class RoadTrafficSimulation
             {
                 LimitForStop(vehicle, lineGap, braking);
             }
-            else
-            {
-                // 회전 시작 전에 미리 감속하여 짧은 폴리라인 곡선에서 급격한 방향 전환을 줄인다.
-                var movement = network.Paths[vehicle.NextPathId];
-                var turnSpeed = path.Width * (movement.Maneuver == RoadLaneManeuver.Straight ? 2f : 1.1f);
-                vehicle.TargetSpeed = Math.Min(vehicle.TargetSpeed,
-                    (float)Math.Sqrt(turnSpeed * turnSpeed + 2f * braking * lineGap));
-            }
+        }
+        if (path.HasStopLine && vehicle.NextPathId >= 0
+            && network.Paths[vehicle.NextPathId].Maneuver != RoadLaneManeuver.Straight)
+        {
+            // 앞범퍼부터 차량 중심까지 커브에 진입하는 동안에도 감속 목표를 유지한다.
+            // 남은 전방 거리에 맞춰 90% 속도로 접근하며, 신호/앞차가 요구한 더 낮은 속도는 보존한다.
+            var curveGap = Math.Max(0f, path.Length - vehicle.Distance - vehicle.Length * 0.5f);
+            var curveSpeed = vehicle.CruiseSpeed * CurveSpeedRatio;
+            vehicle.TargetSpeed = Math.Min(vehicle.TargetSpeed,
+                (float)Math.Sqrt(curveSpeed * curveSpeed + 2f * braking * curveGap));
         }
         if (vehicle.NextPathId < 0)
         {

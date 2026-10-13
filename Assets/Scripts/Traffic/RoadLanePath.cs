@@ -12,6 +12,8 @@ public sealed class RoadLanePath
     // 외부에서 경로와 연결 목록을 수정할 수 없게 읽기 전용 뷰를 한 번 만든다.
     private readonly Vector2[] points;
     private readonly float[] distances;
+    // 회전 경로의 각 점에서 공유하는 단위 접선이다. 직선 경로에는 보간이 필요 없다.
+    private readonly Vector2[] curveTangents;
     private readonly List<int> successors = new List<int>(3);
     private readonly List<int> conflicts = new List<int>();
     public IReadOnlyList<Vector2> Points { get; }
@@ -61,6 +63,20 @@ public sealed class RoadLanePath
         {
             distances[i] = distances[i - 1] + RoadLaneMath.Distance(points[i - 1], points[i]);
         }
+        if (kind == RoadLanePathKind.Intersection && maneuver != RoadLaneManeuver.Straight)
+        {
+            curveTangents = new Vector2[points.Length];
+            // 진입/출구 직선의 방향을 정확히 이어 경로 전환 시에도 차체가 꺾이지 않는다.
+            curveTangents[0] = -RoadLaneMath.Outward(entry);
+            curveTangents[points.Length - 1] = RoadLaneMath.Outward(exit);
+            for (var i = 1; i < points.Length - 1; i++)
+            {
+                // 양쪽 선분의 단위 방향을 평균하여 인접 구간이 동일한 접선을 사용한다.
+                var tangent = (points[i] - points[i - 1]) / (distances[i] - distances[i - 1])
+                    + (points[i + 1] - points[i]) / (distances[i + 1] - distances[i]);
+                curveTangents[i] = tangent / RoadLaneMath.Distance(Vector2.zero, tangent);
+            }
+        }
         Points = Array.AsReadOnly(this.points);
         Successors = successors.AsReadOnly();
         Conflicts = conflicts.AsReadOnly();
@@ -95,9 +111,36 @@ public sealed class RoadLanePath
             }
             forward = delta / length;
             position = points[i - 1] + forward * (clamped - distances[i - 1]);
+            if (curveTangents != null)
+            {
+                SampleCurve(i, (clamped - distances[i - 1]) / length, length, out position, out forward);
+            }
             return true;
         }
         return false;
+    }
+
+    /// <summary>구간 양끝의 위치와 공유 접선으로 3차 Hermite 곡선을 계산한다. 방향은 실제 곡선의 미분이다.</summary>
+    private void SampleCurve(int endIndex, float progress, float length, out Vector2 position, out Vector2 forward)
+    {
+        // 접선을 구간 길이로 환산한다. 거리 기준 미분이 경계 양쪽에서 같아 이동과 회전이 연속이다.
+        var startTangent = curveTangents[endIndex - 1] * length;
+        var endTangent = curveTangents[endIndex] * length;
+        // 0~1 구간 진행률의 거듭제곱과 구간 양끝 위치다.
+        var squared = progress * progress;
+        var cubed = squared * progress;
+        var start = points[endIndex - 1];
+        var delta = points[endIndex] - start;
+        // 상대 좌표로 계산해 맵 원점에서 먼 도로에서도 큰 절대 좌표의 상쇄 오차를 피한다.
+        position = start
+            + startTangent * (cubed - 2f * squared + progress)
+            + delta * (-2f * cubed + 3f * squared)
+            + endTangent * (cubed - squared);
+        // 위치 차분으로 방향을 추정하지 않아 정차 후 재출발에서도 같은 자세를 유지한다.
+        var derivative = startTangent * (3f * squared - 4f * progress + 1f)
+            + delta * (-6f * squared + 6f * progress)
+            + endTangent * (3f * squared - 2f * progress);
+        forward = derivative / RoadLaneMath.Distance(Vector2.zero, derivative);
     }
 
     /// <summary>위치에 가장 가까운 경로의 호 길이와 제곱 거리를 출력한다. 차량을 움직이지 않는다.</summary>
