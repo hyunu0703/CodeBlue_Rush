@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 2263855111185185774}
   - component: {fileID: 4472309903585343963}
   - component: {fileID: 3578314345292373600}
+  - component: {fileID: 9216782660835416035}
   m_Layer: 0
   m_Name: Building_13
   m_TagString: Untagged
@@ -138,3 +139,16 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 3.75, y: 5}
   m_EdgeRadius: 0
+--- !u!114 &9216782660835416035
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3321323626495439972}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 471de938bcd017e4bb80b50d9a87bae1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BuildingPrefab
+  index: 1
