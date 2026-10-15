@@ -29,6 +29,18 @@ public sealed class AmbulanceDriveController : MonoBehaviour
     [SerializeField, Min(0f)] private float maximumLateralAcceleration = 3.2f;
     [SerializeField, Min(0f)] private float yawDamping = 0.8f;
 
+    [Header("Responsive steering")]
+    // 새 조향을 기본 사용하며, 해제하면 저장된 차축/타이어 설정으로 비교 주행할 수 있다.
+    [SerializeField] private bool useResponsiveSteering = true;
+    // 충분히 움직일 때 최대 조향으로 회전하는 속도다. 단위는 도/초다.
+    [SerializeField, Min(1f)] private float maximumTurnSpeed = 120f;
+    // 목표 회전 속도에 접근하는 가속도다. 단위는 도/초²다.
+    [SerializeField, Min(1f)] private float turnAcceleration = 1080f;
+    // 이 전후방 속도부터 최대 회전 속도를 허용한다. 정지 상태의 제자리 회전을 막는다.
+    [SerializeField, Min(0.1f)] private float fullSteeringSpeed = 2f;
+    // 충돌 등으로 남은 횡방향 움직임을 주행 방향에 맞추는 응답률이다. 단위는 1/초다.
+    [SerializeField, Min(0f)] private float velocityAlignment = 8f;
+
     [Header("Stopped detection")]
     [SerializeField, Min(0.001f)] private float stoppedSpeed = 0.025f;
     [SerializeField, Min(0f)] private float stoppedAngularSpeed = 3f;
@@ -152,6 +164,12 @@ public sealed class AmbulanceDriveController : MonoBehaviour
             body.AddForce(-body.linearVelocity / speed * (deceleration * body.mass));
         }
 
+        if (useResponsiveSteering)
+        {
+            ApplyResponsiveSteering(forward, dt);
+            return;
+        }
+
         float roadWheelAngle = steering * maximumRoadWheelAngle;
         Vector2 frontDirection = Quaternion.Euler(0f, 0f, -roadWheelAngle) * forward;
         Vector2 center = body.position + (Vector2)(Quaternion.Euler(0f, 0f, body.rotation) * (Vector3)axleCenter);
@@ -209,5 +227,33 @@ public sealed class AmbulanceDriveController : MonoBehaviour
             -maximumLateralAcceleration, maximumLateralAcceleration);
         // 각 차축에 질량 절반을 적용한다. 브레이크 입력과 무관하게 기존 횡방향 접지력 한도를 사용한다.
         body.AddForceAtPosition(tireRight * (lateralAcceleration * body.mass * 0.5f), position);
+    }
+
+    /// <summary>고정 스텝에서 회전 속도와 이동 방향을 함께 보정한다. 속력은 보존하고 충돌은 물리 엔진에 맡긴다.</summary>
+    private void ApplyResponsiveSteering(Vector2 forward, float dt)
+    {
+        // 실제 전후방 이동 속도로 후진 조향을 판정해 기어만 바꿔도 조향이 뒤집히지 않게 한다.
+        var signedSpeed = Vector2.Dot(body.linearVelocity, forward);
+        // 저속에서는 회전량을 줄이고, 고속에서는 최대 회전 속도를 제한한다. 단위는 도/초다.
+        var targetTurnSpeed = -steering * maximumTurnSpeed
+            * Mathf.Clamp(signedSpeed / fullSteeringSpeed, -1f, 1f);
+        // 현재 물리 회전 속도다. 반대 조향은 이전 회전 관성을 다음 고정 스텝에서 끊는다.
+        var currentTurnSpeed = body.angularVelocity;
+        if (currentTurnSpeed * targetTurnSpeed < 0f)
+        {
+            currentTurnSpeed = 0f;
+        }
+        body.angularVelocity = Mathf.MoveTowards(currentTurnSpeed, targetTurnSpeed, turnAcceleration * dt);
+
+        // 이번 스텝의 회전만큼 속도 벡터도 돌려, 차체와 주행 경로의 응답을 일치시킨다.
+        var turnedVelocity = (Vector2)(Quaternion.Euler(0f, 0f, body.angularVelocity * dt) * body.linearVelocity);
+        // 다음 자세의 전방 벡터다. 후진 중에는 반대 방향으로 정렬한다.
+        var nextForward = (Vector2)(Quaternion.Euler(0f, 0f, body.angularVelocity * dt) * forward);
+        // 옆으로 밀린 경우에만 남은 미끄러짐을 부드럽게 줄인다. 충돌 반동의 앞뒤 부호는 유지한다.
+        var alignmentAngle = signedSpeed != 0f
+            ? Vector2.SignedAngle(turnedVelocity, nextForward * Mathf.Sign(signedSpeed)) : 0f;
+        // 프레임률에 덜 의존하는 보정 비율이며 0~1 범위다.
+        var alignmentFraction = 1f - Mathf.Exp(-velocityAlignment * dt);
+        body.linearVelocity = Quaternion.Euler(0f, 0f, alignmentAngle * alignmentFraction) * turnedVelocity;
     }
 }
