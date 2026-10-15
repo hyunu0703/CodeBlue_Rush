@@ -46,6 +46,8 @@ public sealed class RoadTrafficController : MonoBehaviour
     private int TargetVehicles => Math.Min(maximumVehicles * trafficDensity, spawnPrefabs.Count * MaximumPerPrefab);
     private System.Random random;
     private int version = -1;
+    // 동일 미션의 후송 확장인 경우에만 활성 차량을 보존한다.
+    private int mapSession = -1;
     private float spawnClock;
     private float searchRadius;
     private Vector2 searchCenter;
@@ -62,6 +64,7 @@ public sealed class RoadTrafficController : MonoBehaviour
         internal Rigidbody2D Body;
         internal BoxCollider2D Collider;
         internal RoadTrafficVehicle Vehicle;
+        internal RoadTrafficCollision Collision;
         // 반환 대상 풀 번호와 그래프 단위의 차체 크기는 생성 시 한 번 계산한다.
         internal int PrefabIndex;
         internal float Length;
@@ -137,6 +140,15 @@ public sealed class RoadTrafficController : MonoBehaviour
             return;
         }
         // 물리 스텝 변경에도 순수 시뮬레이터의 0.1초 상한을 지킨다. 반복 중 관측은 동일 경계의 값을 사용한다.
+        foreach (var instance in instances)
+        {
+            if (instance.Body == null || instance.Collision == null)
+            {
+                continue;
+            }
+            instance.Collision.Tick(Time.fixedDeltaTime);
+            instance.Vehicle.IsPhysicsControlled = instance.Collision.IsReacting;
+        }
         CollectObstacles();
         var remaining = Time.fixedDeltaTime;
         while (remaining > 0f)
@@ -148,6 +160,11 @@ public sealed class RoadTrafficController : MonoBehaviour
         for (var index = instances.Count - 1; index >= 0; index--)
         {
             var instance = instances[index];
+            // 사고 차량은 차로 AI 및 거리 기반 회수 대상에서 제외해 정지한 자리에 남긴다.
+            if (instance.Root != null && instance.Body != null && instance.Collision.IsReacting)
+            {
+                continue;
+            }
             if (instance.Root == null || instance.Body == null || instance.Vehicle.IsFinished
                 || !mapGenerator.IsRoadActive(network.Paths[instance.Vehicle.PathId].RoadOrdinal)
                 || (instance.Vehicle.Position - searchCenter).sqrMagnitude > despawnRadius * despawnRadius)
@@ -230,11 +247,17 @@ public sealed class RoadTrafficController : MonoBehaviour
         return true;
     }
 
-    /// <summary>교체된 맵마다 활성 차량을 반환하고 신호/그래프를 교체한다. 후송 확장에서도 풀 차체는 유지한다.</summary>
+    /// <summary>후송 확장은 활성 차량과 신호를 보존한다. 새 미션에서만 차량을 풀로 반환한다.</summary>
     private void ResetNetwork(RoadLaneNetwork current)
     {
-        // 맵 교체에서는 차체를 파괴하지 않고 모든 활성 차량만 반환한다.
-        ReturnAllInstances();
+        // 같은 맵 변환과 세션에서 기존 경로 번호를 유지하는 확장만 차량 상태를 승계한다.
+        var preservesTraffic = simulation != null && mapRoot != null && mapSession == mapGenerator.LaneNetworkSession
+            && mapRoot == mapGenerator.LaneMapRoot && HasSupportedMapTransform()
+            && simulation.TryExtendNetwork(current);
+        if (!preservesTraffic)
+        {
+            ReturnAllInstances();
+        }
         mapRoot = mapGenerator.LaneMapRoot;
         mapScale = mapRoot != null ? mapRoot.lossyScale.x : 0f;
         if (mapRoot == null || !HasSupportedMapTransform())
@@ -245,8 +268,13 @@ public sealed class RoadTrafficController : MonoBehaviour
         }
         network = current;
         version = mapGenerator.LaneNetworkVersion;
-        random = new System.Random(mapGenerator.CurrentSeed);
-        simulation = new RoadTrafficSimulation(network, mapGenerator.CurrentSeed);
+        mapSession = mapGenerator.LaneNetworkSession;
+        if (!preservesTraffic)
+        {
+            random = new System.Random(mapGenerator.CurrentSeed);
+            simulation = new RoadTrafficSimulation(network, mapGenerator.CurrentSeed);
+            spawnClock = 0f;
+        }
         if (mapGenerator.TryGetPickupTrafficZone(out var pickupPath, out var pickupStart, out var pickupEnd))
         {
             var ambulanceRenderer = player.GetComponent<SpriteRenderer>();
@@ -260,7 +288,6 @@ public sealed class RoadTrafficController : MonoBehaviour
             }
             simulation.ConfigurePickupZone(pickupPath, pickupStart, pickupEnd, ambulanceLength * 3f);
         }
-        spawnClock = 0f;
         // 풀은 최초 맵에서만 예열한다. 종료/비활성화 때만 소유 루트 전체를 파괴한다.
         if (vehicleRoot == null)
         {
@@ -279,7 +306,7 @@ public sealed class RoadTrafficController : MonoBehaviour
         UpdateSearchArea();
         RefreshSpawnPaths();
         CollectObstacles();
-        for (var count = 0; count < TargetVehicles && isActiveAndEnabled; count++)
+        for (var count = instances.Count; count < TargetVehicles && isActiveAndEnabled; count++)
         {
             TrySpawn(true);
         }
@@ -323,6 +350,14 @@ public sealed class RoadTrafficController : MonoBehaviour
                 continue;
             }
             AddObstacle(collider, body);
+        }
+        // 사고 차량은 AI 경로의 가상 위치 대신 실제 콜라이더 위치로 관측한다.
+        foreach (var instance in instances)
+        {
+            if (instance.Body != null && instance.Collider != null && instance.Collision.IsReacting)
+            {
+                AddObstacle(instance.Collider, instance.Body);
+            }
         }
     }
 
@@ -382,6 +417,7 @@ public sealed class RoadTrafficController : MonoBehaviour
         body.gravityScale = 0f;
         body.interpolation = RigidbodyInterpolation2D.Interpolate;
         body.useFullKinematicContacts = true;
+        var collision = created.AddComponent<RoadTrafficCollision>();
         // 풀 내부 차체도 소유 목록에 유지해 외부 장애물 관측에서 제외한다.
         ownedBodies.Add(body);
         ownedColliders.Add(collider);
@@ -390,7 +426,7 @@ public sealed class RoadTrafficController : MonoBehaviour
             Root = created, Body = body, Collider = collider, PrefabIndex = prefabIndex,
             Length = collider.size.y * Mathf.Abs(created.transform.localScale.y),
             Width = collider.size.x * Mathf.Abs(created.transform.localScale.x),
-            Vehicle = new RoadTrafficVehicle()
+            Vehicle = new RoadTrafficVehicle(), Collision = collision
         };
     }
 
@@ -464,6 +500,7 @@ public sealed class RoadTrafficController : MonoBehaviour
         var position = GetBodyPosition(instance, center, rotation);
         instance.Root.transform.SetPositionAndRotation(position, Quaternion.Euler(0f, 0f, rotation));
         var body = instance.Body;
+        instance.Collision.ResetForSpawn();
         pools[prefabIndex].Pop();
         activePerPrefab[prefabIndex]++;
         instances.Add(instance);
@@ -522,6 +559,7 @@ public sealed class RoadTrafficController : MonoBehaviour
         simulation = null;
         network = null;
         version = -1;
+        mapSession = -1;
         spawnClock = 0f;
         mapRoot = null;
         random = null;

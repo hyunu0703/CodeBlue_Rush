@@ -14,6 +14,7 @@ public sealed class RoadTrafficVehicle
     public Vector2 Position { get; internal set; }
     public Vector2 Forward { get; internal set; }
     public bool IsFinished { get; internal set; }
+    public bool IsPhysicsControlled { get; internal set; }
     public bool IsChangingLane => TargetLaneId >= 0;
     public int TargetLaneId { get; internal set; } = -1;
     public int NextPathId { get; internal set; } = -1;

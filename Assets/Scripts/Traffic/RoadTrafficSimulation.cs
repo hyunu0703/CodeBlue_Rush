@@ -15,7 +15,7 @@ public sealed class RoadTrafficSimulation
     private const float CurveSpeedRatio = 0.9f;
     private const float PredictionSeconds = 0.8f;
     private const float StopHoldSeconds = 0.3f;
-    private readonly RoadLaneNetwork network;
+    private RoadLaneNetwork network;
     private readonly List<RoadTrafficVehicle> vehicles = new List<RoadTrafficVehicle>();
     private readonly List<RoadTrafficObstacle> observations = new List<RoadTrafficObstacle>();
     private readonly System.Random random;
@@ -42,7 +42,7 @@ public sealed class RoadTrafficSimulation
         pickupMinimumChangeDistance = Math.Min(network.Paths[pathId].Width * MinimumLaneChangeWidths, approach * 0.85f);
     }
     public IReadOnlyList<RoadTrafficVehicle> Vehicles { get; }
-    public RoadTrafficSignals Signals { get; }
+    public RoadTrafficSignals Signals { get; private set; }
 
     /// <summary>맵 스냅숏과 재현 가능한 시드로 새 세션을 만든다. 호출자가 맵 교체 시 이 인스턴스를 폐기한다.</summary>
     public RoadTrafficSimulation(RoadLaneNetwork network, int seed)
@@ -51,6 +51,42 @@ public sealed class RoadTrafficSimulation
         random = new System.Random(seed);
         Signals = new RoadTrafficSignals(network);
         Vehicles = vehicles.AsReadOnly();
+    }
+
+    /// <summary>기존 배치를 접두부로 보존하는 확장만 적용한다. 차량과 난수/예약 상태는 초기화하지 않는다.</summary>
+    internal bool TryExtendNetwork(RoadLaneNetwork next)
+    {
+        if (next == null || !next.IsValid || next.Roads.Count <= network.Roads.Count)
+        {
+            return false;
+        }
+        // 도로 번호와 경로 번호가 유지되는 동일 배치인지 교체 전에 확인한다.
+        for (var index = 0; index < network.Roads.Count; index++)
+        {
+            var previousRoad = network.Roads[index];
+            var nextRoad = next.Roads[index];
+            if (!ReferenceEquals(previousRoad.Layout, nextRoad.Layout)
+                || previousRoad.Position != nextRoad.Position
+                || previousRoad.ClockwiseQuarterTurns != nextRoad.ClockwiseQuarterTurns)
+            {
+                return false;
+            }
+        }
+        // 기존 신호 위상과 차량 자세를 유지하고 새로 열린 막다른 길의 다음 경로만 선택한다.
+        var nextSignals = new RoadTrafficSignals(next);
+        nextSignals.CopyStateFrom(Signals);
+        network = next;
+        Signals = nextSignals;
+        observations.Clear();
+        foreach (var vehicle in vehicles)
+        {
+            if (vehicle.NextPathId < 0 && network.Paths[vehicle.PathId].Successors.Count > 0)
+            {
+                vehicle.IsFinished = false;
+                ChooseNext(vehicle);
+            }
+        }
+        return true;
     }
 
     /// <summary>차로 중앙에 정지 상태로 등록한다. 경계/정지선/기존 차량 간격이 부족하면 생성하지 않는다.</summary>
@@ -90,6 +126,7 @@ public sealed class RoadTrafficSimulation
         candidate.CruiseSpeed = cruiseSpeed;
         candidate.Speed = 0f;
         candidate.IsFinished = false;
+        candidate.IsPhysicsControlled = false;
         candidate.TargetLaneId = -1;
         candidate.NextPathId = -1;
         candidate.ReservedMovement = -1;
@@ -137,7 +174,7 @@ public sealed class RoadTrafficSimulation
         BuildObservations(external);
         foreach (var vehicle in vehicles)
         {
-            if (vehicle.IsFinished)
+            if (vehicle.IsFinished || vehicle.IsPhysicsControlled)
             {
                 continue;
             }
@@ -147,7 +184,7 @@ public sealed class RoadTrafficSimulation
         // 판단은 동일 관측값을 사용한다. 예약과 차로 변경 의도만 ID 순서대로 확정하여 동시 진입 충돌을 막는다.
         foreach (var vehicle in vehicles)
         {
-            if (vehicle.IsFinished)
+            if (vehicle.IsFinished || vehicle.IsPhysicsControlled)
             {
                 continue;
             }
@@ -162,7 +199,7 @@ public sealed class RoadTrafficSimulation
     /// <summary>동일 진행 방향의 바로 옆 차로만 요청한다. 앞/뒤 차량과 다른 차량의 변경 의도를 확인한 뒤 양쪽 차로를 점유한다.</summary>
     public bool TryChangeLane(RoadTrafficVehicle vehicle, bool toLeft)
     {
-        if (!network.IsValid || vehicle == null || !vehicles.Contains(vehicle) || vehicle.IsFinished
+        if (!network.IsValid || vehicle == null || !vehicles.Contains(vehicle) || vehicle.IsFinished || vehicle.IsPhysicsControlled
             || vehicle.IsChangingLane || vehicle.LaneChangeCooldown > 0f
             || (vehicle.Speed <= 0.05f && !(vehicle.PathId == pickupPathId && toLeft)))
         {
@@ -175,7 +212,7 @@ public sealed class RoadTrafficSimulation
         var changeDistance = Math.Max(path.Width * MinimumLaneChangeWidths, vehicle.CruiseSpeed * LaneChangeSeconds);
         if (vehicle.PathId == pickupPathId && toLeft)
         {
-            // 구급차 세 대 길이에서 시작해 앞범퍼가 픽업 구역에 닿기 전에 변경을 완료한다.
+            // 픽업 도로에서 즉시 시작하되 앞범퍼가 픽업 구역에 닿기 전에 변경을 완료한다.
             changeDistance = Math.Min(changeDistance, pickupStart - vehicle.Length * 0.5f - vehicle.Distance);
             if (changeDistance < pickupMinimumChangeDistance)
             {
@@ -223,7 +260,7 @@ public sealed class RoadTrafficSimulation
         observations.Clear();
         foreach (var vehicle in vehicles)
         {
-            if (!vehicle.IsFinished)
+            if (!vehicle.IsFinished && !vehicle.IsPhysicsControlled)
             {
                 observations.Add(new RoadTrafficObstacle(vehicle.Id, vehicle.Position,
                     vehicle.Forward * vehicle.Speed, vehicle.Forward, vehicle.Length, vehicle.Width));
@@ -431,7 +468,8 @@ public sealed class RoadTrafficSimulation
         }
         foreach (var other in vehicles)
         {
-            if (other != vehicle && !other.IsFinished && other.ReservedMovement >= 0 && Conflicts(movement, other.ReservedMovement))
+            if (other != vehicle && !other.IsFinished && !other.IsPhysicsControlled
+                && other.ReservedMovement >= 0 && Conflicts(movement, other.ReservedMovement))
             {
                 return false;
             }
@@ -459,7 +497,7 @@ public sealed class RoadTrafficSimulation
             {
                 foreach (var other in vehicles)
                 {
-                    if (other == vehicle || other.NextPathId != pathId || other.IsFinished
+                    if (other == vehicle || other.NextPathId != pathId || other.IsFinished || other.IsPhysicsControlled
                         || Signals.GetPermission(conflicting) != RoadTrafficPermission.Proceed)
                     {
                         continue;
@@ -498,7 +536,7 @@ public sealed class RoadTrafficSimulation
         return false;
     }
 
-    /// <summary>픽업 도로는 우측 주행을 우선하고 예약 구역 앞에서는 안전한 좌측 합류를 먼저 시도한다.</summary>
+    /// <summary>픽업 도로의 우측 차로에서는 거리 대기 없이 안전한 좌측 합류를 시도한다.</summary>
     private bool RouteAroundPickup(RoadTrafficVehicle vehicle)
     {
         if (pickupPathId < 0)
@@ -516,10 +554,9 @@ public sealed class RoadTrafficSimulation
             return true;
         }
         var isBeforeClearance = vehicle.Distance - vehicle.Length * 0.5f <= pickupEnd;
-        if (vehicle.PathId == pickupPathId && isBeforeClearance
-            && vehicle.Distance + vehicle.Length * 0.5f >= pickupStart - pickupApproach)
+        if (vehicle.PathId == pickupPathId && isBeforeClearance)
         {
-            // 대기 후 재출발을 위해 정차 상태에서도 변경 계획을 세울 수 있다.
+            // 접근 거리나 이전 변경 쿨다운을 기다리지 않는다. 옆 차로가 막히면 정차 후 재시도한다.
             vehicle.LaneChangeCooldown = 0f;
             if (TryChangeLane(vehicle, true))
             {

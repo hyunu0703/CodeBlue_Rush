@@ -46,6 +46,12 @@ public sealed class AmbulanceDriveController : MonoBehaviour
     [SerializeField, Min(0f)] private float stoppedAngularSpeed = 3f;
 
     private Rigidbody2D body;
+    [Header("Vehicle collision (world units / second)")]
+    [SerializeField, Min(0.1f)] private float impactMinimumSpeed = 3.5f;
+    [SerializeField, Min(0.1f)] private float fatalImpactSpeed = 6f;
+    [SerializeField, Range(0f, 1f)] private float impactRestitution = 0.15f;
+    [SerializeField, Min(0f)] private float impactControlDelay = 0.35f;
+    private float impactControlRemaining;
     private float steering;
     private float throttle;
     private float brake;
@@ -82,9 +88,13 @@ public sealed class AmbulanceDriveController : MonoBehaviour
         if (body == null || body.bodyType != RigidbodyType2D.Dynamic || !body.simulated
             || bodyCollider == null || bodyCollider.isTrigger || !bodyCollider.enabled
             || float.IsNaN(brakeStrengthMultiplier) || float.IsInfinity(brakeStrengthMultiplier) || brakeStrengthMultiplier < 1f
-            || float.IsNaN(engineBrakeDeceleration) || float.IsInfinity(engineBrakeDeceleration) || engineBrakeDeceleration < 0f)
+            || float.IsNaN(engineBrakeDeceleration) || float.IsInfinity(engineBrakeDeceleration) || engineBrakeDeceleration < 0f
+            || !RoadLaneMath.IsFinite(impactMinimumSpeed) || impactMinimumSpeed <= 0f
+            || !RoadLaneMath.IsFinite(fatalImpactSpeed) || fatalImpactSpeed < impactMinimumSpeed
+            || !RoadLaneMath.IsFinite(impactRestitution) || impactRestitution < 0f || impactRestitution > 1f
+            || !RoadLaneMath.IsFinite(impactControlDelay) || impactControlDelay < 0f)
         {
-            Debug.LogError("구급차에는 simulated Dynamic Rigidbody2D, 활성 비트리거 BoxCollider2D, 1 이상의 제동 강도 배율과 0 이상의 엔진 브레이크 감속도가 필요합니다.", this);
+            Debug.LogError("구급차의 Dynamic Rigidbody2D, 비트리거 BoxCollider2D와 제동/충돌 설정을 확인해주세요. 충돌 기준 속도는 양수, 사망 기준은 충돌 기준 이상, 반발 계수는 0~1, 제어 유예 시간은 0 이상이어야 합니다.", this);
             enabled = false;
             return;
         }
@@ -95,6 +105,32 @@ public sealed class AmbulanceDriveController : MonoBehaviour
     private void OnDisable()
     {
         ClearInput();
+        impactControlRemaining = 0f;
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (!IsReady || collision.rigidbody == null || collision.contactCount == 0
+            || !collision.rigidbody.TryGetComponent<RoadTrafficCollision>(out var target) || !target.isActiveAndEnabled)
+        {
+            return;
+        }
+        // 접촉 법선의 반대쪽이 상대 차량을 밀어내는 방향이다.
+        var contact = collision.GetContact(0);
+        var direction = -contact.normal;
+        var closingSpeed = Mathf.Abs(Vector2.Dot(collision.relativeVelocity, direction));
+        if (closingSpeed < impactMinimumSpeed)
+        {
+            return;
+        }
+        var other = collision.rigidbody;
+        target.BeginImpact(closingSpeed >= Mathf.Max(impactMinimumSpeed, fatalImpactSpeed));
+        var reducedMass = body.mass * other.mass / (body.mass + other.mass);
+        var impulse = direction * (reducedMass * closingSpeed * (1f + impactRestitution));
+        // 충돌 해결기가 이미 감속시킨 뒤 추가하는 연출 충격량이다. 양쪽에 같은 크기로 적용한다.
+        other.AddForceAtPosition(impulse, contact.point, ForceMode2D.Impulse);
+        body.AddForceAtPosition(-impulse, contact.point, ForceMode2D.Impulse);
+        impactControlRemaining = impactControlDelay;
     }
 
     /// <summary>고정 물리 스텝에서 페달 응답, 구동력, 제동과 접지력을 적용한다.</summary>
@@ -104,6 +140,13 @@ public sealed class AmbulanceDriveController : MonoBehaviour
         brakingDeceleration = 0f;
         if (!IsReady)
         {
+            return;
+        }
+
+        // 충격 직후 조향 정렬과 페달 힘이 반동을 지우지 않도록 잠시 물리 엔진에 맡긴다.
+        if (impactControlRemaining > 0f)
+        {
+            impactControlRemaining = Mathf.Max(0f, impactControlRemaining - Time.fixedDeltaTime);
             return;
         }
 

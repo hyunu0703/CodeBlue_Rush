@@ -95,11 +95,36 @@ public static class MissionSeedRules
         return true;
     }
 
-    /// <summary>기존 픽업 경로의 마지막 출구에 후송 계획을 연결한다. 차선과 두 경로의 겹침을 생성 전에 확인한다.</summary>
+    /// <summary>픽업 위치 뒤에 같은 방향과 차선 수의 직선 한 칸을 추가하고 겹침을 검사한다.</summary>
+    internal static bool TryBuildPickupRoute(int seed, out MissionRoadPiece[] route, out string error)
+    {
+        if (!TryBuildRoute(seed, out route, out error))
+        {
+            return false;
+        }
+        // 원래 마지막 칸이 픽업 위치이며 추가 칸은 차량 직진과 후송 연결에 사용한다.
+        var pieces = new List<MissionRoadPiece>(route);
+        var last = route[route.Length - 1];
+        AddStraights(pieces, 1, last.Outgoing, last.ExitLanes);
+        var continuation = pieces[pieces.Count - 1];
+        foreach (var piece in route)
+        {
+            if (piece.GridX == continuation.GridX && piece.GridY == continuation.GridY)
+            {
+                route = Array.Empty<MissionRoadPiece>();
+                error = "픽업 뒤 직선 도로가 기존 경로와 겹칩니다.";
+                return false;
+            }
+        }
+        route = pieces.ToArray();
+        return true;
+    }
+
+    /// <summary>픽업 뒤 직선의 출구에 후송 계획을 연결한다. 차선과 두 경로의 겹침을 생성 전에 확인한다.</summary>
     public static bool TryBuildTransportRoute(int pickupSeed, int transportSeed, out MissionRoadPiece[] route, out string error)
     {
         route = Array.Empty<MissionRoadPiece>();
-        if (!TryBuildRoute(pickupSeed, out var pickup, out error)
+        if (!TryBuildPickupRoute(pickupSeed, out var pickup, out error)
             || !TryBuildRoute(transportSeed, out var transport, out error))
         {
             return false;
@@ -153,7 +178,7 @@ public static class MissionSeedRules
     public static bool TrySelectTransportSeed(int pickupSeed, out int transportSeed, out string error)
     {
         transportSeed = 0;
-        if (!TryBuildRoute(pickupSeed, out _, out error))
+        if (!TryBuildPickupRoute(pickupSeed, out _, out error))
         {
             return false;
         }

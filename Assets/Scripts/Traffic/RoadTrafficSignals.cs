@@ -28,6 +28,14 @@ public sealed class RoadTrafficSignals
         }
     }
 
+    /// <summary>검증된 후송 확장에서 기존 교차로의 신호 시간과 보행자/우회전 정책을 보존한다.</summary>
+    internal void CopyStateFrom(RoadTrafficSignals previous)
+    {
+        Array.Copy(previous.clocks, clocks, previous.clocks.Length);
+        Array.Copy(previous.dedicatedRight, dedicatedRight, previous.dedicatedRight.Length);
+        Array.Copy(previous.crossings, crossings, previous.crossings.Length);
+    }
+
     /// <summary>유한한 0 이상의 고정 스텝으로만 신호를 진행한다. 일시정지는 호출자가 진행을 중단한다.</summary>
     public void Tick(float seconds)
     {

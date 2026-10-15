@@ -41,6 +41,10 @@ public sealed class MissionMapGenerator : MonoBehaviour
     // 두 단계까지만 연결한다. 동일한 픽업/후송 시드 쌍은 풀 상태와 무관하게 같은 배치를 만든다.
     private int pickupSeed;
     private bool hasTransport;
+    // 새 미션에서만 증가한다. 후송 확장과 새 맵 교체를 교통 시스템이 구분한다.
+    internal int LaneNetworkSession { get; private set; }
+    // 추가 직선 바로 앞의 실제 픽업 도로 번호다. 후송 확장 시에도 유지한다.
+    private int pickupRoadOrdinal = -1;
     // 마지막 출구 방향과 프리팹 회전은 맵 부모 기준으로 저장한다.
     private RoadDirection finalDirection;
     private int finalRotation;
@@ -218,13 +222,14 @@ public sealed class MissionMapGenerator : MonoBehaviour
         sidewalkPosition = Vector2.zero;
         rotation = 0f;
         error = null;
-        if (!isActiveAndEnabled || hasTransport || activeRoads.Count == 0 || destination == null || mapRoot == null)
+        if (!isActiveAndEnabled || hasTransport || pickupRoadOrdinal < 0 || pickupRoadOrdinal >= activeRoads.Count
+            || destination == null || mapRoot == null)
         {
             error = "픽업 배치에는 생성된 픽업 도로와 목적지 참조가 필요합니다.";
             return false;
         }
         // 프리팹 회전과 최종 이동 방향을 사용한다. 화면의 임의 오른쪽이 아니라 주행 방향의 오른쪽이다.
-        var road = activeRoads[activeRoads.Count - 1];
+        var road = activeRoads[pickupRoadOrdinal];
         if (road == null || !road.TryGetConnectionPosition(finalDirection, finalRotation, out var exit))
         {
             error = "마지막 도로의 출구 정보를 확인해주세요.";
@@ -250,7 +255,7 @@ public sealed class MissionMapGenerator : MonoBehaviour
         pickupTrafficPathId = -1;
         foreach (var path in laneNetwork.Paths)
         {
-            if (path.RoadOrdinal == activeRoads.Count - 1 && path.Kind == RoadLanePathKind.Straight
+            if (path.RoadOrdinal == pickupRoadOrdinal && path.Kind == RoadLanePathKind.Straight
                 && path.Exit == finalDirection && path.RightNeighborId < 0
                 && path.TryProject(center + laneOffset, out var along, out _))
             {
@@ -428,7 +433,7 @@ public sealed class MissionMapGenerator : MonoBehaviour
     {
         transportSeed = 0;
         if (!ValidateConfiguration(out error)
-            || !MissionSeedRules.TryBuildRoute(seed, out var pickup, out error)
+            || !MissionSeedRules.TryBuildPickupRoute(seed, out var pickup, out error)
             || !TryPlanRoads(pickup, Vector2.zero, new List<RoadPlacement>(), out var pickupRoads,
                 out var pickupBranches, out error))
         {
@@ -497,7 +502,7 @@ public sealed class MissionMapGenerator : MonoBehaviour
         MissionRoadPiece[] route;
         var isValid = append
             ? MissionSeedRules.TryBuildTransportRoute(pickupSeed, seed, out route, out error)
-            : MissionSeedRules.TryBuildRoute(seed, out route, out error);
+            : MissionSeedRules.TryBuildPickupRoute(seed, out route, out error);
         if (!isValid)
         {
             return false;
@@ -582,10 +587,14 @@ public sealed class MissionMapGenerator : MonoBehaviour
         {
             PlaceRoad(branch);
         }
-        foreach (var road in roads)
+        for (var index = 0; index < roads.Count; index++)
         {
-            var instance = PlaceRoad(road);
-            navigationRoute.Add(instance.transform.position);
+            // 픽업 뒤 추가 직선은 생성하되 픽업 안내가 목적지를 지나치지 않게 한다.
+            var instance = PlaceRoad(roads[index]);
+            if (append || index < roads.Count - 1)
+            {
+                navigationRoute.Add(instance.transform.position);
+            }
         }
         // 각 주행 구역은 자기 이후의 첫 교차로 통과 시 반환한다. 마지막 구간은 유지한다.
         for (var index = 0; index < roads.Count; index++)
@@ -632,13 +641,17 @@ public sealed class MissionMapGenerator : MonoBehaviour
         {
             pickupSeed = seed;
             pickupTrafficPathId = -1;
+            pickupRoadOrdinal = routeStart + roads.Count - 2;
+            LaneNetworkSession++;
         }
         hasTransport = append;
         var last = route.Length - 1;
         finalDirection = route[last].Outgoing;
         finalRotation = roads[last].Rotation;
         roads[last].Prefab.TryGetConnectionPosition(finalDirection, finalRotation, out var finalExit);
-        destination.position = mapRoot.TransformPoint(roads[last].Position + finalExit * 0.5f);
+        // 마지막 칸은 픽업 뒤 연결 도로다. 환자는 원래 시드의 마지막 칸에 그대로 둔다.
+        var destinationRoad = append ? roads[last] : roads[last - 1];
+        destination.position = mapRoot.TransformPoint(destinationRoad.Position + finalExit * 0.5f);
         navigationRoute.Add(DestinationPosition);
         destination.gameObject.SetActive(true);
         if (roadPreview != null)

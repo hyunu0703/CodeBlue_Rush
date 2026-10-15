@@ -6,6 +6,7 @@ using UnityEngine;
 /// <summary>실제 차로 그래프를 고정 스텝으로 실행해 픽업 구역 회피와 안전 대기를 확인한다.</summary>
 public sealed class TrafficPickupTests
 {
+    /// <summary>모든 도로 회전에서 첫 스텝부터 합류하고 픽업 구역 전에 변경을 완료하는지 확인한다.</summary>
     [TestCase(4, 0)]
     [TestCase(4, 1)]
     [TestCase(4, 2)]
@@ -18,6 +19,10 @@ public sealed class TrafficPickupTests
     {
         var simulation = Create(lanes, rotation, out var path);
         Assert.IsTrue(simulation.TryAddVehicle(path.Id, 0.5f, 1f, 0.4f, 1.6f, null, out var vehicle));
+        // 접근 구간까지 직진 대기하지 않고 최초 판단에서 왼쪽 차로를 예약해야 한다.
+        simulation.Tick(0.02f, null);
+        Assert.IsTrue(vehicle.IsChangingLane);
+        Assert.AreEqual(path.LeftNeighborId, vehicle.TargetLaneId);
         var changed = false;
         for (var step = 0; step < 600; step++)
         {
@@ -50,6 +55,9 @@ public sealed class TrafficPickupTests
             Assert.Less(vehicle.Distance + vehicle.Length * 0.5f, 8f);
         }
         Assert.Less(vehicle.Speed, 0.01f);
+        // 장애물이 사라진 첫 스텝에 다시 합류를 시작해야 한다.
+        simulation.Tick(0.02f, null);
+        Assert.IsTrue(vehicle.IsChangingLane);
         for (var step = 0; step < 600; step++)
         {
             simulation.Tick(0.02f, null);
@@ -78,6 +86,62 @@ public sealed class TrafficPickupTests
         Assert.IsFalse(simulation.TryAddVehicle(path.Id, 4.5f, 1f, 0.4f, 1.6f, null, out _));
         Assert.IsFalse(simulation.TryAddVehicle(path.Id, 6f, 1f, 0.4f, 1.6f, null, out _));
         Assert.IsFalse(simulation.TryAddVehicle(path.Id, 8.5f, 1f, 0.4f, 1.6f, null, out _));
+    }
+
+    /// <summary>차로 변경 중 후송을 확장해도 상태를 보존하고 픽업 도로 너머로 계속 직진하는지 확인한다.</summary>
+    [TestCase(4, 0)]
+    [TestCase(4, 1)]
+    [TestCase(4, 2)]
+    [TestCase(4, 3)]
+    [TestCase(6, 0)]
+    [TestCase(6, 1)]
+    [TestCase(6, 2)]
+    [TestCase(6, 3)]
+    public void Tick_ExtendedDuringLaneChange_PreservesVehicleAndDrivesPastPickup(int lanes, int rotation)
+    {
+        // 실제 차로 배치와 고정 시드로 변경 중인 차량 상태를 만든다.
+        var simulation = Create(lanes, rotation, out var path);
+        Assert.IsTrue(simulation.TryAddVehicle(path.Id, 0.5f, 1f, 0.4f, 1.6f, null, out var vehicle));
+        for (var step = 0; step < 50; step++)
+        {
+            simulation.Tick(0.02f, null);
+        }
+        Assert.IsTrue(vehicle.IsChangingLane);
+        // 기존 도로의 출구 방향으로 같은 규격의 직선을 정확히 한 칸 연결한다.
+        var previous = GetNetwork(simulation);
+        var placement = previous.Roads[0];
+        path.TrySample(path.Length, out _, out var forward);
+        Assert.IsTrue(RoadLaneNetwork.TryBuild(new[] { placement,
+            new RoadLanePlacement(placement.Layout, forward * placement.Layout.ImageSize.x, rotation) },
+            out var extended, out var error), error);
+        // 맵 생성기가 이전 그래프를 무효화한 실제 교체 순서를 재현한다.
+        var position = vehicle.Position;
+        var speed = vehicle.Speed;
+        var distance = vehicle.Distance;
+        var targetLane = vehicle.TargetLaneId;
+        var id = vehicle.Id;
+        typeof(RoadLaneNetwork).GetMethod("Invalidate", BindingFlags.Instance | BindingFlags.NonPublic)
+            .Invoke(previous, null);
+        Assert.IsTrue((bool)typeof(RoadTrafficSimulation).GetMethod("TryExtendNetwork", BindingFlags.Instance | BindingFlags.NonPublic)
+            .Invoke(simulation, new object[] { extended }));
+        Assert.AreSame(vehicle, simulation.Vehicles[0]);
+        Assert.AreEqual(id, vehicle.Id);
+        Assert.AreEqual(position, vehicle.Position);
+        Assert.AreEqual(speed, vehicle.Speed);
+        Assert.AreEqual(distance, vehicle.Distance);
+        Assert.AreEqual(targetLane, vehicle.TargetLaneId);
+        // 픽업 구역 전에 합류한 뒤 추가 직선까지 스스로 전진해야 한다.
+        for (var step = 0; step < 650; step++)
+        {
+            simulation.Tick(0.02f, null);
+            if (vehicle.PathId == path.Id)
+            {
+                Assert.LessOrEqual(vehicle.Distance + vehicle.Length * 0.5f, 8f + 0.001f);
+            }
+        }
+        Assert.AreEqual(1, extended.Paths[vehicle.PathId].RoadOrdinal);
+        Assert.Greater(vehicle.Speed, 0f);
+        Assert.IsFalse(vehicle.IsFinished);
     }
 
     private static RoadTrafficSimulation Create(int lanes, int rotation, out RoadLanePath path)
