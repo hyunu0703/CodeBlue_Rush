@@ -146,7 +146,15 @@ public sealed class RoadTrafficController : MonoBehaviour
             {
                 continue;
             }
-            instance.Collision.Tick(Time.fixedDeltaTime);
+            if (instance.Collision.IsReacting && !instance.Vehicle.IsPhysicsControlled)
+            {
+                // 접촉 후에는 속도/차로 변경/교차로 예약을 폐기한다. 같은 수명에서 AI로 복귀하지 않는다.
+                instance.Vehicle.Speed = 0f;
+                instance.Vehicle.TargetSpeed = 0f;
+                instance.Vehicle.TargetLaneId = -1;
+                instance.Vehicle.ReservedMovement = -1;
+                instance.Vehicle.ExitClearanceRemaining = -1f;
+            }
             instance.Vehicle.IsPhysicsControlled = instance.Collision.IsReacting;
         }
         CollectObstacles();
@@ -418,6 +426,8 @@ public sealed class RoadTrafficController : MonoBehaviour
         body.interpolation = RigidbodyInterpolation2D.Interpolate;
         body.useFullKinematicContacts = true;
         var collision = created.AddComponent<RoadTrafficCollision>();
+        // 기존 Bus 프리팹만 대형차 질량을 사용하며 원본 프리팹의 저장 값은 변경하지 않는다.
+        collision.ConfigureVehicle(spawnPrefabs[prefabIndex].name == "Bus");
         // 풀 내부 차체도 소유 목록에 유지해 외부 장애물 관측에서 제외한다.
         ownedBodies.Add(body);
         ownedColliders.Add(collider);
