@@ -17,9 +17,9 @@ public sealed class SteeringWheelControl : MonoBehaviour, IPointerDownHandler, I
     // 기본 450도 범위에서 15/45/90/180/360도 지점의 누적 조향량이다. 범위는 0~1이다.
     private const float FirstSectionSteering = 0.16f;
     private const float SecondSectionSteering = 0.34f;
-    private const float ThirdSectionSteering = 0.46f;
-    private const float FourthSectionSteering = 0.55f;
-    private const float FifthSectionSteering = 0.8f;
+    private const float ThirdSectionSteering = 0.4f;
+    private const float FourthSectionSteering = 0.46f;
+    private const float FifthSectionSteering = 0.7f;
 
     private RectTransform wheelRect;
     private Quaternion neutralRotation;

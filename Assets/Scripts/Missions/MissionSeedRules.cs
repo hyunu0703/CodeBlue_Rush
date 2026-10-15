@@ -64,7 +64,7 @@ public static class MissionSeedRules
         var pieces = new List<MissionRoadPiece>(39);
         var direction = RoadDirection.North;
         var firstDigit = GetDigit(seed, 1);
-        var lanes = firstDigit <= 2 ? 2 : firstDigit <= 5 ? 4 : 6;
+        var lanes = firstDigit <= 4 ? 4 : 6;
         AddStraights(pieces, GetDigit(seed, 2), direction, lanes);
 
         // 3·5·7번째 자리는 같은 선택 규칙을 적용한다. 혼합 T의 출구 차선은 다음 구간과 교차로에 이어진다.
@@ -181,19 +181,19 @@ public static class MissionSeedRules
     /// <summary>차선 수에 대응하는 직선 도로의 고정 식별자를 반환한다.</summary>
     private static RoadIndex Straight(int lanes)
     {
-        return lanes == 2 ? RoadIndex.Straight2Lane : lanes == 4 ? RoadIndex.Straight4Lane : RoadIndex.Straight6Lane;
+        return lanes == 4 ? RoadIndex.Straight4Lane : RoadIndex.Straight6Lane;
     }
 
     /// <summary>직전 도로와 같은 차선 수의 Cross 식별자를 반환한다.</summary>
     private static RoadIndex Cross(int lanes)
     {
-        return lanes == 2 ? RoadIndex.Cross2Lane : lanes == 4 ? RoadIndex.Cross4Lane : RoadIndex.Cross6Lane;
+        return lanes == 4 ? RoadIndex.Cross4Lane : RoadIndex.Cross6Lane;
     }
 
     /// <summary>직전 도로와 같은 차선 수의 일반 T 식별자를 반환한다.</summary>
     private static RoadIndex Tee(int lanes)
     {
-        return lanes == 2 ? RoadIndex.T2Lane : lanes == 4 ? RoadIndex.T4Lane : RoadIndex.T6Lane;
+        return lanes == 4 ? RoadIndex.T4Lane : RoadIndex.T6Lane;
     }
 
     /// <summary>현재 차선과 0~9의 선택 숫자로 교차로와 출구 차선을 결정한다. 3·5·7번째 자리에서 공통으로 사용한다.</summary>
@@ -206,13 +206,12 @@ public static class MissionSeedRules
         }
         if (digit <= 6)
         {
-            exitLanes = lanes == 4 ? 2 : lanes;
-            return lanes == 4 ? RoadIndex.TV4LaneH2Lane : Tee(lanes);
+            // 좌회전은 진입 차선 수를 유지하며 2차선 연결을 만들지 않는다.
+            return Tee(lanes);
         }
 
         exitLanes = lanes == 4 ? 6 : 4;
-        return lanes == 2 ? RoadIndex.TV2LaneH4Lane
-            : lanes == 4 ? RoadIndex.TV4LaneH6Lane : RoadIndex.TV6LaneH4Lane;
+        return lanes == 4 ? RoadIndex.TV4LaneH6Lane : RoadIndex.TV6LaneH4Lane;
     }
 
     /// <summary>주어진 개수의 동일 차선 직선을 진행 방향으로 이어 붙인다.</summary>

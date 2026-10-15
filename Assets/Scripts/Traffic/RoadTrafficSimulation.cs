@@ -20,6 +20,27 @@ public sealed class RoadTrafficSimulation
     private readonly List<RoadTrafficObstacle> observations = new List<RoadTrafficObstacle>();
     private readonly System.Random random;
     private int nextId = 1;
+    private int pickupPathId = -1;
+    private float pickupStart;
+    private float pickupEnd;
+    private float pickupApproach;
+    private float pickupMinimumChangeDistance;
+
+    /// <summary>픽업 사각형과 구급차 세 대 길이의 접근 거리를 맵 로컬 단위로 받는다.</summary>
+    internal void ConfigurePickupZone(int pathId, float start, float end, float approach)
+    {
+        if (pathId < 0 || pathId >= network.Paths.Count || !RoadLaneMath.IsFinite(start)
+            || !RoadLaneMath.IsFinite(end) || end <= start || !RoadLaneMath.IsFinite(approach) || approach <= 0f)
+        {
+            throw new ArgumentOutOfRangeException(nameof(pathId));
+        }
+        pickupPathId = pathId;
+        pickupStart = start;
+        pickupEnd = end;
+        pickupApproach = approach;
+        // 일반 추월보다 짧은 픽업 접근 구간에서도 같은 보간 곡선으로 변경을 완료한다.
+        pickupMinimumChangeDistance = Math.Min(network.Paths[pathId].Width * MinimumLaneChangeWidths, approach * 0.85f);
+    }
     public IReadOnlyList<RoadTrafficVehicle> Vehicles { get; }
     public RoadTrafficSignals Signals { get; }
 
@@ -53,6 +74,8 @@ public sealed class RoadTrafficSimulation
         // 교차로 안에 직접 생성하지 않고 차폭과 앞뒤 범퍼의 배치 여유를 확인한다.
         var path = network.Paths[pathId];
         if (path.Kind == RoadLanePathKind.Intersection || width > path.Width * 0.85f
+            || (pathId == pickupPathId && distance + length * 0.5f >= pickupStart - pickupApproach
+                && distance - length * 0.5f <= pickupEnd)
             || cruiseSpeed > path.Width * 3f
             || distance < length * 0.5f || distance > path.Length - length * 0.5f)
         {
@@ -128,7 +151,10 @@ public sealed class RoadTrafficSimulation
             {
                 continue;
             }
-            TryOvertake(vehicle);
+            if (!RouteAroundPickup(vehicle))
+            {
+                TryOvertake(vehicle);
+            }
             Advance(vehicle, seconds);
         }
     }
@@ -137,7 +163,8 @@ public sealed class RoadTrafficSimulation
     public bool TryChangeLane(RoadTrafficVehicle vehicle, bool toLeft)
     {
         if (!network.IsValid || vehicle == null || !vehicles.Contains(vehicle) || vehicle.IsFinished
-            || vehicle.IsChangingLane || vehicle.LaneChangeCooldown > 0f || vehicle.Speed <= 0.05f)
+            || vehicle.IsChangingLane || vehicle.LaneChangeCooldown > 0f
+            || (vehicle.Speed <= 0.05f && !(vehicle.PathId == pickupPathId && toLeft)))
         {
             return false;
         }
@@ -146,6 +173,20 @@ public sealed class RoadTrafficSimulation
         var targetId = toLeft ? path.LeftNeighborId : path.RightNeighborId;
         // 시간과 차로 폭 양쪽 기준을 만족하는 전진 거리를 확보한 경우에만 부드러운 변경 궤적을 시작한다.
         var changeDistance = Math.Max(path.Width * MinimumLaneChangeWidths, vehicle.CruiseSpeed * LaneChangeSeconds);
+        if (vehicle.PathId == pickupPathId && toLeft)
+        {
+            // 구급차 세 대 길이에서 시작해 앞범퍼가 픽업 구역에 닿기 전에 변경을 완료한다.
+            changeDistance = Math.Min(changeDistance, pickupStart - vehicle.Length * 0.5f - vehicle.Distance);
+            if (changeDistance < pickupMinimumChangeDistance)
+            {
+                return false;
+            }
+        }
+        if (targetId == pickupPathId && vehicle.Distance + changeDistance + vehicle.Length * 0.5f >= pickupStart - pickupApproach
+            && vehicle.Distance - vehicle.Length * 0.5f <= pickupEnd)
+        {
+            return false;
+        }
         if (targetId < 0 || !path.CanChangeLaneAt(vehicle.Distance)
             || vehicle.Distance + changeDistance + vehicle.Length > path.LaneChangeEndDistance)
         {
@@ -225,6 +266,14 @@ public sealed class RoadTrafficSimulation
             ? vehicle.CruiseSpeed * CurveSpeedRatio : vehicle.CruiseSpeed;
         vehicle.ClearDistance = float.PositiveInfinity;
         LimitForTraffic(vehicle, vehicle.PathId, vehicle.Distance, braking, minimumGap);
+        if (vehicle.PathId == pickupPathId && !vehicle.IsChangingLane
+            && vehicle.Distance - vehicle.Length * 0.5f <= pickupEnd)
+        {
+            // 합류가 막히면 노란 구역을 침범하지 않고 정지한 뒤 다시 시도한다.
+            var stopAt = Math.Max(0f, pickupStart - vehicle.Length * 0.5f
+                - pickupMinimumChangeDistance - Math.Min(path.Width * 0.1f, pickupApproach * 0.05f));
+            LimitForStop(vehicle, Math.Max(0f, stopAt - vehicle.Distance), braking);
+        }
         if (vehicle.IsChangingLane)
         {
             network.Paths[vehicle.TargetLaneId].TryProject(vehicle.Position, out var targetAlong, out _);
@@ -447,6 +496,42 @@ public sealed class RoadTrafficSimulation
             }
         }
         return false;
+    }
+
+    /// <summary>픽업 도로는 우측 주행을 우선하고 예약 구역 앞에서는 안전한 좌측 합류를 먼저 시도한다.</summary>
+    private bool RouteAroundPickup(RoadTrafficVehicle vehicle)
+    {
+        if (pickupPathId < 0)
+        {
+            return false;
+        }
+        var pickup = network.Paths[pickupPathId];
+        var path = network.Paths[vehicle.PathId];
+        if (path.RoadOrdinal != pickup.RoadOrdinal || path.Entry != pickup.Entry)
+        {
+            return false;
+        }
+        if (vehicle.IsChangingLane)
+        {
+            return true;
+        }
+        var isBeforeClearance = vehicle.Distance - vehicle.Length * 0.5f <= pickupEnd;
+        if (vehicle.PathId == pickupPathId && isBeforeClearance
+            && vehicle.Distance + vehicle.Length * 0.5f >= pickupStart - pickupApproach)
+        {
+            // 대기 후 재출발을 위해 정차 상태에서도 변경 계획을 세울 수 있다.
+            vehicle.LaneChangeCooldown = 0f;
+            if (TryChangeLane(vehicle, true))
+            {
+                EvaluateSpeed(vehicle, 0f);
+            }
+            return true;
+        }
+        if (vehicle.PathId != pickupPathId && path.RightNeighborId >= 0)
+        {
+            TryChangeLane(vehicle, false);
+        }
+        return true;
     }
 
     /// <summary>신호 대기 중에는 추월하지 않으며 느린 앞차가 있을 때만 비어 있는 인접 차로를 선택한다.</summary>

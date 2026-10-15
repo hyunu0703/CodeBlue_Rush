@@ -64,15 +64,15 @@ public sealed class AmbulanceSteeringTests
     [TestCase(0f, 0f)]
     [TestCase(15f, 0.16f)]
     [TestCase(45f, 0.34f)]
-    [TestCase(90f, 0.46f)]
-    [TestCase(180f, 0.55f)]
-    [TestCase(360f, 0.8f)]
+    [TestCase(90f, 0.4f)]
+    [TestCase(180f, 0.46f)]
+    [TestCase(360f, 0.7f)]
     [TestCase(450f, 1f)]
     [TestCase(-15f, -0.16f)]
     [TestCase(-45f, -0.34f)]
-    [TestCase(-90f, -0.46f)]
-    [TestCase(-180f, -0.55f)]
-    [TestCase(-360f, -0.8f)]
+    [TestCase(-90f, -0.4f)]
+    [TestCase(-180f, -0.46f)]
+    [TestCase(-360f, -0.7f)]
     [TestCase(-450f, -1f)]
     public void Steering_WheelAngle_ProducesAgreedStrength(float degrees, float expected)
     {
@@ -128,7 +128,7 @@ public sealed class AmbulanceSteeringTests
             wheel.OnDrag(pointer);
             if (index == 1)
             {
-                Assert.That(wheel.Steering, Is.EqualTo(0.46f).Within(0.0001f));
+                Assert.That(wheel.Steering, Is.EqualTo(0.4f).Within(0.0001f));
             }
         }
         Assert.That(wheel.Steering, Is.EqualTo(1f).Within(0.0001f));

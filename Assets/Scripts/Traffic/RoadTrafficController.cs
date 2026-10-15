@@ -158,8 +158,9 @@ public sealed class RoadTrafficController : MonoBehaviour
             // Kinematic 2D 바디의 지속 이동은 FixedUpdate의 MovePosition/MoveRotation으로만 적용한다.
             var position = mapRoot.TransformPoint(instance.Vehicle.Position);
             var forward = mapRoot.TransformVector(instance.Vehicle.Forward);
-            instance.Body.MovePosition(position);
-            instance.Body.MoveRotation(Mathf.Atan2(forward.y, forward.x) * Mathf.Rad2Deg - 90f);
+            var rotation = Mathf.Atan2(forward.y, forward.x) * Mathf.Rad2Deg - 90f;
+            instance.Body.MovePosition(GetBodyPosition(instance, position, rotation));
+            instance.Body.MoveRotation(rotation);
         }
         spawnClock += Time.fixedDeltaTime;
         if (spawnClock >= spawnInterval / trafficDensity)
@@ -173,7 +174,7 @@ public sealed class RoadTrafficController : MonoBehaviour
         }
     }
 
-    /// <summary>프리팹의 소유권과 물리 모드를 명확히 확인한다. 이미 제어 스크립트/물리가 있는 프리팹은 덮어쓰지 않는다.</summary>
+    /// <summary>프리팹에 저장된 차체 콜라이더를 검증한다. Rigidbody2D와 제어 스크립트는 생성기가 소유한다.</summary>
     public bool ValidateConfiguration(out string error)
     {
         error = null;
@@ -204,10 +205,19 @@ public sealed class RoadTrafficController : MonoBehaviour
             if (prefab == null || prefab.GetComponentInChildren<SpriteRenderer>() == null
                 || prefab.GetComponentInChildren<SpriteRenderer>().sprite == null
                 || prefab.GetComponentsInChildren<Rigidbody2D>(true).Length > 0
-                || prefab.GetComponentsInChildren<Collider2D>(true).Length > 0
                 || prefab.GetComponentsInChildren<MonoBehaviour>(true).Length > 0)
             {
-                error = "Vehicle Prefabs에는 SpriteRenderer가 있는 기존 외형 프리팹만 연결해주세요. 기존 물리/제어 컴포넌트는 보존합니다.";
+                error = "Vehicle Prefabs에는 SpriteRenderer가 있고 Rigidbody2D/제어 스크립트가 없는 차량 프리팹을 연결해주세요.";
+                return false;
+            }
+            var colliders = prefab.GetComponentsInChildren<Collider2D>(true);
+            var collider = prefab.GetComponent<BoxCollider2D>();
+            if (colliders.Length != 1 || collider == null || !collider.enabled || collider.isTrigger
+                || !RoadLaneMath.IsFinite(collider.size.x) || !RoadLaneMath.IsFinite(collider.size.y)
+                || collider.size.x <= 0f || collider.size.y <= 0f
+                || !RoadLaneMath.IsFinite(collider.offset.x) || !RoadLaneMath.IsFinite(collider.offset.y))
+            {
+                error = $"{prefab.name}: 루트에 활성화된 비트리거 Box Collider 2D 하나가 필요합니다. Size는 양수, Offset은 유한한 값으로 설정해주세요.";
                 return false;
             }
             eligibleCount++;
@@ -237,6 +247,19 @@ public sealed class RoadTrafficController : MonoBehaviour
         version = mapGenerator.LaneNetworkVersion;
         random = new System.Random(mapGenerator.CurrentSeed);
         simulation = new RoadTrafficSimulation(network, mapGenerator.CurrentSeed);
+        if (mapGenerator.TryGetPickupTrafficZone(out var pickupPath, out var pickupStart, out var pickupEnd))
+        {
+            var ambulanceRenderer = player.GetComponent<SpriteRenderer>();
+            var ambulanceLength = ambulanceRenderer != null && ambulanceRenderer.sprite != null
+                ? ambulanceRenderer.sprite.bounds.size.y * Mathf.Abs(player.transform.lossyScale.y) / mapScale
+                : playerCollider.bounds.size.magnitude / mapScale;
+            if (playerCollider is BoxCollider2D ambulanceBox)
+            {
+                ambulanceLength = Mathf.Max(ambulanceLength,
+                    ambulanceBox.size.y * Mathf.Abs(player.transform.lossyScale.y) / mapScale);
+            }
+            simulation.ConfigurePickupZone(pickupPath, pickupStart, pickupEnd, ambulanceLength * 3f);
+        }
         spawnClock = 0f;
         // 풀은 최초 맵에서만 예열한다. 종료/비활성화 때만 소유 루트 전체를 파괴한다.
         if (vehicleRoot == null)
@@ -347,21 +370,12 @@ public sealed class RoadTrafficController : MonoBehaviour
         }
     }
 
-    /// <summary>외형과 Kinematic 차체를 풀 예열 시 한 번만 만든다. 프리팹 원본에는 쓰지 않는다.</summary>
+    /// <summary>저장된 콜라이더 설정을 그대로 복제하고 Kinematic 바디만 풀 예열 시 추가한다.</summary>
     private VehicleInstance CreateInstance(int prefabIndex)
     {
         var created = Instantiate(spawnPrefabs[prefabIndex], vehicleRoot.transform);
         created.SetActive(false);
-        var renderer = created.GetComponentInChildren<SpriteRenderer>(true);
-        var collider = created.AddComponent<BoxCollider2D>();
-        // 월드 AABB는 맵 회전 시 부풀기 때문에 스프라이트의 로컬 꼭짓점을 차량 루트로 변환한다.
-        var visual = renderer.sprite.bounds;
-        var localBounds = new Bounds(created.transform.InverseTransformPoint(renderer.transform.TransformPoint(visual.min)), Vector3.zero);
-        localBounds.Encapsulate(created.transform.InverseTransformPoint(renderer.transform.TransformPoint(visual.max)));
-        localBounds.Encapsulate(created.transform.InverseTransformPoint(renderer.transform.TransformPoint(new Vector3(visual.min.x, visual.max.y))));
-        localBounds.Encapsulate(created.transform.InverseTransformPoint(renderer.transform.TransformPoint(new Vector3(visual.max.x, visual.min.y))));
-        collider.offset = localBounds.center;
-        collider.size = (Vector2)localBounds.size * 0.88f;
+        var collider = created.GetComponent<BoxCollider2D>();
         var body = created.AddComponent<Rigidbody2D>();
         body.bodyType = RigidbodyType2D.Kinematic;
         body.simulated = false;
@@ -378,6 +392,13 @@ public sealed class RoadTrafficController : MonoBehaviour
             Width = collider.size.x * Mathf.Abs(created.transform.localScale.x),
             Vehicle = new RoadTrafficVehicle()
         };
+    }
+
+    /// <summary>AI 위치는 콜라이더 중심이다. Inspector의 Offset 변경을 회전된 차체 위치에 반영한다.</summary>
+    private static Vector3 GetBodyPosition(VehicleInstance instance, Vector3 center, float rotation)
+    {
+        var offset = Vector3.Scale((Vector3)instance.Collider.offset, instance.Root.transform.lossyScale);
+        return center - Quaternion.Euler(0f, 0f, rotation) * offset;
     }
 
     /// <summary>풀의 차량을 주변 경로에 배치한다. 실패 시 풀/물리 상태를 유지하며 후보 횟수에 상한을 둔다.</summary>
@@ -437,9 +458,10 @@ public sealed class RoadTrafficController : MonoBehaviour
             return false;
         }
         // 재활성화 전에 생성 위치를 정한다. 비활성 바디의 위치 설정이 활성화 시 Transform으로 덮이지 않게 한다.
-        var position = mapRoot.TransformPoint(vehicle.Position);
+        var center = mapRoot.TransformPoint(vehicle.Position);
         var forward = mapRoot.TransformVector(vehicle.Forward);
         var rotation = Mathf.Atan2(forward.y, forward.x) * Mathf.Rad2Deg - 90f;
+        var position = GetBodyPosition(instance, center, rotation);
         instance.Root.transform.SetPositionAndRotation(position, Quaternion.Euler(0f, 0f, rotation));
         var body = instance.Body;
         pools[prefabIndex].Pop();

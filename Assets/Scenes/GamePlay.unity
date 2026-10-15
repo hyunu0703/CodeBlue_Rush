@@ -503,7 +503,7 @@ Camera:
   far clip plane: 1000
   field of view: 34
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 4
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -823,7 +823,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -1.83, z: 0}
-  m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
+  m_LocalScale: {x: 0.15, y: 0.15, z: 0.15}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -857,6 +857,11 @@ MonoBehaviour:
   lateralGrip: 12
   maximumLateralAcceleration: 3.2
   yawDamping: 0.8
+  useResponsiveSteering: 1
+  maximumTurnSpeed: 120
+  turnAcceleration: 1080
+  fullSteeringSpeed: 2
+  velocityAlignment: 8
   stoppedSpeed: 0.025
   stoppedAngularSpeed: 3
 --- !u!50 &585983600
@@ -920,7 +925,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: -0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -930,7 +935,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 2.4991999, y: 4.1535997}
+  m_Size: {x: 2.29, y: 4.29}
   m_EdgeRadius: 0
 --- !u!1 &611394919
 GameObject:

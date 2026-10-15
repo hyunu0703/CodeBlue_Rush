@@ -47,6 +47,18 @@ public sealed class MissionMapGenerator : MonoBehaviour
 
     // 맵 단위 차로 그래프의 소유자다. 후송 추가 시 새 스냅숏을 공개하고 이전 스냅숏을 무효화한다.
     private RoadLaneNetwork laneNetwork;
+    // 후송 도로가 추가되어도 최초 픽업 구역은 같은 맵 로컬 위치에 유지한다.
+    private int pickupTrafficPathId = -1;
+    private float pickupTrafficStart;
+    private float pickupTrafficEnd;
+
+    internal bool TryGetPickupTrafficZone(out int pathId, out float start, out float end)
+    {
+        pathId = pickupTrafficPathId;
+        start = pickupTrafficStart;
+        end = pickupTrafficEnd;
+        return isActiveAndEnabled && laneNetwork != null && laneNetwork.IsValid && pathId >= 0;
+    }
     /// <summary>활성 생성기의 최신 차로 그래프다. 생성 전/비활성 상태는 null이며 좌표와 거리는 Map Root 로컬 기준이다.</summary>
     public RoadLaneNetwork LaneNetwork => isActiveAndEnabled ? laneNetwork : null;
     /// <summary>성공한 맵 생성/후송 추가마다 증가한다. AI는 버전 변경 시 그래프를 다시 획득해야 한다.</summary>
@@ -235,6 +247,20 @@ public sealed class MissionMapGenerator : MonoBehaviour
         var center = (Vector2)road.transform.localPosition + exit * 0.5f;
         var laneOffset = right * (laneWidth * (lanes * 0.5f - 0.5f));
         destination.position = mapRoot.TransformPoint(center + laneOffset);
+        pickupTrafficPathId = -1;
+        foreach (var path in laneNetwork.Paths)
+        {
+            if (path.RoadOrdinal == activeRoads.Count - 1 && path.Kind == RoadLanePathKind.Straight
+                && path.Exit == finalDirection && path.RightNeighborId < 0
+                && path.TryProject(center + laneOffset, out var along, out _))
+            {
+                pickupTrafficPathId = path.Id;
+                var halfLength = parkingSize.y / mapRoot.TransformVector(forward).magnitude * 0.5f;
+                pickupTrafficStart = along - halfLength;
+                pickupTrafficEnd = along + halfLength;
+                break;
+            }
+        }
         sidewalkPosition = mapRoot.TransformPoint(center + right * (laneWidth * lanes * 0.5f + sidewalkWidth * 0.5f));
         var worldForward = mapRoot.TransformVector(forward);
         rotation = Mathf.Atan2(-worldForward.x, worldForward.y) * Mathf.Rad2Deg;
@@ -353,6 +379,10 @@ public sealed class MissionMapGenerator : MonoBehaviour
         var size = Vector2.zero;
         for (var index = 1; index <= 13; index++)
         {
+            if (!RoadPrefabCatalog.IsPlayableRoad((RoadIndex)index))
+            {
+                continue;
+            }
             if (!catalog.TryGetPrefab((RoadIndex)index, out var prefab))
             {
                 error = $"도로 카탈로그에 {(RoadIndex)index} 프리팹이 없습니다.";
@@ -364,7 +394,7 @@ public sealed class MissionMapGenerator : MonoBehaviour
                 error = $"{prefab.name}: {laneError}";
                 return false;
             }
-            if (index == 1)
+            if (size == Vector2.zero)
             {
                 size = prefab.ImageSize;
             }
@@ -601,6 +631,7 @@ public sealed class MissionMapGenerator : MonoBehaviour
         if (!append)
         {
             pickupSeed = seed;
+            pickupTrafficPathId = -1;
         }
         hasTransport = append;
         var last = route.Length - 1;
