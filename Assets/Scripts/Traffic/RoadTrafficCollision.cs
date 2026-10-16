@@ -1,17 +1,14 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 /// <summary>교통 컨트롤러가 생성한 차체의 충돌 수명을 소유한다. 풀 재사용 시 명시적으로 초기화한다.</summary>
 [DisallowMultipleComponent]
 [RequireComponent(typeof(Rigidbody2D))]
 public sealed class RoadTrafficCollision : MonoBehaviour
 {
-    // 최초 속도는 빠르게 전달하고 이후 수 초 동안 점진적으로 감속한다. 단위는 1/초다.
-    private const float ImpactDamping = 1.5f;
-    // 버스는 지속해서 밀 때도 이동량이 작도록 승용차보다 높은 노면 저항을 적용한다. 단위는 1/초다.
-    private const float BusImpactDamping = 3f;
-    // 사고 후 회전은 타이어/노면 저항으로 빠르게 줄인다. 단위는 1/초와 도/초다.
-    private const float ImpactAngularDamping = 10f;
-    private const float MaximumImpactAngularSpeed = 30f;
+    // 1유닛=6m로 환산한 지구 중력 가속도다. 단위는 유닛/초²다.
+    private const float ScaledGravity = 9.80665f / 6f;
+    // 사고 후 제동된 타이어가 건조 포장도로에서 미끄러지는 가정이다(NHTSA 재구성 표).
+    private const float RoadFriction = 0.6f;
     // 일반 승용차와 버스의 질량(kg)이다. 버스는 같은 충격과 지속 구동력에 훨씬 적게 밀린다.
     private const float CarMass = 1500f;
     private const float BusMass = 6000f;
@@ -59,31 +56,41 @@ public sealed class RoadTrafficCollision : MonoBehaviour
         IsReacting = true;
         IsWrecked |= fatal;
         body.bodyType = RigidbodyType2D.Dynamic;
-        body.linearDamping = vehicleMass >= BusMass ? BusImpactDamping : ImpactDamping;
-        body.angularDamping = ImpactAngularDamping;
-        LimitImpactRotation();
+        body.linearDamping = 0f;
+        body.angularDamping = 0f;
         body.WakeUp();
     }
 
-    /// <summary>접촉 해결 직후의 과도한 회전 에너지만 제거한다. 위치나 차체 방향을 복원하지 않는다.</summary>
-    internal void LimitImpactRotation()
+    /// <summary>사고 차량의 네 분포 접점에 노면 마찰 충격량을 적용해 이동과 회전을 함께 줄인다.</summary>
+    private void FixedUpdate()
     {
-        if (IsReacting && body != null)
+        if (!IsReacting || body == null || !body.simulated || body.bodyType != RigidbodyType2D.Dynamic || body.IsSleeping())
         {
-            body.angularVelocity = Mathf.Clamp(body.angularVelocity, -MaximumImpactAngularSpeed, MaximumImpactAngularSpeed);
+            return;
         }
-    }
-
-    /// <summary>다른 사고 차량/장애물과 부딪혀도 회전이 누적되어 폭주하지 않게 한다.</summary>
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        LimitImpactRotation();
-    }
-
-    /// <summary>접촉을 유지하면서 생기는 회전도 동일한 노면 저항 정책을 따른다.</summary>
-    private void OnCollisionStay2D(Collision2D collision)
-    {
-        LimitImpactRotation();
+        // 질량과 관성으로 구한 회전 반경은 유닛 단위다. 분포 접점은 차체 관성에 맞춘 근사다.
+        var radius = Mathf.Sqrt(body.inertia / body.mass);
+        // 한 접점이 담당하는 수직 하중은 전체의 1/4이며 충격량은 kg·유닛/초다.
+        var maximumImpulse = RoadFriction * ScaledGravity * body.mass * Time.fixedDeltaTime * 0.25f;
+        for (var index = 0; index < 4; index++)
+        {
+            // 차체 기준 네 접점을 사용해 편심 충돌의 회전 에너지도 노면으로 소산한다.
+            var offset = (Vector2)(Quaternion.Euler(0f, 0f, body.rotation + index * 90f + 45f) * Vector2.up) * radius;
+            var point = body.worldCenterOfMass + offset;
+            var velocity = body.GetPointVelocity(point);
+            var speed = velocity.magnitude;
+            if (speed <= 0f)
+            {
+                continue;
+            }
+            var direction = velocity / speed;
+            var arm = offset.x * direction.y - offset.y * direction.x;
+            var inverseInertia = body.inertia > 0f && (body.constraints & RigidbodyConstraints2D.FreezeRotation) == 0
+                ? 1f / body.inertia : 0f;
+            // 유효 질량 상한으로 접점 속도 반전과 마찰에 의한 에너지 증가를 방지한다.
+            var impulse = Mathf.Min(maximumImpulse, speed / (1f / body.mass + arm * arm * inverseInertia));
+            body.AddForceAtPosition(-direction * impulse, point, ForceMode2D.Impulse);
+        }
     }
 
     // 정지 시에는 물리 엔진의 수면 상태를 사용한다. Static으로 고정하지 않아 재접촉과 지속 밀기가 가능하다.
