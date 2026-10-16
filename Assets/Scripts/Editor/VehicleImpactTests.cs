@@ -233,6 +233,82 @@ public sealed class VehicleImpactTests
         Assert.IsTrue(collision.IsReacting);
     }
 
+    /// <summary>실제 생성 경로가 차종별 질량을 선택하고 충돌/풀 재사용 뒤에도 관성과 함께 복원하는지 검증한다.</summary>
+    [TestCase("Avante", 1250f)]
+    [TestCase("Grandeur", 1620f)]
+    [TestCase("SonataTaxi", 1470f)]
+    [TestCase("Ray", 1085f)]
+    [TestCase("Sorento", 1765f)]
+    [TestCase("Sportage", 1575f)]
+    [TestCase("Carnival", 2080f)]
+    [TestCase("PorterII", 1755f)]
+    [TestCase("Bus", 10400f)]
+    public void CreateInstance_ModelMassAndInertia_PersistThroughPoolReuse(string model, float kilograms)
+    {
+        // 활성 주행/맵 생성 없이 실제 프리팹 복제 경로만 테스트 씬에서 실행한다.
+        var owner = new GameObject("Mass test controller");
+        SceneManager.MoveGameObjectToScene(owner, scene);
+        owner.SetActive(false);
+        var controller = owner.AddComponent<RoadTrafficController>();
+        var root = new GameObject("Mass test vehicles");
+        SceneManager.MoveGameObjectToScene(root, scene);
+        var flags = BindingFlags.NonPublic | BindingFlags.Instance;
+        typeof(RoadTrafficController).GetField("vehicleRoot", flags).SetValue(controller, root);
+        var prefabs = (System.Collections.Generic.List<GameObject>)typeof(RoadTrafficController)
+            .GetField("spawnPrefabs", flags).GetValue(controller);
+        prefabs.Add(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Car/" + model + ".prefab"));
+        var instance = typeof(RoadTrafficController).GetMethod("CreateInstance", flags).Invoke(controller, new object[] { 0 });
+        var created = (GameObject)instance.GetType().GetField("Root", flags).GetValue(instance);
+        var modelBody = created.GetComponent<Rigidbody2D>();
+        var modelCollision = created.GetComponent<RoadTrafficCollision>();
+        created.SetActive(true);
+        modelBody.simulated = true;
+        // 비활성 복제본을 활성화한 뒤 배치해야 프리팹 Transform 동기화가 시험 위치를 덮어쓰지 않는다.
+        modelBody.position = Vector2.one * 100f;
+        Invoke(modelCollision, "ResetForSpawn");
+        Invoke(modelCollision, "BeginImpact", true);
+        Assert.That(modelBody.mass, Is.EqualTo(kilograms));
+        var inertia = modelBody.inertia;
+        Assert.That(inertia, Is.GreaterThan(0f));
+        // 동일한 충격량은 가벼운 차에 더 큰 속도 변화를 주어야 한다. 단위는 kg·유닛/초다.
+        modelBody.AddForce(Vector2.right * 1000f, ForceMode2D.Impulse);
+        scene.GetPhysicsScene2D().Simulate(0.005f);
+        Assert.That(modelBody.linearVelocity.x, Is.EqualTo(1000f / kilograms).Within(0.001f));
+        created.SetActive(false);
+        Invoke(modelCollision, "ResetForSpawn");
+        created.SetActive(true);
+        Invoke(modelCollision, "BeginImpact", false);
+        Assert.That(modelBody.mass, Is.EqualTo(kilograms));
+        Assert.That(modelBody.inertia, Is.EqualTo(inertia).Within(inertia * 0.001f));
+        Assert.IsFalse(modelCollision.IsWrecked);
+    }
+
+    /// <summary>같은 속도의 구급차와 충돌하면 버스는 레이보다 덜 밀리고 구급차의 감속은 더 커진다.</summary>
+    [Test]
+    public void Collision_HeavyBusComparedWithRay_TransfersLessSpeedAndSlowsAmbulanceMore()
+    {
+        Invoke(collision, "ConfigureVehicleModel", "Ray");
+        Invoke(collision, "ResetForSpawn");
+        Hit(4f, 0f);
+        var raySpeed = traffic.linearVelocity.y;
+        var ambulanceAfterRay = ambulance.linearVelocity.y;
+        Invoke(collision, "ConfigureVehicleModel", "Bus");
+        Invoke(collision, "ResetForSpawn");
+        traffic.position = Vector2.zero;
+        traffic.rotation = 0f;
+        traffic.linearVelocity = Vector2.zero;
+        traffic.angularVelocity = 0f;
+        ambulance.rotation = 0f;
+        ambulance.angularVelocity = 0f;
+        // 이전 접촉을 해제한 별도 물리 경계 뒤 두 번째 사고를 시작한다.
+        ambulance.position = Vector2.down * 10f;
+        ambulance.linearVelocity = Vector2.zero;
+        scene.GetPhysicsScene2D().Simulate(0.005f);
+        Hit(4f, 0f);
+        Assert.That(traffic.linearVelocity.y, Is.LessThan(raySpeed * 0.4f));
+        Assert.That(ambulance.linearVelocity.y, Is.LessThan(ambulanceAfterRay));
+    }
+
     /// <summary>기존 내부 생명주기 메서드를 테스트 경계에서 호출한다.</summary>
     private static void Invoke(object target, string method, params object[] arguments)
     {

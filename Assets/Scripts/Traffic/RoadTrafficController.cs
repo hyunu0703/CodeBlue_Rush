@@ -426,8 +426,8 @@ public sealed class RoadTrafficController : MonoBehaviour
         body.interpolation = RigidbodyInterpolation2D.Interpolate;
         body.useFullKinematicContacts = true;
         var collision = created.AddComponent<RoadTrafficCollision>();
-        // 기존 Bus 프리팹만 대형차 질량을 사용하며 원본 프리팹의 저장 값은 변경하지 않는다.
-        collision.ConfigureVehicle(spawnPrefabs[prefabIndex].name == "Bus");
+        // 원본 이름으로 차종별 공차중량을 한 번 설정한다. 풀에서 다시 꺼낼 때도 이 질량을 유지한다.
+        collision.ConfigureVehicleModel(spawnPrefabs[prefabIndex].name);
         // 풀 내부 차체도 소유 목록에 유지해 외부 장애물 관측에서 제외한다.
         ownedBodies.Add(body);
         ownedColliders.Add(collider);

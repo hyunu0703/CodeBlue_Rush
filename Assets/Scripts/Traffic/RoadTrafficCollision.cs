@@ -9,9 +9,9 @@ public sealed class RoadTrafficCollision : MonoBehaviour
     private const float ScaledGravity = 9.80665f / 6f;
     // 사고 후 제동된 타이어가 건조 포장도로에서 미끄러지는 가정이다(NHTSA 재구성 표).
     private const float RoadFriction = 0.6f;
-    // 일반 승용차와 버스의 질량(kg)이다. 버스는 같은 충격과 지속 구동력에 훨씬 적게 밀린다.
+    // 미등록 차량의 호환 기본값과 11m급 에어로시티 대표 공차중량이다. 단위는 kg다.
     private const float CarMass = 1500f;
-    private const float BusMass = 6000f;
+    private const float BusMass = 10400f;
     private Rigidbody2D body;
     // 풀 재사용 사이에도 차량 종류에 따른 질량을 유지한다.
     private float vehicleMass = CarMass;
@@ -28,6 +28,46 @@ public sealed class RoadTrafficCollision : MonoBehaviour
     internal void ConfigureVehicle(bool isBus)
     {
         vehicleMass = isBus ? BusMass : CarMass;
+    }
+
+    /// <summary>원본 프리팹 이름으로 대표 공차중량을 선택한다. 풀 생성 시 한 번 호출하며 kg 단위다.</summary>
+    internal void ConfigureVehicleModel(string prefabName)
+    {
+        // 연식/트림 정보가 없는 외형은 아래 제조사 대표 사양으로 고정하고 승객/화물은 추가하지 않는다.
+        // 현대 헤리티지/제원: 아반떼 2023 1.6, 그랜저 2022 2.5, 쏘나타 뉴라이즈 LPi, 포터II 2021 디젤.
+        // https://www.hyundai.com/kr/ko/brand/brandstory/heritage/2023-the-new-avante
+        // https://www.hyundai.com/kr/ko/brand/brandstory/model/grandeur-history/2022-the-all-new-grandeur
+        // https://www.hyundai.com/kr/ko/vehicles/sonata-taxi/20my/specifications.html
+        // https://www.hyundai.com/kr/ko/brand/brandstory/heritage/2021-porter2
+        // 기아 제원: 레이 가솔린 14인치, 쏘렌토 2.5 2WD 5인승 18인치,
+        // 스포티지 1.6 2WD 17인치, 카니발 3.5 9인승 18인치.
+        // https://www.kia.com/kr/vehicles/ray/specification
+        // https://www.kia.com/kr/vehicles/sorento/specification
+        // https://www.kia.com/kr/vehicles/sportage/specification
+        // https://www.kia.com/kr/vehicles/carnival/specification
+        // 버스는 현대 Super Aero City 카탈로그의 City 21+1석 공차중량을 사용한다.
+        // https://www.hyundai.com/content/dam/hyundai/et/en/data/marketing/brochure/product/super-aero-city/2012-superaerocity.pdf
+        switch (prefabName)
+        {
+            case "Avante": vehicleMass = 1250f; break;
+            case "Grandeur": vehicleMass = 1620f; break;
+            case "SonataTaxi": vehicleMass = 1470f; break;
+            case "Ray": vehicleMass = 1085f; break;
+            case "Sorento": vehicleMass = 1765f; break;
+            case "Sportage": vehicleMass = 1575f; break;
+            case "Carnival": vehicleMass = 2080f; break;
+            case "PorterII": vehicleMass = 1755f; break;
+            case "Bus": vehicleMass = BusMass; break;
+            // 구급차는 기존 주행 차체의 2500kg을 유지한다. 특장 장비를 포함한 대표 근사값이다.
+            case "Ambulance": vehicleMass = 2500f; break;
+            // PCX는 현재 교통 생성에서 제외된다. 추후 명시적으로 사용할 경우의 차체 중량만 정의한다.
+            // https://www.honda.co.jp/PCX/
+            case "PCX": vehicleMass = 133f; break;
+            default:
+                vehicleMass = CarMass;
+                Debug.LogWarning($"{prefabName}: 차량 공차중량이 등록되지 않아 {CarMass}kg을 사용합니다. RoadTrafficCollision의 차종 표를 추가해주세요.", this);
+                break;
+        }
     }
 
     /// <summary>소유 컨트롤러가 풀에서 꺼내기 전에 호출한다. 이전 충격과 사망 상태를 제거한다.</summary>
