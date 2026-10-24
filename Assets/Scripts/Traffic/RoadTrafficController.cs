@@ -42,8 +42,9 @@ public sealed class RoadTrafficController : MonoBehaviour
     private readonly List<int> junctionSpawnPaths = new List<int>(); // 진입 전에 준비할 전방 교차로의 생성 후보다.
     private readonly HashSet<int> spawnRoads = new HashSet<int>(); // 전방 교차로와 직접 연결된 도로 번호다.
     private readonly HashSet<int> localRoads = new HashSet<int>(); // 현재 도로와 이어지는 직선 도로 번호다.
-    private RoadLanePath playerSpawnLane; // 생성 시에만 제외할 플레이어의 현재 직선 차로다.
+    private readonly Queue<int> connectedRoadQueue = new Queue<int>(); // 직선 구간 전체를 중복 없이 탐색하는 재사용 버퍼다.
     private Vector2 trafficForward; // 현재 도로의 정방향과 반대 방향 차량 수를 구분할 기준이다.
+    private Vector2 supplyForward;  // 실제 이동 방향의 화면 밖에 보충 차량을 준비할 기준이다.
     private readonly Plane[] cameraPlanes = new Plane[6]; // 카메라 회전과 화면 비율을 반영하는 재사용 시야 평면이다.
     // 프리팹별 최대 2개의 차체와 managed 주행 상태를 소유한다. 활성 목록과 풀은 중복 소유하지 않는다.
     private readonly List<Stack<VehicleInstance>> pools = new List<Stack<VehicleInstance>>();
@@ -52,6 +53,7 @@ public sealed class RoadTrafficController : MonoBehaviour
     private float spawnRadius;
     private float despawnRadius;
     private float preparedRadius; // 전방 교차로 차량이 도착 전에 회수되지 않도록 보존할 반경이다.
+    private float localTrafficRadius; // 먼 직선이나 교차로 차량을 주변 교통으로 세지 않을 근거리 반경이다.
     private int TargetVehicles => Math.Min(maximumVehicles * trafficDensity, spawnPrefabs.Count * MaximumPerPrefab);
     private System.Random random;
     private int version = -1;
@@ -396,7 +398,11 @@ public sealed class RoadTrafficController : MonoBehaviour
             ? trafficCamera.orthographicSize * Mathf.Sqrt(1f + trafficCamera.aspect * trafficCamera.aspect) / mapScale
                 + Vector2.Distance(searchCenter, mapRoot.InverseTransformPoint(trafficCamera.transform.position))
             : laneWidth * 8f;
-        spawnRadius = Mathf.Max(preparedRadius, Mathf.Max(laneWidth * spawnRadiusInLaneWidths, viewRadius + laneWidth * 8f));
+        // 긴 직선에서도 이웃 한 칸 너머에 화면 밖 보충 공간을 확보한다.
+        var corridorRadius = network.Roads[0].Layout.ImageSize.x * 2f;
+        localTrafficRadius = Mathf.Max(corridorRadius * 0.75f, viewRadius + laneWidth * 8f);
+        spawnRadius = Mathf.Max(preparedRadius, Mathf.Max(corridorRadius,
+            Mathf.Max(laneWidth * spawnRadiusInLaneWidths, viewRadius + laneWidth * 8f)));
         despawnRadius = Mathf.Max(laneWidth * despawnRadiusInLaneWidths, spawnRadius + laneWidth * 8f);
         searchRadius = despawnRadius + laneWidth * 12f;
     }
@@ -411,7 +417,6 @@ public sealed class RoadTrafficController : MonoBehaviour
         junctionSpawnPaths.Clear();
         spawnRoads.Clear();
         localRoads.Clear();
-        playerSpawnLane = null;
         var currentRoad = -1;
         var currentSquared = float.PositiveInfinity;
         trafficForward = ((Vector2)mapRoot.InverseTransformVector(player.transform.up)).normalized;
@@ -419,7 +424,7 @@ public sealed class RoadTrafficController : MonoBehaviour
         {
             GeometryUtility.CalculateFrustumPlanes(trafficCamera, cameraPlanes);
         }
-        // 차체 방향 대신 위치로 차로를 선택해 후진 중에도 현재 차로를 제외한다.
+        // 차체 방향 대신 현재 차로의 접선으로 양방향 교통의 보충 우선순위를 정한다.
         var laneSquared = network.Paths[0].Width * network.Paths[0].Width;
         foreach (var path in network.Paths)
         {
@@ -427,7 +432,6 @@ public sealed class RoadTrafficController : MonoBehaviour
                 && path.TryProject(searchCenter, out var along, out var squared) && squared < laneSquared)
             {
                 laneSquared = squared;
-                playerSpawnLane = path;
                 path.TrySample(along, out _, out trafficForward);
             }
         }
@@ -450,6 +454,7 @@ public sealed class RoadTrafficController : MonoBehaviour
         var preloadRadius = spawnRadius + tileSize * 2f;
         var travelForward = player.linearVelocity.sqrMagnitude > 0.01f
             ? ((Vector2)mapRoot.InverseTransformVector(player.linearVelocity)).normalized : trafficForward;
+        supplyForward = travelForward;
         var nearestRoad = -1;
         var nearestSquared = float.PositiveInfinity;
         for (var index = 0; index < network.Roads.Count; index++)
@@ -478,7 +483,6 @@ public sealed class RoadTrafficController : MonoBehaviour
         {
             if (mapGenerator.IsRoadActive(path.RoadOrdinal)
                 && path.Kind != RoadLanePathKind.Intersection && path.Successors.Count > 0
-                && !IsPlayerSpawnLane(path)
                 && path.TryProject(searchCenter, out var along, out _)
                 && path.TrySample(along, out var nearest, out _)
                 && (nearest - searchCenter).sqrMagnitude <= spawnRadius * spawnRadius)
@@ -510,36 +514,32 @@ public sealed class RoadTrafficController : MonoBehaviour
         searchRadius = despawnRadius + network.Paths[0].Width * 12f;
     }
 
-    // 차로 연결 그래프를 따라 지정 도로의 진입 및 출구 이웃을 수집한다.
+    // 교차로는 바로 연결된 출구를, 현재 직선은 반경 안에서 다음 교차로 전까지 연결된 구간을 수집한다.
     private void AddConnectedRoads(int road, HashSet<int> result, bool includeIntersections)
     {
-        foreach (var path in network.Paths)
+        connectedRoadQueue.Clear();
+        connectedRoadQueue.Enqueue(road);
+        var limit = spawnRadius + network.Roads[0].Layout.ImageSize.x;
+        while (connectedRoadQueue.Count > 0)
         {
-            foreach (var successor in path.Successors)
+            var current = connectedRoadQueue.Dequeue();
+            foreach (var path in network.Paths)
             {
-                var next = network.Paths[successor].RoadOrdinal;
-                var neighbor = path.RoadOrdinal == road ? next : next == road ? path.RoadOrdinal : -1;
-                if (neighbor >= 0 && (includeIntersections || !network.Roads[neighbor].Layout.IsIntersection))
+                foreach (var successor in path.Successors)
                 {
-                    result.Add(neighbor);
+                    var next = network.Paths[successor].RoadOrdinal;
+                    var neighbor = path.RoadOrdinal == current ? next : next == current ? path.RoadOrdinal : -1;
+                    if (neighbor < 0 || !mapGenerator.IsRoadActive(neighbor)
+                        || (!includeIntersections && (network.Roads[neighbor].Layout.IsIntersection
+                            || (network.Roads[neighbor].Position - searchCenter).sqrMagnitude > limit * limit)))
+                    {
+                        continue;
+                    }
+                    if (result.Add(neighbor) && !includeIntersections) connectedRoadQueue.Enqueue(neighbor);
                 }
             }
+            if (includeIntersections) break;
         }
-    }
-
-    // 도로 타일 경계를 넘어 같은 직선으로 이어지는 플레이어 차로도 생성에서 제외한다.
-    private bool IsPlayerSpawnLane(RoadLanePath path)
-    {
-        if (playerSpawnLane == null
-            || !playerSpawnLane.TrySample(0f, out var origin, out var forward)
-            || !path.TrySample(0f, out var point, out var tangent)
-            || Vector2.Dot(forward, tangent) < 0.99f)
-        {
-            return false;
-        }
-        var offset = point - origin;
-        var lateral = Mathf.Abs(offset.x * forward.y - offset.y * forward.x);
-        return lateral < Mathf.Min(path.Width, playerSpawnLane.Width) * 0.5f;
     }
 
     // 실제 주행 위치로 현재 도로 차량을 세어 양방향 보충 우선순위를 정한다.
@@ -548,7 +548,7 @@ public sealed class RoadTrafficController : MonoBehaviour
         var count = 0;
         foreach (var instance in instances)
         {
-            if (localRoads.Contains(network.Paths[instance.Vehicle.PathId].RoadOrdinal)
+            if (IsLocalTraffic(instance)
                 && (direction == 0 || Vector2.Dot(instance.Vehicle.Forward, trafficForward) * direction > 0f))
             {
                 count++;
@@ -557,10 +557,26 @@ public sealed class RoadTrafficController : MonoBehaviour
         return count;
     }
 
+    // 같은 직선 위라도 멀리 뒤처진 차량은 화면 주변의 보충 목표를 차지하지 않는다.
+    private bool IsLocalTraffic(VehicleInstance instance)
+    {
+        var delta = instance.Vehicle.Position - searchCenter;
+        return localRoads.Contains(network.Paths[instance.Vehicle.PathId].RoadOrdinal)
+            && delta.sqrMagnitude <= localTrafficRadius * localTrafficRadius
+            && Vector2.Dot(delta, supplyForward) >= -network.Paths[0].Width * 4f;
+    }
+
+    // 다음 교차로의 선행 배치가 현재 주행 구간의 차량을 모두 차지하지 않도록 절반 이상을 예약한다.
+    private int GetLocalTrafficTarget()
+    {
+        return junctionSpawnPaths.Count > 0 ? Mathf.Min(TargetVehicles, Mathf.Max(LocalTrafficTarget, (TargetVehicles + 1) / 2))
+            : TargetVehicles;
+    }
+
     // 현재 도로 양방향을 먼저 확보하고 남은 수량으로 전방 교차로를 미리 채운다.
     private void FillTraffic(bool allowVisible)
     {
-        var localTarget = junctionSpawnPaths.Count > 0 ? Mathf.Min(LocalTrafficTarget, TargetVehicles) : TargetVehicles;
+        var localTarget = GetLocalTrafficTarget();
         for (var attempt = 0; attempt < TargetVehicles * 2 && instances.Count < TargetVehicles && isActiveAndEnabled; attempt++)
         {
             var needsLocal = CountLocalTraffic() < localTarget && localSpawnPaths.Count > 0;
@@ -578,7 +594,7 @@ public sealed class RoadTrafficController : MonoBehaviour
     private void RebalanceTraffic()
     {
         var localCount = CountLocalTraffic();
-        var localTarget = junctionSpawnPaths.Count > 0 ? Mathf.Min(LocalTrafficTarget, TargetVehicles) : TargetVehicles;
+        var localTarget = GetLocalTrafficTarget();
         var junctionCount = instances.Count - localCount;
         for (var index = instances.Count - 1; index >= 0; index--)
         {
@@ -588,8 +604,8 @@ public sealed class RoadTrafficController : MonoBehaviour
                 continue;
             }
             var road = network.Paths[instance.Vehicle.PathId].RoadOrdinal;
-            var isLocal = localRoads.Contains(road);
-            if ((!isLocal && !spawnRoads.Contains(road))
+            var isLocal = IsLocalTraffic(instance);
+            if ((!localRoads.Contains(road) && !spawnRoads.Contains(road))
                 || (isLocal && localCount > localTarget && junctionSpawnPaths.Count > 0)
                 || (!isLocal && localCount < localTarget && junctionCount > TargetVehicles - localTarget))
             {
@@ -678,9 +694,10 @@ public sealed class RoadTrafficController : MonoBehaviour
             enabled = false;
             return false;
         }
-        // 교차로 주변을 채우되 플레이어 바로 옆에는 생성하지 않는다. 차체 간격은 시뮬레이션에서도 검사한다.
+        // 플레이어 차선도 보충하되 바로 옆과 화면 안에는 생성하지 않는다. 앞뒤 차체 간격도 검사한다.
         var laneWidth = network.Paths[0].Width;
         var minimumRadius = laneWidth * 2f;
+        var isLocalRefill = !allowVisible && ReferenceEquals(candidates, localSpawnPaths);
         RoadTrafficVehicle vehicle = null;
         var pathOffset = ReferenceEquals(candidates, localSpawnPaths) ? 0 : random.Next(candidates.Count);
         var distanceOffset = random.Next(SpawnAttempts);
@@ -695,15 +712,26 @@ public sealed class RoadTrafficController : MonoBehaviour
             }
             // 양 끝에서 차체 전체가 경로 안에 들어가도록 거리 후보를 제한한다.
             var slot = (distanceOffset + attempt / candidates.Count) % SpawnAttempts;
-            var distance = instance.Length * 0.5f + (float)slot / (SpawnAttempts - 1) * (path.Length - instance.Length);
+            var usableLength = path.Length - instance.Length;
+            var offset = (float)slot / (SpawnAttempts - 1) * usableLength;
+            if (path.Kind == RoadLanePathKind.Straight)
+            {
+                // 차체를 회전시키지 않고 차로 번호에 따라 앞뒤 위치를 엇갈리게 배치한다.
+                offset = Mathf.Repeat(offset + (path.EntryLaneNumber - 1) * (instance.Length + path.Width), usableLength);
+            }
+            var distance = instance.Length * 0.5f + offset;
             if (!path.TrySample(distance, out var point, out var laneForward)
                 || (direction != 0 && Vector2.Dot(laneForward, trafficForward) * direction <= 0f)
                 || (!allowVisible && IsVisible(point, instance.VisualRadius))
+                // 현재 타일 뒤쪽 빈자리만 반복해서 채우지 않고 진행 방향의 화면 밖에서 보충한다.
+                || (isLocalRefill && (Vector2.Dot(point - searchCenter, supplyForward) < 0f
+                    || (point - searchCenter).sqrMagnitude > localTrafficRadius * localTrafficRadius))
                 || (point - searchCenter).sqrMagnitude < minimumRadius * minimumRadius
                 || (point - searchCenter).sqrMagnitude > spawnRadius * spawnRadius)
             {
                 continue;
             }
+            if (!simulation.HasStaggeredSpawnSpace(pathId, distance, instance.Length)) continue;
             if (simulation.TryActivateVehicle(instance.Vehicle, pathId, distance, instance.Length, instance.Width,
                 path.Width * (1.8f + (float)random.NextDouble() * 0.6f), obstacles, out vehicle))
             {
@@ -782,7 +810,6 @@ public sealed class RoadTrafficController : MonoBehaviour
         junctionSpawnPaths.Clear();
         localRoads.Clear();
         preparedRadius = 0f;
-        playerSpawnLane = null;
         simulation = null;
         network = null;
         version = -1;
@@ -810,6 +837,5 @@ public sealed class RoadTrafficController : MonoBehaviour
         junctionSpawnPaths.Clear();
         localRoads.Clear();
         preparedRadius = 0f;
-        playerSpawnLane = null;
     }
 }

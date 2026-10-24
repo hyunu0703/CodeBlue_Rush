@@ -103,6 +103,8 @@ public sealed class MissionRoadGenerationTests
         yield return new EnterPlayMode();
         SceneManager.LoadScene("GamePlay");
         yield return null;
+        // 맵과 교통만 검사하는 동안 출동 승인 없이 실행한 씬이 자동 복귀하지 않게 한다.
+        Object.FindFirstObjectByType<MissionController>().enabled = false;
         var generator = Object.FindFirstObjectByType<MissionMapGenerator>();
         Assert.IsNotNull(generator);
         Assert.IsTrue(generator.ValidateConfiguration(out var error), error);

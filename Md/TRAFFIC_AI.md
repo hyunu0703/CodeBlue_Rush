@@ -1,5 +1,9 @@
 # 차량 AI 및 코드 신호
 
+회전 출구와 긴 직선의 최신 교통 보충 변경 및 Unity 검증 조건은 [TRAFFIC_COVERAGE.md](TRAFFIC_COVERAGE.md)를 따른다. 아래 내용은 초기 구현 기록이다.
+
+직선 차량의 엇갈린 생성과 나란한 대열 해소 정책은 [TRAFFIC_FORMATION.md](TRAFFIC_FORMATION.md)를 따른다.
+
 현재 차로 그래프(`RoadLaneNetwork`) 위에서 AI 차량이 주행하도록 구현했다. 신호 외형은 생성하지 않는다. **GamePlay 씬 연결과 실제 Unity Play Mode 검증은 아직 실행하지 않았다.**
 
 ## 실행 방법

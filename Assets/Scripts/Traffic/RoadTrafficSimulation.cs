@@ -15,6 +15,8 @@ public sealed class RoadTrafficSimulation
     private const float CurveSpeedRatio = 0.9f;
     private const float PredictionSeconds = 0.8f;
     private const float StopHoldSeconds = 0.3f;
+    private const float FormationBoostSeconds = 6f; // 나란한 차량 한 대에 적용할 임시 순항 보정 시간(초)이다.
+    private const float FormationCooldownSeconds = 10f; // 같은 차량의 반복 보정 사이에 둘 최소 시간(초)이다.
     private RoadLaneNetwork network;
     private readonly List<RoadTrafficVehicle> vehicles = new List<RoadTrafficVehicle>();
     private readonly List<RoadTrafficObstacle> observations = new List<RoadTrafficObstacle>();
@@ -137,6 +139,8 @@ public sealed class RoadTrafficSimulation
         candidate.LaneChangeCooldown = 0f;
         candidate.TargetSpeed = 0f;
         candidate.ClearDistance = float.PositiveInfinity;
+        candidate.FormationBoostRemaining = 0f;
+        candidate.FormationBoostCooldown = 0f;
         UpdatePose(candidate);
         BuildObservations(external);
         if (!HasLaneSpace(candidate, pathId, distance, length + path.Width))
@@ -181,6 +185,7 @@ public sealed class RoadTrafficSimulation
             vehicle.LaneChangeCooldown = Math.Max(0f, vehicle.LaneChangeCooldown - seconds);
             EvaluateSpeed(vehicle, seconds);
         }
+        UpdateFormationSeparation(seconds);
         // 판단은 동일 관측값을 사용한다. 예약과 차로 변경 의도만 ID 순서대로 확정하여 동시 진입 충돌을 막는다.
         foreach (var vehicle in vehicles)
         {
@@ -299,8 +304,10 @@ public sealed class RoadTrafficSimulation
         var braking = path.Width * 3f;
         var minimumGap = path.Width * 0.6f;
         // 좌우 커브에서만 10% 감속한다. 직진 및 교통 상황에 필요한 감속은 별도로 유지한다.
+        var cruise = vehicle.FormationBoostRemaining > 0f && CanUseFormationBoost(vehicle)
+            ? GetFormationSpeed(vehicle) : vehicle.CruiseSpeed;
         vehicle.TargetSpeed = path.Kind == RoadLanePathKind.Intersection && path.Maneuver != RoadLaneManeuver.Straight
-            ? vehicle.CruiseSpeed * CurveSpeedRatio : vehicle.CruiseSpeed;
+            ? vehicle.CruiseSpeed * CurveSpeedRatio : cruise;
         vehicle.ClearDistance = float.PositiveInfinity;
         LimitForTraffic(vehicle, vehicle.PathId, vehicle.Distance, braking, minimumGap);
         if (vehicle.PathId == pickupPathId && !vehicle.IsChangingLane
@@ -346,6 +353,117 @@ public sealed class RoadTrafficSimulation
         if (vehicle.NextPathId < 0)
         {
             LimitForStop(vehicle, Math.Max(0f, path.Length - vehicle.Distance - vehicle.Length * 0.5f), braking);
+        }
+    }
+
+    // 차로 중앙을 유지하면서 다른 차로의 차량과 차체 길이 이상의 앞뒤 간격을 두고 생성한다.
+    internal bool HasStaggeredSpawnSpace(int pathId, float distance, float length)
+    {
+        var path = network.Paths[pathId];
+        if (path.Kind != RoadLanePathKind.Straight || !path.TrySample(distance, out var position, out var forward)) return true;
+        foreach (var other in vehicles)
+        {
+            if (TryGetParallelOffset(path, position, forward, other, out var along)
+                && Math.Abs(along) < (length + other.Length) * 0.5f + path.Width * 0.5f)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // 타일 번호가 달라도 동일 직선의 같은 방향 다른 차로인지 실제 위치와 접선으로 판단한다.
+    private bool TryGetParallelOffset(RoadLanePath path, Vector2 position, Vector2 forward,
+        RoadTrafficVehicle other, out float along)
+    {
+        along = 0f;
+        if (other.IsFinished || other.IsPhysicsControlled || other.IsChangingLane
+            || network.Paths[other.PathId].Kind != RoadLanePathKind.Straight
+            || RoadLaneMath.Dot(forward, other.Forward) < 0.99f) return false;
+        var delta = other.Position - position;
+        var lateral = Math.Abs(RoadLaneMath.Dot(delta, RoadLaneMath.Right(forward)));
+        if (lateral < path.Width * 0.5f || lateral > path.Width * 2.2f) return false;
+        along = RoadLaneMath.Dot(delta, forward);
+        return true;
+    }
+
+    // 기본 순항 속도를 보존하고 기존 생성 속도 상한 안에서 안쪽 차로부터 다른 보정 폭을 사용한다.
+    private float GetFormationSpeed(RoadTrafficVehicle vehicle)
+    {
+        var path = network.Paths[vehicle.PathId];
+        return Math.Min(path.Width * 3f, vehicle.CruiseSpeed + path.Width * 0.75f / Math.Max(1, path.EntryLaneNumber));
+    }
+
+    // 정지·변경·픽업·교차로 접근은 제외하고 보정을 마칠 전방 직선 공간이 있는지 확인한다.
+    private bool CanUseFormationBoost(RoadTrafficVehicle vehicle)
+    {
+        var path = network.Paths[vehicle.PathId];
+        if (vehicle.IsFinished || vehicle.IsPhysicsControlled || vehicle.IsChangingLane
+            || path.Kind != RoadLanePathKind.Straight || vehicle.Speed < path.Width * 0.7f
+            || (pickupPathId >= 0 && path.RoadOrdinal == network.Paths[pickupPathId].RoadOrdinal)) return false;
+        var required = Math.Max(vehicle.Length * 2f + path.Width, GetFormationSpeed(vehicle) * HeadwaySeconds * 2f);
+        var available = path.Length - vehicle.Distance - vehicle.Length * 0.5f;
+        for (var hop = 0; hop < 3; hop++)
+        {
+            if (available >= required) return true;
+            if (path.Successors.Count != 1) return false;
+            path = network.Paths[path.Successors[0]];
+            if (path.Kind != RoadLanePathKind.Straight
+                || (pickupPathId >= 0 && path.RoadOrdinal == network.Paths[pickupPathId].RoadOrdinal)) return false;
+            available += path.Length;
+        }
+        return false;
+    }
+
+    // 일반 교통 판단이 이미 감속을 요구하거나 가속할 여유가 없는 차량은 후보로 선택하지 않는다.
+    private bool CanStartFormationBoost(RoadTrafficVehicle vehicle)
+    {
+        return vehicle.FormationBoostRemaining <= 0f && vehicle.FormationBoostCooldown <= 0f
+            && CanUseFormationBoost(vehicle) && vehicle.TargetSpeed >= vehicle.CruiseSpeed * 0.95f
+            && GetFormationSpeed(vehicle) > vehicle.Speed + network.Paths[vehicle.PathId].Width * 0.1f
+            && vehicle.ClearDistance > Math.Max(vehicle.Length + network.Paths[vehicle.PathId].Width,
+                GetFormationSpeed(vehicle) * HeadwaySeconds);
+    }
+
+    // 같은 관측 프레임에서 한 대를 먼저 선택하고 안전 속도 제한을 다시 적용한 뒤 기존 가속도로 이동한다.
+    private void UpdateFormationSeparation(float seconds)
+    {
+        foreach (var vehicle in vehicles)
+        {
+            var wasBoosted = vehicle.FormationBoostRemaining > 0f;
+            vehicle.FormationBoostRemaining = Math.Max(0f, vehicle.FormationBoostRemaining - seconds);
+            vehicle.FormationBoostCooldown = Math.Max(0f, vehicle.FormationBoostCooldown - seconds);
+            if (!wasBoosted) continue;
+            if (!CanUseFormationBoost(vehicle) || vehicle.TargetSpeed < vehicle.CruiseSpeed * 0.95f)
+                vehicle.FormationBoostRemaining = 0f;
+            if (!vehicle.IsFinished && !vehicle.IsPhysicsControlled) EvaluateSpeed(vehicle, 0f);
+        }
+        foreach (var vehicle in vehicles)
+        {
+            if (!CanStartFormationBoost(vehicle)) continue;
+            var path = network.Paths[vehicle.PathId];
+            var hasNeighbor = false;
+            var isPreferred = true;
+            foreach (var other in vehicles)
+            {
+                if (other == vehicle || !TryGetParallelOffset(path, vehicle.Position, vehicle.Forward, other, out var along)
+                    || Math.Abs(along) > (vehicle.Length + other.Length) * 0.5f + path.Width * 0.5f) continue;
+                // 진행 중인 보정이 먼저 틈을 만들도록 기다려 3개 차로가 동시에 가속하지 않게 한다.
+                if (other.FormationBoostRemaining > 0f)
+                {
+                    isPreferred = false;
+                    break;
+                }
+                if (other.Speed < path.Width * 0.7f || Math.Abs(vehicle.Speed - other.Speed) > path.Width * 0.3f) continue;
+                hasNeighbor = true;
+                var otherLane = network.Paths[other.PathId].EntryLaneNumber;
+                if ((otherLane < path.EntryLaneNumber || (otherLane == path.EntryLaneNumber && other.Id < vehicle.Id))
+                    && CanStartFormationBoost(other)) isPreferred = false;
+            }
+            if (!hasNeighbor || !isPreferred) continue;
+            vehicle.FormationBoostRemaining = FormationBoostSeconds;
+            vehicle.FormationBoostCooldown = FormationCooldownSeconds;
+            EvaluateSpeed(vehicle, 0f);
         }
     }
 

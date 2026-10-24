@@ -29,6 +29,8 @@ public sealed class RoadTrafficVehicle
     internal float LaneChangeCooldown;
     internal float TargetSpeed;
     internal float ClearDistance;
+    internal float FormationBoostRemaining; // 직선 대열 해소를 위한 임시 가속의 남은 시간(초)이다.
+    internal float FormationBoostCooldown;  // 속도 보정의 반복 진동을 막는 재시도 대기 시간(초)이다.
 }
 
 /// <summary>플레이어/외부 차량의 한 물리 스텝 관측값이다. Forward는 단위 벡터, 크기는 전체 길이/폭이다.</summary>
