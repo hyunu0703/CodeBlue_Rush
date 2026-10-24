@@ -100,6 +100,9 @@ public sealed class MissionController : MonoBehaviour
             return;
         }
 
+        ButtonPressEffect.Attach(missionButton);
+        ButtonPressEffect.Attach(acceptButton);
+        ButtonPressEffect.Attach(rejectButton);
         Unsubscribe();
         subscribedMissionButton = missionButton;
         subscribedAcceptButton = acceptButton;

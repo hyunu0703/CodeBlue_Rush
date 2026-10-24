@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+/// <summary>시작 화면의 버튼 입력과 게임 진입 및 종료를 처리한다.</summary>
 public sealed class StartSceneMenu : MonoBehaviour
 {
-    [SerializeField] private Button startButton;
-    [SerializeField] private Button exitButton;
+    [SerializeField] private Button startButton; // 게임 씬으로 진입하는 버튼이다.
+    [SerializeField] private Button exitButton;  // 실행을 종료하는 버튼이다.
 
     private void OnEnable()
     {
@@ -16,6 +16,8 @@ public sealed class StartSceneMenu : MonoBehaviour
             return;
         }
 
+        ButtonPressEffect.Attach(startButton);
+        ButtonPressEffect.Attach(exitButton);
         startButton.onClick.AddListener(StartGame);
         exitButton.onClick.AddListener(ExitGame);
     }
@@ -32,11 +34,13 @@ public sealed class StartSceneMenu : MonoBehaviour
         }
     }
 
+    // 화면이 어두워진 뒤 게임 씬으로 진입한다.
     private void StartGame()
     {
-        SceneManager.LoadScene("GamePlay");
+        SceneFadeTransition.LoadScene("GamePlay");
     }
 
+    // 실행 환경에 맞춰 게임을 종료한다.
     private void ExitGame()
     {
 #if UNITY_EDITOR
