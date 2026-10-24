@@ -840,7 +840,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54952dbd3e86d524c85f82a479ed111f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AmbulanceDriveController
-  forwardTopSpeed: 9
+  forwardTopSpeed: 6
   reverseTopSpeed: 2
   acceleration: 0.85
   reverseAcceleration: 0.55

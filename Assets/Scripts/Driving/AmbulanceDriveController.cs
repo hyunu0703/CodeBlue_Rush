@@ -5,7 +5,7 @@
 public sealed class AmbulanceDriveController : MonoBehaviour
 {
     [Header("Speed (world units / second)")]
-    [SerializeField, Min(0.1f)] private float forwardTopSpeed = 9f;
+    [SerializeField, Min(0.1f)] private float forwardTopSpeed = 6f; // 전진 구동력이 감소하는 최고 속도 기준이다(월드 유닛/초).
     [SerializeField, Min(0.1f)] private float reverseTopSpeed = 2f;
     [SerializeField, Min(0f)] private float acceleration = 0.85f;
     [SerializeField, Min(0f)] private float reverseAcceleration = 0.55f;
@@ -49,7 +49,7 @@ public sealed class AmbulanceDriveController : MonoBehaviour
     [Header("Vehicle collision (world units / second)")]
     // 이전 충돌 속도 구간의 직렬화 값을 보존한다. 실제 충격량은 속도 구간 없이 연속 계산한다.
     [SerializeField, HideInInspector, Min(0.1f)] private float impactMinimumSpeed = 3.5f;
-    [SerializeField, Min(0.1f)] private float fatalImpactSpeed = 6f;
+    [SerializeField, Min(0.1f)] private float fatalImpactSpeed = 4f; // 전진 최고 속도의 2/3에 해당하는 상대 충돌 속도에서 파손을 판정한다.
     // 저장된 반발 계수를 보존하고 충돌 속도가 높을수록 변형 손실을 더 크게 가정한다.
     [Tooltip("기준 반발 계수입니다. 충돌 속도가 높을수록 실제 반발은 감소합니다.")]
     [SerializeField, Range(0f, 1f)] private float impactRestitution = 0.15f;
