@@ -4,13 +4,11 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>미션 상태의 단일 소유자다. 수락, 픽업 이동, 구출 컷신, 후송을 순서대로 관리한다.</summary>
+/// <summary>확정된 출동의 맵 준비, 픽업, 구출 컷신과 병원 후송 및 대기 씬 복귀를 관리한다.</summary>
 [DisallowMultipleComponent]
 public sealed class MissionController : MonoBehaviour
 {
-    // 제안 없는 대기 시간은 실제 초 단위다. 일시정지 중에도 알림 대기는 진행한다.
-    [SerializeField, Min(0.1f)] private float offerDelaySeconds = 5f;
-    // 기존 미션 버튼과 이번 기능에서 추가한 브리핑/알림 UI 참조다.
+    // 대기 씬으로 옮긴 기존 제안 UI는 주행 씬에서 숨기되 저장된 참조를 보존한다.
     [SerializeField] private Button missionButton;
     [SerializeField] private GameObject notification;
     [SerializeField] private GameObject briefingPanel;
@@ -31,15 +29,8 @@ public sealed class MissionController : MonoBehaviour
     [SerializeField] private Camera navigationCamera;
     [SerializeField] private PatientRescueCutscene rescueCutscene;
 
-    // 활성 기간의 대기 코루틴과 실제로 리스너를 연결한 버튼 발행자를 보관한다.
-    private Coroutine offerRoutine;
-    private Button subscribedMissionButton;
-    private Button subscribedAcceptButton;
-    private Button subscribedRejectButton;
-    // 난수 소스와 제안 번호는 이 씬의 미션 관리자 인스턴스 수명에 속한다.
-    private readonly System.Random random = new System.Random();
-    private int offerNumber;
-    private MissionStage stage;
+    private readonly System.Random random = new System.Random(); // 출동 후 유효한 맵 시드를 선택하는 난수 소스다.
+    private MissionStage stage;                                 // 주행 씬의 준비, 픽업과 후송 진행 상태다.
     // 화면 또는 안전 영역이 바뀐 경우에만 UI 앵커를 갱신하기 위한 직전 값이다.
     private Rect lastSafeArea;
     private int lastScreenWidth;
@@ -60,11 +51,11 @@ public sealed class MissionController : MonoBehaviour
     /// <summary>수락 및 맵 준비가 끝난 미션이 진행 중인지 반환한다.</summary>
     public bool IsMissionActive => stage == MissionStage.Active || stage == MissionStage.Rescuing
         || stage == MissionStage.Transporting;
-    /// <summary>현재 수락한 미션의 8자리 시드다. 대기/제안 단계에는 0이다.</summary>
+    /// <summary>현재 출동한 미션의 8자리 시드다. 맵 준비 전에는 0이다.</summary>
     public int CurrentSeed { get; private set; }
     /// <summary>픽업 컷신 완료 뒤에 생성한 후송 시드다. 후송 시작 전에는 0이다.</summary>
     public int TransportSeed { get; private set; }
-    /// <summary>구출 이미지가 모두 사라진 뒤에만 true가 된다. 다음 미션 대기 진입 시 초기화한다.</summary>
+    /// <summary>구출 이미지가 모두 사라진 뒤에만 true가 된다. 새 출동에서 초기화한다.</summary>
     public bool IsPatientPickedUp { get; private set; }
     /// <summary>맵 배치와 시작 위치 준비 이후 메인 스레드에서 한 번 발행한다.</summary>
     public event Action<int> OnMissionAccepted;
@@ -87,7 +78,6 @@ public sealed class MissionController : MonoBehaviour
         this.safeAreaRoot = safeAreaRoot;
     }
 
-    /// <summary>직렬화된 참조를 검증한 뒤 리스너를 연결하고 현재 상태를 즉시 UI에 반영한다.</summary>
     private void OnEnable()
     {
         if (!ValidateReferences())
@@ -100,20 +90,10 @@ public sealed class MissionController : MonoBehaviour
             return;
         }
 
-        ButtonPressEffect.Attach(missionButton);
-        ButtonPressEffect.Attach(acceptButton);
-        ButtonPressEffect.Attach(rejectButton);
-        Unsubscribe();
-        subscribedMissionButton = missionButton;
-        subscribedAcceptButton = acceptButton;
-        subscribedRejectButton = rejectButton;
-        subscribedMissionButton.onClick.AddListener(OpenBriefing);
-        subscribedAcceptButton.onClick.AddListener(AcceptMission);
-        subscribedRejectButton.onClick.AddListener(RejectMission);
         UpdateSafeArea();
         if (stage == MissionStage.Waiting)
         {
-            BeginWaiting();
+            RefreshView();
         }
         else
         {
@@ -133,13 +113,15 @@ public sealed class MissionController : MonoBehaviour
         }
     }
 
-    /// <summary>씬의 Awake가 끝난 뒤 표시 참조를 연결한다. 이미 저장된 NavigationPanel이 있으면 재사용한다.</summary>
-    private void Start()
+    private IEnumerator Start()
     {
-        EnsurePresentation();
+        // 입력 컴포넌트의 Start가 끝난 뒤 승인하므로 씬 진입 전 누른 입력도 해제 후 적용된다.
+        yield return null;
+        if (!isActiveAndEnabled || !EnsurePresentation()) yield break;
+        AcceptMission();
+        if (enabled && stage == MissionStage.Waiting) SceneFadeTransition.LoadScene("Waiting");
     }
 
-    /// <summary>이전 물리 위치부터 현재 위치까지 검사해 빠른 이동으로 도착 영역을 건너뛰어도 한 번만 처리한다.</summary>
     private void FixedUpdate()
     {
         if ((stage != MissionStage.Active && stage != MissionStage.Transporting) || Time.timeScale <= 0f)
@@ -177,20 +159,16 @@ public sealed class MissionController : MonoBehaviour
             ambulance.linearVelocity = Vector2.zero;
             ambulance.angularVelocity = 0f;
             CompleteMission();
-            missionStatus.text = "병원 후송 완료 · 다음 출동 요청 대기 중";
         }
     }
 
-    /// <summary>화면 크기와 모바일 브라우저 안전 영역 변경을 감지한다. 변경되지 않은 UI는 다시 쓰지 않는다.</summary>
     private void Update()
     {
         UpdateSafeArea();
     }
 
-    /// <summary>컴포넌트 비활성화 시에도 대기를 명시적으로 중지하고 UI와 운전 입력을 정리한다.</summary>
     private void OnDisable()
     {
-        StopWaiting();
         StopRescue();
         if (stage == MissionStage.Rescuing)
         {
@@ -201,7 +179,6 @@ public sealed class MissionController : MonoBehaviour
         {
             navigation.SetGuidanceVisible(false);
         }
-        Unsubscribe();
         if (missionButton != null)
         {
             missionButton.gameObject.SetActive(false);
@@ -216,21 +193,11 @@ public sealed class MissionController : MonoBehaviour
         }
     }
 
-    /// <summary>대기 중인 제안이 있을 때만 브리핑을 연다. 진행 중인 미션이나 중복 클릭은 무시한다.</summary>
-    public void OpenBriefing()
-    {
-        if (!isActiveAndEnabled || stage != MissionStage.Available || !ValidateReferences())
-        {
-            return;
-        }
-        stage = MissionStage.Briefing;
-        RefreshView();
-    }
-
-    /// <summary>열린 제안을 수락하면 시드를 만들고 맵을 준비한다. 성공한 경우에만 진행 판정과 시드를 공개한다.</summary>
+    // 대기 씬에서 확정한 출동만 소비하여 맵을 준비하고, 성공한 이후 운전을 허용한다.
     public void AcceptMission()
     {
-        if (!isActiveAndEnabled || stage != MissionStage.Briefing || !ValidateReferences() || !EnsurePresentation())
+        if (!isActiveAndEnabled || stage != MissionStage.Waiting || !ValidateReferences() || !EnsurePresentation()
+            || !MissionDispatchSession.TryConsume(out _))
         {
             return;
         }
@@ -292,72 +259,32 @@ public sealed class MissionController : MonoBehaviour
         {
             // UI 이벤트 경계에서 예상치 못한 실패를 한 번 관찰하고 추가 수락과 조작을 막는다.
             Debug.LogException(exception, this);
-            stage = MissionStage.Briefing;
+            stage = MissionStage.Waiting;
             CurrentSeed = 0;
             enabled = false;
         }
     }
 
-    /// <summary>현재 제안을 거절한다. 시드와 수락 판정 없이 새 제안까지 다시 5초를 기다린다.</summary>
-    public void RejectMission()
-    {
-        if (!isActiveAndEnabled || stage != MissionStage.Briefing || !ValidateReferences())
-        {
-            return;
-        }
-        BeginWaiting();
-    }
-
-    /// <summary>후속 결과 시스템이 미션 종료를 알릴 진입점이다. 이전 맵은 다음 수락까지 유지한다.</summary>
+    // 병원 후송이 끝나면 차량을 멈추고 새 요청을 받을 대기 씬으로 돌아간다.
     public void CompleteMission()
     {
-        if (!isActiveAndEnabled || !IsMissionActive || !ValidateReferences())
+        if (!isActiveAndEnabled || stage != MissionStage.Transporting || !IsPatientPickedUp || !ValidateReferences())
         {
             return;
         }
-        BeginWaiting();
-    }
-
-    /// <summary>제안과 시드를 비우고 대기 상태에 진입한다. 대기의 단일 소유자는 이 컴포넌트다.</summary>
-    private void BeginWaiting()
-    {
-        StopWaiting();
-        StopRescue();
-        CurrentSeed = 0;
-        TransportSeed = 0;
-        IsPatientPickedUp = false;
-        stage = MissionStage.Waiting;
+        stage = MissionStage.Completed;
+        MissionDispatchSession.Clear();
+        LockVehicle();
         RefreshView();
-        offerRoutine = StartCoroutine(WaitForOffer());
+        SceneFadeTransition.LoadScene("Waiting");
     }
 
-    /// <summary>실제 시간으로 대기한 후 새 브리핑 번호와 알림을 표시한다. 비활성화 시 StopWaiting에서 중지한다.</summary>
-    private IEnumerator WaitForOffer()
-    {
-        yield return new WaitForSecondsRealtime(offerDelaySeconds);
-        offerRoutine = null;
-        if (!isActiveAndEnabled || stage != MissionStage.Waiting || !ValidateReferences())
-        {
-            yield break;
-        }
-        offerNumber++;
-        stage = MissionStage.Available;
-        // 픽업과 후송의 두 목적지를 순서대로 안내한다. 구출과 탑승은 도착 후 자동으로 진행한다.
-        briefingText.text = $"출동 요청 #{offerNumber:000}\n\n"
-            + "긴급 출동 요청이 도착했습니다.\n\n"
-            + "수락하면 픽업 장소와 내비게이션 경로가 생성됩니다. 환자를 구출한 뒤 이어지는 도로를 따라 병원으로 후송하세요.\n\n"
-            + "수락: 출동 시작\n거절: 5초 뒤 새 요청 대기";
-        RefreshView();
-    }
-
-    /// <summary>현재 상태를 UI와 입력 허용 여부에 동기화한다. 게임 상태를 UI에서 별도로 결정하지 않는다.</summary>
+    // 기존 제안 UI를 숨기고 현재 주행 단계에 맞춰 안내와 입력 허용 여부를 갱신한다.
     private void RefreshView()
     {
-        missionButton.gameObject.SetActive(stage == MissionStage.Available || stage == MissionStage.Briefing);
-        missionButton.interactable = stage == MissionStage.Available;
-        notification.SetActive(stage == MissionStage.Available);
-        briefingPanel.SetActive(stage == MissionStage.Briefing || stage == MissionStage.Preparing);
-        acceptButton.interactable = rejectButton.interactable = stage == MissionStage.Briefing;
+        missionButton.gameObject.SetActive(false);
+        notification.SetActive(false);
+        briefingPanel.SetActive(false);
         driveInput.SetMissionDrivingAllowed(stage == MissionStage.Active || stage == MissionStage.Transporting);
         if (navigation != null)
         {
@@ -365,7 +292,8 @@ public sealed class MissionController : MonoBehaviour
         }
         missionStatus.text = stage == MissionStage.Rescuing ? "환자 구출 및 탑승 중"
             : stage == MissionStage.Transporting ? "환자 픽업 완료 · 병원 후송"
-            : stage == MissionStage.Active ? "환자 픽업 장소로 이동" : "출동 요청 대기 중";
+            : stage == MissionStage.Active ? "환자 픽업 장소로 이동"
+            : stage == MissionStage.Completed ? "병원 후송 완료 · 대기 씬 복귀 중" : "출동 준비 중";
     }
 
     /// <summary>구출 iterator의 실패를 UI/코루틴 경계에서 한 번 관찰한다. 후송 준비가 끝나야 조작을 복구한다.</summary>
@@ -568,34 +496,6 @@ public sealed class MissionController : MonoBehaviour
         return true;
     }
 
-    /// <summary>활성 기간의 진행 중 대기를 중지한다. 재활성화된 대기 상태는 5초를 새로 센다.</summary>
-    private void StopWaiting()
-    {
-        if (offerRoutine != null)
-        {
-            StopCoroutine(offerRoutine);
-            offerRoutine = null;
-        }
-    }
-
-    /// <summary>실제로 연결했던 동일 버튼에서 동일 메서드 리스너만 제거한다.</summary>
-    private void Unsubscribe()
-    {
-        if (subscribedMissionButton != null)
-        {
-            subscribedMissionButton.onClick.RemoveListener(OpenBriefing);
-        }
-        if (subscribedAcceptButton != null)
-        {
-            subscribedAcceptButton.onClick.RemoveListener(AcceptMission);
-        }
-        if (subscribedRejectButton != null)
-        {
-            subscribedRejectButton.onClick.RemoveListener(RejectMission);
-        }
-        subscribedMissionButton = subscribedAcceptButton = subscribedRejectButton = null;
-    }
-
     /// <summary>조치 가능한 설정 오류를 한 번 기록하고 컴포넌트를 비활성화한다.</summary>
     private void FailConfiguration(string error)
     {
@@ -604,7 +504,7 @@ public sealed class MissionController : MonoBehaviour
             missionStatus.text = "미션 설정을 확인해주세요";
         }
         Debug.LogError(error, this);
-        stage = offerNumber > 0 ? MissionStage.Briefing : MissionStage.Waiting;
+        stage = MissionStage.Waiting;
         CurrentSeed = 0;
         enabled = false;
     }
@@ -648,11 +548,10 @@ public sealed class MissionController : MonoBehaviour
     private enum MissionStage
     {
         Waiting,
-        Available,
-        Briefing,
         Preparing,
         Active,
         Rescuing,
-        Transporting
+        Transporting,
+        Completed
     }
 }

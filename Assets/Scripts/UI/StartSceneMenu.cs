@@ -34,10 +34,10 @@ public sealed class StartSceneMenu : MonoBehaviour
         }
     }
 
-    // 화면이 어두워진 뒤 게임 씬으로 진입한다.
+    // 화면이 어두워진 뒤 미션을 받을 대기 씬으로 진입한다.
     private void StartGame()
     {
-        SceneFadeTransition.LoadScene("GamePlay");
+        SceneFadeTransition.LoadScene("Waiting");
     }
 
     // 실행 환경에 맞춰 게임을 종료한다.
