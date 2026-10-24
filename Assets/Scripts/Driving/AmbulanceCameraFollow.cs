@@ -1,5 +1,6 @@
 using UnityEngine;
 
+/// <summary>도로 방향에 맞춰 구급차를 추적하고 제동 속도에 따른 약한 카메라 반동을 적용한다.</summary>
 [DisallowMultipleComponent]
 public sealed class AmbulanceCameraFollow : MonoBehaviour
 {
@@ -10,13 +11,10 @@ public sealed class AmbulanceCameraFollow : MonoBehaviour
     [SerializeField, Min(0.01f)] private float rotationSmoothTime = 0.15f;
     // 미지정이면 같은 씬의 단일 맵 생성기를 활성화 시 조회한다. 다른 씬의 교차로는 사용하지 않는다.
     [SerializeField] private MissionMapGenerator mapGenerator;
-    // 제동 카메라의 최대 전방 이동량은 월드 유닛, 전체 왕복 시간은 초 기준이다.
-    [SerializeField, Min(0f)] private float maximumBrakeOffset = 0.45f;
-    [SerializeField, Min(0.1f)] private float brakeMotionDuration = 2.2f;
-    // 전체 시간의 30%에 전방 정점, 70%에 작은 후방 정점에 도달한다.
-    private const float ForwardPeakTime = 0.3f;
-    private const float BackwardPeakTime = 0.7f;
-    private const float BackwardOffsetRatio = 0.2f;
+    [SerializeField, Min(0f)] private float maximumBrakeOffset = 0.16f;        // 최고 속도에서 화면 위쪽으로 이동하는 최대 거리다. 단위는 월드 유닛이다.
+    [SerializeField, Min(0.1f)] private float brakeMotionDuration = 2.2f;      // 최고 속도에서 원위치로 복귀하기까지의 시간이다. 단위는 초다.
+    [SerializeField, Min(0.1f)] private float minimumBrakeMotionDuration = 0.6f; // 저속 제동의 왕복 시간 하한이다. 단위는 초다.
+    private const float ForwardPeakTime = 0.35f; // 전체 시간의 35%에 위쪽 정점에 도달하고 나머지 65% 동안 복귀한다.
     // 한 페달 입력에 한 번 왕복한다. 진행 중 재입력은 중첩하지 않으며 코루틴/프레임별 할당이 없다.
     private AmbulanceDriveController brakeVehicle;
     private Transform cachedBrakeTarget;
@@ -24,7 +22,7 @@ public sealed class AmbulanceCameraFollow : MonoBehaviour
     private float brakeDisplacement;
     private float brakeMotionElapsed;
     private float brakeMotionAmplitude;
-    private Vector3 brakeDirection;
+    private float activeBrakeMotionDuration; // 연출 시작 속도로 결정한 왕복 시간이다. 감속 중에도 유지한다.
     private Vector3 previousTargetPosition;
 
     private Vector3 smoothVelocity;
@@ -46,9 +44,11 @@ public sealed class AmbulanceCameraFollow : MonoBehaviour
     {
         // 잘못 저장된 이동량/시간으로 화면 위치를 오염시키지 않는다.
         if (float.IsNaN(maximumBrakeOffset) || float.IsInfinity(maximumBrakeOffset) || maximumBrakeOffset < 0f
-            || float.IsNaN(brakeMotionDuration) || float.IsInfinity(brakeMotionDuration) || brakeMotionDuration < 0.1f)
+            || float.IsNaN(brakeMotionDuration) || float.IsInfinity(brakeMotionDuration) || brakeMotionDuration < 0.1f
+            || float.IsNaN(minimumBrakeMotionDuration) || float.IsInfinity(minimumBrakeMotionDuration)
+            || minimumBrakeMotionDuration < 0.1f || minimumBrakeMotionDuration > brakeMotionDuration)
         {
-            Debug.LogError("제동 카메라의 최대 이동량은 0 이상, 왕복 시간은 0.1초 이상이어야 합니다.", this);
+            Debug.LogError("제동 카메라의 최대 이동량은 0 이상, 최소 왕복 시간은 0.1초 이상이며 최대 왕복 시간 이하여야 합니다.", this);
             enabled = false;
             return;
         }
@@ -95,15 +95,17 @@ public sealed class AmbulanceCameraFollow : MonoBehaviour
         UpdateIntersectionRotation();
         UpdateBrakeEffect();
 
-        // 회전과 위치를 같은 프레임에 계산한다. 차량 중심이 기존 화면 좌표를 벗어나도록 하는 위치 추적 지연을 제거한다.
+        // 기본 추적 위치와 별도로 위쪽 이동량을 더해 제동 중 차량의 화면 위치가 달라지게 한다.
         smoothedOffset = Vector3.SmoothDamp(smoothedOffset, offset,
             ref smoothVelocity, smoothTime, Mathf.Infinity, Time.deltaTime);
         // 기준 방향 대비 카메라 회전만큼 오프셋도 회전시켜 차량을 중심으로 카메라를 돌린다.
         var relativeRotation = transform.rotation * Quaternion.Inverse(uprightRotation);
-        transform.position = target.position + relativeRotation * smoothedOffset + brakeDirection * brakeDisplacement;
+        // 주행 방향이나 후진 여부와 관계없이 현재 화면 위쪽으로 이동한다.
+        var brakeOffset = transform.up * brakeDisplacement;
+        transform.position = target.position + relativeRotation * smoothedOffset + brakeOffset;
     }
 
-    /// <summary>제동 입력에 전방 이동→작은 후방 이동→원위치 복귀를 한 번 실행한다. 각 정점에서 속도/가속도는 0이다.</summary>
+    // 제동 입력마다 화면 위쪽 이동과 원래 추적 위치로의 복귀를 한 번 실행한다.
     private void UpdateBrakeEffect()
     {
         if (cachedBrakeTarget != target || Vector3.Distance(previousTargetPosition, target.position) > 3f)
@@ -115,7 +117,7 @@ public sealed class AmbulanceCameraFollow : MonoBehaviour
         if (brakeVehicle == null || !brakeVehicle.IsReady)
         {
             brakeDisplacement = 0f;
-            brakeMotionElapsed = brakeMotionDuration;
+            brakeMotionElapsed = activeBrakeMotionDuration;
             brakeMotionAmplitude = 0f;
             canStartBrakeEffect = true;
             return;
@@ -129,19 +131,21 @@ public sealed class AmbulanceCameraFollow : MonoBehaviour
         {
             // 진행 중 재입력은 소비만 하여 이동 방향/위치가 갑자기 바뀌거나 나중에 재실행되지 않게 한다.
             canStartBrakeEffect = false;
-            if (brakeMotionElapsed >= brakeMotionDuration)
+            if (brakeMotionElapsed >= activeBrakeMotionDuration)
             {
-                brakeDirection = brakeVehicle.Velocity.normalized;
-                brakeMotionAmplitude = maximumBrakeOffset * brakeVehicle.NormalizedSpeed * brakeVehicle.BrakePressure;
+                // 감속 중 시간을 다시 계산하면 복귀가 급해지므로 시작 속도를 고정해 사용한다.
+                var speedRatio = brakeVehicle.NormalizedSpeed;
+                brakeMotionAmplitude = maximumBrakeOffset * speedRatio * brakeVehicle.BrakePressure;
+                activeBrakeMotionDuration = Mathf.Lerp(minimumBrakeMotionDuration, brakeMotionDuration, speedRatio);
                 brakeMotionElapsed = 0f;
             }
         }
         // 긴 프레임도 정규화 시간으로 처리한다. 일시정지는 LateUpdate에서 시간 진행을 중단한다.
-        brakeMotionElapsed = Mathf.Min(brakeMotionDuration, brakeMotionElapsed + Time.deltaTime);
-        brakeDisplacement = brakeMotionAmplitude * EvaluateBrakeMotion(brakeMotionElapsed / brakeMotionDuration);
+        brakeMotionElapsed = Mathf.Min(activeBrakeMotionDuration, brakeMotionElapsed + Time.deltaTime);
+        brakeDisplacement = brakeMotionAmplitude * EvaluateBrakeMotion(brakeMotionElapsed / activeBrakeMotionDuration);
     }
 
-    /// <summary>0~1 시간에서 최대 전방 이동량에 대한 비율을 반환한다. 세 구간 모두 5차 보간으로 부드럽게 연결한다.</summary>
+    // 위쪽 정점에서 천천히 방향을 바꾸고 원래 위치를 지나치지 않는 왕복 곡선을 계산한다.
     internal static float EvaluateBrakeMotion(float normalizedTime)
     {
         var progress = Mathf.Clamp01(normalizedTime);
@@ -149,13 +153,7 @@ public sealed class AmbulanceCameraFollow : MonoBehaviour
         {
             return SmoothBrakeProgress(progress / ForwardPeakTime);
         }
-        if (progress <= BackwardPeakTime)
-        {
-            return Mathf.Lerp(1f, -BackwardOffsetRatio,
-                SmoothBrakeProgress((progress - ForwardPeakTime) / (BackwardPeakTime - ForwardPeakTime)));
-        }
-        return Mathf.Lerp(-BackwardOffsetRatio, 0f,
-            SmoothBrakeProgress((progress - BackwardPeakTime) / (1f - BackwardPeakTime)));
+        return 1f - SmoothBrakeProgress((progress - ForwardPeakTime) / (1f - ForwardPeakTime));
     }
 
     /// <summary>양 끝의 속도와 가속도를 0으로 만드는 5차 곡선으로 시작/방향 전환/정지의 급격한 움직임을 줄인다.</summary>
@@ -171,9 +169,9 @@ public sealed class AmbulanceCameraFollow : MonoBehaviour
         brakeVehicle = target != null ? target.GetComponent<AmbulanceDriveController>() : null;
         previousTargetPosition = target != null ? target.position : Vector3.zero;
         brakeDisplacement = 0f;
-        brakeMotionElapsed = brakeMotionDuration;
+        activeBrakeMotionDuration = brakeMotionDuration;
+        brakeMotionElapsed = activeBrakeMotionDuration;
         brakeMotionAmplitude = 0f;
-        brakeDirection = Vector3.zero;
         canStartBrakeEffect = true;
     }
 

@@ -551,8 +551,9 @@ MonoBehaviour:
   smoothTime: 0.15
   rotationSmoothTime: 0.15
   mapGenerator: {fileID: 0}
-  maximumBrakeOffset: 0.45
+  maximumBrakeOffset: 0.16
   brakeMotionDuration: 2.2
+  minimumBrakeMotionDuration: 0.6
 --- !u!1 &536320610
 GameObject:
   m_ObjectHideFlags: 0
