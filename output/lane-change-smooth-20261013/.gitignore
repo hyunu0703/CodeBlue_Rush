@@ -1,4 +1,0 @@
-# 수정 전 소스 기준선은 로컬 검토용으로 보존한다.
-*.before.txt
-before-bin/
-before-obj/

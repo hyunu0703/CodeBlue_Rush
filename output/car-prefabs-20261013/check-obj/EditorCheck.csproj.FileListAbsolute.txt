@@ -1,9 +1,0 @@
-C:\Users\이현우\Desktop\Game Engine\Unity\CodeBlue_Rush\output\car-prefabs-20261013\check-bin\Assembly-CSharp-Editor.deps.json
-C:\Users\이현우\Desktop\Game Engine\Unity\CodeBlue_Rush\output\car-prefabs-20261013\check-bin\Assembly-CSharp-Editor.dll
-C:\Users\이현우\Desktop\Game Engine\Unity\CodeBlue_Rush\output\car-prefabs-20261013\check-bin\Assembly-CSharp-Editor.pdb
-C:\Users\이현우\Desktop\Game Engine\Unity\CodeBlue_Rush\output\car-prefabs-20261013\check-obj\EditorCheck.csproj.AssemblyReference.cache
-C:\Users\이현우\Desktop\Game Engine\Unity\CodeBlue_Rush\output\car-prefabs-20261013\check-obj\EditorCheck.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\이현우\Desktop\Game Engine\Unity\CodeBlue_Rush\output\car-prefabs-20261013\check-obj\EditorCheck.csproj.CoreCompileInputs.cache
-C:\Users\이현우\Desktop\Game Engine\Unity\CodeBlue_Rush\output\car-prefabs-20261013\check-obj\EditorCheck.sourcelink.json
-C:\Users\이현우\Desktop\Game Engine\Unity\CodeBlue_Rush\output\car-prefabs-20261013\check-obj\Assembly-CSharp-Editor.dll
-C:\Users\이현우\Desktop\Game Engine\Unity\CodeBlue_Rush\output\car-prefabs-20261013\check-obj\Assembly-CSharp-Editor.pdb
