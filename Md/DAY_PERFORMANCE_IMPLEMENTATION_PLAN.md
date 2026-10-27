@@ -1,7 +1,7 @@
 # 누적 실적 시스템 구현 계획
 
 - 작성일: 2026-10-28
-- 진행 상태: 준비 단계·1단계와 2단계 로컬 저장·Start 진입, 3단계 미션별 차량 충돌 기록, 4단계 GamePlay 결과·하루 완료의 구현 및 검증을 완료했다. 5단계 이후는 미구현이다. [준비·1단계 결과](DAY_PERFORMANCE_STAGE1.md), [2단계 결과](DAY_PERFORMANCE_STAGE2.md), [3단계 결과](DAY_PERFORMANCE_STAGE3.md), [4단계 결과](DAY_PERFORMANCE_STAGE4.md)를 참고한다.
+- 진행 상태: 준비 단계·1단계와 2단계 로컬 저장·Start 진입, 3단계 미션별 차량 충돌 기록, 4단계 GamePlay 결과·하루 완료, 5단계 Waiting 누적 안내·평가·해고의 구현 및 검증을 완료했다. 6단계 이후는 미구현이다. [준비·1단계 결과](DAY_PERFORMANCE_STAGE1.md), [2단계 결과](DAY_PERFORMANCE_STAGE2.md), [3단계 결과](DAY_PERFORMANCE_STAGE3.md), [4단계 결과](DAY_PERFORMANCE_STAGE4.md), [5단계 결과](DAY_PERFORMANCE_STAGE5.md)를 참고한다.
 - 기준 기획: [날짜 진행 및 누적 실적 평가](DAY_PERFORMANCE_SPEC.md), [리메이크 구현 기준](../GAME_REMAKE_SPEC.md)
 - 실제 프로젝트 버전: Unity 6000.3.23f1 (`ProjectSettings/ProjectVersion.txt` 확인)
 - 유지할 패키지: Input System 1.20.0, URP 17.3.0, Test Framework 1.6.0, uGUI 2.0.0
@@ -109,6 +109,8 @@ Start → 시작하기 → 저장 상태별 Waiting 진입
 **완료 조건:** 한 미션의 결과 확인이 정확히 하루 한 번의 누적 반영·저장·일차 진행으로 이어진다.
 
 ### 5단계 — Waiting 누적 안내·평가·해고
+
+**진행 상태:** 구현·검증 완료. 누적 안내·동점/초과 통과·해고 기록·다시 시작과 각 저장 실패 재시도·중복 입력 차단을 확인했다. 두 번의 연속 평가와 완전 재실행 복원도 검증했다. 6단계 이후는 진행하지 않았다. [상세 결과](DAY_PERFORMANCE_STAGE5.md)를 참고한다.
 
 **수정 범위:** `WaitingMissionController.cs`, 필요한 평가 UI 역할, `Waiting.unity`를 수정한다. 기존 요청·수락·출동 승인과 페이드는 재사용한다.
 
