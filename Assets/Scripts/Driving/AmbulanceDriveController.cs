@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 [DisallowMultipleComponent]
 [RequireComponent(typeof(Rigidbody2D), typeof(BoxCollider2D))]
@@ -21,17 +21,7 @@ public sealed class AmbulanceDriveController : MonoBehaviour
     [SerializeField, Min(0.1f)] private float throttleResponse = 2f;
     [SerializeField, Min(0.1f)] private float brakeResponse = 6f;
 
-    [Header("Steering and tire grip")]
-    [SerializeField, Min(0.01f)] private float wheelbase = 0.68f;
-    [SerializeField] private Vector2 axleCenter;
-    [SerializeField, Range(1f, 60f)] private float maximumRoadWheelAngle = 45f;
-    [SerializeField, Min(0f)] private float lateralGrip = 12f;
-    [SerializeField, Min(0f)] private float maximumLateralAcceleration = 3.2f;
-    [SerializeField, Min(0f)] private float yawDamping = 0.8f;
-
-    [Header("Responsive steering")]
-    // 새 조향을 기본 사용하며, 해제하면 저장된 차축/타이어 설정으로 비교 주행할 수 있다.
-    [SerializeField] private bool useResponsiveSteering = true;
+    [Header("Steering")]
     // 충분히 움직일 때 최대 조향으로 회전하는 속도다. 단위는 도/초다.
     [SerializeField, Min(1f)] private float maximumTurnSpeed = 120f;
     // 목표 회전 속도에 접근하는 가속도다. 단위는 도/초²다.
@@ -139,25 +129,16 @@ public sealed class AmbulanceDriveController : MonoBehaviour
         var contact = collision.GetContact(0);
         var direction = -contact.normal;
         var closingSpeed = Mathf.Abs(Vector2.Dot(collision.relativeVelocity, direction));
-        // 충돌 전 상대 선속도를 복원한다. 충격 방향은 속도 방향이 아니라 실제 접촉 법선을 따른다.
-        var incomingVelocity = collision.relativeVelocity;
-        if (Vector2.Dot(incomingVelocity, direction) < 0f)
-        {
-            incomingVelocity = -incomingVelocity;
-        }
-        var impactSpeed = incomingVelocity.magnitude;
+        var impactSpeed = collision.relativeVelocity.magnitude;
         var other = collision.rigidbody;
         // 전환 전 상대 속도는 Kinematic 접촉 해결의 영향을 받지 않는다. 단위는 월드 유닛/초다.
         var wasKinematic = other.bodyType == RigidbodyType2D.Kinematic;
-        // Kinematic 접촉이 구급차를 정지시켜도 전환 전 상대 속도와 상대속도로 입사 속도를 복원한다.
-        // 이미 Dynamic이면 엔진이 계산한 충돌 결과를 유지하여 재충돌 때 속도를 중복 복원하지 않는다.
-        var incidentVelocity = wasKinematic ? other.linearVelocity + incomingVelocity : body.linearVelocity;
         var fatal = impactSpeed >= fatalImpactSpeed;
         if (!target.IsReacting || (fatal && !target.IsWrecked) || other.bodyType != RigidbodyType2D.Dynamic)
         {
             target.BeginImpact(fatal);
         }
-        if (!applyImpulse || closingSpeed <= 0f)
+        if (!applyImpulse)
         {
             return;
         }
@@ -167,7 +148,8 @@ public sealed class AmbulanceDriveController : MonoBehaviour
         }
         // 면 접촉의 중심을 사용해 정면 접촉에서 모서리 하나 때문에 생기는 인위적 회전을 피한다.
         var point = Vector2.zero;
-        // 기존 해결기가 구급차에 적용한 각충격량을 복구한다(kg·유닛²/초).
+        var solvedLinearImpulse = Vector2.zero;
+        // 기존 해결기가 구급차에 적용한 선충격량과 각충격량만 취소한다(kg·유닛/초, kg·유닛²/초).
         var solvedAngularImpulse = 0f;
         for (var index = 0; index < collision.contactCount; index++)
         {
@@ -175,12 +157,14 @@ public sealed class AmbulanceDriveController : MonoBehaviour
             point += sample.point;
             var tangent = new Vector2(sample.normal.y, -sample.normal.x);
             var solvedImpulse = sample.normal * sample.normalImpulse + tangent * sample.tangentImpulse;
+            solvedLinearImpulse += solvedImpulse;
             var arm = sample.point - body.worldCenterOfMass;
             solvedAngularImpulse += arm.x * solvedImpulse.y - arm.y * solvedImpulse.x;
         }
         point /= collision.contactCount;
-        // 최초 Kinematic 접촉의 무한 질량 응답 대신 유한 질량과 회전 관성을 사용한다.
-        body.linearVelocity = incidentVelocity;
+        // 상대속도의 부호로 입사 속도를 추정하면 후방 충돌/이탈 접촉에서 속도가 반전될 수 있다.
+        // 이 접촉의 엔진 응답만 되돌려 다른 차량과 동시에 충돌했을 때의 속도 변화도 보존한다.
+        body.linearVelocity -= solvedLinearImpulse / body.mass;
         if (body.inertia > 0f && (body.constraints & RigidbodyConstraints2D.FreezeRotation) == 0)
         {
             body.angularVelocity -= solvedAngularImpulse / body.inertia * Mathf.Rad2Deg;
@@ -292,18 +276,7 @@ public sealed class AmbulanceDriveController : MonoBehaviour
             body.AddForce(-body.linearVelocity / speed * (deceleration * body.mass));
         }
 
-        if (useResponsiveSteering)
-        {
-            ApplyResponsiveSteering(forward, dt);
-            return;
-        }
-
-        float roadWheelAngle = steering * maximumRoadWheelAngle;
-        Vector2 frontDirection = Quaternion.Euler(0f, 0f, -roadWheelAngle) * forward;
-        Vector2 center = body.position + (Vector2)(Quaternion.Euler(0f, 0f, body.rotation) * (Vector3)axleCenter);
-        ApplyTireGrip(center + forward * (wheelbase * 0.5f), frontDirection, dt);
-        ApplyTireGrip(center - forward * (wheelbase * 0.5f), forward, dt);
-        body.AddTorque(-body.angularVelocity * Mathf.Deg2Rad * body.inertia * yawDamping);
+        ApplyResponsiveSteering(forward, dt);
     }
 
     public void SetInput(float steering, float throttle, float brake)
@@ -337,24 +310,6 @@ public sealed class AmbulanceDriveController : MonoBehaviour
         appliedBrake = 0f;
         isGearChangePending = false;
         brakingDeceleration = 0f;
-    }
-
-    /// <summary>Used by the scoped scene installer only for a newly added controller. Values are in world units.</summary>
-    public void ConfigureAxles(Vector2 center, float length)
-    {
-        axleCenter = center;
-        wheelbase = Mathf.Max(0.01f, length);
-    }
-
-    private void ApplyTireGrip(Vector2 position, Vector2 tireForward, float dt)
-    {
-        Vector2 tireRight = new Vector2(tireForward.y, -tireForward.x);
-        float sidewaysSpeed = Vector2.Dot(body.GetPointVelocity(position), tireRight);
-        float correction = Mathf.Min(lateralGrip, 1f / dt);
-        float lateralAcceleration = Mathf.Clamp(-sidewaysSpeed * correction,
-            -maximumLateralAcceleration, maximumLateralAcceleration);
-        // 각 차축에 질량 절반을 적용한다. 브레이크 입력과 무관하게 기존 횡방향 접지력 한도를 사용한다.
-        body.AddForceAtPosition(tireRight * (lateralAcceleration * body.mass * 0.5f), position);
     }
 
     /// <summary>고정 스텝에서 회전 속도와 이동 방향을 함께 보정한다. 속력은 보존하고 충돌은 물리 엔진에 맡긴다.</summary>

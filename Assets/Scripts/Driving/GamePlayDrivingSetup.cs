@@ -123,9 +123,6 @@ public static class GamePlayDrivingSetup
         {
             vehicle = AddComponent<AmbulanceDriveController>(ambulance);
             Record(vehicle);
-            Vector3 scale = ambulance.transform.lossyScale;
-            Vector2 center = Vector2.Scale(spriteRenderer.sprite.bounds.center, new Vector2(scale.x, scale.y));
-            vehicle.ConfigureAxles(center, spriteRenderer.sprite.bounds.size.y * Mathf.Abs(scale.y) * 0.72f);
         }
 
         Record(scaler);

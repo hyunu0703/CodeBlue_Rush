@@ -550,7 +550,8 @@ MonoBehaviour:
   target: {fileID: 585983598}
   offset: {x: 0, y: 1.83, z: -10}
   smoothTime: 0.15
-  rotationSmoothTime: 0.15
+  rotationSmoothTime: 0.5
+  maximumRotationSpeed: 75
   mapGenerator: {fileID: 0}
   maximumBrakeOffset: 0.16
   brakeMotionDuration: 2.2
@@ -854,13 +855,6 @@ MonoBehaviour:
   engineBrakeDeceleration: 0.6
   throttleResponse: 2
   brakeResponse: 6
-  wheelbase: 0.67968
-  axleCenter: {x: 0, y: 0}
-  maximumRoadWheelAngle: 45
-  lateralGrip: 12
-  maximumLateralAcceleration: 3.2
-  yawDamping: 0.8
-  useResponsiveSteering: 1
   maximumTurnSpeed: 120
   turnAcceleration: 1080
   fullSteeringSpeed: 2

@@ -7,8 +7,8 @@ public sealed class AmbulanceCameraFollow : MonoBehaviour
     [SerializeField] private Transform target;
     [SerializeField] private Vector3 offset;
     [SerializeField, Min(0.01f)] private float smoothTime = 0.15f;
-    // 교차로의 차량 방향과 출구 도로 방향 사이를 이어주는 회전 완화 시간이다. 단위는 초다.
-    [SerializeField, Min(0.01f)] private float rotationSmoothTime = 0.15f;
+    [SerializeField, Min(0.01f)] private float rotationSmoothTime = 0.5f; // 교차로의 차량 방향과 출구 도로 방향 사이를 이어주는 회전 완화 시간이다. 단위는 초다.
+    [SerializeField, Min(0.01f)] private float maximumRotationSpeed = 75f; // 급조향 시 화면 회전을 제한하는 최대 속도다. 단위는 도/초다.
     // 미지정이면 같은 씬의 단일 맵 생성기를 활성화 시 조회한다. 다른 씬의 교차로는 사용하지 않는다.
     [SerializeField] private MissionMapGenerator mapGenerator;
     [SerializeField, Min(0f)] private float maximumBrakeOffset = 0.16f;        // 최고 속도에서 화면 위쪽으로 이동하는 최대 거리다. 단위는 월드 유닛이다.
@@ -200,7 +200,7 @@ public sealed class AmbulanceCameraFollow : MonoBehaviour
 
         // 구역을 나가도 회전 각속도를 초기화하지 않는다. 맵 밖에서는 마지막 도로 방향을 유지한다.
         intersectionAngle = Mathf.SmoothDampAngle(intersectionAngle, desiredAngle, ref rotationVelocity,
-            rotationSmoothTime, Mathf.Infinity, Time.deltaTime);
+            rotationSmoothTime, maximumRotationSpeed, Time.deltaTime);
         transform.rotation = uprightRotation * Quaternion.Euler(0f, 0f, intersectionAngle);
     }
 

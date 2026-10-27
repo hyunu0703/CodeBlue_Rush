@@ -216,29 +216,6 @@ public sealed class AmbulanceSteeringTests
         Assert.That(body.linearVelocity.magnitude, Is.LessThan(0.1f));
     }
 
-    /// <summary>직진 조건에서 새 조향을 켜거나 꺼도 가속/제동/엔진 제동 결과가 같은지 비교한다.</summary>
-    [TestCase(1f, 0f)]
-    [TestCase(0f, 1f)]
-    [TestCase(0f, 0f)]
-    public void FixedUpdate_StraightPedals_MatchesOriginalSpeed(float throttle, float brake)
-    {
-        body.linearVelocity = Vector2.up * 4f;
-        for (var index = 0; index < 50; index++)
-        {
-            Step(0f, throttle, brake);
-        }
-        // 같은 출발 상태에서 기존 타이어 방식으로 재실행한다.
-        var responsiveSpeed = body.linearVelocity.magnitude;
-        vehicle.ClearInput();
-        body.linearVelocity = Vector2.up * 4f;
-        SetField(vehicle, "useResponsiveSteering", false);
-        for (var index = 0; index < 50; index++)
-        {
-            Step(0f, throttle, brake);
-        }
-        Assert.That(body.linearVelocity.magnitude, Is.EqualTo(responsiveSpeed).Within(0.001f));
-    }
-
     /// <summary>실제 컨트롤러의 고정 스텝 처리 후 격리된 Box2D 월드를 한 스텝 시뮬레이션한다.</summary>
     private void Step(float steering, float throttle, float brake)
     {
@@ -284,7 +261,6 @@ public sealed class AmbulanceSteeringSceneTests
                 foreach (var controller in root.GetComponentsInChildren<AmbulanceDriveController>(true))
                 {
                     var data = new SerializedObject(controller);
-                    Assert.That(data.FindProperty("useResponsiveSteering").boolValue, Is.True);
                     Assert.That(data.FindProperty("maximumTurnSpeed").floatValue, Is.EqualTo(120f));
                     foundVehicle = true;
                 }
