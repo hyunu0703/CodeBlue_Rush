@@ -41,8 +41,14 @@ public static class MissionSeedRules
         return seed % 10;
     }
 
-    /// <summary>시드로 도로 종류와 연결 순서를 만든다. 범위, 반복 횟수 0, 자기 겹침은 실패 이유를 반환한다.</summary>
+    /// <summary>픽업 전 규칙으로 각 직선 구간을 1~2개 생성한다. 잘못된 시드와 자기 겹침은 실패 이유를 반환한다.</summary>
     public static bool TryBuildRoute(int seed, out MissionRoadPiece[] route, out string error)
+    {
+        return TryBuildRoute(seed, 2, out route, out error);
+    }
+
+    // 단계별 최대 길이를 적용하고 교차로와 차선 연결 규칙을 공통으로 처리한다.
+    private static bool TryBuildRoute(int seed, int maximumStraights, out MissionRoadPiece[] route, out string error)
     {
         route = Array.Empty<MissionRoadPiece>();
         error = null;
@@ -60,12 +66,11 @@ public static class MissionSeedRules
             }
         }
 
-        // 최대 구역 수는 직선 9개씩 네 구간과 교차로 세 개를 합친 39개다.
-        var pieces = new List<MissionRoadPiece>(39);
+        var pieces = new List<MissionRoadPiece>(maximumStraights * 4 + 3);
         var direction = RoadDirection.North;
         var firstDigit = GetDigit(seed, 1);
         var lanes = firstDigit <= 4 ? 4 : 6;
-        AddStraights(pieces, GetDigit(seed, 2), direction, lanes);
+        AddStraights(pieces, GetStraightCount(seed, 2, maximumStraights), direction, lanes);
 
         // 3·5·7번째 자리는 같은 선택 규칙을 적용한다. 혼합 T의 출구 차선은 다음 구간과 교차로에 이어진다.
         for (var place = 3; place <= 7; place += 2)
@@ -77,7 +82,7 @@ public static class MissionSeedRules
             AddPiece(pieces, junction, direction, nextDirection, lanes, exitLanes);
             direction = nextDirection;
             lanes = exitLanes;
-            AddStraights(pieces, GetDigit(seed, place + 1), direction, lanes);
+            AddStraights(pieces, GetStraightCount(seed, place + 1, maximumStraights), direction, lanes);
         }
 
         // 동일한 정사각 구역을 같은 칸에 두 번 배치하는 경로는 생성 후보에서 제외한다.
@@ -125,7 +130,7 @@ public static class MissionSeedRules
     {
         route = Array.Empty<MissionRoadPiece>();
         if (!TryBuildPickupRoute(pickupSeed, out var pickup, out error)
-            || !TryBuildRoute(transportSeed, out var transport, out error))
+            || !TryBuildRoute(transportSeed, 2, out var transport, out error))
         {
             return false;
         }
@@ -195,6 +200,12 @@ public static class MissionSeedRules
         }
         error = "픽업 맵에서 차선과 겹침 조건을 만족하는 후송 도로를 연결할 수 없습니다. 다른 픽업 시드를 사용해주세요.";
         return false;
+    }
+
+    // 기존 시드의 1~9를 단계별 길이 범위로 순환시켜 같은 시드의 재현성을 유지한다.
+    private static int GetStraightCount(int seed, int place, int maximumStraights)
+    {
+        return (GetDigit(seed, place) - 1) % maximumStraights + 1;
     }
 
     /// <summary>0~3은 직진, 4~6은 좌회전, 7~9는 우회전이다. 방향 enum은 시계방향 순서다.</summary>
