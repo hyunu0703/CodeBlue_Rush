@@ -202,7 +202,11 @@ public sealed class MissionController : MonoBehaviour
         if (confirmButton != null) confirmButton.onClick.RemoveListener(ConfirmResult);
         if (resultPanel != null) resultPanel.SetActive(false);
         if (missionPerformance != null) missionPerformance.SetRecording(false);
-        if (patientHealth != null) patientHealth.SetTransporting(false);
+        if (patientHealth != null)
+        {
+            patientHealth.SetTransporting(false);
+            patientHealth.SetTimerRunning(false);
+        }
         if (patientECGPanel != null) patientECGPanel.gameObject.SetActive(false);
         StopRescue();
         if (stage == MissionStage.Rescuing)
@@ -315,6 +319,7 @@ public sealed class MissionController : MonoBehaviour
         }
         missionPerformance.SetRecording(false);
         patientHealth.SetTransporting(false);
+        patientHealth.SetTimerRunning(false);
         result = new MissionResult(missionProgress, patientHealth.HealthPercent,
             missionPerformance.LowCollisionCount, missionPerformance.HighCollisionCount);
         stage = MissionStage.Result;
@@ -381,7 +386,11 @@ public sealed class MissionController : MonoBehaviour
         confirmButton.interactable = stage == MissionStage.Result && !isSaving;
         driveInput.SetMissionDrivingAllowed(stage == MissionStage.Active || stage == MissionStage.Transporting);
         var transporting = stage == MissionStage.Transporting && IsPatientPickedUp;
-        if (patientHealth != null) patientHealth.SetTransporting(transporting);
+        if (patientHealth != null)
+        {
+            patientHealth.SetTransporting(transporting);
+            patientHealth.SetTimerRunning(stage == MissionStage.Active || stage == MissionStage.Rescuing || transporting);
+        }
         if (patientECGPanel != null) patientECGPanel.gameObject.SetActive(transporting);
         if (navigation != null)
         {

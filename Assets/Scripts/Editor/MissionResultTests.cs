@@ -8,7 +8,9 @@ public sealed class MissionResultTests
     // 표시값으로 다시 계산하지 않고 실제 HP의 마지막 1회 반올림을 유지한다.
     [TestCase(72.46d, 0, 0, 102)]
     [TestCase(72.50d, 0, 0, 103)]
-    [TestCase(72.46d, 3, 2, 46)]
+    [TestCase(72.46d, 3, 2, 63)]
+    [TestCase(100d, 1, 0, 99)]
+    [TestCase(100d, 0, 1, 97)]
     [TestCase(100d, 0, 0, 130)]
     [TestCase(1d, 2, 0, 0)]
     [TestCase(0d, 0, 0, 0)]

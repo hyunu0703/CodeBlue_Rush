@@ -92,6 +92,38 @@ public sealed class ApplicationPauseTests
         Assert.That(ApplicationPause.IsPaused, Is.False); Assert.That(Time.timeScale, Is.EqualTo(1f));
     }
 
+    // 픽업 전부터 180초를 공유하고 픽업 시 체력을 복원하거나 충격 피해를 미리 적용하지 않는다.
+    [UnityTest]
+    public IEnumerator PatientTimer_RunsBeforePickupAndStopsAfterMission()
+    {
+        scene = SceneManager.CreateScene("Patient timer " + Guid.NewGuid());
+        var root = new GameObject("Patient timer");
+        SceneManager.MoveGameObjectToScene(root, scene);
+        var health = root.AddComponent<PatientHealth>();
+        health.ResetPatient();
+        SignalHealth(health, "Advance", 90f);
+        Assert.That(health.HealthPercent, Is.EqualTo(100f));
+        health.SetTimerRunning(true);
+        SignalHealth(health, "Advance", 90f);
+        Assert.That(health.HealthPercent, Is.EqualTo(50f).Within(.001f));
+        SignalHealth(health, "ApplyVehicleImpact", 60f / 21.6f);
+        Assert.That(health.HealthPercent, Is.EqualTo(50f).Within(.001f));
+        health.SetTransporting(true);
+        SignalHealth(health, "Advance", 45f);
+        Assert.That(health.HealthPercent, Is.EqualTo(25f).Within(.001f));
+        health.SetTransporting(false);
+        health.SetTimerRunning(false);
+        SignalHealth(health, "Advance", 90f);
+        Assert.That(health.HealthPercent, Is.EqualTo(25f).Within(.001f));
+        health.SetTimerRunning(true);
+        SignalHealth(health, "Advance", 45f);
+        Assert.That(health.HealthPercent, Is.Zero);
+        health.ResetPatient();
+        SignalHealth(health, "Advance", 90f);
+        Assert.That(health.HealthPercent, Is.EqualTo(100f));
+        yield break;
+    }
+
     // 실제 자동 물리와 HP Update를 관찰하며 Editor 코루틴에서도 유효한 실제 시간 대기를 사용한다.
     [UnityTest]
     public IEnumerator Background_StopsAutomaticPhysicsAndPatientHealth()
@@ -102,7 +134,7 @@ public sealed class ApplicationPauseTests
         root.AddComponent<BoxCollider2D>().size = Vector2.one * .1f;
         var initial = new Vector2(-500f, -500f);
         body.position = initial;
-        var health = root.AddComponent<PatientHealth>(); health.SetTransporting(true);
+        var health = root.AddComponent<PatientHealth>(); health.SetTransporting(true); health.SetTimerRunning(true);
         yield return null;
         body.position = initial; body.WakeUp();
         body.linearVelocity = Vector2.right * 4f; body.angularVelocity = 40f;

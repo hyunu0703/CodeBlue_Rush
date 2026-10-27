@@ -12,8 +12,8 @@ public sealed class MissionPerformance : MonoBehaviour
     private readonly List<Vector2> contactNormals = new List<Vector2>(8); // 첫 접촉 속도 계산에 사용할 법선 버퍼다.
     private Rigidbody2D body;        // 이 미션 기록을 소유한 구급차 차체다.
     private bool isRecording;       // 미션 준비 전·종료 후에는 기록하지 않는다.
-    private int lowCollisionCount;  // 첫 법선 충격이 40km/h 미만이었던 차량 접촉 횟수다.
-    private int highCollisionCount; // 첫 법선 충격이 40km/h 이상이었던 차량 접촉 횟수다.
+    private int lowCollisionCount;  // 첫 법선 충격이 60km/h 미만이었던 차량 접촉 횟수다.
+    private int highCollisionCount; // 첫 법선 충격이 60km/h 이상이었던 차량 접촉 횟수다.
 
     public int LowCollisionCount => lowCollisionCount;
     public int HighCollisionCount => highCollisionCount;

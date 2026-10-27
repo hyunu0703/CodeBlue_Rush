@@ -24,9 +24,9 @@ public static class PerformanceRules
 {
     public const int MaximumDailyScore = 130; // HP 100%와 생존 무사고 보너스를 합한 이론상 하루 최대 실적이다.
     private const int SafeBonus = 30;         // 생존하고 차량 충돌이 없을 때만 지급하는 실적이다.
-    private const int LowPenalty = 2;         // 저속 충돌 1회에 적용할 실적 감점이다.
-    private const int HighPenalty = 10;       // 고속 충돌 1회에 적용할 실적 감점이다.
-    private const double HighSpeedKmh = 40d;  // 이 값 이상인 법선 방향 충격을 고속으로 판정한다.
+    private const int LowPenalty = 1;         // 저속 충돌 1회에 적용할 실적 감점이다.
+    private const int HighPenalty = 3;        // 고속 충돌 1회에 적용할 실적 감점이다.
+    private const double HighSpeedKmh = 60d;  // 이 값 이상인 법선 방향 충격을 고속으로 판정한다.
 
     // 인계 시 실제 HP와 확정 충돌 횟수로 계산하고, 하한 적용 뒤 마지막에만 사사오입한다.
     public static int CalculateScore(double healthPercent, int lowCollisions, int highCollisions)
@@ -62,7 +62,7 @@ public static class PerformanceRules
         return displayed.ToString("0.0", CultureInfo.InvariantCulture) + "%";
     }
 
-    // 실제 충격 속도를 그대로 비교하여 정확히 40km/h이면 고속으로 판정한다.
+    // 실제 충격 속도를 그대로 비교하여 정확히 60km/h이면 고속으로 판정한다.
     public static CollisionLevel GetCollisionLevel(double impactSpeedKmh)
     {
         ValidateFinite(impactSpeedKmh, nameof(impactSpeedKmh));

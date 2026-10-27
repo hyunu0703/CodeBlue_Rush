@@ -920,9 +920,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48bd5b1e198e4e9fb8e7127c64c807d9, type: 3}
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::PatientHealth
-  survivalSeconds: 120
-  damagePerTenKmh: 5
-  maximumImpactDamage: 30
+  survivalSeconds: 180
   healthPercent: 100
 --- !u!61 &585983601
 BoxCollider2D:
