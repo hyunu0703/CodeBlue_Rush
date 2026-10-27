@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 
 /// <summary>임시 구급대원 두 명과 환자 한 명의 대기/이동/탑승을 표현한다. 코루틴 수명은 미션 관리자가 소유한다.</summary>
 [DisallowMultipleComponent]
@@ -25,6 +26,9 @@ public sealed class PatientRescueCutscene : MonoBehaviour
     private Sprite outlineSprite;
     private Texture2D outlineTexture;
     private Vector2 parkingSize;
+    private CanvasGroup pickupCover; // 픽업 중 전체 화면의 암전과 UI 입력 차단을 관리한다.
+    private Coroutine pickupFade; // 탑승 판정 뒤 실행하며 취소 시 중단하는 화면 복원 작업이다.
+    [SerializeField, Min(0.01f)] private float fadeInSeconds = 1f; // 탑승 판정 직후 검은 화면이 사라지는 시간(초)이다.
 
     /// <summary>세 이미지가 모두 사라져 탑승이 완료되었는지 반환한다. 취소는 완료로 처리하지 않는다.</summary>
     public bool IsCompleted { get; private set; }
@@ -157,6 +161,15 @@ public sealed class PatientRescueCutscene : MonoBehaviour
         {
             yield break;
         }
+        // 대기 중에는 화면을 유지하고 실제 이동 진행률에 맞춰 어둡게 한다.
+        EnsurePickupCover();
+        pickupCover.blocksRaycasts = true;
+        pickupCover.alpha = 0f;
+        if (!isActiveAndEnabled || actorRoot == null || ambulance == null || vehicleCollider == null)
+        {
+            Cancel();
+            yield break;
+        }
         // 입력이 잠긴 차량의 로컬 -Y가 후면이다. 회전/스케일/콜라이더 오프셋을 모두 반영한다.
         var start = actorRoot.position;
         var rear = ambulance.transform.TransformPoint(new Vector3(vehicleCollider.offset.x,
@@ -184,6 +197,9 @@ public sealed class PatientRescueCutscene : MonoBehaviour
             elapsed += Time.deltaTime;
             // 세로 대형을 점차 좁혀 세 이미지가 모두 같은 차량 후면 지점에 도착하게 한다.
             var progress = Mathf.SmoothStep(0f, 1f, elapsed / movingSeconds);
+            // 이동 시간의 70% 지점(후면까지 거리 약 78%)부터 어둡게 하여 탑승 순간 완전 암전한다.
+            var fadeProgress = Mathf.InverseLerp(0.7f, 1f, elapsed / movingSeconds);
+            pickupCover.alpha = Mathf.SmoothStep(0f, 1f, fadeProgress);
             actorRoot.position = Vector3.Lerp(start, rear, progress);
             SetActorSpacing(1f - progress);
             yield return null;
@@ -196,12 +212,64 @@ public sealed class PatientRescueCutscene : MonoBehaviour
             pickupOutline.gameObject.SetActive(false);
         }
         IsCompleted = true;
+        // 호출자가 같은 프레임에 탑승 판정을 반영하고 후송을 준비하는 동안 화면을 복원한다.
+        pickupFade = StartCoroutine(FadePickupCover(0f, fadeInSeconds));
+    }
+
+    // 기존 씬 전환과 독립된 덮개를 한 번만 만들고 컷신과 함께 정리한다.
+    private void EnsurePickupCover()
+    {
+        if (pickupCover != null) return;
+        var root = new GameObject("Patient Pickup Fade", typeof(RectTransform), typeof(Canvas),
+            typeof(CanvasGroup), typeof(GraphicRaycaster));
+        root.transform.SetParent(transform, false);
+        var canvas = root.GetComponent<Canvas>();
+        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        canvas.sortingOrder = short.MaxValue - 1;
+        pickupCover = root.GetComponent<CanvasGroup>();
+        pickupCover.alpha = 0f;
+        pickupCover.blocksRaycasts = false;
+        var image = new GameObject("Black Cover", typeof(RectTransform), typeof(Image));
+        image.transform.SetParent(root.transform, false);
+        var rect = image.GetComponent<RectTransform>();
+        rect.anchorMin = Vector2.zero;
+        rect.anchorMax = Vector2.one;
+        rect.offsetMin = rect.offsetMax = Vector2.zero;
+        image.GetComponent<Image>().color = Color.black;
+    }
+
+    // 일시정지를 존중하며 전체 화면의 검은 덮개 투명도를 변경한다.
+    private IEnumerator FadePickupCover(float target, float seconds)
+    {
+        var initial = pickupCover.alpha;
+        var elapsed = 0f;
+        while (elapsed < Mathf.Max(0.01f, seconds))
+        {
+            if (!isActiveAndEnabled || pickupCover == null) yield break;
+            elapsed += ApplicationPause.ActiveDeltaTime;
+            pickupCover.alpha = Mathf.Lerp(initial, target,
+                Mathf.SmoothStep(0f, 1f, elapsed / Mathf.Max(0.01f, seconds)));
+            yield return null;
+        }
+        if (pickupCover != null) pickupCover.alpha = target;
+        if (pickupCover != null) pickupCover.blocksRaycasts = false;
+        pickupFade = null;
     }
 
     /// <summary>활성 기간 종료나 미션 종료 시 표시를 숨기고 완료 판정을 비운다.</summary>
     public void Cancel()
     {
         IsCompleted = false;
+        if (pickupFade != null)
+        {
+            StopCoroutine(pickupFade);
+            pickupFade = null;
+        }
+        if (pickupCover != null)
+        {
+            pickupCover.alpha = 0f;
+            pickupCover.blocksRaycasts = false;
+        }
         if (actorRoot != null)
         {
             actorRoot.gameObject.SetActive(false);
