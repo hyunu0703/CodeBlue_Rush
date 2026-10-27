@@ -25,6 +25,7 @@ public sealed class MissionMapGenerator : MonoBehaviour
     private readonly Dictionary<Vector2, List<BuildingPrefab>> roadBuildings = new Dictionary<Vector2, List<BuildingPrefab>>();
     private readonly HashSet<Vector2> activeBuildingRoads = new HashSet<Vector2>(); // 이번 스트리밍 갱신에서 살아 있는 도로 좌표다.
     private readonly Dictionary<BuildingPrefab, Stack<BuildingPrefab>> buildingPool = new Dictionary<BuildingPrefab, Stack<BuildingPrefab>>();
+    private Sprite buildingGroundTile; // 기존 인도 텍스처를 공유하는 런타임 타일이며 생성기 파괴 시 해제한다.
 
     // 진행 경로 39개와 미선택 출구의 직선 최대 12개를 단계별로 소유하고 같은 풀에서 재사용한다.
     private readonly List<RoadPrefab> activeRoads = new List<RoadPrefab>(51);
@@ -93,6 +94,10 @@ public sealed class MissionMapGenerator : MonoBehaviour
     private void OnDestroy()
     {
         laneNetwork?.Invalidate();
+        if (buildingGroundTile != null)
+        {
+            Destroy(buildingGroundTile);
+        }
         // Map Root가 생성기와 다른 부모에 있어도 소유한 활성 건물만 정리한다.
         foreach (var buildings in roadBuildings.Values)
         {
@@ -844,6 +849,19 @@ public sealed class MissionMapGenerator : MonoBehaviour
     // 경계를 걸친 건물은 닿는 도로 중 하나라도 활성 상태면 맵 부모 아래 한 번만 유지한다.
     private void RefreshBuildings()
     {
+        catalog.TryGetPrefab(RoadIndex.Straight4Lane, out var groundRoad);
+        var groundRenderer = groundRoad.GetComponent<SpriteRenderer>();
+        if (buildingGroundTile == null)
+        {
+            var source = groundRenderer.sprite;
+            var rect = source.rect;
+            // 1254px 원본의 인도 안쪽 40px 반복 구간이다. 연석과 투명한 바깥 부분은 제외한다.
+            var unit = rect.width / 1254f;
+            buildingGroundTile = Sprite.Create(source.texture,
+                new Rect(rect.x + 402f * unit, rect.y + 1214f * unit, 40f * unit, 40f * unit),
+                Vector2.one * 0.5f, source.pixelsPerUnit, 0, SpriteMeshType.FullRect);
+            buildingGroundTile.name = "BuildingSidewalkTile";
+        }
         activeBuildingRoads.Clear();
         foreach (var road in activeRoads)
         {
@@ -879,6 +897,7 @@ public sealed class MissionMapGenerator : MonoBehaviour
                     building.transform.localRotation = Quaternion.Euler(0f, 0f, -90f * placement.Rotation);
                     var scale = placement.Prefab.transform.localScale;
                     building.transform.localScale = new Vector3(scale.x * placement.Scale * (placement.FlipX ? -1f : 1f), scale.y * placement.Scale, scale.z);
+                    building.ConfigureGround(buildingGroundTile, groundRenderer, MissionBuildingLayout.GetBounds(placement), mapRoot);
                     building.gameObject.SetActive(true);
                     buildings[index] = building;
                 }
