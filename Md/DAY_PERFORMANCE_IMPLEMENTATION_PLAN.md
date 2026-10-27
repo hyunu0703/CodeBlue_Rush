@@ -1,7 +1,7 @@
 # 누적 실적 시스템 구현 계획
 
 - 작성일: 2026-10-28
-- 진행 상태: 준비 단계와 1단계 구현·검증 완료. 2단계 이후는 미구현이다. [준비·1단계 결과](DAY_PERFORMANCE_STAGE1.md)를 참고한다.
+- 진행 상태: 준비 단계·1단계와 2단계 로컬 저장·Start 진입의 구현 및 검증을 완료했다. 3단계 이후는 미구현이다. [준비·1단계 결과](DAY_PERFORMANCE_STAGE1.md), [2단계 결과](DAY_PERFORMANCE_STAGE2.md)를 참고한다.
 - 기준 기획: [날짜 진행 및 누적 실적 평가](DAY_PERFORMANCE_SPEC.md), [리메이크 구현 기준](../GAME_REMAKE_SPEC.md)
 - 실제 프로젝트 버전: Unity 6000.3.23f1 (`ProjectSettings/ProjectVersion.txt` 확인)
 - 유지할 패키지: Input System 1.20.0, URP 17.3.0, Test Framework 1.6.0, uGUI 2.0.0
@@ -67,6 +67,8 @@ Start → 시작하기 → 저장 상태별 Waiting 진입
 **완료 조건:** 씬이나 차량 없이도 확정 기획의 계산·진행 전환을 재현한다.
 
 ### 2단계 — 로컬 저장과 Start 진입
+
+**진행 상태:** 구현 완료. 실제 저장·복원, Start 오류·재시도, 상태별 진입 및 기존 흐름을 검증했다. 평가 대기·해고는 복원 후 요청 차단만 연결하고 평가·재시작 화면은 5단계로 남긴다. 실제 후송 결과에서 저장을 호출하는 작업은 4단계다. [상세 결과](DAY_PERFORMANCE_STAGE2.md)를 참고한다.
 
 **수정 범위:** `Assets/Scripts/Missions/`에 진행 저장 역할을 추가하고 `StartSceneMenu.cs`, `Start.unity`에 읽기 오류·재시도 UI를 연결한다. 저장 API·데이터 형식은 실제 구현 시 기존 기능과 대상 플랫폼의 공식 문서를 확인해 선택한다. 계정·서버·기기 간 동기화는 추가하지 않는다.
 

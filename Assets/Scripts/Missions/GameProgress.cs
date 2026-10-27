@@ -38,6 +38,33 @@ public sealed class GameProgress
         this.stage = stage;
     }
 
+    // 저장된 일차·실적·평가 이력이 서로 모순되지 않을 때만 진행 상태를 복원한다.
+    public static bool TryRestore(int currentDay, long cumulativeScore, int evaluationPeriod,
+        ProgressStage stage, out GameProgress restored)
+    {
+        restored = null;
+        if (currentDay < 1 || evaluationPeriod < 1 || cumulativeScore < 0L
+            || cumulativeScore > (currentDay - 1L) * PerformanceRules.MaximumDailyScore) return false;
+        var completedDays = currentDay - 1;
+        if (stage == ProgressStage.Ready)
+        {
+            if (evaluationPeriod != completedDays / 5 + 1) return false;
+        }
+        else if (stage == ProgressStage.EvaluationPending || stage == ProgressStage.Fired)
+        {
+            if (completedDays == 0 || completedDays % 5 != 0 || evaluationPeriod != completedDays / 5) return false;
+        }
+        else return false;
+
+        // 이전 평가를 통과한 이력과 이후 실적이 감소하지 않는 누적 규칙을 함께 확인한다.
+        if (evaluationPeriod > 1 && cumulativeScore < PerformanceRules.GetCumulativeTarget(evaluationPeriod - 1))
+            return false;
+        if (stage == ProgressStage.Fired && cumulativeScore >= PerformanceRules.GetCumulativeTarget(evaluationPeriod))
+            return false;
+        restored = new GameProgress(currentDay, cumulativeScore, evaluationPeriod, stage);
+        return true;
+    }
+
     // 현재 일차의 확정 실적을 한 번 합산한 후보를 만들고, 매 5일 완료 시 평가를 대기시킨다.
     public bool TryCompleteDay(int completedDay, int dailyScore, out GameProgress next)
     {

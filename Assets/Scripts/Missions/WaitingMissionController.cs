@@ -47,6 +47,8 @@ public sealed class WaitingMissionController : MonoBehaviour
         ButtonPressEffect.Attach(rejectButton);
         ButtonPressEffect.Attach(dispatchButton);
         UpdateSafeArea();
+        if (GameProgressSession.IsLoaded && GameProgressSession.Current.Stage != ProgressStage.Ready)
+            stage = WaitingStage.ProgressBlocked;
         if (stage == WaitingStage.Waiting) BeginWaiting();
         else RefreshView();
     }
@@ -140,7 +142,10 @@ public sealed class WaitingMissionController : MonoBehaviour
         dispatchButton.gameObject.SetActive(stage == WaitingStage.Accepted || stage == WaitingStage.Dispatching);
         dispatchButton.interactable = stage == WaitingStage.Accepted;
         missionStatus.text = stage == WaitingStage.Accepted ? "미션 수락 완료 · 출동 준비"
-            : stage == WaitingStage.Dispatching ? "출동 중" : "출동 요청 대기 중";
+            : stage == WaitingStage.Dispatching ? "출동 중"
+            : stage == WaitingStage.ProgressBlocked
+                ? (GameProgressSession.Current.Stage == ProgressStage.Fired ? "해고되었습니다." : "실적 평가 대기")
+                : "출동 요청 대기 중";
     }
 
     // 세로 화면 비율과 모바일 안전 영역 변경을 UI 앵커에 반영한다.
@@ -163,6 +168,7 @@ public sealed class WaitingMissionController : MonoBehaviour
         Available,
         Briefing,
         Accepted,
-        Dispatching
+        Dispatching,
+        ProgressBlocked
     }
 }
