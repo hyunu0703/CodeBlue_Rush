@@ -1,7 +1,7 @@
 # 누적 실적 시스템 구현 계획
 
 - 작성일: 2026-10-28
-- 진행 상태: 준비 단계·1단계와 2단계 로컬 저장·Start 진입의 구현 및 검증을 완료했다. 3단계 이후는 미구현이다. [준비·1단계 결과](DAY_PERFORMANCE_STAGE1.md), [2단계 결과](DAY_PERFORMANCE_STAGE2.md)를 참고한다.
+- 진행 상태: 준비 단계·1단계와 2단계 로컬 저장·Start 진입, 3단계 미션별 차량 충돌 기록의 구현 및 검증을 완료했다. 4단계 이후는 미구현이다. [준비·1단계 결과](DAY_PERFORMANCE_STAGE1.md), [2단계 결과](DAY_PERFORMANCE_STAGE2.md), [3단계 결과](DAY_PERFORMANCE_STAGE3.md)를 참고한다.
 - 기준 기획: [날짜 진행 및 누적 실적 평가](DAY_PERFORMANCE_SPEC.md), [리메이크 구현 기준](../GAME_REMAKE_SPEC.md)
 - 실제 프로젝트 버전: Unity 6000.3.23f1 (`ProjectSettings/ProjectVersion.txt` 확인)
 - 유지할 패키지: Input System 1.20.0, URP 17.3.0, Test Framework 1.6.0, uGUI 2.0.0
@@ -85,6 +85,8 @@ Start → 시작하기 → 저장 상태별 Waiting 진입
 **완료 조건:** 진행 상태를 안전하게 저장·복원하고, 실패 시 자동 초기화나 덮어쓰기 없이 오류·재시도를 표시한다. 최종 WebGL 영속성 확인은 8단계까지 이어진다.
 
 ### 3단계 — 미션당 차량 충돌 기록
+
+**진행 상태:** 구현·검증 완료. 실제 물리 접촉의 저속·고속 분류, 지속·복합 접촉의 중복 방지, 분리 후 재충돌과 실제 씬 미션 수명을 검증했다. 결과 UI·점수 반영·일차 저장은 4단계 이후로 남긴다. [상세 결과](DAY_PERFORMANCE_STAGE3.md)를 참고한다.
 
 **수정 범위:** `Assets/Scripts/Missions/`에 미션 기록 역할을 추가한다. 후보 이름은 `MissionPerformance`다. `AmbulanceDriveController.cs`의 첫 접촉 연결과 `MissionController.cs`의 기록 시작·종료를 연결하고, GamePlay 구급차에 필요한 컴포넌트·참조만 추가한다.
 

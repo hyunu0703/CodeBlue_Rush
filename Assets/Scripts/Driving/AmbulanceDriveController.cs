@@ -36,6 +36,7 @@ public sealed class AmbulanceDriveController : MonoBehaviour
     [SerializeField, Min(0f)] private float stoppedAngularSpeed = 3f;
 
     private Rigidbody2D body;
+    [SerializeField] private MissionPerformance missionPerformance; // 실제 미션 차량에서만 연결하는 당일 충돌 기록이다.
     [Header("Vehicle collision (world units / second)")]
     // 이전 충돌 속도 구간의 직렬화 값을 보존한다. 실제 충격량은 속도 구간 없이 연속 계산한다.
     [SerializeField, HideInInspector, Min(0.1f)] private float impactMinimumSpeed = 3.5f;
@@ -108,7 +109,14 @@ public sealed class AmbulanceDriveController : MonoBehaviour
     /// <summary>최초 접촉에서 유한 질량 충돌을 처리하며 기존 조작은 계속 적용한다.</summary>
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        // 상대의 물리 상태와 속도를 바꾸는 기존 처리보다 먼저 첫 접촉을 기록한다.
+        if (IsReady && missionPerformance != null) missionPerformance.RecordContact(collision);
         HandleTrafficContact(collision, true);
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (missionPerformance != null) missionPerformance.ReleaseContact(collision);
     }
 
     /// <summary>접촉 유지 중에도 상대는 물리 제어를 유지한다. 밀기는 실제 엔진 힘과 접촉 해결기에 맡긴다.</summary>

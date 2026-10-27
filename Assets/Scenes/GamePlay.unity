@@ -751,6 +751,7 @@ GameObject:
   - component: {fileID: 585983601}
   - component: {fileID: 585983599}
   - component: {fileID: 585983602}
+  - component: {fileID: 585983603}
   m_Layer: 0
   m_Name: Ambulance
   m_TagString: Untagged
@@ -832,6 +833,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &585983603
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 585983596}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 791f1cc303a1150e3bf7c8191e498f62, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::MissionPerformance
 --- !u!114 &585983599
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -844,6 +857,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54952dbd3e86d524c85f82a479ed111f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AmbulanceDriveController
+  missionPerformance: {fileID: 585983603}
   forwardTopSpeed: 6
   reverseTopSpeed: 2
   acceleration: 0.85
@@ -2468,6 +2482,7 @@ MonoBehaviour:
   rescueCutscene: {fileID: 0}
   patientECGPanel: {fileID: 1808600884}
   patientHealth: {fileID: 585983602}
+  missionPerformance: {fileID: 585983603}
 --- !u!114 &1629936290
 MonoBehaviour:
   m_ObjectHideFlags: 0

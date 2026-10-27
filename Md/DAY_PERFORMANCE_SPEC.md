@@ -1,7 +1,7 @@
 # 날짜 진행 및 실적 평가 기획
 
 - 확정일: 2026-10-28
-- 상태: 기획 확정 및 1단계 계산·진행 상태, 2단계 로컬 저장·Start 진입 구현·검증 완료. 3단계 이후는 미구현이다. [준비·1단계 결과](DAY_PERFORMANCE_STAGE1.md), [2단계 결과](DAY_PERFORMANCE_STAGE2.md)를 참고한다.
+- 상태: 기획 확정 및 1단계 계산·진행 상태, 2단계 로컬 저장·Start 진입, 3단계 미션별 차량 충돌 기록 구현·검증 완료. 4단계 이후는 미구현이다. [준비·1단계 결과](DAY_PERFORMANCE_STAGE1.md), [2단계 결과](DAY_PERFORMANCE_STAGE2.md), [3단계 결과](DAY_PERFORMANCE_STAGE3.md)를 참고한다.
 - 프로젝트 Unity 버전: 6000.3.23f1 (`ProjectSettings/ProjectVersion.txt` 확인)
 
 ## 1. 문서 목적과 적용 범위

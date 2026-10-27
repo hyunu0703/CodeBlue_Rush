@@ -30,6 +30,7 @@ public sealed class MissionController : MonoBehaviour
     [SerializeField] private PatientRescueCutscene rescueCutscene;
     [SerializeField] private RectTransform patientECGPanel; // 픽업 완료부터 병원 인계까지 표시하는 기존 검은 패널이다.
     [SerializeField] private PatientHealth patientHealth;   // 차량에서 시간과 충돌에 따른 환자 HP를 관리한다.
+    [SerializeField] private MissionPerformance missionPerformance; // 출동부터 인계까지의 직접 차량 충돌 기록이다.
     private PatientECGGraphic patientECG;                   // 패널 안에서만 그리는 심전도 이력이다.
 
     private readonly System.Random random = new System.Random(); // 출동 후 유효한 맵 시드를 선택하는 난수 소스다.
@@ -94,6 +95,7 @@ public sealed class MissionController : MonoBehaviour
         }
 
         UpdateSafeArea();
+        missionPerformance.SetRecording(IsMissionActive);
         if (stage == MissionStage.Waiting)
         {
             RefreshView();
@@ -172,6 +174,7 @@ public sealed class MissionController : MonoBehaviour
 
     private void OnDisable()
     {
+        if (missionPerformance != null) missionPerformance.SetRecording(false);
         if (patientHealth != null) patientHealth.SetTransporting(false);
         if (patientECGPanel != null) patientECGPanel.gameObject.SetActive(false);
         StopRescue();
@@ -259,6 +262,7 @@ public sealed class MissionController : MonoBehaviour
             mapGenerator.SetDestinationLabel(string.Empty);
             rescueCutscene.ShowPickup(pickupSidewalkPosition, pickupRotation, ambulanceRenderer);
             stage = MissionStage.Active;
+            missionPerformance.BeginMission();
             RefreshView();
             OnMissionAccepted?.Invoke(seed);
         }
@@ -280,6 +284,7 @@ public sealed class MissionController : MonoBehaviour
             return;
         }
         stage = MissionStage.Completed;
+        missionPerformance.SetRecording(false);
         MissionDispatchSession.Clear();
         LockVehicle();
         RefreshView();
@@ -574,10 +579,11 @@ public sealed class MissionController : MonoBehaviour
         if (missionButton == null || notification == null || briefingPanel == null || briefingText == null
             || acceptButton == null || rejectButton == null || missionStatus == null || mapGenerator == null
             || ambulance == null || driveInput == null || safeAreaRoot == null || !ambulance.simulated
-            || ambulance.bodyType != RigidbodyType2D.Dynamic)
+            || ambulance.bodyType != RigidbodyType2D.Dynamic || missionPerformance == null
+            || !missionPerformance.isActiveAndEnabled || missionPerformance.gameObject != ambulance.gameObject)
         {
             FailConfiguration("CodeBlue Rush > Set Up GamePlay Missions로 UI와 운전 참조를 연결해주세요. "
-                + "Ambulance에는 simulated Dynamic Rigidbody2D가 필요합니다.");
+                + "Ambulance에는 simulated Dynamic Rigidbody2D와 연결된 MissionPerformance가 필요합니다.");
             return false;
         }
         return true;
