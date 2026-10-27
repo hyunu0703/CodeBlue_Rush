@@ -13,7 +13,10 @@ public sealed class RoadTrafficSignals
     private readonly bool[] dedicatedRight;
     private readonly bool[,] crossings;
     private readonly RoadLaneNetwork network;
-    public const float PhaseSeconds = 5f;
+    public const float GreenSeconds = 3f;                              // 각 직진·좌회전 현시의 진행 시간(초)이다.
+    public const float YellowSeconds = 1f;                             // 진행에서 정지로 바뀌기 전 주황 점등 시간(초)이다.
+    private const float MovementSeconds = GreenSeconds + YellowSeconds; // 한 방향의 진행과 주의를 합친 시간(초)이다.
+    private const float CycleSeconds = MovementSeconds * 4f;            // 다른 세 현시 동안 빨강 12초를 유지하는 전체 주기다.
 
     /// <summary>새 맵의 신호를 초기화한다. 교차로마다 시작 위상을 달리하여 맵 전체 동시 정지를 피한다.</summary>
     public RoadTrafficSignals(RoadLaneNetwork network)
@@ -24,7 +27,7 @@ public sealed class RoadTrafficSignals
         crossings = new bool[clocks.Length, 4];
         for (var road = 0; road < clocks.Length; road++)
         {
-            clocks[road] = road % 8 * PhaseSeconds;
+            clocks[road] = road % 8 / 2 * MovementSeconds + road % 2 * GreenSeconds;
         }
     }
 
@@ -45,7 +48,7 @@ public sealed class RoadTrafficSignals
         }
         for (var road = 0; road < clocks.Length; road++)
         {
-            clocks[road] = (clocks[road] + seconds) % (8 * PhaseSeconds);
+            clocks[road] = (clocks[road] + seconds) % CycleSeconds;
         }
     }
 
@@ -54,15 +57,16 @@ public sealed class RoadTrafficSignals
     {
         ValidateRoad(road);
         // 진입 가장자리 기준 축과 보호 좌회전 현시를 구분한다. 황색 직진/좌회전에는 새 진입을 허용하지 않는다.
-        var phase = (int)((clocks[road] + 0.00001d) / PhaseSeconds) % 8;
+        var clock = (clocks[road] + 0.00001d) % CycleSeconds;
+        var phase = (int)(clock / MovementSeconds);
         var northSouth = entry == RoadDirection.North || entry == RoadDirection.South;
-        var activeAxis = phase < 4;
-        var isLeftPhase = phase % 4 >= 2;
+        var activeAxis = phase < 2;
+        var isLeftPhase = phase % 2 == 1;
         if (northSouth != activeAxis || (maneuver == RoadLaneManeuver.Left) != isLeftPhase)
         {
             return RoadTrafficLight.Red;
         }
-        return phase % 2 == 0 ? RoadTrafficLight.Green : RoadTrafficLight.Yellow;
+        return clock - phase * MovementSeconds < GreenSeconds ? RoadTrafficLight.Green : RoadTrafficLight.Yellow;
     }
 
     /// <summary>한국 신호 의미를 진입 정책으로 변환한다. 비보호 좌회전은 생성하지 않으며 우회전의 실제 양보는 AI가 판단한다.</summary>

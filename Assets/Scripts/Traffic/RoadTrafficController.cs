@@ -66,6 +66,7 @@ public sealed class RoadTrafficController : MonoBehaviour
     // 플레이어 차체는 활성화 시 캐시하고 파괴되면 런타임 검증에서 중단한다.
     private Collider2D playerCollider;
     public RoadTrafficSimulation Simulation => isActiveAndEnabled ? simulation : null;
+    internal RoadLaneNetwork SignalNetwork => isActiveAndEnabled ? network : null; // 신호와 도로 번호가 일치하는 스냅숏이다.
 
     /// <summary>실제 차체와 순수 AI 상태의 소유 관계다. Finished 또는 파괴된 차체는 다음 스텝에 제거한다.</summary>
     private sealed class VehicleInstance

@@ -32,6 +32,7 @@ public sealed class MissionController : MonoBehaviour
     [SerializeField] private PatientHealth patientHealth;   // 차량에서 시간과 충돌에 따른 환자 HP를 관리한다.
     [SerializeField] private MissionPerformance missionPerformance; // 출동부터 인계까지의 직접 차량 충돌 기록이다.
     private PatientECGGraphic patientECG;                   // 패널 안에서만 그리는 심전도 이력이다.
+    private TrafficSignalGraphic trafficSignal;            // 안내 문구 아래에서 교차로 통과 중 표시하는 세 원형 신호다.
 
     [SerializeField] private GameObject resultPanel;  // 안전 영역 안에서 후송 결과와 확인 입력을 표시한다.
     [SerializeField] private TMP_Text resultText;     // 인계 시 고정한 기록과 누적 후보를 표시한다.
@@ -506,7 +507,7 @@ public sealed class MissionController : MonoBehaviour
         {
             if (navigation != null && navigationCamera != null && rescueCutscene != null
                 && patientECGPanel != null && patientHealth != null && patientECG != null
-                && ambulanceRenderer != null && ambulanceCollider != null && rescueCutscene.isActiveAndEnabled)
+                && ambulanceRenderer != null && ambulanceCollider != null && trafficSignal != null && rescueCutscene.isActiveAndEnabled)
             {
                 return true;
             }
@@ -601,6 +602,23 @@ public sealed class MissionController : MonoBehaviour
         navigation.Configure(mapGenerator, ambulance.transform, navigationCamera);
         navigation.SetGuidanceVisible(IsMissionActive);
         if (!EnsurePatientPresentation()) return false;
+        var traffic = mapGenerator.GetComponent<RoadTrafficController>();
+        if (traffic == null)
+        {
+            FailConfiguration("교차로 신호 표시에는 Map Generator의 RoadTrafficController가 필요합니다.");
+            return false;
+        }
+        // 안내 문구의 아래쪽 중앙에 붙여 기존 안전 영역과 해상도 대응을 그대로 따른다.
+        var signalObject = new GameObject("TrafficSignal", typeof(RectTransform), typeof(CanvasRenderer));
+        signalObject.layer = missionStatus.gameObject.layer;
+        var signalRect = (RectTransform)signalObject.transform;
+        signalRect.SetParent(missionStatus.rectTransform, false);
+        signalRect.anchorMin = signalRect.anchorMax = new Vector2(0.5f, 0f);
+        signalRect.pivot = new Vector2(0.5f, 1f);
+        signalRect.anchoredPosition = new Vector2(0f, -8f);
+        signalRect.sizeDelta = new Vector2(112f, 32f);
+        trafficSignal = signalObject.AddComponent<TrafficSignalGraphic>();
+        trafficSignal.Configure(this, mapGenerator, traffic, ambulanceCollider);
         isPresentationReady = true;
         return true;
     }
