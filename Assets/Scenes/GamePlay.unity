@@ -2490,9 +2490,16 @@ MonoBehaviour:
   mapRoot: {fileID: 194781892}
   destination: {fileID: 536320611}
   roadPreview: {fileID: 0}
+  buildingGapBody: {fileID: 585983601}
   buildingPrefabs:
   - {fileID: 6095123295902223742, guid: 8cfecf7329b24a30a641c75c8f2ba68b, type: 3}
+  - {fileID: 6095123295902223742, guid: 39c599c11dec4d1f93133812df97de69, type: 3}
+  - {fileID: 6095123295902223742, guid: 6271f5c241f44a4993230cada6187012, type: 3}
+  - {fileID: 6095123295902223742, guid: 76ea120483ab44f59147eaaad9a00bce, type: 3}
   - {fileID: 6095123295902223742, guid: e220a439de7c4224957b36bbc91315b9, type: 3}
+  - {fileID: 6095123295902223742, guid: fc54b2a85c8442fd94dbaf48aa866913, type: 3}
+  - {fileID: 6095123295902223742, guid: d78ae42d7ce64d14a92b530912f1db60, type: 3}
+  - {fileID: 6095123295902223742, guid: 72978993050a4f2180c9191001f4050d, type: 3}
 --- !u!4 &1629936291
 Transform:
   m_ObjectHideFlags: 0

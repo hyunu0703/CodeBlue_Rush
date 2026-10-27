@@ -18,10 +18,12 @@ public sealed class MissionMapGenerator : MonoBehaviour
 
     // 좌우 각각 8종의 원본 건물이다. GamePlay 설정 도구가 연결한다.
     [SerializeField] private BuildingPrefab[] buildingPrefabs;
+    [SerializeField] private BoxCollider2D buildingGapBody; // 건물 사이 간격 상한을 정하는 구급차 차체다.
     // 맵 수명 동안 계획을 보존하고 도로 스트리밍 시 같은 건물을 복원한다.
     private readonly Dictionary<Vector2, List<MissionBuildingLayout.Placement>> buildingLayouts = new Dictionary<Vector2, List<MissionBuildingLayout.Placement>>();
-    // 활성 도로가 소유한 건물과 비활성 원본별 풀을 구분한다.
-    private readonly Dictionary<RoadPrefab, List<BuildingPrefab>> roadBuildings = new Dictionary<RoadPrefab, List<BuildingPrefab>>();
+    // 계획별 활성 건물 슬롯이다. 여러 도로에 걸친 건물도 한 번만 생성한다.
+    private readonly Dictionary<Vector2, List<BuildingPrefab>> roadBuildings = new Dictionary<Vector2, List<BuildingPrefab>>();
+    private readonly HashSet<Vector2> activeBuildingRoads = new HashSet<Vector2>(); // 이번 스트리밍 갱신에서 살아 있는 도로 좌표다.
     private readonly Dictionary<BuildingPrefab, Stack<BuildingPrefab>> buildingPool = new Dictionary<BuildingPrefab, Stack<BuildingPrefab>>();
 
     // 진행 경로 39개와 미선택 출구의 직선 최대 12개를 단계별로 소유하고 같은 풀에서 재사용한다.
@@ -165,6 +167,7 @@ public sealed class MissionMapGenerator : MonoBehaviour
         hasStreamingPosition = true;
         // 최소 차체 여유와 두 물리 스텝의 이동량으로 역주행 도로를 경계 도달 전에 복원한다.
         var localVelocity = mapRoot.InverseTransformVector(velocity);
+        var roadsChanged = false;
         for (var ordinal = 0; ordinal < roadPlacements.Count; ordinal++)
         {
             var placement = roadPlacements[ordinal];
@@ -177,12 +180,18 @@ public sealed class MissionMapGenerator : MonoBehaviour
             if (shouldBeActive && activeRoads[ordinal] == null)
             {
                 activeRoads[ordinal] = ActivateRoad(placement);
+                roadsChanged = true;
             }
             else if (!shouldBeActive && activeRoads[ordinal] != null)
             {
                 ReturnRoad(activeRoads[ordinal]);
                 activeRoads[ordinal] = null;
+                roadsChanged = true;
             }
+        }
+        if (roadsChanged)
+        {
+            RefreshBuildings();
         }
     }
 
@@ -380,6 +389,10 @@ public sealed class MissionMapGenerator : MonoBehaviour
         {
             return false;
         }
+        if (!TryGetBuildingGapWidth(out _, out error))
+        {
+            return false;
+        }
         // 현재 시드 경로의 격자 검사는 동일한 크기의 중심 pivot 정사각 프리팹을 사용한다.
         var size = Vector2.zero;
         for (var index = 1; index <= 13; index++)
@@ -412,6 +425,28 @@ public sealed class MissionMapGenerator : MonoBehaviour
                 error = $"{prefab.name}: 동일한 정사각 Image Size, 중심 pivot, 스케일 1인 도로 프리팹이 필요합니다.";
                 return false;
             }
+        }
+        return true;
+    }
+
+    // 회전한 차량의 AABB 대신 차체 로컬 축 길이를 맵 좌표로 변환해 짧은 폭을 구한다.
+    private bool TryGetBuildingGapWidth(out float width, out string error)
+    {
+        width = 0f;
+        error = null;
+        if (buildingGapBody == null || mapRoot == null || !buildingGapBody.enabled || buildingGapBody.isTrigger)
+        {
+            error = "MissionMapGenerator의 Building Gap Body에 구급차의 비트리거 BoxCollider2D를 연결해주세요.";
+            return false;
+        }
+        var bodyTransform = buildingGapBody.transform;
+        var x = mapRoot.InverseTransformVector(bodyTransform.TransformVector(Vector3.right * buildingGapBody.size.x)).magnitude;
+        var y = mapRoot.InverseTransformVector(bodyTransform.TransformVector(Vector3.up * buildingGapBody.size.y)).magnitude;
+        width = Mathf.Min(x, y);
+        if (width <= 0f || float.IsNaN(width) || float.IsInfinity(width))
+        {
+            error = "구급차 콜라이더의 크기와 스케일은 유한한 양수여야 합니다.";
+            return false;
         }
         return true;
     }
@@ -547,8 +582,9 @@ public sealed class MissionMapGenerator : MonoBehaviour
             buildingRoads.Add(new MissionBuildingLayout.Road(placement.Prefab, placement.Position, placement.Rotation));
         }
         var existingBuildings = append ? buildingLayouts : new Dictionary<Vector2, List<MissionBuildingLayout.Placement>>();
-        if (!MissionBuildingLayout.TryPlan(buildingRoads, occupied.Count, seed, buildingPrefabs, existingBuildings,
-            out var addedBuildings, out error))
+        if (!TryGetBuildingGapWidth(out var buildingGapWidth, out error)
+            || !MissionBuildingLayout.TryPlan(buildingRoads, occupied.Count, seed, buildingPrefabs, existingBuildings,
+            out var plannedBuildings, out error, buildingGapWidth))
         {
             return false;
         }
@@ -575,8 +611,10 @@ public sealed class MissionMapGenerator : MonoBehaviour
             previous.TryGetConnectionPosition(finalDirection, finalRotation, out var exit);
             navigationRoute.Add(mapRoot.TransformPoint((Vector2)previous.transform.localPosition + exit));
         }
-        // 픽업 계획은 그대로 두고 후송 계획만 추가한다. 새 미션이면 반환 과정에서 이전 계획을 비운다.
-        foreach (var layout in addedBuildings)
+        // 교차로는 보존하고 길어진 직선의 간격은 전체 길이로 다시 계산한 계획으로 교체한다.
+        ReleaseActiveBuildings();
+        buildingLayouts.Clear();
+        foreach (var layout in plannedBuildings)
         {
             buildingLayouts.Add(layout.Key, layout.Value);
         }
@@ -662,6 +700,7 @@ public sealed class MissionMapGenerator : MonoBehaviour
         laneNetwork?.Invalidate();
         laneNetwork = nextLaneNetwork;
         LaneNetworkVersion++;
+        RefreshBuildings();
         return true;
     }
 
@@ -798,32 +837,71 @@ public sealed class MissionMapGenerator : MonoBehaviour
         instance.transform.localPosition = placement.Position;
         instance.transform.localRotation = Quaternion.Euler(0f, 0f, -90f * placement.Rotation);
         instance.transform.localScale = Vector3.one;
-        ActivateBuildings(instance, placement.Position);
         instance.gameObject.SetActive(true);
         return instance;
     }
 
-    /// <summary>검증된 도로 로컬 계획을 원본별 풀에서 복원한다. 도로 활성화 전에 참조와 변환을 설정한다.</summary>
-    private void ActivateBuildings(RoadPrefab road, Vector2 position)
+    // 경계를 걸친 건물은 닿는 도로 중 하나라도 활성 상태면 맵 부모 아래 한 번만 유지한다.
+    private void RefreshBuildings()
     {
-        if (!buildingLayouts.TryGetValue(position, out var layout))
+        activeBuildingRoads.Clear();
+        foreach (var road in activeRoads)
         {
-            return;
+            if (road != null && road.gameObject.activeSelf)
+            {
+                activeBuildingRoads.Add(road.transform.localPosition);
+            }
         }
-        // 이 도로의 건물만 소유하며 다른 도로의 인스턴스는 건드리지 않는다.
-        var buildings = new List<BuildingPrefab>(layout.Count);
-        foreach (var placement in layout)
+        foreach (var pair in buildingLayouts)
         {
-            var building = AcquireBuilding(placement.Prefab);
-            building.transform.SetParent(road.transform, false);
-            building.transform.localPosition = placement.Position;
-            building.transform.localRotation = Quaternion.identity;
-            var scale = placement.Prefab.transform.localScale;
-            building.transform.localScale = new Vector3(scale.x * placement.Scale, scale.y * placement.Scale, scale.z);
-            building.gameObject.SetActive(true);
-            buildings.Add(building);
+            if (!roadBuildings.TryGetValue(pair.Key, out var buildings))
+            {
+                buildings = new List<BuildingPrefab>(pair.Value.Count);
+                roadBuildings.Add(pair.Key, buildings);
+            }
+            while (buildings.Count < pair.Value.Count)
+            {
+                buildings.Add(null);
+            }
+            for (var index = 0; index < pair.Value.Count; index++)
+            {
+                var placement = pair.Value[index];
+                var needed = false;
+                foreach (var position in placement.Roads)
+                {
+                    needed |= activeBuildingRoads.Contains(position);
+                }
+                if (needed && buildings[index] == null)
+                {
+                    var building = AcquireBuilding(placement.Prefab);
+                    building.transform.SetParent(mapRoot, false);
+                    building.transform.localPosition = placement.Position;
+                    building.transform.localRotation = Quaternion.Euler(0f, 0f, -90f * placement.Rotation);
+                    var scale = placement.Prefab.transform.localScale;
+                    building.transform.localScale = new Vector3(scale.x * placement.Scale * (placement.FlipX ? -1f : 1f), scale.y * placement.Scale, scale.z);
+                    building.gameObject.SetActive(true);
+                    buildings[index] = building;
+                }
+                else if (!needed && buildings[index] != null)
+                {
+                    ReleaseBuilding(buildings[index], placement.Prefab);
+                    buildings[index] = null;
+                }
+            }
         }
-        roadBuildings.Add(road, buildings);
+    }
+
+    // 원본별 풀에 반환하고 맵 부모에서 분리해 다음 배치 시 방향을 새로 적용한다.
+    private void ReleaseBuilding(BuildingPrefab building, BuildingPrefab prefab)
+    {
+        building.gameObject.SetActive(false);
+        building.transform.SetParent(poolRoot, false);
+        if (!buildingPool.TryGetValue(prefab, out var available))
+        {
+            available = new Stack<BuildingPrefab>();
+            buildingPool.Add(prefab, available);
+        }
+        available.Push(building);
     }
 
     /// <summary>비활성 풀에서 살아 있는 같은 원본 건물을 얻는다. 부족할 때만 비활성 부모 아래 생성한다.</summary>
@@ -911,6 +989,7 @@ public sealed class MissionMapGenerator : MonoBehaviour
         }
         activeRoads.Clear();
         roadPlacements.Clear();
+        ReleaseActiveBuildings();
         buildingLayouts.Clear();
         returnCheckpoints.Clear();
         passedIntersections.Clear();
@@ -918,33 +997,29 @@ public sealed class MissionMapGenerator : MonoBehaviour
         hasStreamingPosition = false;
     }
 
+    // 계획 교체 전에 활성 건물을 기존 원본별 풀로 반환한다. 도로 인스턴스에는 영향을 주지 않는다.
+    private void ReleaseActiveBuildings()
+    {
+        foreach (var pair in roadBuildings)
+        {
+            var layout = buildingLayouts[pair.Key];
+            for (var index = 0; index < pair.Value.Count; index++)
+            {
+                if (pair.Value[index] != null)
+                {
+                    ReleaseBuilding(pair.Value[index], layout[index].Prefab);
+                }
+            }
+        }
+        roadBuildings.Clear();
+        activeBuildingRoads.Clear();
+    }
+
     /// <summary>한 구역의 인스턴스만 종류별 풀로 반환한다. 배치 기록과 차로 그래프는 유지한다.</summary>
     private void ReturnRoad(RoadPrefab road)
     {
         road.gameObject.SetActive(false);
-        // 건물을 먼저 분리해 다른 도로 종류 재사용과 중복 활성화를 막는다. 계획은 맵 수명 동안 유지한다.
-        if (roadBuildings.TryGetValue(road, out var buildings))
-        {
-            buildingLayouts.TryGetValue((Vector2)road.transform.localPosition, out var layout);
-            for (var index = 0; index < buildings.Count; index++)
-            {
-                var building = buildings[index];
-                if (building == null)
-                {
-                    continue;
-                }
-                building.gameObject.SetActive(false);
-                building.transform.SetParent(poolRoot, false);
-                var prefab = layout[index].Prefab;
-                if (!buildingPool.TryGetValue(prefab, out var availableBuildings))
-                {
-                    availableBuildings = new Stack<BuildingPrefab>();
-                    buildingPool.Add(prefab, availableBuildings);
-                }
-                availableBuildings.Push(building);
-            }
-            roadBuildings.Remove(road);
-        }
+        // 공유 건물의 반환 여부는 모든 도로의 활성 상태를 바꾼 뒤 RefreshBuildings에서 판단한다.
         road.transform.SetParent(poolRoot, false);
         if (!pool.TryGetValue(road.Index, out var available))
         {
