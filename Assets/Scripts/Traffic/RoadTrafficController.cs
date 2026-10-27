@@ -27,6 +27,7 @@ public sealed class RoadTrafficController : MonoBehaviour
     private const string ExcludedPrefabName = "PCX";
     // 네트워크와 인스턴스는 이 컴포넌트의 활성 수명에만 존재한다. 검색 버퍼는 잘림 없는 List다.
     private RoadTrafficSimulation simulation;
+    private RoadCitizenController citizens; // 같은 고정 스텝에서 차량보다 먼저 점유를 확정하는 시민 시스템이다.
     private RoadLaneNetwork network;
     private Transform mapRoot;
     private GameObject vehicleRoot;
@@ -87,6 +88,7 @@ public sealed class RoadTrafficController : MonoBehaviour
     /// <summary>활성화마다 의존성을 다시 검증한다. 설정은 Play 이전에 완료되어 있어야 한다.</summary>
     private void OnEnable()
     {
+        citizens = GetComponent<RoadCitizenController>();
         if (!ValidateConfiguration(out var error))
         {
             Debug.LogError(error, this);
@@ -110,6 +112,7 @@ public sealed class RoadTrafficController : MonoBehaviour
     /// <summary>소유한 런타임 차량만 제거한다. 원본 프리팹과 플레이어에는 쓰지 않는다.</summary>
     private void OnDisable()
     {
+        if (citizens != null) citizens.Clear();
         ClearVehicles();
     }
 
@@ -131,6 +134,7 @@ public sealed class RoadTrafficController : MonoBehaviour
         {
             if (simulation != null)
             {
+                if (citizens != null) citizens.Clear();
                 ReturnAllInstances();
                 simulation = null;
                 network = null;
@@ -175,6 +179,10 @@ public sealed class RoadTrafficController : MonoBehaviour
         while (remaining > 0f)
         {
             var step = Mathf.Min(0.1f, remaining);
+            if (citizens != null)
+            {
+                citizens.Step(mapGenerator, network, simulation, searchCenter, step, obstacles);
+            }
             simulation.Tick(step, obstacles);
             remaining -= step;
         }

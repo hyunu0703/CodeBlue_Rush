@@ -2445,6 +2445,7 @@ GameObject:
   - component: {fileID: 1629936290}
   - component: {fileID: 1629936289}
   - component: {fileID: 1629936292}
+  - component: {fileID: 1629936293}
   m_Layer: 0
   m_Name: MissionSystem
   m_TagString: Untagged
@@ -2562,6 +2563,22 @@ MonoBehaviour:
   obstacleLayers:
     serializedVersion: 2
     m_Bits: 0
+--- !u!114 &1629936293
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1629936288}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8b45dbbf0f3485ca07b0f2238c872e0, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::RoadCitizenController
+  maximumCitizens: 48
+  radiusInLaneWidths: 26
+  walkSpeed: 0.9
+  sizeInLaneWidths: 0.3
 --- !u!1 &1779358359
 GameObject:
   m_ObjectHideFlags: 0

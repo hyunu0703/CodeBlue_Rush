@@ -12,6 +12,7 @@ public sealed class RoadTrafficSignals
     private readonly double[] clocks;
     private readonly bool[] dedicatedRight;
     private readonly bool[,] crossings;
+    private readonly bool[,] pedestrianCrossings; // 시민 AI가 소유하는 점유 상태로 외부 차단 요청과 독립적으로 유지한다.
     private readonly RoadLaneNetwork network;
     public const float GreenSeconds = 3f;                              // 각 직진·좌회전 현시의 진행 시간(초)이다.
     public const float YellowSeconds = 1f;                             // 진행에서 정지로 바뀌기 전 주황 점등 시간(초)이다.
@@ -25,6 +26,7 @@ public sealed class RoadTrafficSignals
         clocks = new double[network.Roads.Count];
         dedicatedRight = new bool[clocks.Length];
         crossings = new bool[clocks.Length, 4];
+        pedestrianCrossings = new bool[clocks.Length, 4];
         for (var road = 0; road < clocks.Length; road++)
         {
             clocks[road] = road % 8 / 2 * MovementSeconds + road % 2 * GreenSeconds;
@@ -37,6 +39,7 @@ public sealed class RoadTrafficSignals
         Array.Copy(previous.clocks, clocks, previous.clocks.Length);
         Array.Copy(previous.dedicatedRight, dedicatedRight, previous.dedicatedRight.Length);
         Array.Copy(previous.crossings, crossings, previous.crossings.Length);
+        Array.Copy(previous.pedestrianCrossings, pedestrianCrossings, previous.pedestrianCrossings.Length);
     }
 
     /// <summary>유한한 0 이상의 고정 스텝으로만 신호를 진행한다. 일시정지는 호출자가 진행을 중단한다.</summary>
@@ -78,7 +81,8 @@ public sealed class RoadTrafficSignals
         }
         // 진입과 회전 후 횡단보도 양쪽 모두 보행자 보호 조건을 적용한다.
         var road = movement.RoadOrdinal;
-        if (crossings[road, (int)movement.Entry] || crossings[road, (int)movement.Exit])
+        if (crossings[road, (int)movement.Entry] || crossings[road, (int)movement.Exit]
+            || pedestrianCrossings[road, (int)movement.Entry] || pedestrianCrossings[road, (int)movement.Exit])
         {
             return RoadTrafficPermission.Stop;
         }
@@ -98,7 +102,7 @@ public sealed class RoadTrafficSignals
         dedicatedRight[road] = enabled;
     }
 
-    /// <summary>향후 보행자 시스템이 횡단 중이거나 횡단하려는 보행자가 있는 가장자리를 차단/해제한다.</summary>
+    /// <summary>외부 시스템의 횡단보도 차단 요청을 설정한다. 시민 AI의 점유 상태는 별도 채널에서 유지한다.</summary>
     public void SetCrossingBlocked(int road, RoadDirection side, bool blocked)
     {
         ValidateRoad(road);
@@ -107,6 +111,28 @@ public sealed class RoadTrafficSignals
             throw new ArgumentOutOfRangeException(nameof(side));
         }
         crossings[road, (int)side] = blocked;
+    }
+
+    // 횡단 방향과 나란한 차량 직진 녹색에만 보행자의 새 횡단을 허용한다.
+    public RoadTrafficLight GetPedestrianLight(int road, RoadDirection side)
+    {
+        ValidateRoad(road);
+        RoadLaneMath.Outward(side);
+        var placement = network.Roads[road];
+        var localSide = RoadLaneMath.Rotate(side, -placement.ClockwiseQuarterTurns);
+        if (placement.Layout.GetLaneCount(localSide) == 0)
+        {
+            return RoadTrafficLight.Red;
+        }
+        var light = GetLight(road, RoadLaneMath.Rotate(side, 1), RoadLaneManeuver.Straight);
+        return light == RoadTrafficLight.Green ? RoadTrafficLight.Green : RoadTrafficLight.Red;
+    }
+
+    // 시민 시스템 전용 차단 채널이다. 다른 시스템의 SetCrossingBlocked 상태를 덮어쓰지 않는다.
+    internal void SetPedestrianCrossingOccupied(int road, RoadDirection side, bool occupied)
+    {
+        ValidateRoad(road);
+        pedestrianCrossings[road, (int)side] = occupied;
     }
 
     /// <summary>외부 호출의 도로 식별자를 검증한다.</summary>
