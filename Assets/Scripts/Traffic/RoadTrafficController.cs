@@ -180,9 +180,16 @@ public sealed class RoadTrafficController : MonoBehaviour
         for (var index = instances.Count - 1; index >= 0; index--)
         {
             var instance = instances[index];
-            // 사고 차량은 차로 AI 및 거리 기반 회수 대상에서 제외해 정지한 자리에 남긴다.
+            // 주변 사고 차량은 물리 제어로 남기되 멀리 벗어난 차체는 반환해 생성 풀이 고갈되지 않게 한다.
             if (instance.Root != null && instance.Body != null && instance.Collision.IsReacting)
             {
+                // 충돌 뒤 AI 경로 위치는 갱신되지 않으므로 실제 차체 중심으로 회수 여부를 판단한다.
+                var wreckPosition = (Vector2)mapRoot.InverseTransformPoint(instance.Collider.bounds.center);
+                if ((wreckPosition - searchCenter).sqrMagnitude > despawnRadius * despawnRadius
+                    && !IsVisible(wreckPosition, instance.VisualRadius))
+                {
+                    RemoveInstance(index);
+                }
                 continue;
             }
             if (instance.Root == null || instance.Body == null || instance.Vehicle.IsFinished

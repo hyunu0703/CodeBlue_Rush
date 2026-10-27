@@ -117,96 +117,11 @@ public sealed class AmbulanceDriveController : MonoBehaviour
         HandleTrafficContact(collision, false);
     }
 
-    /// <summary>접촉 시작에만 속도별 반응을 적용한다. 접촉 유지 중에는 반복 반동 없이 실제 힘으로 밀 수 있다.</summary>
+    // 구급차의 충돌 설정으로 공통 차량 충격 처리를 시작하고 접촉 유지 중에는 물리 밀기를 허용한다.
     private void HandleTrafficContact(Collision2D collision, bool applyImpulse)
     {
-        if (!IsReady || collision.rigidbody == null || collision.contactCount == 0
-            || !collision.rigidbody.TryGetComponent<RoadTrafficCollision>(out var target) || !target.isActiveAndEnabled)
-        {
-            return;
-        }
-        // 접촉 법선의 반대쪽이 상대 차량을 밀어내는 방향이다.
-        var contact = collision.GetContact(0);
-        var direction = -contact.normal;
-        var closingSpeed = Mathf.Abs(Vector2.Dot(collision.relativeVelocity, direction));
-        var impactSpeed = collision.relativeVelocity.magnitude;
-        var other = collision.rigidbody;
-        // 전환 전 상대 속도는 Kinematic 접촉 해결의 영향을 받지 않는다. 단위는 월드 유닛/초다.
-        var wasKinematic = other.bodyType == RigidbodyType2D.Kinematic;
-        var fatal = impactSpeed >= fatalImpactSpeed;
-        if (!target.IsReacting || (fatal && !target.IsWrecked) || other.bodyType != RigidbodyType2D.Dynamic)
-        {
-            target.BeginImpact(fatal);
-        }
-        if (!applyImpulse)
-        {
-            return;
-        }
-        if (!wasKinematic)
-        {
-            return;
-        }
-        // 면 접촉의 중심을 사용해 정면 접촉에서 모서리 하나 때문에 생기는 인위적 회전을 피한다.
-        var point = Vector2.zero;
-        var solvedLinearImpulse = Vector2.zero;
-        // 기존 해결기가 구급차에 적용한 선충격량과 각충격량만 취소한다(kg·유닛/초, kg·유닛²/초).
-        var solvedAngularImpulse = 0f;
-        for (var index = 0; index < collision.contactCount; index++)
-        {
-            var sample = collision.GetContact(index);
-            point += sample.point;
-            var tangent = new Vector2(sample.normal.y, -sample.normal.x);
-            var solvedImpulse = sample.normal * sample.normalImpulse + tangent * sample.tangentImpulse;
-            solvedLinearImpulse += solvedImpulse;
-            var arm = sample.point - body.worldCenterOfMass;
-            solvedAngularImpulse += arm.x * solvedImpulse.y - arm.y * solvedImpulse.x;
-        }
-        point /= collision.contactCount;
-        // 상대속도의 부호로 입사 속도를 추정하면 후방 충돌/이탈 접촉에서 속도가 반전될 수 있다.
-        // 이 접촉의 엔진 응답만 되돌려 다른 차량과 동시에 충돌했을 때의 속도 변화도 보존한다.
-        body.linearVelocity -= solvedLinearImpulse / body.mass;
-        if (body.inertia > 0f && (body.constraints & RigidbodyConstraints2D.FreezeRotation) == 0)
-        {
-            body.angularVelocity -= solvedAngularImpulse / body.inertia * Mathf.Rad2Deg;
-        }
-        // 속도에 따른 변형 손실은 실차 보정 전 가정이다. 10m/s를 반발 감소의 기준 속도로 사용한다.
-        var restitution = impactRestitution / (1f + closingSpeed * 6f / 10f);
-        ResolveFiniteMassImpact(body, other, point, direction, restitution);
-    }
-
-    /// <summary>접촉점의 상대속도와 관성으로 법선 충격량을 계산한다. 단위는 kg·유닛/초다.</summary>
-    private static void ResolveFiniteMassImpact(Rigidbody2D first, Rigidbody2D second, Vector2 point, Vector2 normal, float restitution)
-    {
-        // 질량중심에서 접촉점까지의 모멘트 팔은 유닛 단위다.
-        var firstOffset = point - first.worldCenterOfMass;
-        var secondOffset = point - second.worldCenterOfMass;
-        var firstArm = firstOffset.x * normal.y - firstOffset.y * normal.x;
-        var secondArm = secondOffset.x * normal.y - secondOffset.y * normal.x;
-        var firstInverseInertia = first.inertia > 0f && (first.constraints & RigidbodyConstraints2D.FreezeRotation) == 0 ? 1f / first.inertia : 0f;
-        var secondInverseInertia = second.inertia > 0f && (second.constraints & RigidbodyConstraints2D.FreezeRotation) == 0 ? 1f / second.inertia : 0f;
-        var relative = first.GetPointVelocity(point) - second.GetPointVelocity(point);
-        var closing = Vector2.Dot(relative, normal);
-        if (closing <= 0f)
-        {
-            return;
-        }
-        // 동일 거리 스케일에서는 kg·유닛² 관성과 유닛/초 속도로 계산해도 운동량이 보존된다.
-        var inverseMass = 1f / first.mass + 1f / second.mass
-            + firstArm * firstArm * firstInverseInertia + secondArm * secondArm * secondInverseInertia;
-        var impulse = normal * ((1f + restitution) * closing / inverseMass);
-        first.AddForceAtPosition(-impulse, point, ForceMode2D.Impulse);
-        second.AddForceAtPosition(impulse, point, ForceMode2D.Impulse);
-        // 차체 사이 접선 마찰 계수 0.3은 실차 보정 전 가정이다. 노면 마찰과 별도로 제한한다.
-        var tangent = new Vector2(-normal.y, normal.x);
-        firstArm = firstOffset.x * tangent.y - firstOffset.y * tangent.x;
-        secondArm = secondOffset.x * tangent.y - secondOffset.y * tangent.x;
-        inverseMass = 1f / first.mass + 1f / second.mass
-            + firstArm * firstArm * firstInverseInertia + secondArm * secondArm * secondInverseInertia;
-        relative = first.GetPointVelocity(point) - second.GetPointVelocity(point);
-        var tangentMagnitude = Mathf.Clamp(Vector2.Dot(relative, tangent) / inverseMass,
-            -impulse.magnitude * 0.3f, impulse.magnitude * 0.3f);
-        first.AddForceAtPosition(-tangent * tangentMagnitude, point, ForceMode2D.Impulse);
-        second.AddForceAtPosition(tangent * tangentMagnitude, point, ForceMode2D.Impulse);
+        if (!IsReady) return;
+        RoadTrafficCollision.HandleTrafficContact(body, collision, applyImpulse, fatalImpactSpeed, impactRestitution);
     }
 
     /// <summary>고정 물리 스텝에서 페달 응답, 구동력, 제동과 접지력을 적용한다.</summary>
