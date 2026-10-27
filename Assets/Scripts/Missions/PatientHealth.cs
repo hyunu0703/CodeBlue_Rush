@@ -12,6 +12,8 @@ public sealed class PatientHealth : MonoBehaviour
     private bool isTransporting;                                               // 픽업 완료부터 병원 인계 사이에만 HP 감소를 허용한다.
 
     public float NormalizedHealth => healthPercent / 100f;
+    /// <summary>인계 결과에서 중간 환산 없이 읽는 실제 HP 백분율이다.</summary>
+    public float HealthPercent => healthPercent;
 
     // 새 환자의 상태를 완전히 복원하며 픽업 전 시간과 충돌은 계산하지 않는다.
     public void ResetPatient()

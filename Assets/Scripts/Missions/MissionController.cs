@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>확정된 출동의 맵 준비, 픽업, 구출 컷신과 병원 후송 및 대기 씬 복귀를 관리한다.</summary>
+/// <summary>출동·픽업·후송과 인계 결과를 관리하고 하루 완료 저장 성공 후 대기 씬으로 복귀한다.</summary>
 [DisallowMultipleComponent]
 public sealed class MissionController : MonoBehaviour
 {
@@ -32,6 +32,15 @@ public sealed class MissionController : MonoBehaviour
     [SerializeField] private PatientHealth patientHealth;   // 차량에서 시간과 충돌에 따른 환자 HP를 관리한다.
     [SerializeField] private MissionPerformance missionPerformance; // 출동부터 인계까지의 직접 차량 충돌 기록이다.
     private PatientECGGraphic patientECG;                   // 패널 안에서만 그리는 심전도 이력이다.
+
+    [SerializeField] private GameObject resultPanel;  // 안전 영역 안에서 후송 결과와 확인 입력을 표시한다.
+    [SerializeField] private TMP_Text resultText;     // 인계 시 고정한 기록과 누적 후보를 표시한다.
+    [SerializeField] private TMP_Text saveStatus;     // 저장 실패와 재시도 안내를 결과 아래에 표시한다.
+    [SerializeField] private Button confirmButton;   // 같은 결과 후보를 저장하고 다음 일차로 진입한다.
+    [SerializeField] private TMP_Text confirmLabel;  // 확인 또는 실패 후 다시 시도 문구다.
+    private GameProgress missionProgress;            // 출동 시점에 확정한 일차와 누적 실적 원본이다.
+    private MissionResult result;                    // 인계 후에는 HP·접촉 변화와 무관하게 유지할 결과다.
+    private bool isSaving;                           // 저장 중 재진입과 연속 확인 입력을 차단한다.
 
     private readonly System.Random random = new System.Random(); // 출동 후 유효한 맵 시드를 선택하는 난수 소스다.
     private MissionStage stage;                                 // 주행 씬의 준비, 픽업과 후송 진행 상태다.
@@ -95,6 +104,9 @@ public sealed class MissionController : MonoBehaviour
         }
 
         UpdateSafeArea();
+        confirmButton.onClick.AddListener(ConfirmResult);
+        ButtonPressEffect.Attach(confirmButton);
+        if (stage == MissionStage.Result || stage == MissionStage.Completed) LockVehicle();
         missionPerformance.SetRecording(IsMissionActive);
         if (stage == MissionStage.Waiting)
         {
@@ -123,6 +135,18 @@ public sealed class MissionController : MonoBehaviour
         // 입력 컴포넌트의 Start가 끝난 뒤 승인하므로 씬 진입 전 누른 입력도 해제 후 적용된다.
         yield return null;
         if (!isActiveAndEnabled || !EnsurePresentation()) yield break;
+        // 씬 직접 실행에서도 미확인 저장을 덮어쓰거나 임의의 첫날로 처리하지 않는다.
+        if (!GameProgressSession.IsLoaded && !GameProgressSession.TryLoad(out var error))
+        {
+            Debug.LogWarning($"진행 데이터 읽기 실패: {error}", this);
+            SceneFadeTransition.LoadScene("Start");
+            yield break;
+        }
+        if (GameProgressSession.Current.Stage != ProgressStage.Ready)
+        {
+            SceneFadeTransition.LoadScene("Waiting");
+            yield break;
+        }
         AcceptMission();
         if (enabled && stage == MissionStage.Waiting) SceneFadeTransition.LoadScene("Waiting");
     }
@@ -174,6 +198,8 @@ public sealed class MissionController : MonoBehaviour
 
     private void OnDisable()
     {
+        if (confirmButton != null) confirmButton.onClick.RemoveListener(ConfirmResult);
+        if (resultPanel != null) resultPanel.SetActive(false);
         if (missionPerformance != null) missionPerformance.SetRecording(false);
         if (patientHealth != null) patientHealth.SetTransporting(false);
         if (patientECGPanel != null) patientECGPanel.gameObject.SetActive(false);
@@ -205,11 +231,13 @@ public sealed class MissionController : MonoBehaviour
     public void AcceptMission()
     {
         if (!isActiveAndEnabled || stage != MissionStage.Waiting || !ValidateReferences() || !EnsurePresentation()
+            || !GameProgressSession.IsLoaded || GameProgressSession.Current.Stage != ProgressStage.Ready
             || !MissionDispatchSession.TryConsume(out _))
         {
             return;
         }
         stage = MissionStage.Preparing;
+        missionProgress = GameProgressSession.Current;
         RefreshView();
         try
         {
@@ -276,19 +304,64 @@ public sealed class MissionController : MonoBehaviour
         }
     }
 
-    // 병원 후송이 끝나면 차량을 멈추고 새 요청을 받을 대기 씬으로 돌아간다.
+    // 병원 인계에서는 기록을 고정하고 결과를 표시한다. 확인 전에는 저장이나 일차 진행을 하지 않는다.
     public void CompleteMission()
     {
-        if (!isActiveAndEnabled || stage != MissionStage.Transporting || !IsPatientPickedUp || !ValidateReferences())
+        if (!isActiveAndEnabled || stage != MissionStage.Transporting || !IsPatientPickedUp
+            || !ValidateReferences() || !EnsurePresentation())
         {
             return;
         }
-        stage = MissionStage.Completed;
         missionPerformance.SetRecording(false);
+        patientHealth.SetTransporting(false);
+        result = new MissionResult(missionProgress, patientHealth.HealthPercent,
+            missionPerformance.LowCollisionCount, missionPerformance.HighCollisionCount);
+        stage = MissionStage.Result;
+        resultText.text = result.FormatSummary();
+        saveStatus.text = string.Empty;
+        confirmLabel.text = "확인";
+        isSaving = false;
         MissionDispatchSession.Clear();
         LockVehicle();
         RefreshView();
+    }
+
+    // 같은 결과 후보를 저장하고 성공한 경우에만 다음 일차 Waiting으로 이동한다.
+    private void ConfirmResult()
+    {
+        if (!isActiveAndEnabled || stage != MissionStage.Result || result == null || isSaving) return;
+        if (!Application.CanStreamedLevelBeLoaded("Waiting"))
+        {
+            ShowSaveError("대기 화면을 열지 못했습니다.\n다시 시도해주세요.");
+            return;
+        }
+        if (!GameProgressSession.IsLoaded || !ReferenceEquals(GameProgressSession.Current, result.OriginalProgress))
+        {
+            ShowSaveError("진행 상태를 확인하지 못했습니다.\n게임을 다시 실행해주세요.");
+            return;
+        }
+        isSaving = true;
+        confirmButton.interactable = false;
+        saveStatus.text = "저장 중…";
+        if (!GameProgressSession.TrySave(result.NextProgress, out var error))
+        {
+            isSaving = false;
+            ShowSaveError("진행 데이터를 저장하지 못했습니다.\n다시 시도해주세요.");
+            Debug.LogWarning($"하루 완료 저장 실패: {error}", this);
+            return;
+        }
+        stage = MissionStage.Completed;
+        saveStatus.text = "저장 완료 · 대기 씬으로 이동 중";
+        RefreshView();
         SceneFadeTransition.LoadScene("Waiting");
+    }
+
+    // 결과와 후보는 유지하고 저장만 다시 시도할 수 있도록 입력을 복구한다.
+    private void ShowSaveError(string message)
+    {
+        saveStatus.text = message;
+        confirmLabel.text = "다시 시도";
+        confirmButton.interactable = true;
     }
 
     // 기존 제안 UI를 숨기고 현재 주행 단계에 맞춰 안내와 입력 허용 여부를 갱신한다.
@@ -297,6 +370,14 @@ public sealed class MissionController : MonoBehaviour
         missionButton.gameObject.SetActive(false);
         notification.SetActive(false);
         briefingPanel.SetActive(false);
+        resultPanel.SetActive(stage == MissionStage.Result || stage == MissionStage.Completed);
+        if (resultPanel.activeSelf)
+        {
+            // 런타임 내비게이션과 주행 UI보다 결과를 위에 배치해 확인 입력을 가리지 않게 한다.
+            safeAreaRoot.SetAsLastSibling();
+            resultPanel.transform.SetAsLastSibling();
+        }
+        confirmButton.interactable = stage == MissionStage.Result && !isSaving;
         driveInput.SetMissionDrivingAllowed(stage == MissionStage.Active || stage == MissionStage.Transporting);
         var transporting = stage == MissionStage.Transporting && IsPatientPickedUp;
         if (patientHealth != null) patientHealth.SetTransporting(transporting);
@@ -308,6 +389,7 @@ public sealed class MissionController : MonoBehaviour
         missionStatus.text = stage == MissionStage.Rescuing ? "환자 구출 및 탑승 중"
             : stage == MissionStage.Transporting ? "환자 픽업 완료 · 병원 후송"
             : stage == MissionStage.Active ? "환자 픽업 장소로 이동"
+            : stage == MissionStage.Result ? "병원 후송 완료 · 결과 확인"
             : stage == MissionStage.Completed ? "병원 후송 완료 · 대기 씬 복귀 중" : "출동 준비 중";
     }
 
@@ -586,6 +668,11 @@ public sealed class MissionController : MonoBehaviour
                 + "Ambulance에는 simulated Dynamic Rigidbody2D와 연결된 MissionPerformance가 필요합니다.");
             return false;
         }
+        if (resultPanel == null || resultText == null || saveStatus == null || confirmButton == null || confirmLabel == null)
+        {
+            FailConfiguration("GamePlay의 결과 패널·본문·저장 안내·확인 버튼과 문구를 연결해주세요.");
+            return false;
+        }
         return true;
     }
 
@@ -617,6 +704,7 @@ public sealed class MissionController : MonoBehaviour
         Active,
         Rescuing,
         Transporting,
+        Result,
         Completed
     }
 }

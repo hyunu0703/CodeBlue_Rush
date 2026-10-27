@@ -1,7 +1,7 @@
 # 누적 실적 시스템 구현 계획
 
 - 작성일: 2026-10-28
-- 진행 상태: 준비 단계·1단계와 2단계 로컬 저장·Start 진입, 3단계 미션별 차량 충돌 기록의 구현 및 검증을 완료했다. 4단계 이후는 미구현이다. [준비·1단계 결과](DAY_PERFORMANCE_STAGE1.md), [2단계 결과](DAY_PERFORMANCE_STAGE2.md), [3단계 결과](DAY_PERFORMANCE_STAGE3.md)를 참고한다.
+- 진행 상태: 준비 단계·1단계와 2단계 로컬 저장·Start 진입, 3단계 미션별 차량 충돌 기록, 4단계 GamePlay 결과·하루 완료의 구현 및 검증을 완료했다. 5단계 이후는 미구현이다. [준비·1단계 결과](DAY_PERFORMANCE_STAGE1.md), [2단계 결과](DAY_PERFORMANCE_STAGE2.md), [3단계 결과](DAY_PERFORMANCE_STAGE3.md), [4단계 결과](DAY_PERFORMANCE_STAGE4.md)를 참고한다.
 - 기준 기획: [날짜 진행 및 누적 실적 평가](DAY_PERFORMANCE_SPEC.md), [리메이크 구현 기준](../GAME_REMAKE_SPEC.md)
 - 실제 프로젝트 버전: Unity 6000.3.23f1 (`ProjectSettings/ProjectVersion.txt` 확인)
 - 유지할 패키지: Input System 1.20.0, URP 17.3.0, Test Framework 1.6.0, uGUI 2.0.0
@@ -97,6 +97,8 @@ Start → 시작하기 → 저장 상태별 Waiting 진입
 **완료 조건:** 병원 인계 전까지 정확한 당일 저속·고속 횟수와 사고 여부를 제공한다.
 
 ### 4단계 — GamePlay 결과와 하루 완료
+
+**진행 상태:** 구현·검증 완료. 인계 결과 고정·표시, 확인 후 실제 파일 저장·다음 일차 복귀, 쓰기 실패 재시도·중복 입력 차단을 확인했다. 5일차 완료는 6일차 평가 대기 저장·요청 차단까지만 연결하며 평가 처리는 5단계다. [상세 결과](DAY_PERFORMANCE_STAGE4.md)를 참고한다.
 
 **수정 범위:** `MissionController.cs`, 필요한 결과 UI 역할과 `GamePlay.unity`의 기존 Canvas·안전 영역 하위 패널을 수정한다. `PatientHealth.cs`는 기존 공개 HP 읽기와 후송 상태 전환을 우선 재사용한다. 필드명·GUID·기존 UI 배치를 불필요하게 바꾸지 않는다.
 
