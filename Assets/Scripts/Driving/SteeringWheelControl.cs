@@ -14,12 +14,12 @@ public sealed class SteeringWheelControl : MonoBehaviour, IPointerDownHandler, I
     [FormerlySerializedAs("stationaryReturnSpeed")]
     [SerializeField, Min(0f)] private float returnSpeed = 1200f;
     [SerializeField, Min(0f)] private float centerDeadRadius = 16f;
-    // 기본 450도 범위에서 15/45/90/180/360도 지점의 누적 조향량이다. 범위는 0~1이다.
-    private const float FirstSectionSteering = 0.16f;
-    private const float SecondSectionSteering = 0.34f;
-    private const float ThirdSectionSteering = 0.4f;
-    private const float FourthSectionSteering = 0.46f;
-    private const float FifthSectionSteering = 0.7f;
+    // 450도 범위의 각 지점에서 기존 120도/초 기준 회전 속도를 유지하도록 90도/초에 맞춰 보정한다.
+    private const float FirstSectionSteering = 19.2f / 90f;  // 핸들 15도에서 기존 16%의 회전 속도를 유지한다.
+    private const float SecondSectionSteering = 40.8f / 90f; // 핸들 45도에서 기존 34%의 회전 속도를 유지한다.
+    private const float ThirdSectionSteering = 48f / 90f;    // 핸들 90도에서 기존 40%의 회전 속도를 유지한다.
+    private const float FourthSectionSteering = 55.2f / 90f; // 핸들 180도에서 기존 46%의 회전 속도를 유지한다.
+    private const float FifthSectionSteering = 84f / 90f;    // 핸들 360도에서 기존 70%를 유지하고 450도까지 남은 회전량을 배분한다.
 
     private RectTransform wheelRect;
     private Quaternion neutralRotation;

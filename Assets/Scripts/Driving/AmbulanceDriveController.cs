@@ -23,7 +23,7 @@ public sealed class AmbulanceDriveController : MonoBehaviour
 
     [Header("Steering")]
     // 충분히 움직일 때 최대 조향으로 회전하는 속도다. 단위는 도/초다.
-    [SerializeField, Min(1f)] private float maximumTurnSpeed = 120f;
+    [SerializeField, Min(1f)] private float maximumTurnSpeed = 90f;
     // 목표 회전 속도에 접근하는 가속도다. 단위는 도/초²다.
     [SerializeField, Min(1f)] private float turnAcceleration = 1080f;
     // 이 전후방 속도부터 최대 회전 속도를 허용한다. 정지 상태의 제자리 회전을 막는다.

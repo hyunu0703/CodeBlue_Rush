@@ -62,22 +62,42 @@ public sealed class AmbulanceSteeringTests
 
     /// <summary>450도 범위에서 합의한 누적 조향량과 좌우 대칭을 검증한다.</summary>
     [TestCase(0f, 0f)]
-    [TestCase(15f, 0.16f)]
-    [TestCase(45f, 0.34f)]
-    [TestCase(90f, 0.4f)]
-    [TestCase(180f, 0.46f)]
-    [TestCase(360f, 0.7f)]
+    [TestCase(15f, 19.2f / 90f)]
+    [TestCase(45f, 40.8f / 90f)]
+    [TestCase(90f, 48f / 90f)]
+    [TestCase(180f, 55.2f / 90f)]
+    [TestCase(360f, 84f / 90f)]
     [TestCase(450f, 1f)]
-    [TestCase(-15f, -0.16f)]
-    [TestCase(-45f, -0.34f)]
-    [TestCase(-90f, -0.4f)]
-    [TestCase(-180f, -0.46f)]
-    [TestCase(-360f, -0.7f)]
+    [TestCase(-15f, -19.2f / 90f)]
+    [TestCase(-45f, -40.8f / 90f)]
+    [TestCase(-90f, -48f / 90f)]
+    [TestCase(-180f, -55.2f / 90f)]
+    [TestCase(-360f, -84f / 90f)]
     [TestCase(-450f, -1f)]
     public void Steering_WheelAngle_ProducesAgreedStrength(float degrees, float expected)
     {
         wheel.Tick(Mathf.Sign(degrees), 0f, Mathf.Abs(degrees) / 720f);
         Assert.That(wheel.Steering, Is.EqualTo(expected).Within(0.00001f));
+    }
+
+    // 실제 핸들 입력을 차량에 전달해 기존 회전 속도와 새 최대 속도를 함께 검증한다.
+    [TestCase(15f, 19.2f)]
+    [TestCase(45f, 40.8f)]
+    [TestCase(90f, 48f)]
+    [TestCase(180f, 55.2f)]
+    [TestCase(360f, 84f)]
+    [TestCase(450f, 90f)]
+    [TestCase(-90f, -48f)]
+    [TestCase(-450f, -90f)]
+    public void FixedUpdate_WheelInput_PreservesTurnSpeedWith90DegreeLimit(float degrees, float expectedSpeed)
+    {
+        body.linearVelocity = Vector2.up * 4f;
+        wheel.Tick(Mathf.Sign(degrees), 0f, Mathf.Abs(degrees) / 720f);
+        for (var index = 0; index < 30; index++)
+        {
+            Step(wheel.Steering, 0f, 0f);
+        }
+        Assert.That(body.angularVelocity, Is.EqualTo(-expectedSpeed).Within(0.01f));
     }
 
     /// <summary>전체 범위의 단조 증가와 구간 경계의 연속성을 실제 입력 경로로 확인한다.</summary>
@@ -128,7 +148,7 @@ public sealed class AmbulanceSteeringTests
             wheel.OnDrag(pointer);
             if (index == 1)
             {
-                Assert.That(wheel.Steering, Is.EqualTo(0.4f).Within(0.0001f));
+                Assert.That(wheel.Steering, Is.EqualTo(48f / 90f).Within(0.0001f));
             }
         }
         Assert.That(wheel.Steering, Is.EqualTo(1f).Within(0.0001f));
@@ -138,7 +158,7 @@ public sealed class AmbulanceSteeringTests
             pointer.position = (Vector2)(Quaternion.Euler(0f, 0f, -450f + index * 77.5f) * Vector2.right) * 100f;
             wheel.OnDrag(pointer);
         }
-        Assert.That(wheel.Steering, Is.EqualTo(-0.16f).Within(0.0001f));
+        Assert.That(wheel.Steering, Is.EqualTo(-19.2f / 90f).Within(0.0001f));
     }
 
     /// <summary>전진/후진 모두 반대 입력 다음 스텝에서 회전 부호가 바뀌는지 검증한다.</summary>
@@ -261,7 +281,7 @@ public sealed class AmbulanceSteeringSceneTests
                 foreach (var controller in root.GetComponentsInChildren<AmbulanceDriveController>(true))
                 {
                     var data = new SerializedObject(controller);
-                    Assert.That(data.FindProperty("maximumTurnSpeed").floatValue, Is.EqualTo(120f));
+                    Assert.That(data.FindProperty("maximumTurnSpeed").floatValue, Is.EqualTo(90f));
                     foundVehicle = true;
                 }
             }

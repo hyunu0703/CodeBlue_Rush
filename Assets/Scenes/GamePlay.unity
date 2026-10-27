@@ -855,7 +855,7 @@ MonoBehaviour:
   engineBrakeDeceleration: 0.6
   throttleResponse: 2
   brakeResponse: 6
-  maximumTurnSpeed: 120
+  maximumTurnSpeed: 90
   turnAcceleration: 1080
   fullSteeringSpeed: 2
   velocityAlignment: 8
