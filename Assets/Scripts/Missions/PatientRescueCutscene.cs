@@ -169,6 +169,7 @@ public sealed class PatientRescueCutscene : MonoBehaviour
             {
                 yield break;
             }
+            if (ApplicationPause.IsPaused) { yield return null; continue; }
             elapsed += Time.deltaTime;
             yield return null;
         }
@@ -179,6 +180,7 @@ public sealed class PatientRescueCutscene : MonoBehaviour
             {
                 yield break;
             }
+            if (ApplicationPause.IsPaused) { yield return null; continue; }
             elapsed += Time.deltaTime;
             // 세로 대형을 점차 좁혀 세 이미지가 모두 같은 차량 후면 지점에 도착하게 한다.
             var progress = Mathf.SmoothStep(0f, 1f, elapsed / movingSeconds);
@@ -186,6 +188,7 @@ public sealed class PatientRescueCutscene : MonoBehaviour
             SetActorSpacing(1f - progress);
             yield return null;
         }
+        while (ApplicationPause.IsPaused) yield return null;
         // 완료 판정은 이미지가 사라진 뒤에만 공개한다.
         actorRoot.gameObject.SetActive(false);
         if (pickupOutline != null)

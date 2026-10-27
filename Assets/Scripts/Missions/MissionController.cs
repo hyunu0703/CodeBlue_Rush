@@ -134,6 +134,7 @@ public sealed class MissionController : MonoBehaviour
     {
         // 입력 컴포넌트의 Start가 끝난 뒤 승인하므로 씬 진입 전 누른 입력도 해제 후 적용된다.
         yield return null;
+        while (ApplicationPause.IsPaused) yield return null;
         if (!isActiveAndEnabled || !EnsurePresentation()) yield break;
         // 씬 직접 실행에서도 미확인 저장을 덮어쓰거나 임의의 첫날로 처리하지 않는다.
         if (!GameProgressSession.IsLoaded && !GameProgressSession.TryLoad(out var error))
@@ -230,7 +231,7 @@ public sealed class MissionController : MonoBehaviour
     // 대기 씬에서 확정한 출동만 소비하여 맵을 준비하고, 성공한 이후 운전을 허용한다.
     public void AcceptMission()
     {
-        if (!isActiveAndEnabled || stage != MissionStage.Waiting || !ValidateReferences() || !EnsurePresentation()
+        if (ApplicationPause.IsPaused || !isActiveAndEnabled || stage != MissionStage.Waiting || !ValidateReferences() || !EnsurePresentation()
             || !GameProgressSession.IsLoaded || GameProgressSession.Current.Stage != ProgressStage.Ready
             || !MissionDispatchSession.TryConsume(out _))
         {
@@ -307,7 +308,7 @@ public sealed class MissionController : MonoBehaviour
     // 병원 인계에서는 기록을 고정하고 결과를 표시한다. 확인 전에는 저장이나 일차 진행을 하지 않는다.
     public void CompleteMission()
     {
-        if (!isActiveAndEnabled || stage != MissionStage.Transporting || !IsPatientPickedUp
+        if (ApplicationPause.IsPaused || !isActiveAndEnabled || stage != MissionStage.Transporting || !IsPatientPickedUp
             || !ValidateReferences() || !EnsurePresentation())
         {
             return;
@@ -329,7 +330,7 @@ public sealed class MissionController : MonoBehaviour
     // 같은 결과 후보를 저장하고 성공한 경우에만 다음 일차 Waiting으로 이동한다.
     private void ConfirmResult()
     {
-        if (!isActiveAndEnabled || stage != MissionStage.Result || result == null || isSaving) return;
+        if (ApplicationPause.IsPaused || !isActiveAndEnabled || stage != MissionStage.Result || result == null || isSaving) return;
         if (!Application.CanStreamedLevelBeLoaded("Waiting"))
         {
             ShowSaveError("대기 화면을 열지 못했습니다.\n다시 시도해주세요.");

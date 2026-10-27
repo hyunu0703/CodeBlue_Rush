@@ -36,14 +36,14 @@ public sealed class PatientHealth : MonoBehaviour
     // 일시정지와 픽업 전 대기를 제외한 경과 시간만 HP에 반영한다.
     internal void Advance(float seconds)
     {
-        if (!isTransporting || seconds <= 0f || !RoadLaneMath.IsFinite(seconds)) return;
+        if (ApplicationPause.IsPaused || !isTransporting || seconds <= 0f || !RoadLaneMath.IsFinite(seconds)) return;
         healthPercent = Mathf.Max(0f, healthPercent - seconds * 100f / Mathf.Max(1f, survivalSeconds));
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
         // 건물 접촉과 지속적으로 차량을 미는 동작은 추가 피해로 계산하지 않는다.
-        if (!isActiveAndEnabled || !isTransporting || collision.rigidbody == null
+        if (ApplicationPause.IsPaused || !isActiveAndEnabled || !isTransporting || collision.rigidbody == null
             || (!collision.rigidbody.TryGetComponent<RoadTrafficCollision>(out _)
                 && !collision.rigidbody.TryGetComponent<AmbulanceDriveController>(out _))) return;
         var impactSpeed = 0f;
@@ -58,7 +58,7 @@ public sealed class PatientHealth : MonoBehaviour
     // 기존 프로젝트의 1유닛=6m 스케일로 법선 충격 속도를 km/h로 환산한다.
     internal void ApplyVehicleImpact(float worldSpeed)
     {
-        if (!isTransporting || !RoadLaneMath.IsFinite(worldSpeed) || worldSpeed <= 0f) return;
+        if (ApplicationPause.IsPaused || !isTransporting || !RoadLaneMath.IsFinite(worldSpeed) || worldSpeed <= 0f) return;
         var damage = Mathf.Min(maximumImpactDamage, worldSpeed * 6f * 3.6f / 10f * damagePerTenKmh);
         healthPercent = Mathf.Max(0f, healthPercent - damage);
     }

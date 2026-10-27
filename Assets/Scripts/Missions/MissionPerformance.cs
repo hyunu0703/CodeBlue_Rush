@@ -18,7 +18,7 @@ public sealed class MissionPerformance : MonoBehaviour
     public int LowCollisionCount => lowCollisionCount;
     public int HighCollisionCount => highCollisionCount;
     public bool HasVehicleCollision => lowCollisionCount > 0 || highCollisionCount > 0;
-    public bool IsRecording => isActiveAndEnabled && isRecording;
+    public bool IsRecording => !ApplicationPause.IsPaused && isActiveAndEnabled && isRecording;
 
     private void Awake()
     {

@@ -30,7 +30,7 @@ public sealed class WaitingMissionController : MonoBehaviour
     private bool isSaving;                               // 저장 중 재진입과 중복 입력을 차단한다.
     private bool hasSaveError;                           // 실패한 저장을 재시도 버튼에서만 허용한다.
 
-    private bool CanReceiveMission => isActiveAndEnabled && GameProgressSession.IsLoaded && !isSaving && pendingProgress == null
+    private bool CanReceiveMission => !ApplicationPause.IsPaused && isActiveAndEnabled && GameProgressSession.IsLoaded && !isSaving && pendingProgress == null
         && ReferenceEquals(observedProgress, GameProgressSession.Current)
         && observedProgress.Stage == ProgressStage.Ready;
 
@@ -63,6 +63,7 @@ public sealed class WaitingMissionController : MonoBehaviour
         dispatchButton.onClick.AddListener(Dispatch);
         evaluationButton.onClick.AddListener(ConfirmProgress);
         retryButton.onClick.AddListener(RetryProgressSave);
+        ApplicationPause.Changed += HandlePauseChanged;
         ButtonPressEffect.Attach(missionButton);
         ButtonPressEffect.Attach(acceptButton);
         ButtonPressEffect.Attach(rejectButton);
@@ -90,6 +91,15 @@ public sealed class WaitingMissionController : MonoBehaviour
         if (dispatchButton != null) dispatchButton.onClick.RemoveListener(Dispatch);
         if (evaluationButton != null) evaluationButton.onClick.RemoveListener(ConfirmProgress);
         if (retryButton != null) retryButton.onClick.RemoveListener(RetryProgressSave);
+        ApplicationPause.Changed -= HandlePauseChanged;
+    }
+
+    // 기존 타이머는 유지하며, 이탈 중 씬 진입이나 저장 완료로 보류된 작업만 복귀 때 시작한다.
+    private void HandlePauseChanged(bool paused)
+    {
+        if (paused || !isActiveAndEnabled) return;
+        if (stage == WaitingStage.Waiting && offerRoutine == null && CanReceiveMission) BeginWaiting();
+        else if (progressAction == ProgressAction.RecordFiring && !hasSaveError) SaveProgress();
     }
 
     // 첫 진입과 저장 상태 변경 시에만 후보를 만들며 재활성화 시 실패 후보를 유지한다.
@@ -167,7 +177,8 @@ public sealed class WaitingMissionController : MonoBehaviour
     // 저장 성공 후에만 원본을 교체하고 요청 대기 또는 저장된 해고 화면으로 전환한다.
     private void SaveProgress()
     {
-        if (!isActiveAndEnabled || stage != WaitingStage.ProgressBlocked || isSaving || pendingProgress == null) return;
+        if (ApplicationPause.IsPaused || !isActiveAndEnabled || stage != WaitingStage.ProgressBlocked
+            || isSaving || pendingProgress == null) return;
         if (!GameProgressSession.IsLoaded || !ReferenceEquals(GameProgressSession.Current, observedProgress))
         {
             ShowSaveError("진행 상태를 확인하지 못했습니다.\n게임을 다시 실행해주세요.");
@@ -221,10 +232,15 @@ public sealed class WaitingMissionController : MonoBehaviour
         offerRoutine = StartCoroutine(WaitForOffer());
     }
 
-    // 기존 5초 요청 대기 방식을 대기 씬에서도 유지한다.
+    // 기존 실제 시간 5초 기준을 유지하되 백그라운드·복귀 첫 프레임은 남은 시간에서 제외한다.
     private IEnumerator WaitForOffer()
     {
-        yield return new WaitForSecondsRealtime(offerDelaySeconds);
+        var elapsed = 0f;
+        while (elapsed < offerDelaySeconds)
+        {
+            yield return null;
+            elapsed += ApplicationPause.ActiveDeltaTime;
+        }
         offerRoutine = null;
         if (!CanReceiveMission || stage != WaitingStage.Waiting) yield break;
         requestNumber++;

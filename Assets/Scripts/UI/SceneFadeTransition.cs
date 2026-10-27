@@ -59,6 +59,7 @@ public sealed class SceneFadeTransition : MonoBehaviour
     private IEnumerator Transition(string sceneName)
     {
         yield return FadeTo(1f, 0.6f);
+        while (ApplicationPause.IsPaused) yield return null;
         yield return SceneManager.LoadSceneAsync(sceneName);
         yield return null;
         yield return FadeTo(0f, 1.2f);
@@ -73,10 +74,11 @@ public sealed class SceneFadeTransition : MonoBehaviour
         float elapsed = 0f;
         while (elapsed < duration)
         {
-            elapsed += Time.unscaledDeltaTime;
+            elapsed += ApplicationPause.ActiveDeltaTime;
             cover.alpha = Mathf.Lerp(initial, target, Mathf.SmoothStep(0f, 1f, elapsed / duration));
             yield return null;
         }
+        while (ApplicationPause.IsPaused) yield return null;
         cover.alpha = target;
     }
 

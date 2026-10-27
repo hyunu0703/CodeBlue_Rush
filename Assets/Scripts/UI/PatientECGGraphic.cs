@@ -33,7 +33,7 @@ public sealed class PatientECGGraphic : MaskableGraphic
 
     private void Update()
     {
-        if (patient == null || Time.deltaTime <= 0f) return;
+        if (ApplicationPause.IsPaused || patient == null || Time.deltaTime <= 0f) return;
         remainder += Time.deltaTime;
         // 프레임률에 관계없이 같은 샘플 간격을 사용하고 힙 할당 없이 이력을 교체한다.
         while (remainder >= 1f / SampleRate)

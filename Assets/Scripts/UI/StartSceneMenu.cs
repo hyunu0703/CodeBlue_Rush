@@ -60,7 +60,7 @@ public sealed class StartSceneMenu : MonoBehaviour
     // 저장을 정상 복원한 경우에만 페이드를 시작하고 실패하면 같은 데이터를 다시 읽는다.
     private void StartGame()
     {
-        if (isStarting) return;
+        if (ApplicationPause.IsPaused || isStarting) return;
         isStarting = true;
         startButton.interactable = false;
         retryButton.interactable = false;
