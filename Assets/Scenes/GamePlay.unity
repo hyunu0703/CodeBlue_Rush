@@ -249,6 +249,7 @@ RectTransform:
   - {fileID: 1495287549}
   - {fileID: 1209765004}
   - {fileID: 2040328776}
+  - {fileID: 1808600884}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -748,6 +749,7 @@ GameObject:
   - component: {fileID: 585983600}
   - component: {fileID: 585983601}
   - component: {fileID: 585983599}
+  - component: {fileID: 585983602}
   m_Layer: 0
   m_Name: Ambulance
   m_TagString: Untagged
@@ -865,6 +867,12 @@ MonoBehaviour:
   velocityAlignment: 8
   stoppedSpeed: 0.025
   stoppedAngularSpeed: 3
+  impactMinimumSpeed: 3.5
+  fatalImpactSpeed: 4
+  impactRestitution: 0.15
+  ambulanceRecoilRatio: 0.22
+  impactControlDelay: 0.35
+  vehicleLaunchRatio: 0.65
 --- !u!50 &585983600
 Rigidbody2D:
   serializedVersion: 5
@@ -892,6 +900,22 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 0
+--- !u!114 &585983602
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 585983596}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48bd5b1e198e4e9fb8e7127c64c807d9, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::PatientHealth
+  survivalSeconds: 120
+  damagePerTenKmh: 5
+  maximumImpactDamage: 30
+  healthPercent: 100
 --- !u!61 &585983601
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -2433,7 +2457,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9dbb9866e41c044d9999005a889217b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MissionController
-  offerDelaySeconds: 5
   missionButton: {fileID: 419641410}
   notification: {fileID: 1390504550}
   briefingPanel: {fileID: 1415392637}
@@ -2449,6 +2472,8 @@ MonoBehaviour:
   navigationPanel: {fileID: 0}
   navigationCamera: {fileID: 0}
   rescueCutscene: {fileID: 0}
+  patientECGPanel: {fileID: 1808600884}
+  patientHealth: {fileID: 585983602}
 --- !u!114 &1629936290
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2791,6 +2816,81 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!1 &1808600883
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1808600884}
+  - component: {fileID: 1808600886}
+  - component: {fileID: 1808600885}
+  m_Layer: 5
+  m_Name: PatientECGPanel
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &1808600884
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1808600883}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 221503415}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 1, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -406, y: -47}
+  m_SizeDelta: {x: 120, y: 60}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1808600885
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1808600883}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.088050246, g: 0.088050246, b: 0.088050246, a: 0.7411765}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Type: 1
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1808600886
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1808600883}
+  m_CullTransparentMesh: 1
 --- !u!1 &1950470826
 GameObject:
   m_ObjectHideFlags: 0

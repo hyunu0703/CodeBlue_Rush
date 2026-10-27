@@ -28,6 +28,9 @@ public sealed class MissionController : MonoBehaviour
     [SerializeField] private RectTransform navigationPanel;
     [SerializeField] private Camera navigationCamera;
     [SerializeField] private PatientRescueCutscene rescueCutscene;
+    [SerializeField] private RectTransform patientECGPanel; // 픽업 완료부터 병원 인계까지 표시하는 기존 검은 패널이다.
+    [SerializeField] private PatientHealth patientHealth;   // 차량에서 시간과 충돌에 따른 환자 HP를 관리한다.
+    private PatientECGGraphic patientECG;                   // 패널 안에서만 그리는 심전도 이력이다.
 
     private readonly System.Random random = new System.Random(); // 출동 후 유효한 맵 시드를 선택하는 난수 소스다.
     private MissionStage stage;                                 // 주행 씬의 준비, 픽업과 후송 진행 상태다.
@@ -169,6 +172,8 @@ public sealed class MissionController : MonoBehaviour
 
     private void OnDisable()
     {
+        if (patientHealth != null) patientHealth.SetTransporting(false);
+        if (patientECGPanel != null) patientECGPanel.gameObject.SetActive(false);
         StopRescue();
         if (stage == MissionStage.Rescuing)
         {
@@ -247,6 +252,8 @@ public sealed class MissionController : MonoBehaviour
             CurrentSeed = seed;
             TransportSeed = 0;
             IsPatientPickedUp = false;
+            patientHealth.ResetPatient();
+            patientECG.ResetPatient(patientHealth);
             previousPosition = ambulance.position;
             // 픽업 장소는 노란 테두리 자체로 표시한다. 기존 글자가 사각형과 차량을 가리지 않게 비운다.
             mapGenerator.SetDestinationLabel(string.Empty);
@@ -286,6 +293,9 @@ public sealed class MissionController : MonoBehaviour
         notification.SetActive(false);
         briefingPanel.SetActive(false);
         driveInput.SetMissionDrivingAllowed(stage == MissionStage.Active || stage == MissionStage.Transporting);
+        var transporting = stage == MissionStage.Transporting && IsPatientPickedUp;
+        if (patientHealth != null) patientHealth.SetTransporting(transporting);
+        if (patientECGPanel != null) patientECGPanel.gameObject.SetActive(transporting);
         if (navigation != null)
         {
             navigation.SetGuidanceVisible(IsMissionActive);
@@ -398,6 +408,7 @@ public sealed class MissionController : MonoBehaviour
         if (isPresentationReady)
         {
             if (navigation != null && navigationCamera != null && rescueCutscene != null
+                && patientECGPanel != null && patientHealth != null && patientECG != null
                 && ambulanceRenderer != null && ambulanceCollider != null && rescueCutscene.isActiveAndEnabled)
             {
                 return true;
@@ -492,7 +503,55 @@ public sealed class MissionController : MonoBehaviour
         }
         navigation.Configure(mapGenerator, ambulance.transform, navigationCamera);
         navigation.SetGuidanceVisible(IsMissionActive);
+        if (!EnsurePatientPresentation()) return false;
         isPresentationReady = true;
+        return true;
+    }
+
+    // 기존 패널 배치를 보존하고 HP 원본과 마스킹된 표시 전용 자식을 한 번 연결한다.
+    private bool EnsurePatientPresentation()
+    {
+        if (patientECGPanel == null)
+        {
+            var canvas = safeAreaRoot.GetComponentInParent<Canvas>();
+            if (canvas != null)
+            {
+                foreach (var candidate in canvas.GetComponentsInChildren<RectTransform>(true))
+                {
+                    if (candidate.name != "PatientECGPanel") continue;
+                    patientECGPanel = candidate;
+                    break;
+                }
+            }
+        }
+        if (patientECGPanel == null || patientECGPanel.GetComponent<Image>() == null)
+        {
+            FailConfiguration("Canvas 아래 PatientECGPanel의 RectTransform과 배경 Image를 연결해주세요.");
+            return false;
+        }
+        if (patientHealth == null)
+        {
+            patientHealth = ambulance.GetComponent<PatientHealth>();
+            if (patientHealth == null) patientHealth = ambulance.gameObject.AddComponent<PatientHealth>();
+        }
+        patientECGPanel.GetComponent<Image>().raycastTarget = false;
+        if (patientECGPanel.GetComponent<RectMask2D>() == null)
+            patientECGPanel.gameObject.AddComponent<RectMask2D>();
+        patientECG = patientECGPanel.GetComponentInChildren<PatientECGGraphic>(true);
+        if (patientECG == null)
+        {
+            var display = new GameObject("PatientECG", typeof(RectTransform), typeof(CanvasRenderer));
+            display.layer = patientECGPanel.gameObject.layer;
+            var displayRect = (RectTransform)display.transform;
+            displayRect.SetParent(patientECGPanel, false);
+            displayRect.anchorMin = Vector2.zero;
+            displayRect.anchorMax = Vector2.one;
+            displayRect.offsetMin = displayRect.offsetMax = Vector2.zero;
+            patientECG = display.AddComponent<PatientECGGraphic>();
+        }
+        patientHealth.ResetPatient();
+        patientECG.ResetPatient(patientHealth);
+        patientECGPanel.gameObject.SetActive(false);
         return true;
     }
 
