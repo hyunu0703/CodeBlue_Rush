@@ -33,7 +33,7 @@ public sealed class MissionBuildingLayoutTests
                         var sequence = new List<BuildingPrefab>();
                         foreach (var road in roads)
                         {
-                            var row = result[road.Position].Where(item => item.Prefab.Index == side).ToList();
+                            var row = result[road.Position].Where(item => (item.Position.x < 0f ? 1 : 2) == side).ToList();
                             Assert.That(row.Count, Is.InRange(4, 5));
                             var lastY = float.NegativeInfinity;
                             foreach (var item in row)
@@ -82,7 +82,7 @@ public sealed class MissionBuildingLayoutTests
             Assert.AreEqual(before, Signature(existing));
             for (var side = 1; side <= 2; side++)
             {
-                var row = existing[Vector2.zero].Concat(added[roads[1].Position]).Where(item => item.Prefab.Index == side).ToArray();
+                var row = existing[Vector2.zero].Concat(added[roads[1].Position]).Where(item => (item.Position.x < 0f ? 1 : 2) == side).ToArray();
                 for (var index = 2; index < row.Length; index++)
                 {
                     Assert.IsFalse(row[index].Prefab == row[index - 1].Prefab && row[index].Prefab == row[index - 2].Prefab);
@@ -108,7 +108,7 @@ public sealed class MissionBuildingLayoutTests
             Assert.IsTrue(MissionBuildingLayout.TryPlan(roads, 1, seed + 5678, prefabs, existing, out var added, out error), error);
             for (var side = 1; side <= 2; side++)
             {
-                var row = added[roads[1].Position].Concat(existing[Vector2.zero]).Where(item => item.Prefab.Index == side).ToArray();
+                var row = added[roads[1].Position].Concat(existing[Vector2.zero]).Where(item => (item.Position.x < 0f ? 1 : 2) == side).ToArray();
                 for (var index = 2; index < row.Length; index++)
                 {
                     Assert.IsFalse(row[index].Prefab == row[index - 1].Prefab && row[index].Prefab == row[index - 2].Prefab);
@@ -117,10 +117,10 @@ public sealed class MissionBuildingLayoutTests
         }
     }
 
-    /// <summary>이미 연결된 원본 16종을 읽고 분류를 검증한다.</summary>
+    /// <summary>현재 사용하는 두 건물 원본을 읽고 양쪽 배치 가능 여부를 검증한다.</summary>
     private static BuildingPrefab[] LoadBuildings()
     {
-        var result = Enumerable.Range(1, 16).Select(index => AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Building/Building_" + index.ToString("00") + ".prefab").GetComponent<BuildingPrefab>()).ToArray();
+        var result = new[] { "Apartment", "LowRiseVilla" }.Select(name => AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Building/" + name + ".prefab").GetComponent<BuildingPrefab>()).ToArray();
         Assert.IsTrue(MissionBuildingLayout.Validate(result, out var error), error);
         return result;
     }

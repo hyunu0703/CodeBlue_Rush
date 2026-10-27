@@ -40,23 +40,23 @@ public static class MissionBuildingLayout
         }
     }
 
-    /// <summary>양쪽 8종의 필수 스프라이트, 박스 및 변환을 검증한다.</summary>
+    /// <summary>각 방향에서 사용할 건물의 필수 스프라이트, 박스 및 변환을 검증한다.</summary>
     public static bool Validate(BuildingPrefab[] prefabs, out string error)
     {
         error = null;
         // 프리팹별 분류와 중복 참조를 검사한다.
         var counts = new int[2];
         var unique = new HashSet<BuildingPrefab>();
-        if (prefabs == null || prefabs.Length != 16)
+        if (prefabs == null || prefabs.Length == 0)
         {
-            error = "MissionMapGenerator의 Building Prefabs에 좌우 건물 16종을 연결해주세요.";
+            error = "MissionMapGenerator의 Building Prefabs에 건물 프리팹을 연결해주세요.";
             return false;
         }
         foreach (var prefab in prefabs)
         {
-            if (prefab == null || !unique.Add(prefab) || prefab.Index < 1 || prefab.Index > 2)
+            if (prefab == null || !unique.Add(prefab) || prefab.Index < 0 || prefab.Index > 2)
             {
-                error = "건물 프리팹은 중복 없이 Index 1 또는 2로 설정되어야 합니다.";
+                error = "건물 프리팹은 중복 없이 Index 0, 1 또는 2로 설정되어야 합니다.";
                 return false;
             }
             var box = prefab.GetComponent<BoxCollider2D>();
@@ -70,11 +70,19 @@ public static class MissionBuildingLayout
                 error = prefab.name + ": 스프라이트, 정적 비트리거 박스, 양수 균일 XY 스케일과 회전 0이 필요합니다.";
                 return false;
             }
-            counts[prefab.Index - 1]++;
+            if (prefab.Index == 0)
+            {
+                counts[0]++;
+                counts[1]++;
+            }
+            else
+            {
+                counts[prefab.Index - 1]++;
+            }
         }
-        if (counts[0] != 8 || counts[1] != 8)
+        if (counts[0] == 0 || counts[1] == 0)
         {
-            error = "Index 1과 Index 2 건물을 각각 8종 연결해주세요.";
+            error = "양쪽 공용 건물 또는 각 방향의 건물을 연결해주세요.";
             return false;
         }
         return true;
@@ -139,7 +147,7 @@ public static class MissionBuildingLayout
             var result = new List<Placement>(5);
             foreach (var placement in placements)
             {
-                if (placement.Prefab.Index == side)
+                if ((placement.Position.x < 0f ? 1 : 2) == side)
                 {
                     result.Add(placement);
                 }
@@ -161,7 +169,7 @@ public static class MissionBuildingLayout
         var minimumHeight = float.MaxValue;
         foreach (var prefab in prefabs)
         {
-            if (prefab.Index != side)
+            if (prefab.Index != 0 && prefab.Index != side)
             {
                 continue;
             }

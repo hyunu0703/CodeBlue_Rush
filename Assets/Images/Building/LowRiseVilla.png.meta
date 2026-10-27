@@ -110,6 +110,7 @@ TextureImporter:
     serializedVersion: 2
     sprites: []
     outline: []
+    customData: 
     physicsShape: []
     bones: []
     spriteID: 004f2d1cc2c24b76bea59e0c0352a7d4
@@ -119,6 +120,8 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
     nameFileIdTable: {}
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0

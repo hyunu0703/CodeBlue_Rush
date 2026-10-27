@@ -2466,22 +2466,8 @@ MonoBehaviour:
   destination: {fileID: 536320611}
   roadPreview: {fileID: 0}
   buildingPrefabs:
-  - {fileID: 6095123295902223742, guid: 0668348c105a3d1408cef14507a10340, type: 3}
-  - {fileID: 4427957956599536023, guid: 7b8b434195e71dd4588cedef5e8f9f8c, type: 3}
-  - {fileID: 1692472366616493014, guid: 7ebe2e9868edc574bb35114cac3e5228, type: 3}
-  - {fileID: 523635426939391867, guid: f3a6bd69de781294da2f3c51ca303187, type: 3}
-  - {fileID: 5534423624170935155, guid: 80aee91c0a87af243a925585ecbaf9ba, type: 3}
-  - {fileID: 6693310169242107945, guid: f7f269c6674b0c443bc1d6b3d74be2c7, type: 3}
-  - {fileID: 4514935124646341202, guid: 3265b7826f7b3bd499705e09dc6f5a4d, type: 3}
-  - {fileID: 5762704189632004678, guid: d289886fff846ca499f8a84b15d552f5, type: 3}
-  - {fileID: 6526889101084846877, guid: 3cb200d29ceadec48ad3d00206dba7b8, type: 3}
-  - {fileID: 6501468942551995666, guid: 3fd49b8b2eb66634fb079213220b039c, type: 3}
-  - {fileID: 8997620733740140197, guid: 5dce108903c8ad842b15c98fa6af4039, type: 3}
-  - {fileID: 4560914224080272456, guid: f618f949b14bcbd4681d0eca267ee090, type: 3}
-  - {fileID: 9216782660835416035, guid: ecf2b103a3f13a84b921cc75986bfbce, type: 3}
-  - {fileID: 5723096717187577837, guid: 14ae2cb6d96b1124eb231b028d787bf4, type: 3}
-  - {fileID: 609060759254223052, guid: 05c88cea5cc7d5e42a76f81be9e4d734, type: 3}
-  - {fileID: 2787934390030359751, guid: a20327c9c0c3bc0488e6ab761c09789e, type: 3}
+  - {fileID: 6095123295902223742, guid: 8cfecf7329b24a30a641c75c8f2ba68b, type: 3}
+  - {fileID: 6095123295902223742, guid: e220a439de7c4224957b36bbc91315b9, type: 3}
 --- !u!4 &1629936291
 Transform:
   m_ObjectHideFlags: 0
