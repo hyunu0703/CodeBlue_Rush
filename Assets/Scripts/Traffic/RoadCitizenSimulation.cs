@@ -13,6 +13,7 @@ public sealed class RoadCitizenSimulation
         public float Distance { get; internal set; } // 출발점에서 이동한 맵 로컬 거리다.
         public float Speed { get; internal set; } // 시민별 보행 속도이며 맵 로컬 유닛/초다.
         public bool Crossing { get; internal set; } // 신호가 바뀌어도 유지할 횡단 허가다.
+        public bool IsFallen { get; internal set; } // 충돌 이후에는 보행을 재개하지 않고 실제 물리 위치를 따른다.
         public Vector2 Position { get; internal set; } // 표시와 주변 회수에 사용하는 맵 로컬 위치다.
     }
 
@@ -84,6 +85,7 @@ public sealed class RoadCitizenSimulation
         }
         foreach (var citizen in citizens)
         {
+            if (citizen.IsFallen) continue;
             var edge = Sidewalks.Edges[citizen.EdgeId];
             if (!isRoadActive(edge.Road))
             {
@@ -190,7 +192,7 @@ public sealed class RoadCitizenSimulation
         ClearOccupancy();
         foreach (var citizen in citizens)
         {
-            if (citizen.Crossing)
+            if (citizen.Crossing && !citizen.IsFallen)
             {
                 var edge = Sidewalks.Edges[citizen.EdgeId];
                 signals.SetPedestrianCrossingOccupied(edge.Road, edge.Side, true);

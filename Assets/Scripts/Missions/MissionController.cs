@@ -322,7 +322,7 @@ public sealed class MissionController : MonoBehaviour
         patientHealth.SetTransporting(false);
         patientHealth.SetTimerRunning(false);
         result = new MissionResult(missionProgress, patientHealth.HealthPercent,
-            missionPerformance.LowCollisionCount, missionPerformance.HighCollisionCount);
+            missionPerformance.LowCollisionCount, missionPerformance.HighCollisionCount, missionPerformance.CitizenCollisionCount);
         stage = MissionStage.Result;
         resultText.text = result.FormatSummary();
         saveStatus.text = string.Empty;

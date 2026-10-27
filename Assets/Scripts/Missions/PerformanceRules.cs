@@ -23,22 +23,25 @@ public enum CollisionLevel
 public static class PerformanceRules
 {
     public const int MaximumDailyScore = 130; // HP 100%와 생존 무사고 보너스를 합한 이론상 하루 최대 실적이다.
-    private const int SafeBonus = 30;         // 생존하고 차량 충돌이 없을 때만 지급하는 실적이다.
+    private const int SafeBonus = 30;         // 생존하고 차량·시민 충돌이 없을 때만 지급하는 실적이다.
     private const int LowPenalty = 1;         // 저속 충돌 1회에 적용할 실적 감점이다.
     private const int HighPenalty = 3;        // 고속 충돌 1회에 적용할 실적 감점이다.
+    public const int CitizenPenalty = 5;      // 같은 시민 한 명과의 충돌에 미션당 한 번 적용하는 감점이다.
     private const double HighSpeedKmh = 60d;  // 이 값 이상인 법선 방향 충격을 고속으로 판정한다.
 
     // 인계 시 실제 HP와 확정 충돌 횟수로 계산하고, 하한 적용 뒤 마지막에만 사사오입한다.
-    public static int CalculateScore(double healthPercent, int lowCollisions, int highCollisions)
+    public static int CalculateScore(double healthPercent, int lowCollisions, int highCollisions, int citizenCollisions = 0)
     {
         ValidateHealth(healthPercent);
         if (lowCollisions < 0) throw new ArgumentOutOfRangeException(nameof(lowCollisions));
         if (highCollisions < 0) throw new ArgumentOutOfRangeException(nameof(highCollisions));
+        if (citizenCollisions < 0) throw new ArgumentOutOfRangeException(nameof(citizenCollisions));
         if (healthPercent == 0d) return 0;
 
-        var bonus = lowCollisions == 0 && highCollisions == 0 ? SafeBonus : 0;
+        var bonus = lowCollisions == 0 && highCollisions == 0 && citizenCollisions == 0 ? SafeBonus : 0;
         var score = Math.Max(0d, healthPercent + bonus
-            - (double)lowCollisions * LowPenalty - (double)highCollisions * HighPenalty);
+            - (double)lowCollisions * LowPenalty - (double)highCollisions * HighPenalty
+            - (double)citizenCollisions * CitizenPenalty);
         // 기본 반올림의 짝수 쪽 처리 대신, 정확히 0.5인 경우에도 항상 올린다.
         return (int)Math.Round(score, 0, MidpointRounding.AwayFromZero);
     }

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>출동부터 병원 인계까지 직접 차량 접촉을 기록하며 차량별 지속 접촉을 한 번만 집계한다.</summary>
+/// <summary>출동부터 병원 인계까지 차량 접촉과 시민 충돌을 기록하며 같은 시민은 미션당 한 번만 집계한다.</summary>
 [DisallowMultipleComponent]
 [RequireComponent(typeof(Rigidbody2D))]
 public sealed class MissionPerformance : MonoBehaviour
@@ -10,6 +10,9 @@ public sealed class MissionPerformance : MonoBehaviour
         = new Dictionary<Rigidbody2D, List<(Collider2D Local, Collider2D Other)>>(); // 차량별로 아직 분리되지 않은 콜라이더 쌍이다.
     private readonly List<Rigidbody2D> separatedVehicles = new List<Rigidbody2D>(); // 순회 후 제거할 차량을 재사용한다.
     private readonly List<Vector2> contactNormals = new List<Vector2>(8); // 첫 접촉 속도 계산에 사용할 법선 버퍼다.
+    // 외형 풀 재사용과 무관하게 같은 시민을 한 미션에서 한 번만 기록한다.
+    private readonly HashSet<RoadCitizenSimulation.Citizen> hitCitizens =
+        new HashSet<RoadCitizenSimulation.Citizen>();
     private Rigidbody2D body;        // 이 미션 기록을 소유한 구급차 차체다.
     private bool isRecording;       // 미션 준비 전·종료 후에는 기록하지 않는다.
     private int lowCollisionCount;  // 첫 법선 충격이 60km/h 미만이었던 차량 접촉 횟수다.
@@ -17,6 +20,7 @@ public sealed class MissionPerformance : MonoBehaviour
 
     public int LowCollisionCount => lowCollisionCount;
     public int HighCollisionCount => highCollisionCount;
+    public int CitizenCollisionCount => hitCitizens.Count;
     public bool HasVehicleCollision => lowCollisionCount > 0 || highCollisionCount > 0;
     public bool IsRecording => !ApplicationPause.IsPaused && isActiveAndEnabled && isRecording;
 
@@ -48,6 +52,7 @@ public sealed class MissionPerformance : MonoBehaviour
     {
         lowCollisionCount = 0;
         highCollisionCount = 0;
+        hitCitizens.Clear();
         contacts.Clear();
         isRecording = true;
     }
@@ -57,6 +62,12 @@ public sealed class MissionPerformance : MonoBehaviour
     {
         isRecording = value;
         if (!value) contacts.Clear();
+    }
+
+    // 지속 접촉, 재접촉과 복수 콜라이더 접촉을 모두 같은 시민 한 명의 기록으로 합친다.
+    internal void RecordCitizenContact(RoadCitizenSimulation.Citizen citizen)
+    {
+        if (IsRecording && citizen != null) hitCitizens.Add(citizen);
     }
 
     // 구급차의 기존 충격 처리 전에 호출해 첫 접촉의 상대 속도와 모든 접점 법선을 사용한다.
