@@ -2504,6 +2504,8 @@ MonoBehaviour:
   mapRoot: {fileID: 194781892}
   destination: {fileID: 536320611}
   roadPreview: {fileID: 0}
+  startFireStation: {fileID: 6095123295902223742, guid: 9b8912beeeef459baf061c0ab985e401, type: 3}
+  startSideBuilding: {fileID: 6095123295902223742, guid: 8cfecf7329b24a30a641c75c8f2ba68b, type: 3}
   buildingGapBody: {fileID: 585983601}
   buildingPrefabs:
   - {fileID: 6095123295902223742, guid: 8cfecf7329b24a30a641c75c8f2ba68b, type: 3}

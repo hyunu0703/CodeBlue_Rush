@@ -18,6 +18,8 @@ public sealed class MissionMapGenerator : MonoBehaviour
 
     // 좌우 각각 8종의 원본 건물이다. GamePlay 설정 도구가 연결한다.
     [SerializeField] private BuildingPrefab[] buildingPrefabs;
+    [SerializeField] private BuildingPrefab startFireStation; // GamePlay 첫 도로의 아래쪽 끝 바깥에 한 채만 배치하는 소방서 원본이다.
+    [SerializeField] private BuildingPrefab startSideBuilding; // 소방서 양옆에서 맵 바깥 진입을 막는 건물 원본이다.
     [SerializeField] private BoxCollider2D buildingGapBody; // 건물 사이 간격 상한을 정하는 구급차 차체다.
     // 맵 수명 동안 계획을 보존하고 도로 스트리밍 시 같은 건물을 복원한다.
     private readonly Dictionary<Vector2, List<MissionBuildingLayout.Placement>> buildingLayouts = new Dictionary<Vector2, List<MissionBuildingLayout.Placement>>();
@@ -394,6 +396,10 @@ public sealed class MissionMapGenerator : MonoBehaviour
         {
             return false;
         }
+        if (startFireStation != null && !MissionBuildingLayout.Validate(new[] { startFireStation }, out error, true))
+        {
+            return false;
+        }
         if (!TryGetBuildingGapWidth(out _, out error))
         {
             return false;
@@ -587,9 +593,16 @@ public sealed class MissionMapGenerator : MonoBehaviour
             buildingRoads.Add(new MissionBuildingLayout.Road(placement.Prefab, placement.Position, placement.Rotation));
         }
         var existingBuildings = append ? buildingLayouts : new Dictionary<Vector2, List<MissionBuildingLayout.Placement>>();
+        // 새 맵의 원점은 항상 첫 직선이며 후송 확장에서도 같은 도로를 기준으로 예약한다.
+        MissionBuildingLayout.Placement? station = null;
+        if (startFireStation != null)
+        {
+            var startRoad = buildingRoads.Find(road => road.Position == Vector2.zero);
+            station = MissionBuildingLayout.CreateStartBuilding(startFireStation, startRoad);
+        }
         if (!TryGetBuildingGapWidth(out var buildingGapWidth, out error)
             || !MissionBuildingLayout.TryPlan(buildingRoads, occupied.Count, seed, buildingPrefabs, existingBuildings,
-            out var plannedBuildings, out error, buildingGapWidth))
+            out var plannedBuildings, out error, buildingGapWidth, station, startSideBuilding))
         {
             return false;
         }
@@ -601,12 +614,11 @@ public sealed class MissionMapGenerator : MonoBehaviour
         if (!append)
         {
             ReturnActiveRoads();
-            // 북쪽 주행의 우측 3차로 중앙이다. 편도 1/2차로 도로는 존재하는 가장 바깥 차로를 사용한다.
+            // 소방서 앞 첫 직선의 중앙선 옆 1차로에 고정한다. 차체가 도로 밖으로 걸치지 않도록 시작 경계에서 0.5유닛 안쪽에 둔다.
             var startRoad = roads[0];
-            var startLane = Mathf.Min(3, startRoad.Prefab.GetLaneCount(RoadDirection.South, startRoad.Rotation) / 2);
-            var startOffset = startRoad.Prefab.ImageSize.x * LaneWidthRatio * (startLane - 0.5f);
+            var startOffset = startRoad.Prefab.ImageSize.x * LaneWidthRatio * 0.5f;
             StartPosition = mapRoot.TransformPoint(startRoad.Position
-                + new Vector2(startOffset, -startRoad.Prefab.ImageSize.y * 0.25f));
+                + new Vector2(startOffset, -startRoad.Prefab.ImageSize.y * 0.5f + 0.5f));
             navigationRoute.Add(StartPosition);
         }
         else
@@ -808,9 +820,20 @@ public sealed class MissionMapGenerator : MonoBehaviour
         return true;
     }
 
-    /// <summary>검증된 동일 크기 정사각 구역의 면적 겹침을 확인하고 배치를 예약한다.</summary>
-    private static bool TryReserveRoad(RoadPlacement placement, List<RoadPlacement> occupied)
+    // 기존 도로와 시작 소방서의 예약 공간을 피한 구역만 후보 경로에 추가한다.
+    private bool TryReserveRoad(RoadPlacement placement, List<RoadPlacement> occupied)
     {
+        if (startFireStation != null)
+        {
+            var first = occupied.Find(road => road.Position == Vector2.zero);
+            if (first.Prefab != null)
+            {
+                var station = MissionBuildingLayout.CreateStartBuilding(startFireStation,
+                    new MissionBuildingLayout.Road(first.Prefab, first.Position, first.Rotation));
+                if (MissionBuildingLayout.Overlaps(MissionBuildingLayout.GetBounds(station),
+                    new Bounds(placement.Position, placement.Prefab.ImageSize))) return false;
+            }
+        }
         foreach (var other in occupied)
         {
             var offset = placement.Position - other.Position;
@@ -894,10 +917,11 @@ public sealed class MissionMapGenerator : MonoBehaviour
                     var building = AcquireBuilding(placement.Prefab);
                     building.transform.SetParent(mapRoot, false);
                     building.transform.localPosition = placement.Position;
-                    building.transform.localRotation = Quaternion.Euler(0f, 0f, -90f * placement.Rotation);
+                    building.transform.localRotation = Quaternion.Euler(0f, 0f, -90f * placement.Rotation) * placement.Prefab.transform.localRotation;
                     var scale = placement.Prefab.transform.localScale;
                     building.transform.localScale = new Vector3(scale.x * placement.Scale * (placement.FlipX ? -1f : 1f), scale.y * placement.Scale, scale.z);
                     building.ConfigureGround(buildingGroundTile, groundRenderer, MissionBuildingLayout.GetBounds(placement), mapRoot);
+                    building.ConfigureStartBarrier(placement.Barrier, mapRoot);
                     building.gameObject.SetActive(true);
                     buildings[index] = building;
                 }
