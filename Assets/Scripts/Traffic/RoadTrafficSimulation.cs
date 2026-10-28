@@ -267,7 +267,8 @@ public sealed class RoadTrafficSimulation
         observations.Clear();
         foreach (var vehicle in vehicles)
         {
-            if (!vehicle.IsFinished && !vehicle.IsPhysicsControlled)
+            // 경로 끝 차량도 화면 밖으로 회수될 때까지 차체가 남으므로 뒤차의 정지 관측에 포함한다.
+            if (!vehicle.IsPhysicsControlled)
             {
                 observations.Add(new RoadTrafficObstacle(vehicle.Id, vehicle.Position,
                     vehicle.Forward * vehicle.Speed, vehicle.Forward, vehicle.Length, vehicle.Width));

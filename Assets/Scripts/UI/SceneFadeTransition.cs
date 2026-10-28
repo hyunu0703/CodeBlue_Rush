@@ -10,6 +10,8 @@ public sealed class SceneFadeTransition : MonoBehaviour
     private CanvasGroup cover;                  // 검은 화면의 투명도와 입력 차단을 제어한다.
     private bool isTransitioning;               // 중복 씬 로드를 차단한다.
 
+    public static bool IsTransitioning => instance != null && instance.isTransitioning;
+
     // Domain Reload를 끈 실행에서도 이전 세션의 참조를 제거한다.
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     private static void ResetState()

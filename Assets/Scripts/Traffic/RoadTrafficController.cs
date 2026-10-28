@@ -201,9 +201,7 @@ public sealed class RoadTrafficController : MonoBehaviour
                 }
                 continue;
             }
-            if (instance.Root == null || instance.Body == null || instance.Vehicle.IsFinished
-                || !mapGenerator.IsRoadActive(network.Paths[instance.Vehicle.PathId].RoadOrdinal)
-                || (instance.Vehicle.Position - searchCenter).sqrMagnitude > despawnRadius * despawnRadius)
+            if (ShouldReturnVehicle(instance))
             {
                 RemoveInstance(index);
                 continue;
@@ -223,6 +221,24 @@ public sealed class RoadTrafficController : MonoBehaviour
             RebalanceTraffic();
             FillTraffic(false);
         }
+    }
+
+    // 경로 종료·도로 반환·거리 초과 차량도 화면에 보이는 동안 유지해 주행 중 차체가 갑자기 사라지지 않게 한다.
+    private bool ShouldReturnVehicle(VehicleInstance instance)
+    {
+        if (instance.Root == null || instance.Body == null) return true;
+        var shouldReturn = instance.Vehicle.IsFinished
+            || !mapGenerator.IsRoadActive(network.Paths[instance.Vehicle.PathId].RoadOrdinal)
+            || (instance.Vehicle.Position - searchCenter).sqrMagnitude > despawnRadius * despawnRadius;
+        return shouldReturn && !IsInstanceVisible(instance);
+    }
+
+    // AI의 다음 물리 위치와 보간 중인 실제 차체를 모두 보호해 화면 가장자리에서도 회수되지 않게 한다.
+    private bool IsInstanceVisible(VehicleInstance instance)
+    {
+        var physicalPosition = (Vector2)mapRoot.InverseTransformPoint(instance.Collider.bounds.center);
+        return IsVisible(instance.Vehicle.Position, instance.VisualRadius)
+            || IsVisible(physicalPosition, instance.VisualRadius);
     }
 
     /// <summary>프리팹에 저장된 차체 콜라이더를 검증한다. Rigidbody2D와 제어 스크립트는 생성기가 소유한다.</summary>
@@ -408,6 +424,8 @@ public sealed class RoadTrafficController : MonoBehaviour
     private void UpdateSearchArea()
     {
         searchCenter = mapRoot.InverseTransformPoint(player.position);
+        // 회수는 매 물리 스텝 실행되므로 카메라 이동·회전에 맞춰 시야도 같은 주기로 갱신한다.
+        if (trafficCamera != null) GeometryUtility.CalculateFrustumPlanes(trafficCamera, cameraPlanes);
         // 화면 모서리와 카메라 추적 지연까지 포함하는 보수적인 원형 반경이다.
         var laneWidth = network.Paths[0].Width;
         var viewRadius = trafficCamera != null && trafficCamera.orthographic
@@ -436,10 +454,6 @@ public sealed class RoadTrafficController : MonoBehaviour
         var currentRoad = -1;
         var currentSquared = float.PositiveInfinity;
         trafficForward = ((Vector2)mapRoot.InverseTransformVector(player.transform.up)).normalized;
-        if (trafficCamera != null)
-        {
-            GeometryUtility.CalculateFrustumPlanes(trafficCamera, cameraPlanes);
-        }
         // 차체 방향 대신 현재 차로의 접선으로 양방향 교통의 보충 우선순위를 정한다.
         var laneSquared = network.Paths[0].Width * network.Paths[0].Width;
         foreach (var path in network.Paths)
@@ -615,7 +629,7 @@ public sealed class RoadTrafficController : MonoBehaviour
         for (var index = instances.Count - 1; index >= 0; index--)
         {
             var instance = instances[index];
-            if (instance.Collision.IsReacting || IsVisible(instance.Vehicle.Position, instance.VisualRadius))
+            if (instance.Collision.IsReacting || IsInstanceVisible(instance))
             {
                 continue;
             }

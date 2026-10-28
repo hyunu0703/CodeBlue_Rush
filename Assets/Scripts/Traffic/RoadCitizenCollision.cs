@@ -89,7 +89,15 @@ public sealed class RoadCitizenCollision : MonoBehaviour
     internal void MoveTo(Vector2 position, bool teleport = false)
     {
         if (citizen == null || citizen.IsFallen) return;
-        if (teleport) body.position = position;
+        if (teleport)
+        {
+            // 최초 생성·풀 재사용 위치를 과거 물리 자세와 보간하면 원점이나 회수 위치에 잔상이 보인다.
+            var interpolation = body.interpolation;
+            body.interpolation = RigidbodyInterpolation2D.None;
+            body.position = position;
+            transform.position = new Vector3(position.x, position.y, transform.position.z);
+            body.interpolation = interpolation;
+        }
         else body.MovePosition(position);
     }
 

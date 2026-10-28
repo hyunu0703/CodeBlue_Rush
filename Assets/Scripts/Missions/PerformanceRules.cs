@@ -23,9 +23,9 @@ public enum CollisionLevel
 public static class PerformanceRules
 {
     public const int MaximumDailyScore = 130; // HP 100%와 생존 무사고 보너스를 합한 이론상 하루 최대 실적이다.
-    private const int SafeBonus = 30;         // 생존하고 차량·시민 충돌이 없을 때만 지급하는 실적이다.
-    private const int LowPenalty = 1;         // 저속 충돌 1회에 적용할 실적 감점이다.
-    private const int HighPenalty = 3;        // 고속 충돌 1회에 적용할 실적 감점이다.
+    public const int SafeBonus = 30;          // 생존하고 차량·시민 충돌이 없을 때만 지급하는 실적이다.
+    public const int LowPenalty = 1;          // 저속 충돌 1회에 적용할 실적 감점이다.
+    public const int HighPenalty = 3;         // 고속 충돌 1회에 적용할 실적 감점이다.
     public const int CitizenPenalty = 5;      // 같은 시민 한 명과의 충돌에 미션당 한 번 적용하는 감점이다.
     private const double HighSpeedKmh = 60d;  // 이 값 이상인 법선 방향 충격을 고속으로 판정한다.
 

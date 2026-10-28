@@ -45,6 +45,10 @@ public sealed class MissionController : MonoBehaviour
     [SerializeField, Min(0.01f)] private float arrivalFadeSeconds = 0.8f; // 병원 도착부터 결과 표시까지 검게 어두워지는 시간(초)이다.
     private CanvasGroup arrivalCover;                // 결과창 아래에서 주행 화면을 가리고 뒤쪽 UI 입력을 막는 검은 덮개다.
     private Coroutine arrivalRoutine;                // 비활성화 시 중단하고 재활성화 시 다시 시작하는 도착 연출이다.
+    private MissionResultStamp resultStamp;           // 기존 결과 본문에 판정·점수별 도장 연출을 연결한다.
+    private bool isResultAnimating;                   // 모든 결과를 읽기 전에 확인 입력으로 넘어가지 않게 한다.
+    private DayStartOverlay dayStart;                 // 출동 시작 전 현재 일차와 부족 실적을 표시한다.
+    private Coroutine dayStartRoutine;               // 비활성화 시 중단하고 재활성화 때 다시 표시할 시작 안내다.
 
     private readonly System.Random random = new System.Random(); // 출동 후 유효한 맵 시드를 선택하는 난수 소스다.
     private MissionStage stage;                                 // 주행 씬의 준비, 픽업과 후송 진행 상태다.
@@ -117,6 +121,13 @@ public sealed class MissionController : MonoBehaviour
             arrivalCover.blocksRaycasts = true;
             if (stage == MissionStage.Arriving) arrivalRoutine = StartCoroutine(FadeArrival());
             else arrivalCover.alpha = 1f;
+        }
+        if (stage == MissionStage.Starting)
+        {
+            if (!EnsurePresentation()) return;
+            rescueCutscene.ShowPickup(pickupSidewalkPosition, pickupRotation, ambulanceRenderer);
+            LockVehicle();
+            dayStartRoutine = StartCoroutine(ShowDayStart());
         }
         missionPerformance.SetRecording(IsMissionActive);
         if (stage == MissionStage.Waiting)
@@ -204,6 +215,10 @@ public sealed class MissionController : MonoBehaviour
 
     private void OnDisable()
     {
+        if (dayStartRoutine != null) StopCoroutine(dayStartRoutine);
+        dayStartRoutine = null;
+        if (dayStart != null) dayStart.Hide();
+        isResultAnimating = false;
         if (confirmButton != null) confirmButton.onClick.RemoveListener(ConfirmResult);
         if (resultPanel != null) resultPanel.SetActive(false);
         if (missionPerformance != null) missionPerformance.SetRecording(false);
@@ -242,6 +257,7 @@ public sealed class MissionController : MonoBehaviour
     {
         // 덮개는 UI Canvas 아래에 있으므로 미션 컴포넌트만 제거할 때도 함께 정리한다.
         if (arrivalCover != null) Destroy(arrivalCover.gameObject);
+        if (dayStart != null) Destroy(dayStart.gameObject);
     }
 
     // 대기 씬에서 확정한 출동만 소비하여 맵을 준비하고, 성공한 이후 운전을 허용한다.
@@ -306,10 +322,11 @@ public sealed class MissionController : MonoBehaviour
             // 픽업 장소는 노란 테두리 자체로 표시한다. 기존 글자가 사각형과 차량을 가리지 않게 비운다.
             mapGenerator.SetDestinationLabel(string.Empty);
             rescueCutscene.ShowPickup(pickupSidewalkPosition, pickupRotation, ambulanceRenderer);
-            stage = MissionStage.Active;
-            missionPerformance.BeginMission();
+            stage = MissionStage.Starting;
+            LockVehicle();
             RefreshView();
             OnMissionAccepted?.Invoke(seed);
+            dayStartRoutine = StartCoroutine(ShowDayStart());
         }
         catch (Exception exception)
         {
@@ -319,6 +336,27 @@ public sealed class MissionController : MonoBehaviour
             CurrentSeed = 0;
             enabled = false;
         }
+    }
+
+    // 맵 준비 뒤 시작 안내를 끝까지 보여준 후 운전·환자 시간·사고 기록을 함께 시작한다.
+    private IEnumerator ShowDayStart()
+    {
+        if (dayStart == null)
+        {
+            var root = new GameObject("Day Start Overlay", typeof(RectTransform));
+            root.layer = safeAreaRoot.gameObject.layer;
+            root.transform.SetParent(safeAreaRoot.parent, false);
+            dayStart = root.AddComponent<DayStartOverlay>();
+        }
+        dayStart.Prepare(missionStatus, missionProgress);
+        yield return dayStart.Play();
+        dayStartRoutine = null;
+        if (!isActiveAndEnabled || stage != MissionStage.Starting) yield break;
+        UnlockVehicle();
+        previousPosition = ambulance.position;
+        stage = MissionStage.Active;
+        missionPerformance.BeginMission();
+        RefreshView();
     }
 
     // 병원 인계 순간 기록과 차량을 고정하고 암전이 끝난 뒤 결과를 표시한다.
@@ -335,7 +373,8 @@ public sealed class MissionController : MonoBehaviour
         result = new MissionResult(missionProgress, patientHealth.HealthPercent,
             missionPerformance.LowCollisionCount, missionPerformance.HighCollisionCount, missionPerformance.CitizenCollisionCount);
         stage = MissionStage.Arriving;
-        resultText.text = result.FormatSummary();
+        if (!resultText.TryGetComponent(out resultStamp)) resultStamp = resultText.gameObject.AddComponent<MissionResultStamp>();
+        resultStamp.Prepare(resultText, result);
         saveStatus.text = string.Empty;
         confirmLabel.text = "확인";
         isSaving = false;
@@ -370,7 +409,7 @@ public sealed class MissionController : MonoBehaviour
         resultPanel.transform.SetAsLastSibling();
     }
 
-    // 일시정지 동안 진행을 멈추고 완전 암전 후 결과창의 확인 입력을 허용한다.
+    // 일시정지 동안 진행을 멈추고 암전과 결과 도장 연출이 끝난 뒤 확인 입력을 허용한다.
     private IEnumerator FadeArrival()
     {
         var elapsed = 0f;
@@ -383,8 +422,12 @@ public sealed class MissionController : MonoBehaviour
         }
         while (ApplicationPause.IsPaused) yield return null;
         arrivalCover.alpha = 1f;
-        arrivalRoutine = null;
         stage = MissionStage.Result;
+        isResultAnimating = true;
+        RefreshView();
+        yield return resultStamp.Play();
+        isResultAnimating = false;
+        arrivalRoutine = null;
         RefreshView();
     }
 
@@ -401,7 +444,7 @@ public sealed class MissionController : MonoBehaviour
     // 같은 결과 후보를 저장하고 성공한 경우에만 다음 일차 Waiting으로 이동한다.
     private void ConfirmResult()
     {
-        if (ApplicationPause.IsPaused || !isActiveAndEnabled || stage != MissionStage.Result || result == null || isSaving) return;
+        if (ApplicationPause.IsPaused || !isActiveAndEnabled || stage != MissionStage.Result || result == null || isSaving || isResultAnimating) return;
         if (!Application.CanStreamedLevelBeLoaded("Waiting"))
         {
             ShowSaveError("대기 화면을 열지 못했습니다.\n다시 시도해주세요.");
@@ -450,7 +493,7 @@ public sealed class MissionController : MonoBehaviour
             safeAreaRoot.SetAsLastSibling();
             resultPanel.transform.SetAsLastSibling();
         }
-        confirmButton.interactable = stage == MissionStage.Result && !isSaving;
+        confirmButton.interactable = stage == MissionStage.Result && !isSaving && !isResultAnimating;
         driveInput.SetMissionDrivingAllowed(stage == MissionStage.Active || stage == MissionStage.Transporting);
         var transporting = stage == MissionStage.Transporting && IsPatientPickedUp;
         if (patientHealth != null)
@@ -800,6 +843,7 @@ public sealed class MissionController : MonoBehaviour
         Transporting,
         Arriving,
         Result,
-        Completed
+        Completed,
+        Starting
     }
 }

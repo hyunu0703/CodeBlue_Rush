@@ -42,6 +42,170 @@ public sealed class WaitingProgressTests
         if (Directory.Exists(directory)) Directory.Delete(directory, true);
     }
 
+    // 수락한 요청과 출동 승인을 비우고 초기 상태를 저장해 재진입 후에도 1일차를 유지한다.
+    [UnityTest]
+    public IEnumerator ResetButton_ClearsAcceptedMissionAndPersistsFirstDay()
+    {
+        yield return LoadProgress(3, 100, 1, ProgressStage.Ready);
+        yield return Offer();
+        waiting.OpenBriefing(); waiting.AcceptMission();
+        Assert.That(MissionDispatchSession.TryDispatch(1), Is.True);
+        var button = Field<Button>(waiting, "resetButton");
+        var rect = (RectTransform)button.transform;
+        Assert.That(rect.anchorMin.x, Is.LessThan(0.1f));
+        Assert.That(rect.anchorMin.y, Is.GreaterThan(0.9f));
+        button.onClick.Invoke();
+        Assert.That(writes, Is.Zero);
+        Assert.That(GameProgressSession.Current.CurrentDay, Is.EqualTo(3));
+        var confirm = Field<Button>(waiting, "resetConfirmButton");
+        onWrite = () => confirm.onClick.Invoke();
+        confirm.onClick.Invoke();
+        Assert.That(writes, Is.EqualTo(1));
+        Assert.That(GameProgressSession.Current.CurrentDay, Is.EqualTo(1));
+        Assert.That(GameProgressSession.Current.CumulativeScore, Is.Zero);
+        Assert.That(GameProgressSession.Current.EvaluationPeriod, Is.EqualTo(1));
+        Assert.That(GameProgressSession.Current.Stage, Is.EqualTo(ProgressStage.Ready));
+        Assert.That(GameProgressSession.Current.CumulativeTarget, Is.EqualTo(200));
+        Assert.That(MissionDispatchSession.TryConsume(out _), Is.False);
+        Assert.That(Field<GameObject>(waiting, "briefingPanel").activeSelf, Is.False);
+        yield return Reopen();
+        Assert.That(GameProgressSession.Current.CurrentDay, Is.EqualTo(1));
+        Assert.That(GameProgressSession.Current.CumulativeScore, Is.Zero);
+        Assert.That(writes, Is.EqualTo(1));
+        yield return Offer();
+    }
+
+    // 세로 화면에서 안내 글자의 넘침과 구급차 영역의 침범, 브리핑 중 안내 노출을 검사한다.
+    [UnityTest]
+    public IEnumerator LobbyCards_KeepTextReadableAndVehicleClear()
+    {
+        yield return LoadProgress(3, 100, 1, ProgressStage.Ready);
+        var safe = Field<RectTransform>(waiting, "safeAreaRoot");
+        var ambulance = GameObject.Find("WaitingAmbulance").GetComponent<Image>();
+        Assert.That(ambulance.sprite, Is.Not.Null);
+        Assert.That(ambulance.raycastTarget, Is.False);
+        Assert.That(ambulance.preserveAspect, Is.True);
+        var vehicleBounds = new Rect(ambulance.rectTransform.anchorMin,
+            ambulance.rectTransform.anchorMax - ambulance.rectTransform.anchorMin);
+        foreach (var size in new[] { new Vector2(480, 854), new Vector2(320, 568) })
+        {
+            safe.sizeDelta += size - safe.rect.size;
+            Canvas.ForceUpdateCanvases();
+            foreach (var name in new[] { "progressText", "targetText", "missionStatus" })
+            {
+                var text = Field<TMP_Text>(waiting, name);
+                text.ForceMeshUpdate();
+                Assert.That(text.isTextOverflowing, Is.False, name + " " + size);
+                var card = (RectTransform)text.transform.parent;
+                Assert.That(vehicleBounds.Overlaps(new Rect(card.anchorMin, card.anchorMax - card.anchorMin)), Is.False, name);
+            }
+        }
+        safe.sizeDelta = Vector2.zero;
+        yield return Offer();
+        waiting.OpenBriefing();
+        Assert.That(Field<TMP_Text>(waiting, "targetText").gameObject.activeSelf, Is.False);
+    }
+
+    // 시작 화면 복귀 버튼의 실제 입력이 진행을 보존하고 수락한 출동을 취소하는지 확인한다.
+    [UnityTest]
+    public IEnumerator HomeButton_ReturnsToStartWithoutResettingProgress()
+    {
+        yield return LoadProgress(3, 100, 1, ProgressStage.Ready);
+        yield return Offer();
+        waiting.OpenBriefing();
+        waiting.AcceptMission();
+        var button = Field<Button>(waiting, "homeButton");
+        Assert.That(button.GetComponent<Image>().raycastTarget, Is.True);
+        button.onClick.Invoke();
+        button.onClick.Invoke();
+        var end = Time.realtimeSinceStartupAsDouble + 8;
+        while ((SceneManager.GetActiveScene().name != "Start" || SceneFadeTransition.IsTransitioning)
+            && Time.realtimeSinceStartupAsDouble < end) yield return null;
+        Assert.That(SceneManager.GetActiveScene().name, Is.EqualTo("Start"));
+        Assert.That(GameProgressSession.Current.CurrentDay, Is.EqualTo(3));
+        Assert.That(GameProgressSession.Current.CumulativeScore, Is.EqualTo(100));
+        Assert.That(MissionDispatchSession.TryConsume(out _), Is.False);
+        Assert.That(writes, Is.Zero);
+    }
+
+    // 초기화 저장이 실패하면 원본 파일과 현재 진행을 유지하고 같은 후보만 재시도한다.
+    [UnityTest]
+    public IEnumerator ResetWriteFailure_PreservesProgressUntilRetrySucceeds()
+    {
+        yield return LoadProgress(6, 199, 1, ProgressStage.Fired);
+        Directory.CreateDirectory(path + ".tmp");
+        Field<Button>(waiting, "resetButton").onClick.Invoke();
+        Assert.That(writes, Is.Zero);
+        Field<Button>(waiting, "resetConfirmButton").onClick.Invoke();
+        Assert.That(GameProgressSession.Current.CurrentDay, Is.EqualTo(6));
+        Assert.That(GameProgressSession.Current.Stage, Is.EqualTo(ProgressStage.Fired));
+        Assert.That(File.ReadAllText(path), Is.EqualTo(originalText));
+        Assert.That(RetryButton().gameObject.activeSelf, Is.True);
+        Directory.Delete(path + ".tmp");
+        RetryButton().onClick.Invoke();
+        Assert.That(GameProgressSession.Current.CurrentDay, Is.EqualTo(1));
+        Assert.That(GameProgressSession.Current.CumulativeScore, Is.Zero);
+        Assert.That(GameProgressSession.Current.Stage, Is.EqualTo(ProgressStage.Ready));
+        Assert.That(writes, Is.EqualTo(2));
+    }
+
+    // 확인창을 취소하면 저장 파일과 수락 상태를 유지하고 뒤쪽 출동 입력도 실행하지 않는다.
+    [UnityTest]
+    public IEnumerator ResetCancel_PreservesAcceptedMissionAndBlocksBackgroundActions()
+    {
+        yield return LoadProgress(3, 100, 1, ProgressStage.Ready);
+        yield return Offer();
+        waiting.OpenBriefing(); waiting.AcceptMission();
+        Field<Button>(waiting, "resetButton").onClick.Invoke();
+        var dialog = Field<GameObject>(waiting, "resetDialog");
+        Assert.That(dialog.activeSelf, Is.True);
+        Assert.That(dialog.GetComponentInChildren<TMP_Text>().text, Is.EqualTo("정말 1일차부터 다시 시작하시겠습니까?"));
+        waiting.Dispatch();
+        Assert.That(MissionDispatchSession.TryConsume(out _), Is.False);
+        Assert.That(writes, Is.Zero);
+        Assert.That(File.ReadAllText(path), Is.EqualTo(originalText));
+        Field<Button>(waiting, "resetCancelButton").onClick.Invoke();
+        Assert.That(dialog.activeSelf, Is.False);
+        Assert.That(Field<Button>(waiting, "dispatchButton").gameObject.activeSelf, Is.True);
+        Assert.That(GameProgressSession.Current.CurrentDay, Is.EqualTo(3));
+        Assert.That(GameProgressSession.Current.CumulativeScore, Is.EqualTo(100));
+        Assert.That(writes, Is.Zero);
+    }
+
+    // 초상·가로 화면에서 브리핑과 확인창의 본문이 버튼 위로 넘치거나 뒤쪽 안내와 겹치지 않는다.
+    [UnityTest]
+    public IEnumerator BriefingAndResetLayout_SeparateTextFromButtons()
+    {
+        yield return LoadProgress(3, 100, 1, ProgressStage.Ready);
+        yield return Offer();
+        waiting.OpenBriefing();
+        var safe = Field<RectTransform>(waiting, "safeAreaRoot");
+        var originalSize = safe.sizeDelta;
+        var baseSize = safe.rect.size;
+        foreach (var size in new[] { new Vector2(480, 854), new Vector2(320, 568), new Vector2(854, 480) })
+        {
+            safe.sizeDelta = originalSize + size - baseSize;
+            Canvas.ForceUpdateCanvases();
+            Assert.That(Field<TMP_Text>(waiting, "progressText").gameObject.activeSelf, Is.False);
+            Assert.That(Field<TMP_Text>(waiting, "missionStatus").gameObject.activeSelf, Is.False);
+            var body = Field<TMP_Text>(waiting, "briefingText");
+            body.ForceMeshUpdate();
+            Assert.That(body.isTextOverflowing, Is.False, "브리핑 " + size);
+            Assert.That(body.rectTransform.anchorMin.y,
+                Is.GreaterThan(((RectTransform)Field<Button>(waiting, "acceptButton").transform).anchorMax.y));
+            Field<Button>(waiting, "resetButton").onClick.Invoke();
+            var dialog = Field<GameObject>(waiting, "resetDialog");
+            var question = dialog.GetComponentInChildren<TMP_Text>();
+            Canvas.ForceUpdateCanvases(); question.ForceMeshUpdate();
+            Assert.That(question.isTextOverflowing, Is.False, "초기화 확인 " + size);
+            Assert.That(question.rectTransform.anchorMin.y,
+                Is.GreaterThan(((RectTransform)Field<Button>(waiting, "resetConfirmButton").transform).anchorMax.y));
+            Assert.That(dialog.transform.GetSiblingIndex(), Is.EqualTo(safe.childCount - 1));
+            Field<Button>(waiting, "resetCancelButton").onClick.Invoke();
+        }
+        safe.sizeDelta = originalSize;
+    }
+
     // 일반 일차의 안내·거절·수락은 기존 요청 흐름을 유지하고 저장을 발생시키지 않는다.
     [UnityTest]
     public IEnumerator Ready_ShowsCumulativeGoalAndPreservesOfferFlow()
@@ -49,8 +213,8 @@ public sealed class WaitingProgressTests
         yield return LoadProgress(3, 100, 1, ProgressStage.Ready);
         Assert.That(Field<TMP_Text>(waiting, "progressText").text, Does.Contain("3일차"));
         Assert.That(Field<TMP_Text>(waiting, "progressText").text, Does.Contain("누적 실적: 100점"));
-        Assert.That(Field<TMP_Text>(waiting, "progressText").text, Does.Contain("다음 누적 목표: 200점"));
-        Assert.That(Field<TMP_Text>(waiting, "progressText").text, Does.Contain("부족 실적: 100점"));
+        Assert.That(Field<TMP_Text>(waiting, "targetText").text, Does.Contain("다음 목표: 200점"));
+        Assert.That(Field<TMP_Text>(waiting, "targetText").text, Does.Contain("부족 실적: 100점"));
         yield return Offer();
         waiting.OpenBriefing(); waiting.RejectMission();
         yield return Offer();
@@ -97,7 +261,7 @@ public sealed class WaitingProgressTests
         Assert.That(GameProgressSession.Current.CurrentDay, Is.EqualTo(6));
         Assert.That(GameProgressSession.Current.CumulativeScore, Is.EqualTo(650));
         Assert.That(GameProgressSession.Current.EvaluationPeriod, Is.EqualTo(2));
-        Assert.That(Field<TMP_Text>(waiting, "progressText").text, Does.Contain("부족 실적: 0점"));
+        Assert.That(Field<TMP_Text>(waiting, "targetText").text, Does.Contain("부족 실적: 0점"));
         yield return Offer();
     }
 
