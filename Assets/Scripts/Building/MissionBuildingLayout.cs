@@ -33,7 +33,7 @@ public static class MissionBuildingLayout
         public readonly int Rotation;          // 맵 기준 시계방향 90도 회전 횟수다.
         public readonly Vector2[] Roads;       // 건물 외곽이 걸치는 모든 도로의 맵 좌표다.
         public readonly bool FlipX;            // 오른쪽 원본을 왼쪽에 배치할 때 이미지와 충돌 영역을 함께 반전한다.
-        public readonly Bounds? Barrier;       // 시작 구역의 인도 틈을 잇는 맵 로컬 충돌 영역이며 일반 건물은 null이다.
+        public readonly Bounds? Barrier;       // 도로 양 끝의 인도 틈을 잇는 맵 로컬 충돌 영역이며 일반 건물은 null이다.
 
         // 맵 로컬 변환과 겹치는 도로 목록을 하나의 복원 계획으로 보관한다.
         public Placement(BuildingPrefab prefab, Vector2 position, float scale, bool flipX = false, int rotation = 0, Vector2[] roads = null, Bounds? barrier = null)
@@ -134,7 +134,7 @@ public static class MissionBuildingLayout
     // 교차로를 먼저 고정하고 교차로 사이 직선 전체에 잔여 길이를 균등 배분한 전체 계획을 반환한다.
     public static bool TryPlan(List<Road> roads, int firstNewRoad, int seed, BuildingPrefab[] prefabs,
         Dictionary<Vector2, List<Placement>> existing, out Dictionary<Vector2, List<Placement>> plan, out string error, float ambulanceWidth,
-        Placement? startBuilding = null, BuildingPrefab startSideBuilding = null)
+        Placement? startBuilding = null, BuildingPrefab startSideBuilding = null, Placement? endBuilding = null)
     {
         plan = new Dictionary<Vector2, List<Placement>>();
         if (!Validate(prefabs, out error)) return false;
@@ -170,8 +170,10 @@ public static class MissionBuildingLayout
             if (TryPlanRows(rows, roads, firstNewRoad, prefabs, existing, random, ambulanceWidth * MaxGapRatio,
                 attempt, startBuilding, out plan, out error))
             {
-                if (!startBuilding.HasValue || startSideBuilding == null
-                    || TryAddStartSides(startBuilding.Value, startSideBuilding, roads, plan, out error)) return true;
+                if (startBuilding.HasValue && startSideBuilding != null
+                    && !TryAddStartSides(startBuilding.Value, startSideBuilding, roads, plan, out error)) continue;
+                if (endBuilding.HasValue && !TryAddEndBuilding(endBuilding.Value, startSideBuilding, roads, plan, out error)) continue;
+                return true;
             }
         }
         return false;
@@ -231,6 +233,86 @@ public static class MissionBuildingLayout
         var center = road.Position + Vector2.down * (road.Prefab.ImageSize.y * 0.5f + 0.16f + size.y * 0.5f);
         var offset = Vector2.Scale(footprint.center, prefab.transform.localScale);
         return new Placement(prefab, center - offset, 1f, roads: new[] { road.Position });
+    }
+
+    // 마지막 직선 출구 바깥에 병원을 놓고 전면이 접근 도로를 향하게 한다.
+    public static Placement CreateEndBuilding(BuildingPrefab prefab, Road road, RoadDirection direction)
+    {
+        var rotation = (int)direction;
+        var footprint = GetFootprint(prefab);
+        var size = Vector2.Scale(footprint.size, prefab.transform.localScale);
+        var offset = Vector2.Scale(footprint.center, prefab.transform.localScale);
+        var halfRoad = (rotation % 2 == 0 ? road.Prefab.ImageSize.y : road.Prefab.ImageSize.x) * 0.5f;
+        var center = road.Position + Forward(rotation) * (halfRoad + 0.16f + size.y * 0.5f);
+        return new Placement(prefab, center - Right(rotation) * offset.x - Forward(rotation) * offset.y,
+            1f, rotation: rotation, roads: new[] { road.Position });
+    }
+
+    // 병원 양옆의 건물을 기존 도로변 충돌 영역까지 연결하고 다른 도로와 건물의 침범을 거부한다.
+    private static bool TryAddEndBuilding(Placement hospital, BuildingPrefab sidePrefab, List<Road> roads,
+        Dictionary<Vector2, List<Placement>> plan, out string error)
+    {
+        error = null;
+        if (sidePrefab == null || !ValidateStartBuilding(hospital, roads, out error))
+        {
+            error = error ?? "병원 양옆을 막을 건물 원본이 필요합니다.";
+            return false;
+        }
+        var items = new List<Placement>();
+        foreach (var layout in plan.Values) items.AddRange(layout);
+        var right = Right(hospital.Rotation);
+        var forward = Forward(hospital.Rotation);
+        var hospitalSize = Vector2.Scale(GetFootprint(hospital.Prefab).size, hospital.Prefab.transform.localScale);
+        var sideFootprint = GetFootprint(sidePrefab);
+        var sideSize = Vector2.Scale(sideFootprint.size, sidePrefab.transform.localScale);
+        var front = hospital.Position - forward * (hospitalSize.y * 0.5f);
+        var additions = new List<Placement> { hospital };
+        for (var side = -1; side <= 1; side += 2)
+        {
+            var center = front + right * (side * (hospitalSize.x + sideSize.x) * 0.5f)
+                + forward * (sideSize.y * 0.5f);
+            var offset = Vector2.Scale(sideFootprint.center, sidePrefab.transform.localScale);
+            var block = new Placement(sidePrefab, center - right * offset.x - forward * offset.y,
+                1f, rotation: hospital.Rotation, roads: hospital.Roads);
+            if (!ValidateStartBuilding(block, roads, out error)) return false;
+            var body = ProjectBounds(GetCollisionBounds(block), right, forward);
+            var found = false;
+            var nearest = new Bounds();
+            foreach (var item in items)
+            {
+                var candidate = ProjectBounds(GetCollisionBounds(item), right, forward);
+                if (candidate.max.x <= body.min.x || candidate.min.x >= body.max.x
+                    || candidate.max.y > body.min.y + Tolerance) continue;
+                if (!found || candidate.max.y > nearest.max.y) { nearest = candidate; found = true; }
+            }
+            if (!found) { error = "병원 옆 건물을 마지막 도로변 건물에 연결할 수 없습니다."; return false; }
+            var min = new Vector2(Mathf.Max(body.min.x, nearest.min.x), nearest.max.y - 0.01f);
+            var max = new Vector2(Mathf.Min(body.max.x, nearest.max.x), body.min.y + 0.01f);
+            var local = new Bounds((min + max) * 0.5f, max - min);
+            var barrier = new Bounds(right * local.center.x + forward * local.center.y,
+                hospital.Rotation % 2 == 0 ? local.size : new Vector3(local.size.y, local.size.x));
+            additions.Add(new Placement(sidePrefab, block.Position, 1f, rotation: hospital.Rotation,
+                roads: hospital.Roads, barrier: barrier));
+        }
+        foreach (var addition in additions)
+        {
+            foreach (var item in items)
+            {
+                if (!Overlaps(GetBounds(addition), GetBounds(item))) continue;
+                error = "병원 또는 병원 옆 건물이 기존 건물과 겹칩니다.";
+                return false;
+            }
+        }
+        foreach (var addition in additions) StorePlacement(addition, roads, items, plan);
+        return true;
+    }
+
+    // 직각 회전한 병원 접근 방향으로 외곽을 투영해 네 방향에 같은 연결 기준을 적용한다.
+    private static Bounds ProjectBounds(Bounds bounds, Vector2 right, Vector2 forward)
+    {
+        var center = new Vector2(Vector2.Dot(bounds.center, right), Vector2.Dot(bounds.center, forward));
+        var size = Mathf.Abs(right.x) > 0.5f ? bounds.size : new Vector3(bounds.size.y, bounds.size.x);
+        return new Bounds(center, size);
     }
 
     // 소방서 양옆에 한 채씩 붙이고 차도 바깥에서 기존 도로변 건물까지 충돌 영역을 잇는다.
@@ -293,10 +375,10 @@ public static class MissionBuildingLayout
         offset = Vector2.Scale(offset, scale);
         var size = Vector2.Scale(box.size, (Vector2)placement.Prefab.transform.localScale * placement.Scale);
         return new Bounds(placement.Position + Right(placement.Rotation) * offset.x + Forward(placement.Rotation) * offset.y,
-            placement.Rotation == 0 ? size : new Vector2(size.y, size.x));
+            placement.Rotation % 2 == 0 ? size : new Vector2(size.y, size.x));
     }
 
-    // 큰 소방서는 도로 타일 밖으로 확장할 수 있지만 다른 도로의 차도와 보도는 침범할 수 없다.
+    // 도로 끝 건물은 소유 도로 바깥으로 확장하되 다른 도로의 차도와 보도를 침범하지 않는다.
     private static bool ValidateStartBuilding(Placement placement, List<Road> roads, out string error)
     {
         if (!Validate(new[] { placement.Prefab }, out error, true)) return false;
@@ -315,11 +397,11 @@ public static class MissionBuildingLayout
                 if (axis == 0) size.x = Edge(road, lanes) * 2f;
                 else size.y = Edge(road, lanes) * 2f;
                 if (!Overlaps(bounds, new Bounds(road.Position, size))) continue;
-                error = "시작 소방서가 도로 또는 보도를 침범합니다. 소방서 크기와 시작 도로를 확인해주세요.";
+                error = "도로 끝 건물이 차도 또는 보도를 침범합니다. 건물 크기와 끝 도로를 확인해주세요.";
                 return false;
             }
         }
-        if (!touchesRoad) error = "시작 소방서가 시작 도로와 연결되지 않았습니다.";
+        if (!touchesRoad) error = "도로 끝 건물이 소유 도로와 연결되지 않았습니다.";
         return touchesRoad;
     }
 
@@ -752,7 +834,7 @@ public static class MissionBuildingLayout
         scale.x *= placement.FlipX ? -1f : 1f;
         var offset = Vector2.Scale(footprint.center, scale);
         var center = placement.Position + Right(placement.Rotation) * offset.x + Forward(placement.Rotation) * offset.y;
-        return new Bounds(center, placement.Rotation == 0 ? size : new Vector2(size.y, size.x));
+        return new Bounds(center, placement.Rotation % 2 == 0 ? size : new Vector2(size.y, size.x));
     }
 
     // 경계 계산 오차를 제외하고 면적이 있는 겹침만 검출한다.
@@ -783,10 +865,10 @@ public static class MissionBuildingLayout
     private static float AlongMax(Bounds bounds, int axis) => axis == 0 ? bounds.max.y : bounds.max.x;
 
     // 건물 줄이 진행하는 단위 축을 반환한다.
-    private static Vector2 Forward(int axis) => axis == 0 ? Vector2.up : Vector2.right;
+    private static Vector2 Forward(int axis) => axis == 0 ? Vector2.up : axis == 1 ? Vector2.right : axis == 2 ? Vector2.down : Vector2.left;
 
     // 건물 원본의 오른쪽이 향하는 단위 축을 반환한다.
-    private static Vector2 Right(int axis) => axis == 0 ? Vector2.right : Vector2.down;
+    private static Vector2 Right(int axis) => axis == 0 ? Vector2.right : axis == 1 ? Vector2.down : axis == 2 ? Vector2.left : Vector2.up;
     // 이미지와 충돌 영역을 모두 포함하는 원본 로컬 외곽으로 시각적인 겹침도 방지한다.
     public static Bounds GetFootprint(BuildingPrefab prefab)
     {

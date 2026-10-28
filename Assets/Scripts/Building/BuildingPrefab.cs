@@ -1,6 +1,6 @@
 using UnityEngine;
 
-/// <summary>건물의 배치 분류와 공유 바닥, 시작 구역의 충돌 연결부를 관리한다. 공용 원본은 오른쪽 기준이다.</summary>
+/// <summary>건물의 배치 분류와 공유 바닥, 도로 양 끝의 충돌 연결부를 관리한다. 공용 원본은 오른쪽 기준이다.</summary>
 [DisallowMultipleComponent]
 public sealed class BuildingPrefab : MonoBehaviour
 {
@@ -12,14 +12,14 @@ public sealed class BuildingPrefab : MonoBehaviour
     [SerializeField] private bool allowIntersection = true; // 외곽 일부라도 교차로 구역에 들어갈 수 있는지 지정한다.
 
     private SpriteRenderer ground; // 건물과 함께 풀로 반환하는 충돌 없는 바닥이다.
-    private BoxCollider2D startBarrier; // 소방서 옆에 배치될 때만 인도 틈을 막으며 건물과 함께 풀에 반환한다.
+    private BoxCollider2D startBarrier; // 소방서 또는 병원 옆의 인도 틈을 막으며 건물과 함께 풀에 반환한다.
 
     public bool AllowIntersection => allowIntersection;
 
     /// <summary>저장된 배치 분류를 반환한다. 0은 양쪽 공용, 1은 왼쪽, 2는 오른쪽이다.</summary>
     public int Index => index;
 
-    // 시작 구역의 연결부를 맵 좌표로 설정하고 일반 건물로 재사용될 때는 충돌을 해제한다.
+    // 도로 끝의 연결부를 맵 좌표로 설정하고 일반 건물로 재사용될 때는 충돌을 해제한다.
     public void ConfigureStartBarrier(Bounds? bounds, Transform mapRoot)
     {
         if (!bounds.HasValue)

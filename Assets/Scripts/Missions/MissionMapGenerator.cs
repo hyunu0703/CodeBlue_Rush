@@ -20,6 +20,8 @@ public sealed class MissionMapGenerator : MonoBehaviour
     [SerializeField] private BuildingPrefab[] buildingPrefabs;
     [SerializeField] private BuildingPrefab startFireStation; // GamePlay 첫 도로의 아래쪽 끝 바깥에 한 채만 배치하는 소방서 원본이다.
     [SerializeField] private BuildingPrefab startSideBuilding; // 소방서 양옆에서 맵 바깥 진입을 막는 건물 원본이다.
+    [SerializeField] private BuildingPrefab endHospital; // 후송 마지막 직선 끝의 병원이며 자식 트리거가 오른쪽 차고 접근 영역이다.
+    private BoxCollider2D hospitalArrival; // 활성 병원 인스턴스의 후송 완료 영역이며 풀 반환 시 해제한다.
     [SerializeField] private BoxCollider2D buildingGapBody; // 건물 사이 간격 상한을 정하는 구급차 차체다.
     // 맵 수명 동안 계획을 보존하고 도로 스트리밍 시 같은 건물을 복원한다.
     private readonly Dictionary<Vector2, List<MissionBuildingLayout.Placement>> buildingLayouts = new Dictionary<Vector2, List<MissionBuildingLayout.Placement>>();
@@ -223,6 +225,25 @@ public sealed class MissionMapGenerator : MonoBehaviour
     /// <summary>마지막 직선 구역 안에 배치된 도착 표시의 월드 좌표다.</summary>
     public Vector2 DestinationPosition => destination != null ? (Vector2)destination.position : Vector2.zero;
 
+    // 오른쪽 차고 접근 영역과 차량의 겹침 또는 물리 스텝 사이의 통과를 검사한다.
+    public bool HasReachedHospital(BoxCollider2D vehicle, Vector2 previous, Vector2 current, float fallbackRadius)
+    {
+        if (endHospital == null)
+        {
+            var movement = current - previous;
+            var fraction = movement.sqrMagnitude > 0f
+                ? Mathf.Clamp01(Vector2.Dot(DestinationPosition - previous, movement) / movement.sqrMagnitude) : 0f;
+            return (previous + movement * fraction - DestinationPosition).sqrMagnitude <= fallbackRadius * fallbackRadius;
+        }
+        if (!hasTransport || hospitalArrival == null || !hospitalArrival.gameObject.activeInHierarchy) return false;
+        var bounds = hospitalArrival.bounds;
+        bounds.Expand(new Vector3(vehicle.bounds.size.x, vehicle.bounds.size.y, 1f));
+        var start = new Vector3(previous.x, previous.y, bounds.center.z);
+        var delta = current - previous;
+        return bounds.Contains(start) || (delta.sqrMagnitude > 0f
+            && bounds.IntersectRay(new Ray(start, delta.normalized), out var distance) && distance <= delta.magnitude);
+    }
+
     /// <summary>기존 월드 도착 표시를 현재 미션 목적지 이름으로 바꾼다. 영구 씬/프리팹 에셋은 수정하지 않는다.</summary>
     public void SetDestinationLabel(string label)
     {
@@ -400,6 +421,15 @@ public sealed class MissionMapGenerator : MonoBehaviour
         {
             return false;
         }
+        if (endHospital != null)
+        {
+            if (!MissionBuildingLayout.Validate(new[] { endHospital }, out error)) return false;
+            if (FindHospitalArrival(endHospital) == null || startSideBuilding == null)
+            {
+                error = "병원 프리팹의 차고 접근 트리거와 Start Side Building을 연결해주세요.";
+                return false;
+            }
+        }
         if (!TryGetBuildingGapWidth(out _, out error))
         {
             return false;
@@ -485,14 +515,21 @@ public sealed class MissionMapGenerator : MonoBehaviour
         {
             return false;
         }
-        var occupied = new List<RoadPlacement>(pickupRoads);
-        occupied.AddRange(pickupBranches);
+        var occupied = new List<RoadPlacement>(pickupBranches);
+        occupied.AddRange(pickupRoads);
         // 출구가 이웃 도로의 닫힌 면에 닿는 시드도 제안 전에 제외한다.
         if (!TryBuildLaneNetwork(occupied, out _, out error))
         {
             return false;
         }
         var last = pickupRoads[pickupRoads.Count - 1];
+        var pickupBuildings = buildingLayouts;
+        if (endHospital != null && (CurrentSeed != seed || hasTransport || pickupBuildings.Count == 0))
+        {
+            if (!TryPlanHospitalRouteBuildings(occupied, 0, seed,
+                new Dictionary<Vector2, List<MissionBuildingLayout.Placement>>(), null, null,
+                out pickupBuildings, out error)) return false;
+        }
         var random = new System.Random(seed ^ 0x5F3759DF);
         for (var attempt = 0; attempt < 1024; attempt++)
         {
@@ -516,7 +553,10 @@ public sealed class MissionMapGenerator : MonoBehaviour
                 var connectedRoads = new List<RoadPlacement>(occupied);
                 connectedRoads.AddRange(transportBranches);
                 connectedRoads.AddRange(transportRoads);
-                if (TryBuildLaneNetwork(connectedRoads, out _, out error))
+                if (TryBuildLaneNetwork(connectedRoads, out _, out error)
+                    && (endHospital == null || TryPlanHospitalRouteBuildings(connectedRoads, occupied.Count, candidate,
+                        pickupBuildings, transportRoads[transportRoads.Count - 1], transport[transport.Length - 1].Outgoing,
+                        out _, out error)))
                 {
                     transportSeed = candidate;
                     return true;
@@ -525,6 +565,27 @@ public sealed class MissionMapGenerator : MonoBehaviour
         }
         error = "교차로의 추가 도로까지 겹치지 않는 후송 경로를 찾지 못했습니다. 다른 픽업 시드를 사용해주세요.";
         return false;
+    }
+
+    // 후송 시드 선택에서도 실제 생성과 같은 병원·주변 건물 예약을 검사해 도착부가 막힌 후보를 제외한다.
+    private bool TryPlanHospitalRouteBuildings(List<RoadPlacement> roads, int firstNewRoad, int seed,
+        Dictionary<Vector2, List<MissionBuildingLayout.Placement>> existing, RoadPlacement? terminal,
+        RoadDirection? direction, out Dictionary<Vector2, List<MissionBuildingLayout.Placement>> plan, out string error)
+    {
+        plan = null;
+        var buildingRoads = new List<MissionBuildingLayout.Road>(roads.Count);
+        foreach (var road in roads)
+            buildingRoads.Add(new MissionBuildingLayout.Road(road.Prefab, road.Position, road.Rotation));
+        MissionBuildingLayout.Placement? station = startFireStation != null
+            ? MissionBuildingLayout.CreateStartBuilding(startFireStation, buildingRoads.Find(road => road.Position == Vector2.zero))
+            : (MissionBuildingLayout.Placement?)null;
+        MissionBuildingLayout.Placement? hospital = terminal.HasValue
+            ? MissionBuildingLayout.CreateEndBuilding(endHospital,
+                new MissionBuildingLayout.Road(terminal.Value.Prefab, terminal.Value.Position, terminal.Value.Rotation), direction.Value)
+            : (MissionBuildingLayout.Placement?)null;
+        return TryGetBuildingGapWidth(out var width, out error)
+            && MissionBuildingLayout.TryPlan(buildingRoads, firstNewRoad, seed, buildingPrefabs, existing,
+                out plan, out error, width, station, startSideBuilding, hospital);
     }
 
     /// <summary>전체 연결 검증 뒤에만 풀과 목적지를 변경한다. 후송은 기존 도로와 구급차 위치를 유지한다.</summary>
@@ -602,7 +663,9 @@ public sealed class MissionMapGenerator : MonoBehaviour
         }
         if (!TryGetBuildingGapWidth(out var buildingGapWidth, out error)
             || !MissionBuildingLayout.TryPlan(buildingRoads, occupied.Count, seed, buildingPrefabs, existingBuildings,
-            out var plannedBuildings, out error, buildingGapWidth, station, startSideBuilding))
+            out var plannedBuildings, out error, buildingGapWidth, station, startSideBuilding,
+            append && endHospital != null ? MissionBuildingLayout.CreateEndBuilding(endHospital,
+                buildingRoads[buildingRoads.Count - 1], route[route.Length - 1].Outgoing) : (MissionBuildingLayout.Placement?)null))
         {
             return false;
         }
@@ -718,6 +781,12 @@ public sealed class MissionMapGenerator : MonoBehaviour
         laneNetwork = nextLaneNetwork;
         LaneNetworkVersion++;
         RefreshBuildings();
+        if (append && hospitalArrival != null)
+        {
+            // 목적지와 안내선 끝점을 실제 오른쪽 차고 접근 영역으로 함께 옮긴다.
+            destination.position = hospitalArrival.transform.TransformPoint(hospitalArrival.offset);
+            navigationRoute[navigationRoute.Count - 1] = DestinationPosition;
+        }
         return true;
     }
 
@@ -923,6 +992,7 @@ public sealed class MissionMapGenerator : MonoBehaviour
                     building.ConfigureGround(buildingGroundTile, groundRenderer, MissionBuildingLayout.GetBounds(placement), mapRoot);
                     building.ConfigureStartBarrier(placement.Barrier, mapRoot);
                     building.gameObject.SetActive(true);
+                    if (placement.Prefab == endHospital) hospitalArrival = FindHospitalArrival(building);
                     buildings[index] = building;
                 }
                 else if (!needed && buildings[index] != null)
@@ -937,6 +1007,7 @@ public sealed class MissionMapGenerator : MonoBehaviour
     // 원본별 풀에 반환하고 맵 부모에서 분리해 다음 배치 시 방향을 새로 적용한다.
     private void ReleaseBuilding(BuildingPrefab building, BuildingPrefab prefab)
     {
+        if (prefab == endHospital) hospitalArrival = null;
         building.gameObject.SetActive(false);
         building.transform.SetParent(poolRoot, false);
         if (!buildingPool.TryGetValue(prefab, out var available))
@@ -945,6 +1016,14 @@ public sealed class MissionMapGenerator : MonoBehaviour
             buildingPool.Add(prefab, available);
         }
         available.Push(building);
+    }
+
+    // 병원 프리팹에 저장한 차고 접근 트리거를 생성 및 검증 시에만 찾는다.
+    private static BoxCollider2D FindHospitalArrival(BuildingPrefab building)
+    {
+        foreach (var box in building.GetComponentsInChildren<BoxCollider2D>(true))
+            if (box.isTrigger && box.enabled) return box;
+        return null;
     }
 
     /// <summary>비활성 풀에서 살아 있는 같은 원본 건물을 얻는다. 부족할 때만 비활성 부모 아래 생성한다.</summary>

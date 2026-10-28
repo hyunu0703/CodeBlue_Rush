@@ -42,6 +42,9 @@ public sealed class MissionController : MonoBehaviour
     private GameProgress missionProgress;            // 출동 시점에 확정한 일차와 누적 실적 원본이다.
     private MissionResult result;                    // 인계 후에는 HP·접촉 변화와 무관하게 유지할 결과다.
     private bool isSaving;                           // 저장 중 재진입과 연속 확인 입력을 차단한다.
+    [SerializeField, Min(0.01f)] private float arrivalFadeSeconds = 0.8f; // 병원 도착부터 결과 표시까지 검게 어두워지는 시간(초)이다.
+    private CanvasGroup arrivalCover;                // 결과창 아래에서 주행 화면을 가리고 뒤쪽 UI 입력을 막는 검은 덮개다.
+    private Coroutine arrivalRoutine;                // 비활성화 시 중단하고 재활성화 시 다시 시작하는 도착 연출이다.
 
     private readonly System.Random random = new System.Random(); // 출동 후 유효한 맵 시드를 선택하는 난수 소스다.
     private MissionStage stage;                                 // 주행 씬의 준비, 픽업과 후송 진행 상태다.
@@ -107,7 +110,14 @@ public sealed class MissionController : MonoBehaviour
         UpdateSafeArea();
         confirmButton.onClick.AddListener(ConfirmResult);
         ButtonPressEffect.Attach(confirmButton);
-        if (stage == MissionStage.Result || stage == MissionStage.Completed) LockVehicle();
+        if (stage == MissionStage.Arriving || stage == MissionStage.Result || stage == MissionStage.Completed)
+        {
+            LockVehicle();
+            EnsureArrivalCover();
+            arrivalCover.blocksRaycasts = true;
+            if (stage == MissionStage.Arriving) arrivalRoutine = StartCoroutine(FadeArrival());
+            else arrivalCover.alpha = 1f;
+        }
         missionPerformance.SetRecording(IsMissionActive);
         if (stage == MissionStage.Waiting)
         {
@@ -163,17 +173,13 @@ public sealed class MissionController : MonoBehaviour
         {
             return;
         }
-        // 픽업은 차량 이미지와 콜라이더 전체가 주차 사각형 안에 들어오면 시작한다. 병원에는 기존 이동 선분 감지를 유지한다.
+        // 픽업은 차체 전체의 주차를, 병원은 오른쪽 차고 접근 영역과 차체의 접촉을 검사한다.
         var currentPosition = ambulance.position;
         mapGenerator.UpdateRoadStreaming(ambulanceCollider.bounds, ambulance.linearVelocity);
-        var movement = currentPosition - previousPosition;
-        var fraction = movement.sqrMagnitude > 0f
-            ? Mathf.Clamp01(Vector2.Dot(mapGenerator.DestinationPosition - previousPosition, movement) / movement.sqrMagnitude) : 0f;
-        var closest = previousPosition + movement * fraction;
-        previousPosition = currentPosition;
         var hasArrived = stage == MissionStage.Active
             ? rescueCutscene.IsVehicleInsidePickup(ambulance, ambulanceRenderer, ambulanceCollider)
-            : (closest - mapGenerator.DestinationPosition).sqrMagnitude <= arrivalRadius * arrivalRadius;
+            : mapGenerator.HasReachedHospital(ambulanceCollider, previousPosition, currentPosition, arrivalRadius);
+        previousPosition = currentPosition;
         if (!hasArrived)
         {
             return;
@@ -187,8 +193,6 @@ public sealed class MissionController : MonoBehaviour
         }
         else
         {
-            ambulance.linearVelocity = Vector2.zero;
-            ambulance.angularVelocity = 0f;
             CompleteMission();
         }
     }
@@ -209,6 +213,7 @@ public sealed class MissionController : MonoBehaviour
             patientHealth.SetTimerRunning(false);
         }
         if (patientECGPanel != null) patientECGPanel.gameObject.SetActive(false);
+        StopArrival();
         StopRescue();
         if (stage == MissionStage.Rescuing)
         {
@@ -231,6 +236,12 @@ public sealed class MissionController : MonoBehaviour
         {
             driveInput.SetMissionDrivingAllowed(false);
         }
+    }
+
+    private void OnDestroy()
+    {
+        // 덮개는 UI Canvas 아래에 있으므로 미션 컴포넌트만 제거할 때도 함께 정리한다.
+        if (arrivalCover != null) Destroy(arrivalCover.gameObject);
     }
 
     // 대기 씬에서 확정한 출동만 소비하여 맵을 준비하고, 성공한 이후 운전을 허용한다.
@@ -310,7 +321,7 @@ public sealed class MissionController : MonoBehaviour
         }
     }
 
-    // 병원 인계에서는 기록을 고정하고 결과를 표시한다. 확인 전에는 저장이나 일차 진행을 하지 않는다.
+    // 병원 인계 순간 기록과 차량을 고정하고 암전이 끝난 뒤 결과를 표시한다.
     public void CompleteMission()
     {
         if (ApplicationPause.IsPaused || !isActiveAndEnabled || stage != MissionStage.Transporting || !IsPatientPickedUp
@@ -323,7 +334,7 @@ public sealed class MissionController : MonoBehaviour
         patientHealth.SetTimerRunning(false);
         result = new MissionResult(missionProgress, patientHealth.HealthPercent,
             missionPerformance.LowCollisionCount, missionPerformance.HighCollisionCount, missionPerformance.CitizenCollisionCount);
-        stage = MissionStage.Result;
+        stage = MissionStage.Arriving;
         resultText.text = result.FormatSummary();
         saveStatus.text = string.Empty;
         confirmLabel.text = "확인";
@@ -331,6 +342,60 @@ public sealed class MissionController : MonoBehaviour
         MissionDispatchSession.Clear();
         LockVehicle();
         RefreshView();
+        EnsureArrivalCover();
+        arrivalCover.blocksRaycasts = true;
+        arrivalRoutine = StartCoroutine(FadeArrival());
+    }
+
+    // 기존 UI Canvas의 형제 순서로 검은 덮개와 결과창을 정렬해 별도 Canvas 사이의 정렬 의존을 없앤다.
+    private void EnsureArrivalCover()
+    {
+        if (arrivalCover != null) return;
+        var canvas = safeAreaRoot.GetComponentInParent<Canvas>();
+        var root = new GameObject("Hospital Arrival Fade", typeof(RectTransform), typeof(CanvasGroup), typeof(Image));
+        root.layer = canvas.gameObject.layer;
+        root.transform.SetParent(safeAreaRoot.parent, false);
+        arrivalCover = root.GetComponent<CanvasGroup>();
+        arrivalCover.alpha = 0f;
+        arrivalCover.blocksRaycasts = false;
+        var rect = (RectTransform)root.transform;
+        rect.anchorMin = Vector2.zero;
+        rect.anchorMax = Vector2.one;
+        rect.offsetMin = rect.offsetMax = Vector2.zero;
+        root.GetComponent<Image>().color = Color.black;
+
+        // 동일 Canvas에서 주행 UI → 덮개 → 결과 안전 영역 순으로 그려 확인 버튼까지 덮이지 않게 한다.
+        root.transform.SetAsLastSibling();
+        safeAreaRoot.SetAsLastSibling();
+        resultPanel.transform.SetAsLastSibling();
+    }
+
+    // 일시정지 동안 진행을 멈추고 완전 암전 후 결과창의 확인 입력을 허용한다.
+    private IEnumerator FadeArrival()
+    {
+        var elapsed = 0f;
+        var duration = Mathf.Max(0.01f, arrivalFadeSeconds);
+        while (elapsed < duration)
+        {
+            elapsed += ApplicationPause.ActiveDeltaTime;
+            arrivalCover.alpha = Mathf.SmoothStep(0f, 1f, elapsed / duration);
+            yield return null;
+        }
+        while (ApplicationPause.IsPaused) yield return null;
+        arrivalCover.alpha = 1f;
+        arrivalRoutine = null;
+        stage = MissionStage.Result;
+        RefreshView();
+    }
+
+    // 비활성화와 씬 종료에서 검은 덮개와 입력 차단이 남지 않게 정리한다.
+    private void StopArrival()
+    {
+        if (arrivalRoutine != null) StopCoroutine(arrivalRoutine);
+        arrivalRoutine = null;
+        if (arrivalCover == null) return;
+        arrivalCover.alpha = 0f;
+        arrivalCover.blocksRaycasts = false;
     }
 
     // 같은 결과 후보를 저장하고 성공한 경우에만 다음 일차 Waiting으로 이동한다.
@@ -377,6 +442,7 @@ public sealed class MissionController : MonoBehaviour
         missionButton.gameObject.SetActive(false);
         notification.SetActive(false);
         briefingPanel.SetActive(false);
+        missionStatus.gameObject.SetActive(stage != MissionStage.Arriving && stage != MissionStage.Result && stage != MissionStage.Completed);
         resultPanel.SetActive(stage == MissionStage.Result || stage == MissionStage.Completed);
         if (resultPanel.activeSelf)
         {
@@ -398,6 +464,7 @@ public sealed class MissionController : MonoBehaviour
             navigation.SetGuidanceVisible(IsMissionActive);
         }
         missionStatus.text = stage == MissionStage.Rescuing ? "환자 구출 및 탑승 중"
+            : stage == MissionStage.Arriving ? "병원 도착 · 환자 인계 중"
             : stage == MissionStage.Transporting ? "환자 픽업 완료 · 병원 후송"
             : stage == MissionStage.Active ? "환자 픽업 장소로 이동"
             : stage == MissionStage.Result ? "병원 후송 완료 · 결과 확인"
@@ -448,7 +515,6 @@ public sealed class MissionController : MonoBehaviour
                 yield break;
             }
             TransportSeed = seed;
-            mapGenerator.SetDestinationLabel("병원");
             previousPosition = ambulance.position;
             UnlockVehicle();
             stage = MissionStage.Transporting;
@@ -732,6 +798,7 @@ public sealed class MissionController : MonoBehaviour
         Active,
         Rescuing,
         Transporting,
+        Arriving,
         Result,
         Completed
     }
