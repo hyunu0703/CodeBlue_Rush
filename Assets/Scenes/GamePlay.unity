@@ -2413,9 +2413,9 @@ MonoBehaviour:
   - {fileID: 4972899132792735681, guid: de4624a0083bca24e9d0ca4ccec24dfb, type: 3}
   - {fileID: 1033072001151962637, guid: ade7c31f62c08624896cb20740eb6318, type: 3}
   - {fileID: 1910790756883838423, guid: 7c0b03479a8b3ca428e5e69b02fd7732, type: 3}
-  maximumVehicles: 32
+  maximumVehicles: 12
   spawnInterval: 1
-  trafficDensity: 3
+  trafficDensity: 1
   spawnRadiusInLaneWidths: 28
   despawnRadiusInLaneWidths: 36
   obstacleLayers:
@@ -2433,7 +2433,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8b45dbbf0f3485ca07b0f2238c872e0, type: 3}
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::RoadCitizenController
-  maximumCitizens: 24
+  maximumCitizens: 12
   radiusInLaneWidths: 26
   walkSpeed: 0.9
   sizeInLaneWidths: 0.3

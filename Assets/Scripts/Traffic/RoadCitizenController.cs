@@ -6,7 +6,7 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public sealed class RoadCitizenController : MonoBehaviour
 {
-    [SerializeField, Range(1, 128)] private int maximumCitizens = 24;          // 플레이어 주변의 최대 시민 수다.
+    [SerializeField, Range(1, 128)] private int maximumCitizens = 12;          // 플레이어 주변의 최대 시민 수다.
     [SerializeField, Min(1f)] private float radiusInLaneWidths = 26f;          // 생성 반경이며 맵 로컬 차로 폭 단위다.
     [SerializeField, Min(0.1f)] private float walkSpeed = 0.9f;                // 기본 속도이며 맵 로컬 유닛/초다.
     [SerializeField, Range(0.1f, 0.5f)] private float sizeInLaneWidths = 0.3f; // 인도 폭 안에 들어가는 임시 사각형 한 변이다.

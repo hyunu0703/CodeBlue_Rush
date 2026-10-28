@@ -10,11 +10,11 @@ public sealed class RoadTrafficController : MonoBehaviour
     [SerializeField] private MissionMapGenerator mapGenerator;
     [SerializeField] private Rigidbody2D player;
     [SerializeField] private GameObject[] vehiclePrefabs;
-    // 기존 차량 수/생성 간격을 기준으로 주변 밀도와 보충 속도를 3배로 높인다.
-    [SerializeField, Range(1, 64)] private int maximumVehicles = 32;
+    // 밀도 배수를 적용하기 전의 차량 수와 기본 보충 간격이다.
+    [SerializeField, Range(1, 64)] private int maximumVehicles = 12; // 주변 AI 차량 수의 기준값이다.
     [SerializeField, Min(0.2f)] private float spawnInterval = 1f;
     // 반경은 맵 로컬 차로 폭 단위다. 회수 반경을 더 크게 두어 경계에서 반복 생성/회수를 막는다.
-    [SerializeField, Range(1, 3)] private int trafficDensity = 3;
+    [SerializeField, Range(1, 3)] private int trafficDensity = 1; // 차량 수와 보충 빈도에 적용하는 배수다.
     [SerializeField, Min(8f)] private float spawnRadiusInLaneWidths = 28f;
     [SerializeField, Min(9f)] private float despawnRadiusInLaneWidths = 36f;
     private const int MaximumPerPrefab = 2; // 같은 차종은 주변에 최대 두 대까지 배치한다.
