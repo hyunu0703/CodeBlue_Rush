@@ -33,6 +33,8 @@ public sealed class AmbulanceCameraFollow : MonoBehaviour
     private float intersectionAngle;
     private float desiredAngle;
     private float rotationVelocity;
+    private BoxCollider2D targetBody; // 차체 중심이 중앙선을 넘었는지 판단하는 구급차 충돌 영역이다.
+    private bool centerLineRotation;  // 직선에서 중앙선을 넘은 뒤 차량 방향을 따라가는 상태다.
 
     /// <summary>씬에 저장된 원래 화면 방향을 인스턴스 수명 동안 보관한다.</summary>
     private void Awake()
@@ -166,6 +168,8 @@ public sealed class AmbulanceCameraFollow : MonoBehaviour
     private void ResetBrakeEffect()
     {
         cachedBrakeTarget = target;
+        targetBody = target != null ? target.GetComponent<BoxCollider2D>() : null;
+        centerLineRotation = false;
         brakeVehicle = target != null ? target.GetComponent<AmbulanceDriveController>() : null;
         previousTargetPosition = target != null ? target.position : Vector3.zero;
         brakeDisplacement = 0f;
@@ -175,27 +179,40 @@ public sealed class AmbulanceCameraFollow : MonoBehaviour
         canStartBrakeEffect = true;
     }
 
-    /// <summary>교차로와 바리케이드 앞에서는 차량 방향을 따르고, 나머지 직선에서는 도로 방향으로 부드럽게 정렬한다.</summary>
+    /// <summary>교차로·바리케이드 앞과 중앙선을 절반 넘은 직선에서는 차량 방향을 따르고 정상 차선에서는 도로에 정렬한다.</summary>
     private void UpdateIntersectionRotation()
     {
         if (mapGenerator != null)
         {
             if (mapGenerator.IsInsideCameraTurnArea(target.position))
             {
+                centerLineRotation = false;
                 // 2D 차량의 로컬 위쪽이 전방이다.
                 desiredAngle = Mathf.DeltaAngle(uprightRotation.eulerAngles.z, target.eulerAngles.z);
             }
-            else if (mapGenerator.TryGetStraightRoadAxis(target.position, out var roadAxis))
+            else if (mapGenerator.TryGetStraightRoadAxis(
+                targetBody != null ? targetBody.transform.TransformPoint(targetBody.offset) : target.position,
+                out var roadAxis, out var lateralPosition))
             {
-                var roadAngle = Mathf.Atan2(-roadAxis.x, roadAxis.y) * Mathf.Rad2Deg;
-                var relativeRoadAngle = Mathf.DeltaAngle(uprightRotation.eulerAngles.z, roadAngle);
-                // 양방향 도로에서 직전 시점과 가까운 방향을 유지한다. 직선에서 조향해도 화면이 뒤집히지 않는다.
-                if (Mathf.Abs(Mathf.DeltaAngle(desiredAngle, relativeRoadAngle)) > 90f)
+                centerLineRotation = ShouldFollowAcrossCenterLine(lateralPosition,
+                    Vector3.Dot(target.up, roadAxis), centerLineRotation);
+                if (centerLineRotation)
                 {
-                    relativeRoadAngle = Mathf.DeltaAngle(0f, relativeRoadAngle + 180f);
+                    desiredAngle = Mathf.DeltaAngle(uprightRotation.eulerAngles.z, target.eulerAngles.z);
                 }
-                desiredAngle = relativeRoadAngle;
+                else
+                {
+                    var roadAngle = Mathf.Atan2(-roadAxis.x, roadAxis.y) * Mathf.Rad2Deg;
+                    var relativeRoadAngle = Mathf.DeltaAngle(uprightRotation.eulerAngles.z, roadAngle);
+                    // 양방향 도로에서 직전 시점과 가까운 방향을 유지한다. 직선에서 조향해도 화면이 뒤집히지 않는다.
+                    if (Mathf.Abs(Mathf.DeltaAngle(desiredAngle, relativeRoadAngle)) > 90f)
+                    {
+                        relativeRoadAngle = Mathf.DeltaAngle(0f, relativeRoadAngle + 180f);
+                    }
+                    desiredAngle = relativeRoadAngle;
+                }
             }
+            else centerLineRotation = false;
         }
 
         // 구역을 나가도 회전 각속도를 초기화하지 않는다. 맵 밖에서는 마지막 도로 방향을 유지한다.
@@ -204,12 +221,20 @@ public sealed class AmbulanceCameraFollow : MonoBehaviour
         transform.rotation = uprightRotation * Quaternion.Euler(0f, 0f, intersectionAngle);
     }
 
+    // 차체 중심이 진행 방향의 반대 차선에 있으면 추적한다. 도로와 수직에 가까울 때는 직전 상태를 유지한다.
+    internal static bool ShouldFollowAcrossCenterLine(float lateralPosition, float forwardAlongRoad, bool wasFollowing)
+    {
+        if (Mathf.Abs(forwardAlongRoad) < 0.1f) return wasFollowing;
+        return lateralPosition * forwardAlongRoad < 0f;
+    }
+
     /// <summary>원래 카메라 방향으로 복귀하고 이전 회전의 관성을 비운다.</summary>
     private void RestoreUprightRotation()
     {
         intersectionAngle = 0f;
         desiredAngle = 0f;
         rotationVelocity = 0f;
+        centerLineRotation = false;
         transform.rotation = uprightRotation;
     }
 

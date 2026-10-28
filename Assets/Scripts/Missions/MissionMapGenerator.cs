@@ -375,7 +375,14 @@ public sealed class MissionMapGenerator : MonoBehaviour
     /// <summary>현재 위치의 활성 직선 도로가 향하는 월드 축을 반환한다. 축의 양방향 중 시점 선택은 카메라가 담당한다.</summary>
     public bool TryGetStraightRoadAxis(Vector3 worldPosition, out Vector3 axis)
     {
+        return TryGetStraightRoadAxis(worldPosition, out axis, out _);
+    }
+
+    // 도로 축과 중앙선 기준 가로 위치를 함께 반환한다. 양수는 원본 도로의 오른쪽이다.
+    public bool TryGetStraightRoadAxis(Vector3 worldPosition, out Vector3 axis, out float lateralPosition)
+    {
         axis = Vector3.zero;
+        lateralPosition = 0f;
         if (!isActiveAndEnabled)
         {
             return false;
@@ -391,6 +398,7 @@ public sealed class MissionMapGenerator : MonoBehaviour
             if (ContainsPoint(road, worldPosition))
             {
                 axis = road.transform.up;
+                lateralPosition = road.transform.InverseTransformPoint(worldPosition).x;
                 return true;
             }
         }

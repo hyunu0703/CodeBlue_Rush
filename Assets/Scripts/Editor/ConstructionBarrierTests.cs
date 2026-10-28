@@ -8,6 +8,22 @@ using UnityEngine.SceneManagement;
 /// <summary>공사 분기의 차량 경로 차단, 회전 배치와 풀 재사용 및 실제 2D 충돌을 검증한다.</summary>
 public sealed class ConstructionBarrierTests
 {
+    // 정상 차선·중앙선·반대 차선과 유턴 중 수직 자세에서 카메라 추적 전환을 확인한다.
+    [TestCase(0.2f, 1f, false, false)]
+    [TestCase(0f, 1f, false, false)]
+    [TestCase(-0.01f, 1f, false, true)]
+    [TestCase(-0.2f, -1f, true, false)]
+    [TestCase(0.01f, -1f, false, true)]
+    [TestCase(-0.2f, 0f, true, true)]
+    [TestCase(0.2f, 0f, false, false)]
+    public void StraightCamera_FollowsOnlyAcrossCenterLine(float lateral, float forward, bool previous, bool expected)
+    {
+        var method = typeof(AmbulanceCameraFollow).GetMethod("ShouldFollowAcrossCenterLine",
+            System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
+        Assert.IsNotNull(method);
+        Assert.AreEqual(expected, method.Invoke(null, new object[] { lateral, forward, previous }));
+    }
+
     // 펜스 양쪽에서 시민이 차체 여유를 남기고 돌아서며 후송 확장 후에도 같은 경로를 유지한다.
     [TestCase(2, 0)]
     [TestCase(2, 1)]
