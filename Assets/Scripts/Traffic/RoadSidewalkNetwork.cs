@@ -69,7 +69,20 @@ public sealed class RoadSidewalkNetwork
                 if (lanes > 0)
                 {
                     var boundary = AddPoint(placement, outward * (width * 0.5f) + offset);
-                    AddEdge(ends[sideIndex, bank], boundary, road, side, false);
+                    if ((int)RoadLaneMath.Rotate(side, placement.ClockwiseQuarterTurns) == placement.ConstructionBarrierSide)
+                    {
+                        // 펜스 두께의 절반과 최대 시민 반폭을 비워 양쪽 접근 모두 차체가 닿기 전에 돌아선다.
+                        var barrierDistance = width * 0.5f - layout.LaneWidth;
+                        var clearance = layout.LaneWidth * (0.35f * 0.5f + 0.25f);
+                        var inner = AddPoint(placement, outward * (barrierDistance - clearance) + offset);
+                        var outer = AddPoint(placement, outward * (barrierDistance + clearance) + offset);
+                        AddEdge(ends[sideIndex, bank], inner, road, side, false);
+                        AddEdge(outer, boundary, road, side, false);
+                    }
+                    else
+                    {
+                        AddEdge(ends[sideIndex, bank], boundary, road, side, false);
+                    }
                 }
             }
             if (layout.IsIntersection)

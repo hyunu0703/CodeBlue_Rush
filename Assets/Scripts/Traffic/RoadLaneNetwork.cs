@@ -9,13 +9,18 @@ public readonly struct RoadLanePlacement
     public RoadLaneLayout Layout { get; }
     public Vector2 Position { get; }
     public int ClockwiseQuarterTurns { get; }
+    public bool IsTrafficClosed { get; } // 공사 분기 도로는 일반 차량의 생성과 통행을 금지한다.
+    public int ConstructionBarrierSide { get; } // 맵 기준 바리케이드 입구 방향이며 -1이면 없다.
 
     /// <summary>배치 정보를 복사하고 회전을 0~3으로 정규화한다.</summary>
-    public RoadLanePlacement(RoadLaneLayout layout, Vector2 position, int clockwiseQuarterTurns)
+    public RoadLanePlacement(RoadLaneLayout layout, Vector2 position, int clockwiseQuarterTurns,
+        bool isTrafficClosed = false, int constructionBarrierSide = -1)
     {
         Layout = layout;
         Position = position;
         ClockwiseQuarterTurns = ((clockwiseQuarterTurns % 4) + 4) % 4;
+        IsTrafficClosed = isTrafficClosed;
+        ConstructionBarrierSide = constructionBarrierSide;
     }
 }
 
@@ -124,6 +129,7 @@ public sealed class RoadLaneNetwork
                 }
             }
         }
+        ApplyTrafficClosures(paths, roads);
         // 교차로의 공통 입구/출구 및 경로 폭이 겹치는 구간을 미래의 양보/예약 판단용으로 제공한다.
         for (var ordinal = 0; ordinal < roads.Length; ordinal++)
         {
@@ -149,6 +155,42 @@ public sealed class RoadLaneNetwork
         return true;
     }
 
+    // 도로/경로 번호를 보존하면서 공사 분기와 그쪽을 사용하는 교차로 경로의 연결을 제거한다.
+    private static void ApplyTrafficClosures(List<RoadLanePath> paths, RoadLanePlacement[] roads)
+    {
+        var closedSides = new int[roads.Length];
+        for (var ordinal = 0; ordinal < roads.Length; ordinal++)
+        {
+            if (!roads[ordinal].Layout.IsIntersection) continue;
+            for (var other = 0; other < roads.Length; other++)
+            {
+                if (!roads[other].IsTrafficClosed) continue;
+                var span = (roads[ordinal].Layout.ImageSize.x + roads[other].Layout.ImageSize.x) * 0.5f;
+                var delta = roads[other].Position - roads[ordinal].Position;
+                for (var side = 0; side < 4; side++)
+                    if (RoadLaneMath.Distance(delta, RoadLaneMath.Outward((RoadDirection)side) * span) <= ConnectionTolerance)
+                        closedSides[ordinal] |= 1 << side;
+            }
+        }
+        foreach (var path in paths)
+        {
+            var mask = closedSides[path.RoadOrdinal];
+            path.IsTrafficAllowed = !roads[path.RoadOrdinal].IsTrafficClosed
+                && (mask & ((1 << (int)path.Entry) | (1 << (int)path.Exit))) == 0;
+        }
+        foreach (var path in paths) path.RemoveClosedSuccessors(paths);
+        // 차로별 허용 회전이 모두 폐쇄된 진입로에는 차량을 새로 공급하지 않는다.
+        foreach (var path in paths)
+            if (closedSides[path.RoadOrdinal] != 0 && path.Kind == RoadLanePathKind.Approach && path.Successors.Count == 0)
+                path.IsTrafficAllowed = false;
+        foreach (var path in paths)
+        {
+            path.RemoveClosedSuccessors(paths);
+            if (path.LeftNeighborId >= 0 && !paths[path.LeftNeighborId].IsTrafficAllowed) path.LeftNeighborId = -1;
+            if (path.RightNeighborId >= 0 && !paths[path.RightNeighborId].IsTrafficAllowed) path.RightNeighborId = -1;
+        }
+    }
+
     /// <summary>차량 초기 배치용 근접 경로를 찾는다. forward가 0이면 방향 필터가 없고, 그 외에는 60도 이내 경로만 허용한다.</summary>
     public bool TryFindNearest(Vector2 position, Vector2 forward, float maxDistance, out int pathId, out float distance)
     {
@@ -164,7 +206,7 @@ public sealed class RoadLaneNetwork
         var forwardLength = RoadLaneMath.Distance(Vector2.zero, forward);
         foreach (var path in Paths)
         {
-            if (!path.TryProject(position, out var along, out var squared) || squared > bestSquared
+            if (!path.IsTrafficAllowed || !path.TryProject(position, out var along, out var squared) || squared > bestSquared
                 || !path.TrySample(along, out _, out var tangent)
                 || (forwardLength > 0f && RoadLaneMath.Dot(forward / forwardLength, tangent) < 0.5f))
             {
@@ -189,7 +231,8 @@ public sealed class RoadLaneNetwork
             throw new ArgumentNullException(nameof(result));
         }
         result.Clear();
-        if (!IsValid || startId < 0 || destinationId < 0 || startId >= Paths.Count || destinationId >= Paths.Count)
+        if (!IsValid || startId < 0 || destinationId < 0 || startId >= Paths.Count || destinationId >= Paths.Count
+            || !Paths[startId].IsTrafficAllowed || !Paths[destinationId].IsTrafficAllowed)
         {
             return false;
         }

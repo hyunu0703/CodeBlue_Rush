@@ -6,7 +6,7 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public sealed class RoadCitizenController : MonoBehaviour
 {
-    [SerializeField, Range(1, 128)] private int maximumCitizens = 48;          // 플레이어 주변의 최대 시민 수다.
+    [SerializeField, Range(1, 128)] private int maximumCitizens = 24;          // 플레이어 주변의 최대 시민 수다.
     [SerializeField, Min(1f)] private float radiusInLaneWidths = 26f;          // 생성 반경이며 맵 로컬 차로 폭 단위다.
     [SerializeField, Min(0.1f)] private float walkSpeed = 0.9f;                // 기본 속도이며 맵 로컬 유닛/초다.
     [SerializeField, Range(0.1f, 0.5f)] private float sizeInLaneWidths = 0.3f; // 인도 폭 안에 들어가는 임시 사각형 한 변이다.
@@ -23,6 +23,8 @@ public sealed class RoadCitizenController : MonoBehaviour
     private Transform visualRoot;                                              // 이 컴포넌트만 소유하는 런타임 외형 부모다.
     private Texture2D texture;                                                 // 모든 시민이 공유하는 1px 흰색 텍스처다.
     private Sprite sprite;                                                     // 색으로 구분하는 임시 사각형 스프라이트다.
+    private Texture2D outlineTexture;                                          // 모든 시민이 공유하는 얇은 테두리 텍스처다.
+    private Sprite outlineSprite;                                              // 내부가 투명해 시민의 색 전환을 가리지 않는 외곽선이다.
     private System.Random random;                                              // 생성 지점과 색상 선택용 난수다.
     private int session = -1;                                                  // 새 미션과 같은 미션의 후송 확장을 구분한다.
     private float spawnClock;                                                  // 주변 보충을 매 프레임 반복하지 않도록 하는 게임 시간이다.
@@ -108,6 +110,17 @@ public sealed class RoadCitizenController : MonoBehaviour
         texture.SetPixel(0, 0, Color.white);
         texture.Apply(false, true);
         sprite = Sprite.Create(texture, new Rect(0f, 0f, 1f, 1f), Vector2.one * 0.5f, 1f);
+        outlineTexture = new Texture2D(32, 32, TextureFormat.RGBA32, false);
+        outlineTexture.filterMode = FilterMode.Point;
+        var pixels = new Color32[32 * 32];
+        for (var y = 0; y < 32; y++)
+            for (var x = 0; x < 32; x++)
+                pixels[y * 32 + x] = x == 0 || x == 31 || y == 0 || y == 31
+                    ? new Color32(255, 255, 255, 255) : new Color32(0, 0, 0, 0);
+        outlineTexture.SetPixels32(pixels);
+        outlineTexture.Apply(false, true);
+        outlineSprite = Sprite.Create(outlineTexture, new Rect(0f, 0f, 32f, 32f), Vector2.one * 0.5f,
+            32f, 0, SpriteMeshType.FullRect);
     }
 
     // 활성 인도에만 시민을 보충하고 같은 위치에 겹쳐 생성하지 않는다.
@@ -174,6 +187,7 @@ public sealed class RoadCitizenController : MonoBehaviour
         var roadRenderer = generator.ActiveRoads[road].GetComponent<SpriteRenderer>();
         visual.Renderer.sortingLayerID = roadRenderer.sortingLayerID;
         visual.Renderer.sortingOrder = roadRenderer.sortingOrder + 3;
+        visual.ConfigureOutline(outlineSprite);
         visual.gameObject.SetActive(true);
         return visual;
     }
@@ -197,8 +211,12 @@ public sealed class RoadCitizenController : MonoBehaviour
         }
         if (sprite != null) Destroy(sprite);
         if (texture != null) Destroy(texture);
+        if (outlineSprite != null) Destroy(outlineSprite);
+        if (outlineTexture != null) Destroy(outlineTexture);
         visualRoot = null;
         sprite = null;
         texture = null;
+        outlineSprite = null;
+        outlineTexture = null;
     }
 }

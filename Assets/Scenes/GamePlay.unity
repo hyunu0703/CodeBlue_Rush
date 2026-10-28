@@ -2433,7 +2433,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8b45dbbf0f3485ca07b0f2238c872e0, type: 3}
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::RoadCitizenController
-  maximumCitizens: 48
+  maximumCitizens: 24
   radiusInLaneWidths: 26
   walkSpeed: 0.9
   sizeInLaneWidths: 0.3

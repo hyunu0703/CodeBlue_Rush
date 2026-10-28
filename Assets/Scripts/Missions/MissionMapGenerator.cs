@@ -350,6 +350,28 @@ public sealed class MissionMapGenerator : MonoBehaviour
         return false;
     }
 
+    // 교차로와 공사 분기의 입구부터 펜스 앞면까지를 차량 방향 추적 카메라의 회전 구역으로 사용한다.
+    public bool IsInsideCameraTurnArea(Vector3 worldPosition)
+    {
+        if (IsInsideIntersection(worldPosition)) return true;
+        if (!isActiveAndEnabled || mapRoot == null) return false;
+        var position = (Vector2)mapRoot.InverseTransformPoint(worldPosition);
+        for (var ordinal = 0; ordinal < roadPlacements.Count; ordinal++)
+        {
+            var placement = roadPlacements[ordinal];
+            if (placement.BarrierSide < 0 || !IsRoadActive(ordinal)) continue;
+            var road = activeRoads[ordinal];
+            if (!ContainsPoint(road, worldPosition)) continue;
+            var outward = RoadLaneMath.Outward((RoadDirection)placement.BarrierSide);
+            var halfLength = placement.Prefab.ImageSize.x * 0.5f;
+            var laneWidth = placement.Prefab.ImageSize.x * LaneWidthRatio;
+            // 분기 입구 쪽 펜스 앞면을 경계로 삼아 펜스 뒤 직선 구역까지 확장하지 않는다.
+            var front = halfLength - laneWidth + laneWidth * 0.35f * 0.5f;
+            if (Vector2.Dot(position - placement.Position, outward) >= front) return true;
+        }
+        return false;
+    }
+
     /// <summary>현재 위치의 활성 직선 도로가 향하는 월드 축을 반환한다. 축의 양방향 중 시점 선택은 카메라가 담당한다.</summary>
     public bool TryGetStraightRoadAxis(Vector3 worldPosition, out Vector3 axis)
     {
@@ -807,7 +829,7 @@ public sealed class MissionMapGenerator : MonoBehaviour
                 }
                 return false;
             }
-            placements.Add(new RoadLanePlacement(layout, road.Position, road.Rotation));
+            placements.Add(new RoadLanePlacement(layout, road.Position, road.Rotation, road.BranchOwner >= 0, road.BarrierSide));
         }
         return RoadLaneNetwork.TryBuild(placements, out network, out error);
     }
@@ -875,7 +897,8 @@ public sealed class MissionMapGenerator : MonoBehaviour
                 prefab.TryGetConnectionPosition(direction, rotation, out var straightExit);
                 for (var count = 0; count < BranchRoadCount; count++)
                 {
-                    var placement = new RoadPlacement(prefab, rotation, position, index);
+                    var placement = new RoadPlacement(prefab, rotation, position, index,
+                        count == 0 ? (int)Opposite(direction) : -1);
                     if (!TryReserveRoad(placement, occupied))
                     {
                         error = "교차로의 추가 도로가 미션 경로 또는 다른 추가 도로와 겹칩니다.";
@@ -934,6 +957,16 @@ public sealed class MissionMapGenerator : MonoBehaviour
         instance.transform.localPosition = placement.Position;
         instance.transform.localRotation = Quaternion.Euler(0f, 0f, -90f * placement.Rotation);
         instance.transform.localScale = Vector3.one;
+        var barrier = instance.GetComponent<RoadConstructionBarrier>();
+        if (placement.BarrierSide >= 0)
+        {
+            if (barrier == null) barrier = instance.gameObject.AddComponent<RoadConstructionBarrier>();
+            barrier.Configure(instance, RoadLaneMath.Rotate((RoadDirection)placement.BarrierSide, -placement.Rotation));
+        }
+        else if (barrier != null)
+        {
+            barrier.Hide();
+        }
         instance.gameObject.SetActive(true);
         return instance;
     }
@@ -1052,13 +1085,15 @@ public sealed class MissionMapGenerator : MonoBehaviour
         public readonly int Rotation;
         public readonly Vector2 Position;
         public readonly int BranchOwner;
+        public readonly int BarrierSide; // 맵 기준 공사 차단 방향이며 -1이면 바리케이드가 없다.
 
-        public RoadPlacement(RoadPrefab prefab, int rotation, Vector2 position, int branchOwner = -1)
+        public RoadPlacement(RoadPrefab prefab, int rotation, Vector2 position, int branchOwner = -1, int barrierSide = -1)
         {
             Prefab = prefab;
             Rotation = rotation;
             Position = position;
             BranchOwner = branchOwner;
+            BarrierSide = barrierSide;
         }
     }
 

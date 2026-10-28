@@ -497,7 +497,7 @@ public sealed class RoadTrafficController : MonoBehaviour
         }
         foreach (var path in network.Paths)
         {
-            if (mapGenerator.IsRoadActive(path.RoadOrdinal)
+            if (path.IsTrafficAllowed && mapGenerator.IsRoadActive(path.RoadOrdinal)
                 && path.Kind != RoadLanePathKind.Intersection && path.Successors.Count > 0
                 && path.TryProject(searchCenter, out var along, out _)
                 && path.TrySample(along, out var nearest, out _)

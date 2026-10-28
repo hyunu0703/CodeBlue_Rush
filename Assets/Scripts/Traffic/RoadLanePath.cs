@@ -35,6 +35,7 @@ public sealed class RoadLanePath
     public float StopLineDistance => HasStopLine ? Length : -1f;
     public bool RequiresExitClearance => Kind == RoadLanePathKind.Intersection;
     public float Width { get; }
+    public bool IsTrafficAllowed { get; internal set; } = true; // 공사 폐쇄 경로는 그래프 식별자만 남기고 통행에서 제외한다.
     public float Length => distances[distances.Length - 1];
     // 같은 진행 방향의 인접 차로만 제공한다. 교차로 내부에는 인접 차로가 없다.
     public int LeftNeighborId { get; internal set; } = -1;
@@ -184,6 +185,13 @@ public sealed class RoadLanePath
         {
             successors.Add(id);
         }
+    }
+
+    // 그래프 공개 전에 폐쇄 경로로 향하는 연결을 제거한다.
+    internal void RemoveClosedSuccessors(IReadOnlyList<RoadLanePath> paths)
+    {
+        for (var index = successors.Count - 1; index >= 0; index--)
+            if (!IsTrafficAllowed || !paths[successors[index]].IsTrafficAllowed) successors.RemoveAt(index);
     }
 
     /// <summary>빌드 중에만 교차/합류하는 경로의 식별자를 추가한다.</summary>

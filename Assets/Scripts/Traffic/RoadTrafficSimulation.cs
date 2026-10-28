@@ -69,7 +69,9 @@ public sealed class RoadTrafficSimulation
             var nextRoad = next.Roads[index];
             if (!ReferenceEquals(previousRoad.Layout, nextRoad.Layout)
                 || previousRoad.Position != nextRoad.Position
-                || previousRoad.ClockwiseQuarterTurns != nextRoad.ClockwiseQuarterTurns)
+                || previousRoad.ClockwiseQuarterTurns != nextRoad.ClockwiseQuarterTurns
+                || previousRoad.IsTrafficClosed != nextRoad.IsTrafficClosed
+                || previousRoad.ConstructionBarrierSide != nextRoad.ConstructionBarrierSide)
             {
                 return false;
             }
@@ -111,7 +113,7 @@ public sealed class RoadTrafficSimulation
         }
         // 교차로 안에 직접 생성하지 않고 차폭과 앞뒤 범퍼의 배치 여유를 확인한다.
         var path = network.Paths[pathId];
-        if (path.Kind == RoadLanePathKind.Intersection || width > path.Width * 0.85f
+        if (!path.IsTrafficAllowed || path.Kind == RoadLanePathKind.Intersection || width > path.Width * 0.85f
             || (pathId == pickupPathId && distance + length * 0.5f >= pickupStart - pickupApproach
                 && distance - length * 0.5f <= pickupEnd)
             || cruiseSpeed > path.Width * 3f

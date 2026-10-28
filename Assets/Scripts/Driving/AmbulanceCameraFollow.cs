@@ -175,12 +175,12 @@ public sealed class AmbulanceCameraFollow : MonoBehaviour
         canStartBrakeEffect = true;
     }
 
-    /// <summary>교차로에서는 차량 방향을 따르고, 직선에서는 도로가 세로로 보이는 방향으로 부드럽게 정렬한다.</summary>
+    /// <summary>교차로와 바리케이드 앞에서는 차량 방향을 따르고, 나머지 직선에서는 도로 방향으로 부드럽게 정렬한다.</summary>
     private void UpdateIntersectionRotation()
     {
         if (mapGenerator != null)
         {
-            if (mapGenerator.IsInsideIntersection(target.position))
+            if (mapGenerator.IsInsideCameraTurnArea(target.position))
             {
                 // 2D 차량의 로컬 위쪽이 전방이다.
                 desiredAngle = Mathf.DeltaAngle(uprightRotation.eulerAngles.z, target.eulerAngles.z);

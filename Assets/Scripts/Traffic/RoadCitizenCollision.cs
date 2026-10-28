@@ -17,6 +17,7 @@ public sealed class RoadCitizenCollision : MonoBehaviour
     private Rigidbody2D body;                      // 보행 중에는 Kinematic, 충돌 후에는 Dynamic으로 사용하는 차체다.
     private BoxCollider2D bodyCollider;            // 보행 중 접촉 감지와 쓰러진 뒤 실제 충돌을 담당한다.
     private SpriteRenderer spriteRenderer;         // 쓰러짐 자세와 색을 적용할 현재 외형이다.
+    private SpriteRenderer outline;                // 쓰러짐과 회전에도 외형을 따라가며 진한 회색을 유지하는 얇은 테두리다.
     private Vector3 uprightScale;                  // 풀 재사용 때 복구할 충돌 직전 외형 크기다.
     private Quaternion uprightRotation;            // 물리 회전 이전의 로컬 방향이다.
     private Color uprightColor;                    // 다음 시민으로 초기화할 때 복구할 충돌 직전 색이다.
@@ -26,6 +27,22 @@ public sealed class RoadCitizenCollision : MonoBehaviour
 
     public Rigidbody2D Body => body;
     public SpriteRenderer Renderer => spriteRenderer;
+
+    // 사각형 안쪽의 얇은 테두리를 공유 스프라이트로 표시하고 풀 재사용 때 정렬을 갱신한다.
+    internal void ConfigureOutline(Sprite sprite)
+    {
+        if (outline == null)
+        {
+            var root = new GameObject("CitizenOutline");
+            root.transform.SetParent(transform, false);
+            outline = root.AddComponent<SpriteRenderer>();
+        }
+        outline.sprite = sprite;
+        outline.color = new Color(0.2f, 0.2f, 0.2f, 1f);
+        outline.sharedMaterial = spriteRenderer.sharedMaterial;
+        outline.sortingLayerID = spriteRenderer.sortingLayerID;
+        outline.sortingOrder = spriteRenderer.sortingOrder + 1;
+    }
 
     private void Awake()
     {
