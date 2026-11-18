@@ -35,9 +35,11 @@ public sealed class WaitingMissionController : MonoBehaviour
     private ProgressAction progressAction;               // 후보 저장 성공 뒤 실행할 화면 전환이다.
     private bool isSaving;                               // 저장 중 재진입과 중복 입력을 차단한다.
     private bool hasSaveError;                           // 실패한 저장을 재시도 버튼에서만 허용한다.
+    private FirebaseAccountPanel accountPanel;           // 서버 최고 기록과 계정 입력을 기존 안전 영역에 연결한다.
 
     private bool IsResetDialogOpen => resetDialog != null && resetDialog.activeSelf;
-    private bool CanReceiveMission => !IsResetDialogOpen && !ApplicationPause.IsPaused && isActiveAndEnabled && GameProgressSession.IsLoaded && !isSaving && pendingProgress == null
+    private bool CanReceiveMission => !IsResetDialogOpen && !ApplicationPause.IsPaused && isActiveAndEnabled && GameProgressSession.IsLoaded
+        && FirebaseSession.Instance.IsLoggedIn && !isSaving && pendingProgress == null
         && ReferenceEquals(observedProgress, GameProgressSession.Current)
         && observedProgress.Stage == ProgressStage.Ready;
 
@@ -85,7 +87,17 @@ public sealed class WaitingMissionController : MonoBehaviour
         ButtonPressEffect.Attach(evaluationButton);
         ButtonPressEffect.Attach(retryButton);
         UpdateSafeArea();
+        if (!FirebaseSession.Instance.IsLoggedIn)
+        {
+            SceneFadeTransition.LoadScene("Start");
+            return;
+        }
         if (!PrepareProgress()) return;
+        if (accountPanel == null) accountPanel = FirebaseAccountPanel.Create(safeAreaRoot, progressText, false,
+            () => !isSaving && !IsResetDialogOpen && stage != WaitingStage.Dispatching
+                && pendingProgress == null && !briefingPanel.activeSelf && !SceneFadeTransition.IsTransitioning);
+        else accountPanel.gameObject.SetActive(true);
+        FirebaseSession.Instance.Submit(GameProgressSession.Current.CumulativeScore);
         if (stage == WaitingStage.Waiting && CanReceiveMission) BeginWaiting();
         else RefreshView();
     }
@@ -97,6 +109,7 @@ public sealed class WaitingMissionController : MonoBehaviour
 
     private void OnDisable()
     {
+        if (accountPanel != null) accountPanel.gameObject.SetActive(false);
         if (homeButton != null) homeButton.onClick.RemoveListener(ReturnToStart);
         if (offerRoutine != null) StopCoroutine(offerRoutine);
         offerRoutine = null;
@@ -336,6 +349,13 @@ public sealed class WaitingMissionController : MonoBehaviour
         if (!GameProgressSession.IsLoaded || !ReferenceEquals(GameProgressSession.Current, observedProgress))
         {
             ShowSaveError("진행 상태를 확인하지 못했습니다.\n게임을 다시 실행해주세요.");
+            return;
+        }
+        // 초기화로 사라질 누적 실적을 먼저 보존하며 서버 응답 자체는 기다리지 않는다.
+        if (progressAction == ProgressAction.Restart
+            && !FirebaseSession.Instance.PreserveScore(observedProgress.CumulativeScore))
+        {
+            ShowSaveError("최고 실적 후보를 보존하지 못했습니다. 저장 권한 확인 후 다시 시도해주세요.");
             return;
         }
         isSaving = true;

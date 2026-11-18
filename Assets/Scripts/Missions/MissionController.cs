@@ -465,6 +465,7 @@ public sealed class MissionController : MonoBehaviour
             Debug.LogWarning($"하루 완료 저장 실패: {error}", this);
             return;
         }
+        FirebaseSession.Instance.Submit(result.NextProgress.CumulativeScore);
         stage = MissionStage.Completed;
         saveStatus.text = "저장 완료 · 대기 씬으로 이동 중";
         RefreshView();

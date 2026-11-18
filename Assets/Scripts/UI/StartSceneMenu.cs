@@ -14,6 +14,8 @@ public sealed class StartSceneMenu : MonoBehaviour
     [SerializeField] private RectTransform errorSafeArea; // 오류 안내를 안전 영역에 배치한다.
 
     private bool isStarting;       // 페이드 중 중복 읽기와 씬 전환을 차단한다.
+    private FirebaseAccountPanel accountPanel; // 기존 Canvas에 연결할 게스트 로그인 안내다.
+    private FirebaseSession authSession;       // 비활성화 때 새 서비스를 생성하지 않고 구독을 해제할 대상이다.
     private Rect lastSafeArea;     // 안전 영역 변경 시에만 앵커를 갱신한다.
     private Vector2Int lastScreen; // 화면 회전과 해상도 변경을 감지한다.
 
@@ -34,7 +36,14 @@ public sealed class StartSceneMenu : MonoBehaviour
         retryButton.onClick.AddListener(StartGame);
         ButtonPressEffect.Attach(retryButton);
         isStarting = false;
-        startButton.interactable = true;
+        if (accountPanel == null) accountPanel = FirebaseAccountPanel.Create(
+            (RectTransform)startButton.GetComponentInParent<Canvas>().transform,
+            startButton.GetComponentInChildren<TMP_Text>(), true, () => !isStarting);
+        else accountPanel.gameObject.SetActive(true);
+        accountPanel.transform.SetSiblingIndex(errorPanel.transform.GetSiblingIndex());
+        authSession = FirebaseSession.Instance;
+        authSession.Changed += RefreshAuthentication;
+        RefreshAuthentication();
         errorPanel.SetActive(false);
         UpdateSafeArea();
     }
@@ -46,6 +55,8 @@ public sealed class StartSceneMenu : MonoBehaviour
 
     private void OnDisable()
     {
+        if (authSession != null) authSession.Changed -= RefreshAuthentication;
+        if (accountPanel != null) accountPanel.gameObject.SetActive(false);
         if (retryButton != null) retryButton.onClick.RemoveListener(StartGame);
         if (startButton != null)
         {
@@ -60,7 +71,7 @@ public sealed class StartSceneMenu : MonoBehaviour
     // 저장을 정상 복원한 경우에만 페이드를 시작하고 실패하면 같은 데이터를 다시 읽는다.
     private void StartGame()
     {
-        if (ApplicationPause.IsPaused || isStarting) return;
+        if (ApplicationPause.IsPaused || isStarting || !FirebaseSession.Instance.IsLoggedIn) return;
         isStarting = true;
         startButton.interactable = false;
         retryButton.interactable = false;
@@ -78,6 +89,12 @@ public sealed class StartSceneMenu : MonoBehaviour
         }
         errorPanel.SetActive(false);
         SceneFadeTransition.LoadScene("Waiting");
+    }
+
+    // 인증 실패와 진행 읽기 오류의 표시를 분리하고 로그인 완료 뒤 시작 입력을 허용한다.
+    private void RefreshAuthentication()
+    {
+        startButton.interactable = !isStarting && FirebaseSession.Instance.IsLoggedIn;
     }
 
     // 실패 후 재시도 버튼을 통해서만 시작 동작을 다시 허용한다.
