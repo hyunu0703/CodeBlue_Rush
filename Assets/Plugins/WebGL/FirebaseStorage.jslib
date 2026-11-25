@@ -22,5 +22,29 @@ mergeInto(LibraryManager.library, {
         var pointer = _malloc(size);
         stringToUTF8(result, pointer, size);
         return pointer;
+    },
+    // 노출마다 별도 키를 사용하므로 다른 탭의 추가나 제거를 덮어쓰지 않는다.
+    CodeBlueAdStore: function (scopePointer, idPointer, operation) {
+        var result;
+        try {
+            var prefix = "codeblue-rush.adstats.v1." + UTF8ToString(scopePointer) + ".";
+            var store = window.localStorage;
+            var key = prefix + UTF8ToString(idPointer);
+            result = "S";
+            if (operation === 1) store.setItem(key, "1");
+            else if (operation === 0) store.removeItem(key);
+            else {
+                var ids = [];
+                for (var index = 0; index < store.length; index++) {
+                    var stored = store.key(index);
+                    if (stored && stored.indexOf(prefix) === 0) ids.push(stored.substring(prefix.length));
+                }
+                result += ids.join(",");
+            }
+        } catch (error) { result = "E"; }
+        var size = lengthBytesUTF8(result) + 1;
+        var pointer = _malloc(size);
+        stringToUTF8(result, pointer, size);
+        return pointer;
     }
 });

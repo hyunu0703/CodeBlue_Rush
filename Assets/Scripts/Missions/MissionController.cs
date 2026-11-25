@@ -39,6 +39,12 @@ public sealed class MissionController : MonoBehaviour
     [SerializeField] private TMP_Text saveStatus;     // 저장 실패와 재시도 안내를 결과 아래에 표시한다.
     [SerializeField] private Button confirmButton;   // 같은 결과 후보를 저장하고 다음 일차로 진입한다.
     [SerializeField] private TMP_Text confirmLabel;  // 확인 또는 실패 후 다시 시도 문구다.
+    [SerializeField] private DummyAds ads;           // 이 결과 화면에서 표시하는 더미 광고다.
+    [SerializeField] private Button rewardButton;    // 다음 날 첫 요청 대기 보상을 신청한다.
+    [SerializeField] private TMP_Text rewardStatus;  // 저장 재시도 중에도 이미 얻은 보상을 표시한다.
+    private bool rewardEarned;                      // 현재 결과에 같은 보상을 중복 부여하지 않는다.
+    private bool rewardedAdShown;                   // 조기 종료도 같은 결과의 전면 광고를 생략한다.
+    private bool waitingTransitionRequested;        // 저장 뒤 광고 닫힘이 중복되어도 씬 전환은 한 번이다.
     private GameProgress missionProgress;            // 출동 시점에 확정한 일차와 누적 실적 원본이다.
     private MissionResult result;                    // 인계 후에는 HP·접촉 변화와 무관하게 유지할 결과다.
     private bool isSaving;                           // 저장 중 재진입과 연속 확인 입력을 차단한다.
@@ -114,6 +120,17 @@ public sealed class MissionController : MonoBehaviour
         UpdateSafeArea();
         confirmButton.onClick.AddListener(ConfirmResult);
         ButtonPressEffect.Attach(confirmButton);
+        if (ads != null && rewardButton != null && rewardStatus != null)
+        {
+            ads.Changed += RefreshAdControls;
+            ads.Shown += RecordAdShown;
+            rewardButton.onClick.AddListener(WatchRewarded);
+            ButtonPressEffect.Attach(rewardButton);
+        }
+        else if (gameObject.scene.name == "GamePlay")
+        {
+            Debug.LogError("MissionSystem의 Ads, Reward Button, Reward Status를 연결해주세요.", this);
+        }
         if (stage == MissionStage.Arriving || stage == MissionStage.Result || stage == MissionStage.Completed)
         {
             LockVehicle();
@@ -150,6 +167,7 @@ public sealed class MissionController : MonoBehaviour
             }
             RefreshView();
         }
+        if (stage == MissionStage.Completed) ReturnToWaiting();
     }
 
     private IEnumerator Start()
@@ -215,6 +233,13 @@ public sealed class MissionController : MonoBehaviour
 
     private void OnDisable()
     {
+        if (ads != null)
+        {
+            ads.Changed -= RefreshAdControls;
+            ads.Shown -= RecordAdShown;
+            ads.Cancel();
+        }
+        if (rewardButton != null) rewardButton.onClick.RemoveListener(WatchRewarded);
         if (dayStartRoutine != null) StopCoroutine(dayStartRoutine);
         dayStartRoutine = null;
         if (dayStart != null) dayStart.Hide();
@@ -377,6 +402,9 @@ public sealed class MissionController : MonoBehaviour
         resultStamp.Prepare(resultText, result);
         saveStatus.text = string.Empty;
         confirmLabel.text = "확인";
+        rewardEarned = false;
+        rewardedAdShown = false;
+        waitingTransitionRequested = false;
         isSaving = false;
         MissionDispatchSession.Clear();
         LockVehicle();
@@ -444,7 +472,7 @@ public sealed class MissionController : MonoBehaviour
     // 같은 결과 후보를 저장하고 성공한 경우에만 다음 일차 Waiting으로 이동한다.
     private void ConfirmResult()
     {
-        if (ApplicationPause.IsPaused || !isActiveAndEnabled || stage != MissionStage.Result || result == null || isSaving || isResultAnimating) return;
+        if (!CanUseResultControls()) return;
         if (!Application.CanStreamedLevelBeLoaded("Waiting"))
         {
             ShowSaveError("대기 화면을 열지 못했습니다.\n다시 시도해주세요.");
@@ -466,10 +494,64 @@ public sealed class MissionController : MonoBehaviour
             return;
         }
         FirebaseSession.Instance.Submit(result.NextProgress.CumulativeScore);
+        if (rewardEarned) MissionAdSession.GrantWaitSkip(result.NextProgress);
         stage = MissionStage.Completed;
         saveStatus.text = "저장 완료 · 대기 씬으로 이동 중";
         RefreshView();
+        if (!rewardedAdShown && ads != null
+            && MissionAdSession.CanShowInterstitial(result.OriginalProgress.CurrentDay, Time.realtimeSinceStartupAsDouble)
+            && ads.TryShow(DummyAds.Kind.Interstitial, _ => ReturnToWaiting())) return;
+        ReturnToWaiting();
+    }
+
+    // 결과 연출·저장·광고가 끝난 상태에서만 후속 입력을 받는다.
+    private bool CanUseResultControls() =>
+        !ApplicationPause.IsPaused && isActiveAndEnabled && stage == MissionStage.Result
+        && result != null && !isSaving && !isResultAnimating && (ads == null || !ads.IsShowing);
+
+    // 평가 대기일에는 첫 출동 요청이 없으므로 보상을 제안하지 않는다.
+    private bool CanOfferReward() =>
+        CanUseResultControls() && !rewardEarned && result.NextProgress.Stage == ProgressStage.Ready
+        && ads != null && ads.IsReady(DummyAds.Kind.Rewarded);
+
+    // 표시와 닫힘을 구분하고 타이머를 마친 닫힘만 현재 결과의 보상으로 기록한다.
+    private void WatchRewarded()
+    {
+        if (!CanOfferReward()) return;
+        ads.TryShow(DummyAds.Kind.Rewarded, earned =>
+        {
+            if (!isActiveAndEnabled || stage != MissionStage.Result) return;
+            if (earned) rewardEarned = true;
+            RefreshAdControls();
+        });
+    }
+
+    // 실제 화면이 열린 순간에만 노출과 전면 광고 간격을 갱신한다.
+    private void RecordAdShown(DummyAds.Kind kind)
+    {
+        if (kind == DummyAds.Kind.Rewarded) rewardedAdShown = true;
+        else MissionAdSession.RecordInterstitial(Time.realtimeSinceStartupAsDouble);
+        FirebaseSession.Instance.RecordAdImpression(kind);
+    }
+
+    // 저장이 끝난 광고 콜백 또는 광고 생략 경로에서 같은 씬 전환을 요청한다.
+    private void ReturnToWaiting()
+    {
+        if (!isActiveAndEnabled || stage != MissionStage.Completed || waitingTransitionRequested) return;
+        waitingTransitionRequested = true;
         SceneFadeTransition.LoadScene("Waiting");
+    }
+
+    // 준비 여부가 바뀌거나 광고가 닫힐 때 결과 본문을 유지하면서 버튼만 갱신한다.
+    private void RefreshAdControls()
+    {
+        confirmButton.interactable = stage == MissionStage.Result && !isSaving && !isResultAnimating
+            && (ads == null || !ads.IsShowing);
+        // 앱 이탈 중에는 ApplicationPause가 입력을 막으므로 복귀 때 버튼을 다시 만들 필요가 없다.
+        if (rewardButton != null)
+            rewardButton.gameObject.SetActive(confirmButton.interactable && result != null && !rewardEarned
+                && result.NextProgress.Stage == ProgressStage.Ready && ads != null && ads.IsReady(DummyAds.Kind.Rewarded));
+        if (rewardStatus != null) rewardStatus.gameObject.SetActive(stage == MissionStage.Result && rewardEarned);
     }
 
     // 결과와 후보는 유지하고 저장만 다시 시도할 수 있도록 입력을 복구한다.
@@ -494,7 +576,7 @@ public sealed class MissionController : MonoBehaviour
             safeAreaRoot.SetAsLastSibling();
             resultPanel.transform.SetAsLastSibling();
         }
-        confirmButton.interactable = stage == MissionStage.Result && !isSaving && !isResultAnimating;
+        RefreshAdControls();
         driveInput.SetMissionDrivingAllowed(stage == MissionStage.Active || stage == MissionStage.Transporting);
         var transporting = stage == MissionStage.Transporting && IsPatientPickedUp;
         if (patientHealth != null)

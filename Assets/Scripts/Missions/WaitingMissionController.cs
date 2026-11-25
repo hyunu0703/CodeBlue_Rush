@@ -401,22 +401,33 @@ public sealed class WaitingMissionController : MonoBehaviour
     {
         if (!CanReceiveMission) return;
         if (offerRoutine != null) StopCoroutine(offerRoutine);
+        offerRoutine = null;
         stage = WaitingStage.Waiting;
         RefreshView();
-        offerRoutine = StartCoroutine(WaitForOffer());
+        if (MissionAdSession.ConsumeWaitSkip(observedProgress)) ShowOffer();
+        else offerRoutine = StartCoroutine(WaitForOffer());
     }
 
     // 기존 실제 시간 5초 기준을 유지하되 백그라운드·복귀 첫 프레임은 남은 시간에서 제외한다.
     private IEnumerator WaitForOffer()
     {
-        var elapsed = 0f;
-        while (elapsed < offerDelaySeconds || IsResetDialogOpen)
+        var elapsed = 0d;
+        var lastSample = Time.realtimeSinceStartupAsDouble;
+        while (elapsed < offerDelaySeconds || IsResetDialogOpen || ApplicationPause.IsPaused)
         {
             yield return null;
-            if (!IsResetDialogOpen) elapsed += ApplicationPause.ActiveDeltaTime;
+            var now = Time.realtimeSinceStartupAsDouble;
+            if (!IsResetDialogOpen && ApplicationPause.ActiveDeltaTime > 0f) elapsed += now - lastSample;
+            lastSample = now;
         }
         offerRoutine = null;
-        if (!CanReceiveMission || stage != WaitingStage.Waiting) yield break;
+        ShowOffer();
+    }
+
+    // 보상 또는 일반 대기가 끝나면 같은 출동 요청을 한 번 연다.
+    private void ShowOffer()
+    {
+        if (!CanReceiveMission || stage != WaitingStage.Waiting) return;
         requestNumber++;
         stage = WaitingStage.Available;
         briefingText.text = $"출동 요청 #{requestNumber:000}\n\n긴급 출동 요청이 도착했습니다.\n\n"

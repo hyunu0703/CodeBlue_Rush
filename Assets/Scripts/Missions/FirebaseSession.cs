@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 
 /// <summary>씬 전환을 넘어 익명 인증과 UID별 최고 기록 제출을 이어가며 로컬 진행에는 서버 값을 덮어쓰지 않는다.</summary>
-public sealed class FirebaseSession : MonoBehaviour
+public sealed partial class FirebaseSession : MonoBehaviour
 {
     /// <summary>진행 초기화와 독립적으로 유지할 한 손님의 인증·미전송 저장 단위다.</summary>
     [Serializable]
@@ -240,6 +240,7 @@ public sealed class FirebaseSession : MonoBehaviour
         }
         authenticating = false;
         SetStatus("로그인 완료");
+        if (!syncing && ReadAdImpressions().Count > 0) RetrySync();
     }
 
     // 서버 실패와 무관하게 높은 후보를 먼저 로컬에 남기며 초기화 직전에도 재사용한다.
@@ -352,11 +353,12 @@ public sealed class FirebaseSession : MonoBehaviour
                 break;
             }
         }
+        yield return SyncAdStats();
         syncing = false;
         if (completed) SetStatus("최고 실적 동기화 완료");
         else if (Status == "최고 실적 동기화 중…" || Status == "로그인 완료") SetStatus("동기화 대기 중. 재시도해주세요.");
         else Changed?.Invoke();
-        if (completed && syncAgain) RetrySync();
+        if (syncAgain) RetrySync();
     }
 
     // 전송 중 더 높은 후보가 추가됐으면 그대로 남기고 확인된 값 이하만 지운다.

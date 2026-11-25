@@ -22,6 +22,9 @@ public sealed class ApplicationPause : MonoBehaviour
     private int resumeFrame = -1;             // 복귀 첫 프레임의 큰 실제 시간 간격을 제외한다.
     private Coroutine resumeRoutine;          // 모든 복귀 조건 충족 후 한 프레임을 비울 작업이다.
     private GameObject inputCover;            // 일시정지 중 화면 입력을 막는 투명 덮개다.
+    private bool adPlaying;                   // 앱이 활성 상태일 때도 광고 동안 게임 시간을 멈춘다.
+    private bool gameTimeStopped;             // 두 정지 사유가 겹쳐도 첫 배속만 보관한다.
+    private bool previousAudioPause;          // 광고가 열리기 전 오디오 정지 상태다.
 
     public static bool IsPaused { get; private set; }
     public static float ActiveDeltaTime => IsPaused || (instance != null && instance.resumeFrame == Time.frameCount)
@@ -32,7 +35,7 @@ public sealed class ApplicationPause : MonoBehaviour
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     private static void ResetState()
     {
-        if (instance != null && IsPaused) Time.timeScale = instance.previousTimeScale;
+        if (instance != null) instance.RestorePlayback();
         instance = null;
         IsPaused = false;
         Changed = null;
@@ -101,6 +104,43 @@ public sealed class ApplicationPause : MonoBehaviour
         Reconcile();
     }
 
+    // 광고와 포커스 이탈이 겹치면 두 사유가 모두 해제된 뒤에만 배속을 복원한다.
+    internal static void SetAdPlaying(bool value)
+    {
+        if (instance == null || instance.adPlaying == value) return;
+        instance.adPlaying = value;
+        if (value)
+        {
+            instance.previousAudioPause = AudioListener.pause;
+            AudioListener.pause = true;
+        }
+        else AudioListener.pause = instance.previousAudioPause;
+        instance.UpdateGameTime();
+    }
+
+    // 광고 카운트다운은 ActiveDeltaTime을 쓰므로 게임 정지와 백그라운드 정지를 구분한다.
+    private void UpdateGameTime()
+    {
+        var shouldStop = IsPaused || adPlaying;
+        if (gameTimeStopped == shouldStop) return;
+        gameTimeStopped = shouldStop;
+        if (shouldStop)
+        {
+            previousTimeScale = Time.timeScale;
+            Time.timeScale = 0f;
+        }
+        else Time.timeScale = previousTimeScale;
+    }
+
+    // 실행 종료 순서와 관계없이 이 관리자가 획득한 배속과 음소거만 반환한다.
+    private void RestorePlayback()
+    {
+        if (gameTimeStopped) Time.timeScale = previousTimeScale;
+        if (adPlaying) AudioListener.pause = previousAudioPause;
+        gameTimeStopped = false;
+        adPlaying = false;
+    }
+
     // 하나라도 이탈 상태면 멈추며 모든 신호가 복귀해야 한 프레임 뒤 재개한다.
     private void Reconcile()
     {
@@ -109,9 +149,8 @@ public sealed class ApplicationPause : MonoBehaviour
             if (resumeRoutine != null) StopCoroutine(resumeRoutine);
             resumeRoutine = null;
             if (IsPaused) return;
-            previousTimeScale = Time.timeScale;
             IsPaused = true;
-            Time.timeScale = 0f;
+            UpdateGameTime();
             inputCover.SetActive(true);
             BlockInput();
             Changed?.Invoke(true);
@@ -126,8 +165,8 @@ public sealed class ApplicationPause : MonoBehaviour
         resumeRoutine = null;
         if (!hasFocus || applicationPaused || browserHidden || !browserFocused) yield break;
         resumeFrame = Time.frameCount;
-        Time.timeScale = previousTimeScale;
         IsPaused = false;
+        UpdateGameTime();
         foreach (var module in blockedModules) if (module != null) module.enabled = true;
         blockedModules.Clear();
         inputCover.SetActive(false);
@@ -178,7 +217,7 @@ public sealed class ApplicationPause : MonoBehaviour
 #if UNITY_WEBGL && !UNITY_EDITOR
         CodeBluePauseStop();
 #endif
-        if (IsPaused) Time.timeScale = previousTimeScale;
+        RestorePlayback();
         foreach (var module in blockedModules) if (module != null) module.enabled = true;
         blockedModules.Clear();
         IsPaused = false;

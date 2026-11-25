@@ -17,6 +17,24 @@
           ".validate": false
         }
       }
+    },
+    "adstats": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid && newData.hasChildren(['interstitial', 'rewarded', 'processed'])",
+        "interstitial": {
+          ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 9007199254740991 && newData.val() % 1 === 0 && (!data.exists() || newData.val() >= data.val())"
+        },
+        "rewarded": {
+          ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 9007199254740991 && newData.val() % 1 === 0 && (!data.exists() || newData.val() >= data.val())"
+        },
+        "processed": {
+          ".validate": "newData.isString() && newData.val().matches(/^([ir][0-9a-f]{32},)+$/) && (!data.exists() || newData.val().beginsWith(data.val()))"
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
     }
   }
 }
