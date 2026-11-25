@@ -71,10 +71,22 @@ public sealed class DayStartTests
         var mission = Object.FindFirstObjectByType<MissionController>();
         var health = Object.FindFirstObjectByType<PatientHealth>();
         var body = health.GetComponent<Rigidbody2D>();
-        var input = body.GetComponent<AmbulanceDriveInput>();
+        var input = Object.FindFirstObjectByType<AmbulanceDriveInput>();
         var inputAllowed = typeof(AmbulanceDriveInput).GetField("isMissionDrivingAllowed", BindingFlags.Instance | BindingFlags.NonPublic);
         var overlay = Object.FindFirstObjectByType<DayStartOverlay>();
+        Assert.That(input, Is.Not.Null);
         Assert.That(overlay, Is.Not.Null);
+        // WebGL에서 도로 텍스처 전체를 샘플링하고 월드 연결 규격을 유지해야 한다.
+        var roads = Object.FindObjectsByType<RoadPrefab>(FindObjectsSortMode.None);
+        Assert.That(roads, Is.Not.Empty);
+        foreach (var road in roads)
+        {
+            var sprite = road.GetComponent<SpriteRenderer>().sprite;
+            Assert.That(sprite.rect.width, Is.EqualTo(sprite.texture.width));
+            Assert.That(sprite.rect.height, Is.EqualTo(sprite.texture.height));
+            Assert.That(sprite.bounds.size.x, Is.EqualTo(road.ImageSize.x).Within(0.001f));
+            Assert.That(sprite.bounds.size.y, Is.EqualTo(road.ImageSize.y).Within(0.001f));
+        }
         Assert.That(mission.IsMissionActive, Is.False);
         Assert.That(inputAllowed.GetValue(input), Is.False);
         Assert.That(body.constraints, Is.EqualTo(RigidbodyConstraints2D.FreezeAll));

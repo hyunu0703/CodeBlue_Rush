@@ -34,6 +34,7 @@ public sealed class MissionMapGenerator : MonoBehaviour
     // 진행 경로 39개와 미선택 출구의 직선 최대 12개를 단계별로 소유하고 같은 풀에서 재사용한다.
     private readonly List<RoadPrefab> activeRoads = new List<RoadPrefab>(51);
     private readonly Dictionary<RoadIndex, Stack<RoadPrefab>> pool = new Dictionary<RoadIndex, Stack<RoadPrefab>>();
+    private readonly Dictionary<RoadIndex, Sprite> resizedRoadSprites = new Dictionary<RoadIndex, Sprite>(); // 축소된 도로 텍스처마다 생성한 표시용 스프라이트를 공유한다.
     private Transform poolRoot;
     // 반환된 슬롯도 원본 배치와 차로 번호를 유지한다. 활성 인스턴스만 null로 비운다.
     private readonly List<RoadPlacement> roadPlacements = new List<RoadPlacement>();
@@ -101,6 +102,10 @@ public sealed class MissionMapGenerator : MonoBehaviour
         if (buildingGroundTile != null)
         {
             Destroy(buildingGroundTile);
+        }
+        foreach (var sprite in resizedRoadSprites.Values)
+        {
+            Destroy(sprite);
         }
         // Map Root가 생성기와 다른 부모에 있어도 소유한 활성 건물만 정리한다.
         foreach (var buildings in roadBuildings.Values)
@@ -987,12 +992,14 @@ public sealed class MissionMapGenerator : MonoBehaviour
         if (buildingGroundTile == null)
         {
             var source = groundRenderer.sprite;
-            var rect = source.rect;
-            // 1254px 원본의 인도 안쪽 40px 반복 구간이다. 연석과 투명한 바깥 부분은 제외한다.
-            var unit = rect.width / 1254f;
-            buildingGroundTile = Sprite.Create(source.texture,
-                new Rect(rect.x + 402f * unit, rect.y + 1214f * unit, 40f * unit, 40f * unit),
-                Vector2.one * 0.5f, source.pixelsPerUnit, 0, SpriteMeshType.FullRect);
+            var texture = source.texture;
+            // 도로 스프라이트는 정사각형 원본 전체를 쓴다. 인도 구간을 빌드에서 축소된 텍스처 좌표로 변환한다.
+            const float originalSize = 1254f;
+            var pixelScale = new Vector2(texture.width / originalSize, texture.height / originalSize);
+            var sidewalk = Rect.MinMaxRect(402f * pixelScale.x, 1214f * pixelScale.y, 442f * pixelScale.x, texture.height);
+            // 픽셀 밀도도 같은 비율로 조정해 타일의 월드 크기와 반복 간격을 유지한다.
+            buildingGroundTile = Sprite.Create(texture, sidewalk,
+                Vector2.one * 0.5f, source.pixelsPerUnit * pixelScale.x, 0, SpriteMeshType.FullRect);
             buildingGroundTile.name = "BuildingSidewalkTile";
         }
         activeBuildingRoads.Clear();
@@ -1210,6 +1217,26 @@ public sealed class MissionMapGenerator : MonoBehaviour
         }
         var created = Instantiate(prefab, poolRoot);
         created.gameObject.SetActive(false);
+        FitRoadSprite(created);
         return created;
+    }
+
+    // 빌드에서 축소된 전체 이미지 스프라이트의 픽셀 좌표를 맞추고 도로 연결에 사용하는 월드 크기를 유지한다.
+    private void FitRoadSprite(RoadPrefab road)
+    {
+        var renderer = road.GetComponent<SpriteRenderer>();
+        var source = renderer.sprite;
+        var texture = source.texture;
+        if (source.rect.width == texture.width && source.rect.height == texture.height) return;
+
+        if (!resizedRoadSprites.TryGetValue(road.Index, out var sprite))
+        {
+            var pixelsPerUnit = texture.width / road.ImageSize.x;
+            sprite = Sprite.Create(texture, new Rect(0f, 0f, texture.width, texture.height),
+                Vector2.one * 0.5f, pixelsPerUnit, 0, SpriteMeshType.FullRect);
+            sprite.name = source.name;
+            resizedRoadSprites.Add(road.Index, sprite);
+        }
+        renderer.sprite = sprite;
     }
 }
